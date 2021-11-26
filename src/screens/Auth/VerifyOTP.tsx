@@ -1,10 +1,11 @@
 import OtpInputs from '@twotalltotems/react-native-otp-input'
 import { verifyOtp } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { BackButton, Button, KeyboardHideView, KeyboardTopView, Text } from 'custom-components'
+import { BackButton, Button, Text } from 'custom-components'
 import { validateNumber } from 'custom-components/TextInput/rules'
 import React, { FC, useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, View } from 'react-native'
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
@@ -17,26 +18,24 @@ const VerifyOTP: FC<any> = (props) => {
     return (
         <SafeAreaView style={styles.container} >
             <BackButton />
-            <View style={{ flex: 1, marginTop: scaler(40), alignItems: 'center', }} >
-                <Image source={Images.ic_email_illustrator} style={{ height: scaler(100), marginLeft: scaler(20), resizeMode: 'contain', marginBottom: scaler(20) }} />
-                <Text style={styles.check} > {Language.check_your_mail}</Text>
-                <Text style={styles.weHave} > {Language.we_have_sent_you}</Text>
+            <ScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: scaler(20) }} >
+
+                <Text style={styles.heading} >{Language.enter_verification_code}</Text>
+                <Text style={styles.content} >{Language.enter_otp_sent}</Text>
 
                 <OtpInputs
                     pinCount={4}
                     autoFocusOnLoad={false}
-                    style={{ width: '60%', marginTop: scaler(30), height: scaler(40), alignSelf: 'center' }}
+                    style={{ width: '100%', marginVertical: scaler(20), height: scaler(50), alignSelf: 'center' }}
                     codeInputFieldStyle={styles.underlineStyleBase}
                     codeInputHighlightStyle={styles.underlineStyleHighLighted}
+                    secureTextEntry={true}
                     onCodeChanged={(code) => {
                         setOtp(code.trim().toString())
                     }}
                 />
 
-            </View>
-
-            <KeyboardTopView style={{ paddingHorizontal: scaler(20), paddingBottom: scaler(20) }} >
-                <Button disabled={disabled} title={Language.verify_otp} onPress={() => {
+                <Button disabled={disabled} title={Language.verify} onPress={() => {
                     if (otp.trim().length == 4 && validateNumber(otp.trim())) {
                         dispatch(verifyOtp({
                             otp: otp,
@@ -48,18 +47,21 @@ const VerifyOTP: FC<any> = (props) => {
 
                 }} />
 
-            </KeyboardTopView>
-
-            <KeyboardHideView>
-                <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: '13%', paddingBottom: scaler(50) }} >
-                    <Text style={styles.didYouNot} >{Language.did_you_not_receive}
-                        <Text onPress={() => {
-                            NavigationService.goBack()
-                        }} style={[styles.didYouNot, { color: colors.colorPrimary }]} > {Language.try_another_email}</Text></Text>
-                </View>
-            </KeyboardHideView>
 
 
+                <Image source={Images.ic_email_illustrator} style={{ flex: 1, resizeMode: 'contain', width: '100%', marginVertical: scaler(20) }} />
+
+            </ScrollView>
+
+            <View style={{ marginVertical: scaler(20), marginHorizontal: '10%' }} >
+                <Text style={styles.check} >{Language.check_your_mail}</Text>
+                <Text style={styles.weHave} >{Language.we_have_sent_you}</Text>
+            </View>
+
+            <Text style={styles.didYouNot} >{Language.did_you_not_receive}
+                <Text onPress={() => {
+                    NavigationService.goBack()
+                }} style={[styles.didYouNot, { color: colors.colorPrimary }]} > {Language.try_another_email}</Text></Text>
 
         </SafeAreaView>
     )
@@ -69,31 +71,34 @@ export default VerifyOTP
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
+        height: Dimensions.get('screen').height - scaler(30),
         backgroundColor: colors.colorWhite,
     },
     didYouNot: {
         fontWeight: '400',
         fontSize: scaler(13),
         color: colors.colorPlaceholder,
+        marginHorizontal: "13%",
+        marginVertical: scaler(20),
         textAlign: 'center'
     },
     check: {
         color: colors.colorBlack,
         fontWeight: '600',
-        fontSize: scaler(16),
+        fontSize: scaler(20),
         textAlign: 'center'
     },
     weHave: {
         color: colors.colorPlaceholder,
         fontWeight: '400',
-        fontSize: scaler(12),
+        fontSize: scaler(14),
         textAlign: 'center'
     },
     underlineStyleBase: {
-        width: scaler(35),
-        height: scaler(40),
-        borderRadius: scaler(4),
+        width: (Dimensions.get('screen').width - (90)) / 4,// scaler(35),
+        height: scaler(50),
+        borderRadius: scaler(7),
         borderWidth: 1,
         fontSize: scaler(18),
         borderColor: colors.colorD,
@@ -102,6 +107,20 @@ const styles = StyleSheet.create({
 
     underlineStyleHighLighted: {
         borderColor: colors.colorPrimary,
+        color: colors.colorPlaceholder
+    },
+    heading: {
+        fontSize: scaler(18),
+        marginTop: scaler(20),
+        // marginHorizontal: scaler(5),
+        fontWeight: '600',
+    },
+    content: {
+        fontSize: scaler(12),
+        marginTop: scaler(5),
+        marginBottom: scaler(10),
+        fontWeight: '400',
+        // marginHorizontal: scaler(5),
         color: colors.colorPlaceholder
     },
 })

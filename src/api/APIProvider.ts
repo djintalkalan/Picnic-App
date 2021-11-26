@@ -123,6 +123,11 @@ export const _resetPassword = async (body: any) => {
     return fetchApiData(config.API_URL + 'auth/reset-password', body, "POST")
 }
 
+export const _checkEmail = async (body: any) => {
+    console.log("---------- Reset Password Api Call ---------------")
+    return fetchApiData(config.API_URL + 'auth/check-email', body, "POST")
+}
+
 
 export const _verifyOtp = async (body: any) => {
     console.log("---------- Verify Otp Api Call ---------------")

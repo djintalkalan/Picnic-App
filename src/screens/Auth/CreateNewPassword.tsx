@@ -3,7 +3,7 @@ import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import Button from 'custom-components/Button'
-import { PasswordValidations } from 'custom-components/TextInput/rules'
+import { ConfirmPasswordValidations, PasswordValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { StyleSheet, View } from 'react-native'
@@ -67,14 +67,14 @@ const CreateNewPassword: FC<any> = (props) => {
                     errors={errors}
                 />
 
-                <TextInput disabled containerStyle={{ height: 0 }} />
+                <TextInput disabled containerStyle={{ height: 0, padding: 0, margin: 0 }} />
 
                 <TextInput
                     ref={confirmPasswordRef}
                     placeholder={Language.confirm_password}
                     name={'confirmPassword'}
                     rules={{
-                        ...PasswordValidations,
+                        ...ConfirmPasswordValidations,
                         validate: (confirmPassword: string) => {
                             if (confirmPassword != getValues('password')) return Language.both_pass_same
                             return true
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     content: {
-        fontSize: scaler(13),
+        fontSize: scaler(12),
         marginTop: scaler(5),
         marginBottom: scaler(10),
         fontWeight: '400',

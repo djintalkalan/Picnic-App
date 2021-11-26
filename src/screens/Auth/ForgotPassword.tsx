@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     content: {
-        fontSize: scaler(13),
+        fontSize: scaler(12),
         marginTop: scaler(5),
         marginBottom: scaler(10),
         fontWeight: '400',

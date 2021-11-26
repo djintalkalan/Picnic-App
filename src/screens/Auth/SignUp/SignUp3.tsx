@@ -35,7 +35,7 @@ const SignUp3: FC<any> = (props) => {
         console.log(data)
         dispatch(doSignUp({
             username: data?.username,
-            dial_code: data?.phone_dialCode,
+            dial_code: data?.phone ? data?.phone_dialCode : "",
             phone_number: data?.phone,
             register_platform: Platform.OS,
             ...props.route?.params,
@@ -50,8 +50,7 @@ const SignUp3: FC<any> = (props) => {
     // }, [])
 
     const calculateButtonDisability = useCallback(() => {
-        if (!isTerms || !getValues('username')
-            || !getValues('phone')
+        if (!isTerms
             ||
             (errors && (errors.username
                 || errors.phone
@@ -78,7 +77,6 @@ const SignUp3: FC<any> = (props) => {
                         placeholder={Language.username}
                         name={'username'}
                         style={{ fontSize: scaler(13) }}
-                        required={true}
                         control={control}
                         errors={errors}
                     />
@@ -87,10 +85,9 @@ const SignUp3: FC<any> = (props) => {
                         name={'phone'}
                         ref={phoneRef}
                         title={Language.phone}
-                        placeholder={Language.phone_including_country}
+                        placeholder={"0000-000-000"}
                         controlObject={{ control, getValues, setValue, setError }}
-                        defaultCountry={'IN'}
-                        required
+                        defaultCountry={'US'}
                         errors={errors}
                     />
 

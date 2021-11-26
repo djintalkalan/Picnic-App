@@ -94,6 +94,27 @@ function* resetPassword({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+
+    try {
+        let res = yield call(ApiProvider._checkEmail, { email: payload?.email });
+        if (res.status == 200) {
+            payload?.onSuccess()
+        } else if (res.status == 400) {
+            payload?.onSuccess(res.message)
+            // _showErrorMessage(res.message);
+        } else {
+            // _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
@@ -127,9 +148,9 @@ function* doLogout({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
 
         } else if (res.status == 400) {
-            _showErrorMessage(res.message);
+            // _showErrorMessage(res.message);
         } else {
-            _showErrorMessage(Language.something_went_wrong);
+            // _showErrorMessage(Language.something_went_wrong);
         }
         yield put(tokenExpiredAction(false));
         yield put(setLoadingAction(false));
@@ -169,4 +190,6 @@ export default function* watchAuth() {
     yield takeLatest(ActionTypes.DO_SIGN_UP, doSignUp);
     yield takeLatest(ActionTypes.DO_LOGOUT, doLogout);
     yield takeLatest(ActionTypes.TOKEN_EXPIRED, tokenExpired);
+    yield takeLatest(ActionTypes.CHECK_EMAIL, checkEmail);
+
 };

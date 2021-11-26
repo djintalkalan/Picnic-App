@@ -1,7 +1,7 @@
 import { doLogin } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Text, TextInput } from 'custom-components'
-import { EmailValidations, PasswordValidations } from 'custom-components/TextInput/rules'
+import { EmailValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, View } from 'react-native'
@@ -83,7 +83,7 @@ const Login: FC = () => {
                         icon={isSecure ? Images.ic_eye_open : Images.ic_eye_closed}
                         iconSize={scaler(18)}
                         required={true}
-                        rules={PasswordValidations}
+                        // rules={PasswordValidations}
                         control={control}
                         errors={errors}
                     />

@@ -43,6 +43,13 @@ export const doLogout = (payload?: any) => {
   };
 }
 
+export const checkEmail = (payload: any) => {
+  return {
+    type: ActionTypes.CHECK_EMAIL,
+    payload
+  };
+}
+
 export const tokenExpired = (payload?: any) => {
   return {
     type: ActionTypes.TOKEN_EXPIRED,

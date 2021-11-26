@@ -89,7 +89,7 @@ const SignUp2: FC<any> = (props) => {
 
                     <TextInput
                         containerStyle={{ flex: 1, marginRight: scaler(10) }}
-                        placeholder={"DD-MM-YYYY"}
+                        placeholder={"MM-DD-YYYY"}
                         style={{ fontSize: scaler(13) }}
                         name={'dob'}
                         onPress={openDatePicker}
@@ -119,6 +119,7 @@ const SignUp2: FC<any> = (props) => {
                 </View>
             </ScrollView>
             <DateTimePickerModal
+                style={{ zIndex: 20 }}
                 isVisible={isDatePickerVisible}
                 mode="date"
                 customConfirmButtonIOS={(props) => (
@@ -136,7 +137,7 @@ const SignUp2: FC<any> = (props) => {
                 })}
                 onConfirm={(date: Date) => {
                     birthDate.current = date
-                    setValue("dob", dateFormat(date, "DD-MM-YYYY"), { shouldValidate: true })
+                    setValue("dob", dateFormat(date, "MM-DD-YYYY"), { shouldValidate: true })
                     setDatePickerVisibility(false);
                 }}
                 onCancel={() => {

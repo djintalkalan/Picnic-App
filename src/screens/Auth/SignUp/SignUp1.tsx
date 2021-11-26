@@ -1,11 +1,13 @@
+import { checkEmail } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Stepper, Text, TextInput } from 'custom-components'
-import { EmailValidations, PasswordValidations } from 'custom-components/TextInput/rules'
-import React, { FC, useCallback, useState } from 'react'
+import { ConfirmPasswordValidations, EmailValidations, PasswordValidations, validateEmail } from 'custom-components/TextInput/rules'
+import React, { FC, useCallback, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler, _showErrorMessage } from 'utils'
 
@@ -18,13 +20,15 @@ type FormType = {
 
 const SignUp1: FC = () => {
 
+    const dispatch = useDispatch()
+
     const [isTerms, setTerms] = useState(true)
     const [isSecure1, setSecure1] = useState(true)
     const [isSecure2, setSecure2] = useState(true)
-
-    const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormType>({
+    const isValidEmail = useRef(false)
+    const { control, handleSubmit, getValues, formState: { errors }, setError } = useForm<FormType>({
         defaultValues: {
-            // email: "deepakq@testing.com",
+            // email: "deepakq@testings.com",
             // password: "Dj@123456",
             // confirmPassword: "Dj@123456"
         },
@@ -46,6 +50,22 @@ const SignUp1: FC = () => {
         return false
     }, [errors])
 
+    const onBlurEmail = useCallback(() => {
+        if (validateEmail(getValues('email'))) {
+            dispatch(checkEmail({
+                email: getValues('email'), onSuccess: (errorMessage: string) => {
+                    if (errorMessage) {
+                        setError('email', { message: errorMessage })
+                        isValidEmail.current = false
+                    } else {
+                        isValidEmail.current = true
+                        onSubmit()
+                    }
+                }
+            }))
+        }
+    }, [])
+
     return (
         <SafeAreaView style={styles.container} >
 
@@ -63,8 +83,11 @@ const SignUp1: FC = () => {
                         placeholder={Language.enter_email_or_password}
                         name={'email'}
                         keyboardType={'email-address'}
-                        style={{ fontSize: scaler(13) }}
                         required={true}
+                        onChangeText={(text: string) => {
+
+                        }}
+                        // onBlur={onBlurEmail}
                         rules={EmailValidations}
                         control={control}
                         errors={errors}
@@ -72,7 +95,6 @@ const SignUp1: FC = () => {
 
                     <TextInput
                         placeholder={Language.password}
-                        style={{ fontSize: scaler(13) }}
                         name={'password'}
                         rules={PasswordValidations}
                         required={true}
@@ -84,13 +106,13 @@ const SignUp1: FC = () => {
                         iconSize={scaler(18)}
                     />
 
-                    <TextInput containerStyle={{ height: 0 }} />
+                    <TextInput containerStyle={{ height: 0, padding: 0, margin: 0 }} />
 
                     <TextInput
                         placeholder={Language.confirm_password}
                         name={'confirmPassword'}
                         rules={{
-                            ...PasswordValidations,
+                            ...ConfirmPasswordValidations,
                             validate: (confirmPassword: string) => {
                                 if (confirmPassword != getValues('password')) return Language.both_pass_same
                                 return true
@@ -122,7 +144,7 @@ const SignUp1: FC = () => {
 
 
 
-                    <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.next} onPress={onSubmit} />
+                    <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.next} onPress={onBlurEmail} />
 
                     <Text style={styles.notAMember} >{Language.already_a_member} <Text onPress={() => {
                         NavigationService.navigate("Login")

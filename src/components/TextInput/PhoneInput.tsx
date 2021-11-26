@@ -126,7 +126,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                     name={name}
                     rules={{
                         required: required, ...rules, validate: (v) => {
-                            return !currentDataRef?.current?.isVerified ? "Invalid Phone" : true
+                            return currentDataRef?.current?.isVerified || (!required && !v) || "Invalid Phone"
                         }
                     }}
                     defaultValue=""

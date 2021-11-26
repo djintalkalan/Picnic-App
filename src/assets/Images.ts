@@ -6,6 +6,7 @@ export const Images = {
     ic_eye_closed: require("./images/ic_eye_closed.png"),
     ic_calender: require("./images/ic_calender.png"),
     ic_email_illustrator: require("./images/ic_email_illustrator.png"),
-    // ic_email_illustrator: require("./images/ic_email_illustrator.png"),
+    ic_homepage: require("./images/ic_homepage.png"),
+    // ic_homepage: require("./images/ic_homepage.png"),
 
 }

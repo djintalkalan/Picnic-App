@@ -16,3 +16,5 @@ Run yarn apk-s for staging environment variable's APK generation
 Run yarn apk-p for production environment variable's APK generation
 
 yarn pod for installing pod
+
+APK will be generated in android/output/

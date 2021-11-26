@@ -30,7 +30,7 @@ interface TextInputProps extends RNTextInputProps {
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { style, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
     const styles = useMemo(() => {
 
@@ -91,7 +91,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     name={name}
                     rules={{ required: required, ...rules }}
                     defaultValue=""
-                    render={({ field: { onChange, onBlur, value } }) => (
+                    render={({ field: { onChange, onBlur: onBlurC, value } }) => (
                         <>
 
                             <RNTextInput {...rest}
@@ -106,12 +106,14 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 value={value}
                                 multiline={multiline}
                                 autoCorrect={false}
-                                onFocus={() => {
+                                onFocus={(e) => {
                                     setFocused(true)
+                                    onFocus && onFocus(e)
                                 }}
                                 onBlur={(e) => {
                                     setFocused(false)
-                                    onBlur()
+                                    onBlurC()
+                                    onBlur && onBlur(e)
                                 }}
                                 onChangeText={text => {
                                     onChange(text);
@@ -139,11 +141,11 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                             // placeholder={!isFocused ? placeholder : ""}
                             onFocus={(e) => {
                                 setFocused(true)
-                                rest?.onFocus && rest?.onFocus(e)
+                                onFocus && onFocus(e)
                             }}
                             onBlur={(e) => {
                                 setFocused(false)
-                                rest?.onBlur && rest?.onBlur(e)
+                                onBlur && onBlur(e)
                             }}
                             placeholderTextColor={colors.colorGreyText}
                             onChangeText={text => {

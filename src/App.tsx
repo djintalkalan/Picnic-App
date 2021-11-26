@@ -46,7 +46,7 @@ const DropdownAlertWithStatusBar = () => {
         successImageSrc={successImageSrc}
         updateStatusBar={false}
         customAlert={(data) => {
-            console.log("data", data)
+            // console.log("data", data)
             let IconComponent = <Feather color={colors.colorWhite} size={scaler(22)} name={'check'} />
             let iconBackgroundColor = colors.colorPrimary
 
