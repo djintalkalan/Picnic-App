@@ -22,8 +22,8 @@ const Login: FC = () => {
 
     const { control, handleSubmit, getValues, formState: { errors } } = useForm<LoginFormType>({
         defaultValues: {
-            // email: "mukeshkaushal2008@gmail.com",
-            // password: "Mukesh@123",
+            email: "mukeshkaushal2008@gmail.com",
+            password: "Mukesh@123",
         },
         mode: 'onChange'
     })

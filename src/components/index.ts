@@ -6,6 +6,7 @@ export * from './KeyboardService';
 export * from './KeyboardTopView';
 export * from './Loader';
 export * from './Modal';
+export * from './MyHeader';
 export * from './PopupAlert';
 export * from './StatusBarService';
 export * from './Stepper';

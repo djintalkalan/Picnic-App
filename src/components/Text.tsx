@@ -12,8 +12,8 @@ export const Text: FC<TextProps> = (props) => {
     const styles = useMemo(() => {
         const styles = StyleSheet.flatten(style)
         let fontType = type;
-        if (styles.fontWeight) {
-            switch (styles.fontWeight) {
+        if (styles?.fontWeight) {
+            switch (styles?.fontWeight) {
                 case "500":
                     fontType = "medium"
                     break;

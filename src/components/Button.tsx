@@ -37,7 +37,7 @@ export const Button = (props: ButtonProps) => {
                 marginVertical: scaler(5),
                 paddingHorizontal: scaler(5),
                 ...container,
-                ...Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle]))
+                ...StyleSheet.flatten(containerStyle) // Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle]))
             },
             buttonStyle: {
                 borderRadius: radius ?? scaler(10),
@@ -48,14 +48,14 @@ export const Button = (props: ButtonProps) => {
                 justifyContent: 'center',
                 paddingVertical: paddingVertical ?? scaler(15),
                 paddingHorizontal: paddingHorizontal ?? scaler(15),
-                ...Object.assign({}, ...(Array.isArray(buttonStyle) ? buttonStyle : [buttonStyle]))
+                ...StyleSheet.flatten(buttonStyle) //Object.assign({}, ...(Array.isArray(buttonStyle) ? buttonStyle : [buttonStyle]))
 
             },
             textStyle: {
                 fontSize,
                 color: fontColor,
                 fontWeight: '500',
-                ...Object.assign({}, ...(Array.isArray(textStyle) ? textStyle : [textStyle]))
+                ...StyleSheet.flatten(textStyle) //Object.assign({}, ...(Array.isArray(textStyle) ? textStyle : [textStyle]))
 
             }
         })

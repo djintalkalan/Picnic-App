@@ -2,7 +2,7 @@ import { colors, Fonts } from "assets";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
-import { GestureResponderEvent, Image, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ColorValue, GestureResponderEvent, Image, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { Text } from "../Text";
@@ -23,6 +23,8 @@ interface TextInputProps extends RNTextInputProps {
     name?: string
     iconPosition?: 'left' | 'right',
     errors?: FieldErrors
+    backgroundColor?: ColorValue
+    borderColor?: ColorValue
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
 }
 
@@ -30,7 +32,7 @@ interface TextInputProps extends RNTextInputProps {
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { style, borderColor = "#E9E9E9", backgroundColor, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
     const styles = useMemo(() => {
 
@@ -75,8 +77,8 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 style={{
                     justifyContent: 'center',
                     minHeight: scaler(50),
-                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : "#E9E9E9",
-                    backgroundColor: colors.colorWhite,
+                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
+                    backgroundColor: backgroundColor ?? colors.colorWhite,
                     // padding: scaler(2),
                     paddingVertical: scaler(10),
                     marginTop: scaler(5),

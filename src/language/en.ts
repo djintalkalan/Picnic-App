@@ -3,6 +3,8 @@ export const en = {
     welcome_back: "Welcome back",
     enter_email_or_password: "Enter your email address",
     password: "Password",
+    old_password: "Old Password",
+    new_password: "New Password",
     confirm_password: "Confirm Password",
     forgot_your_password: "Forgot your password?",
     login: "Log In",
@@ -64,4 +66,13 @@ export const en = {
     and: "and",
     enter_verification_code: "Enter verification code",
     enter_otp_sent: "Please enter the verification code that was sent to your email address",
+    location: "location",
+    edit_profile: "Edit Profile",
+    events: "Events",
+    groups: "Groups",
+    change_password: "Change Password",
+    privacy: "Privacy",
+    share_picnic: "Share Picnic",
+    logout: "Logout",
+    join_now: "Join now"
 }

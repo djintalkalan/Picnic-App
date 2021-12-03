@@ -5,7 +5,7 @@ import { Button, StyleSheet, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useLanguage, useUpdateLanguage } from 'src/language/Language'
-import { scaler } from 'utils'
+import { NavigationService, scaler } from 'utils'
 const Home: FC = () => {
 
     const dispatch = useDispatch()
@@ -29,6 +29,10 @@ const Home: FC = () => {
             <Button title={'Profile'} onPress={() => {
                 NavigationService.navigate('ProfileScreen')
             }} /> */}
+
+            <Button title={'Settings'} onPress={() => {
+                NavigationService.navigate('Settings')
+            }} />
 
             <Text style={{ marginBottom: scaler(10) }} >{"Homepage work is in progress"}</Text>
 

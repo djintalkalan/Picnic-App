@@ -42,6 +42,8 @@ interface InputPhoneProps extends IntlPhoneInputProps {
     onPress?: (e?: GestureResponderEvent) => void
     value?: string
     errors?: FieldErrors
+    backgroundColor?: ColorValue
+    borderColor?: ColorValue
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
 }
 
@@ -53,7 +55,7 @@ interface IVerifiedData {
 export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, iconMargin, icon, defaultCountry, fontFamily = "regular", errors, controlObject: { getValues, setError, setValue, control }, title, placeholder, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { style, borderColor = "#E9E9E9", backgroundColor = colors.colorWhite, iconMargin, icon, defaultCountry, fontFamily = "regular", errors, controlObject: { getValues, setError, setValue, control }, title, placeholder, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
     const currentDataRef = useRef<IOnChangeText>({
         dialCode: props?.dialCode ?? "",
         unmaskedPhoneNumber: "",
@@ -73,15 +75,15 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                 height: height,
                 color: colors.colorBlack,
                 // backgroundColor: 'red',
-                ...Object.assign({}, ...(Array.isArray(style) ? style : [style]))
+                ...StyleSheet.flatten(style)
             },
             containerStyle: {
                 overflow: 'hidden',
                 marginTop: scaler(5),
-                ...Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle]))
+                ...StyleSheet.flatten(containerStyle)
             },
             phoneInputStyle: {
-
+                backgroundColor
             }
         })
 
@@ -104,8 +106,8 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                 style={{
                     justifyContent: 'center',
                     minHeight: scaler(50),
-                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : "#E9E9E9",
-                    backgroundColor: colors.colorWhite,
+                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
+                    backgroundColor: backgroundColor,
                     padding: scaler(2),
                     paddingVertical: scaler(10),
                     marginTop: scaler(5),
@@ -158,7 +160,9 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     placeholder: props.placeholder
                                 }}
                                 defaultCountry={defaultCountry || "IN"}
-                                phoneInputStyle={{ paddingVertical: 0, marginLeft: scaler(5), fontFamily: Fonts.regular, fontSize: scaler(13) }}
+                                phoneInputStyle={{
+                                    paddingVertical: 0, marginLeft: scaler(5), fontFamily: Fonts.regular, fontSize: scaler(13)
+                                }}
                                 dialCodeTextStyle={{}}
                                 placeholderTextColor={colors.colorGreyText}
                                 filterText={props.filterText}
