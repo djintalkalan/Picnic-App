@@ -11,7 +11,7 @@ interface LoaderProps {
 
 export const Loader: FC<LoaderProps> = (props) => {
     const { isLoading } = useSelector((state: RootState) => ({
-        isLoading: state.isLoadingReducer,
+        isLoading: state.isLoading,
         // loadingMsg: state.loadingMsgReducer,
         // isLogin: state.isLoginReducer
     }), isEqual);

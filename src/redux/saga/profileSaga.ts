@@ -43,10 +43,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
                 is_notification_enabled: userData?.is_notification_enabled
             }))
             Database.setUserData(userData)
-            NavigationService.goBack()
-            setTimeout(() => {
-                NavigationService.navigate("Settings")
-            }, 100);
+            NavigationService.replace("Settings")
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

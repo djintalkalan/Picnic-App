@@ -49,7 +49,9 @@ const Home: FC = () => {
                     <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
                 </View>
 
-                <TouchableOpacity onPress={() => NavigationService.navigate("ProfileScreen")} >
+                <TouchableOpacity style={{ borderRadius: scaler(18), }} onPress={() => {
+                    NavigationService.navigate("ProfileScreen")
+                }} >
                     <Image style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
                         onError={(err) => setProfileImage(Images.ic_home_profile)} source={
                             profileImage ?? userData?.image ? { uri: getImageBaseUrl('users', scaler(35), scaler(35)) + userData?.image } :

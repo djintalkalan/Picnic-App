@@ -111,17 +111,14 @@ const MutedResources: FC<any> = (props) => {
                     data={resources}
                     renderItem={_renderItem}
                     renderHiddenItem={_renderHiddenItem}
-                    leftOpenValue={scaler(70)}
                     rightOpenValue={-scaler(70)}
-                    previewRowKey={'0'}
-                    previewOpenValue={-40}
-                    previewOpenDelay={3000}
                     onEndReached={() => {
                         if (!isLoading) {
                             fetchBlockedMembers()
                         }
                     }}
                     closeOnRowOpen={true}
+                    disableRightSwipe={true}
                     ItemSeparatorComponent={ListItemSeparator}
                 />
             </View>
