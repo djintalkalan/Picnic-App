@@ -3,7 +3,7 @@ export const en = {
     welcome_back: "Welcome back",
     enter_email_or_password: "Enter your email address",
     password: "Password",
-    old_password: "Old Password",
+    old_password: "Current Password",
     new_password: "New Password",
     confirm_password: "Confirm Password",
     forgot_your_password: "Forgot your password?",

@@ -61,7 +61,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     placeholder={Language.old_password}
                     name={'oldPassword'}
                     rules={{
-                        required: "Old Password is required"
+                        required: "Current Password is required"
                     }}
                     onPressIcon={() => setSecure1(!isSecure1)}
                     secureTextEntry={isSecure1}
