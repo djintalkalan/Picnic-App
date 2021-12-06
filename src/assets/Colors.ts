@@ -10,5 +10,7 @@ export const colors = {
     colorTextInputBackground: "#F6F6F6",
     colorGreyText: "#C2C2C2",
     colorPlaceholder: "#7D7F85",
+    transparent: "transparent",
+    colorGreyInactive: "#797979",
 
 }

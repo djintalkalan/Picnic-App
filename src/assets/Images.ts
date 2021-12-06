@@ -19,6 +19,7 @@ export const Images = {
     ic_home_profile: require("./images/ic_home_profile.png"),
     ic_setting: require("./images/ic_setting.png"),
     ic_lens: require("./images/ic_lens.png"),
-    // ic_lens: require("./images/ic_lens.png"),
+    ic_group_icon: require("./images/ic_group_icon.png"),
+    // ic_group_icon: require("./images/ic_group_icon.png"),
 
 }

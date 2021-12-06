@@ -5,7 +5,7 @@ import { Images } from 'assets/Images'
 import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, NavigationService, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageBaseUrl, NavigationService, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -33,8 +33,6 @@ type FormType = {
 
 const ProfileScreen: FC<any> = (props) => {
 
-    const source = useMemo(() => Images.ic_profile_image, [])
-
     const dispatch = useDispatch()
 
     // const 
@@ -49,7 +47,7 @@ const ProfileScreen: FC<any> = (props) => {
 
     const [userData] = useDatabase<any>("userData")
 
-    const { control, handleSubmit, getValues, setValue, setError, formState: { errors } } = useForm<FormType>({
+    const { control, handleSubmit, getValues, clearErrors, setValue, setError, formState: { errors } } = useForm<FormType>({
         defaultValues: {
             // about: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. ",
             // // about: "",
@@ -90,7 +88,8 @@ const ProfileScreen: FC<any> = (props) => {
 
 
     const setProfileData = useCallback((userData: any) => {
-        const { first_name, last_name, email, username, dial_code, phone_number, dob, bio } = userData
+        console.log("getImageBaseUrl('users', scaler(100), scaler(100))", getImageBaseUrl('users', scaler(100), scaler(100)))
+        const { first_name, image, last_name, email, username, dial_code, phone_number, dob, bio } = userData
         setValue("firstName", first_name)
         setValue("lastName", last_name)
         setValue("about", bio)
@@ -113,6 +112,10 @@ const ProfileScreen: FC<any> = (props) => {
                 if (isEditEnabled) {
                     setEditEnabled(false)
                     setProfileData(userData)
+                    setProfileImage(null)
+                    clearErrors("email")
+                    clearErrors("dob")
+
                 } else NavigationService.goBack()
             }} title={isEditEnabled ? Language.edit_profile : Language.profile} />
             {/* <View> */}
@@ -121,12 +124,14 @@ const ProfileScreen: FC<any> = (props) => {
 
                 <View>
                     <View style={styles.imageContainer} >
-                        <Image style={styles.image} source={
-                            profileImage ? { uri: profileImage?.path ?? profileImage } :
-                                source
+                        <Image onError={(err) => {
+                            setProfileImage(Images.ic_home_profile)
+                        }} style={styles.image} source={
+                            profileImage ? profileImage?.path ? { uri: profileImage?.path } : profileImage :
+                                userData?.image ? { uri: getImageBaseUrl('users', scaler(100), scaler(100)) + userData?.image } :
+                                    Images.ic_home_profile
                         } />
                     </View>
-
                     {isEditEnabled ? <TouchableOpacity onPress={pickImage} style={styles.cameraButton} >
                         <Image style={styles.image} source={Images.ic_camera} />
                     </TouchableOpacity> : null}
@@ -173,9 +178,8 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.email}
                         name={'email'}
                         required={true}
-                        onPress={() => {
-                            setError('email', { message: 'Contact support to change your email address' })
-                        }}
+                        onPress={() => setError('email', { message: 'Contact support to change your email address' })}
+                        style={{ color: "rgba(6, 29, 50, 0.4)" }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         keyboardType={'email-address'}
@@ -190,9 +194,11 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'dob'}
-                        onPress={() => setDatePickerVisibility(true)}
+                        onPress={() => setError('dob', { message: 'Contact support to change your date of birth' })}
+                        style={{ color: "rgba(6, 29, 50, 0.4)" }}
+
                         required={true}
-                        icon={Images.ic_calender}
+                        // icon={Images.ic_calender}
                         iconSize={scaler(20)}
                         control={control}
                         errors={errors}
@@ -219,7 +225,7 @@ const ProfileScreen: FC<any> = (props) => {
                     />
 
                     <TextInput
-                        placeholder={Language.about}
+                        placeholder={Language.tell_us_about}
                         name={'about'}
                         multiline
                         style={{ minHeight: scaler(80) }}

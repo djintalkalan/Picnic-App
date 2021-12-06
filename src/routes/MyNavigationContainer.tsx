@@ -13,8 +13,10 @@ import SignUp1 from 'screens/Auth/SignUp/SignUp1';
 import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
+import BlockedMembers from 'screens/BlockedMembers';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
@@ -45,6 +47,8 @@ const dashboardScreens = {
     Settings: Settings,
     UpdatePassword: UpdatePassword,
     PrivacyScreen: PrivacyScreen,
+    BlockedMembers: BlockedMembers,
+    MutedGroupsEvents: MutedGroupsEvents,
 };
 
 const MyNavigationContainer = () => {

@@ -7,8 +7,8 @@ import createSagaMiddleware from 'redux-saga';
 import { mergeStorageInPersistedReducer } from 'src/database/Database';
 
 export interface RootState {
-    isLoadingReducer: boolean,
-    loadingMsgReducer: string,
+    isLoading: boolean,
+    loadingMsg: string,
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -29,8 +29,8 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-    isLoadingReducer: Reducers.isLoadingReducer,
-    loadingMsgReducer: Reducers.loadingMsgReducer,
+    isLoading: Reducers.isLoadingReducer,
+    loadingMsg: Reducers.loadingMsgReducer,
     notificationSettings: Reducers.notificationSettingsReducer
 });
 

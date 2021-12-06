@@ -164,3 +164,26 @@ export const _mediaUpload = async (body: FormData) => {
     return fetchApiData(config.API_URL + 'media/upload', body, "POST")
 }
 
+export const _mutedBlockedReportedCount = async (body: any) => {
+    console.log("---------- _mutedBlockedReportedCount Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/muted-blocked-reported-count', null, "GET")
+}
+
+export const _getBlockedMembers = async (page: number) => {
+    console.log("---------- _getBlockedMembers Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/blocked-resources?page=' + page + '&limit=20', null, "GET")
+}
+
+export const _blockUnblockResource = async (body: any) => {
+    console.log("---------- _blockUnblockResource Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/block-unblock-resource', body, "POST")
+}
+
+export const _getMutedResources = async (body: any, page: number) => {
+    console.log("---------- _getMutedResources Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/muted-resources?resource_type=' + body + '&page=' + page + '&limit=20', null, "GET")
+}
+
+
+
+

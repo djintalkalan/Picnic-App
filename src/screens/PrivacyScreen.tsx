@@ -1,12 +1,14 @@
+import { useFocusEffect } from '@react-navigation/core'
+import { getMutedReportedCount } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import { Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { scaler } from 'utils'
+import { NavigationService, scaler } from 'utils'
 
 
 const PrivacyScreen: FC<any> = (props) => {
@@ -16,6 +18,31 @@ const PrivacyScreen: FC<any> = (props) => {
     const [isLogoutAlert, setLogoutAlert] = useState(false)
 
     const dispatch = useDispatch()
+
+    const [blockedState, setBlockedState] = useState({
+        events: 0,
+        users: 0,
+        groups: 0,
+        posts: 0
+    })
+
+
+
+    useFocusEffect(useCallback(() => {
+        dispatch(getMutedReportedCount({
+            onSuccess: (data: any) => {
+                if (data) {
+                    setBlockedState({
+                        events: data?.muted?.messages || 0,
+                        users: data?.blocked?.users || 0,
+                        groups: data?.muted?.groups || 0,
+                        posts: data?.muted?.messages || 0,
+                    })
+                }
+            }
+        }))
+
+    }, []))
 
 
     return (
@@ -27,28 +54,26 @@ const PrivacyScreen: FC<any> = (props) => {
 
             <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
-
-
                 <View style={{}} >
-
                     <SettingButton
                         onPress={() => {
-
+                            NavigationService.navigate("BlockedMembers")
                         }}
                         image={Images.ic_blocked_members}
                         title={Language.blocked_members}
-                        subtitle={"5 Users"}
+                        subtitle={blockedState?.users + " Users"}
                     />
-
 
                     <SettingButton
                         onPress={() => {
+                            NavigationService.navigate("MutedGroupsEvents")
+
+
                         }}
                         image={Images.ic_muted}
                         title={Language.muted_group}
-                        subtitle={"8 group / 2 events"}
+                        subtitle={blockedState?.groups + " group / " + blockedState?.events + " events"}
                     />
-
 
                     <SettingButton
                         onPress={() => {
@@ -56,10 +81,8 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_muted}
                         title={Language.muted_post}
-                        subtitle={"8 Post"}
-
+                        subtitle={blockedState?.posts + " Posts"}
                     />
-
 
                 </View>
             </View>

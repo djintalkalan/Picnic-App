@@ -1,4 +1,5 @@
 
+import { config } from 'api';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { Share } from 'react-native';
@@ -270,3 +271,7 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 //         Alert.alert(error.message)
 //     }
 // }
+
+export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages', height: number, width: number) => {
+    return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
+}
