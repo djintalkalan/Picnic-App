@@ -82,5 +82,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>${APP_NAME} would like to get your location</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>${APP_NAME} would like to save photos to your photo gallery</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>${APP_NAME} would like access to your photo gallery</string>
+	
 </dict>
 </plist>

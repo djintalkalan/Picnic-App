@@ -8,7 +8,8 @@ import Reactotron from 'reactotron-react-native';
 import { config } from 'src/api/config';
 import App from 'src/App';
 import { name as appName } from './app.json';
-if (__DEV__ && JSON.parse(config.REACTOTRON_STATUS)) {
+console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
+if (__DEV__ && config.REACTOTRON_STATUS == 'true') {
     import('./ReactotronConfig').then(() => {
         console.log = Reactotron.log
         console.warn = Reactotron.warn

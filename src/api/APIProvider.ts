@@ -26,7 +26,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
     return axios({
         method: methodType, //you can set what request you want to be
         url: urlString,
-        data: isMultipart ? body : (methodType != "GET" && body) ? body : null,
+        data: methodType != "GET" ? body : undefined,// isMultipart ? body : (methodType != "GET" && body) ? body : undefined,
         headers: header
     }).then(res => {
         if (config.REACTOTRON_STATUS == 'false') {
@@ -110,7 +110,7 @@ export const _loginApi = async (body: any) => {
 
 export const _logoutApi = async () => {
     console.log("---------- Logout Api Call ---------------")
-    return fetchApiData(config.API_URL + 'logout', null, "GET")
+    return fetchApiData(config.API_URL + 'user/logout', {}, "POST")
 }
 
 export const _forgotPassword = async (body: any) => {
@@ -133,3 +133,34 @@ export const _verifyOtp = async (body: any) => {
     console.log("---------- Verify Otp Api Call ---------------")
     return fetchApiData(config.API_URL + 'auth/verify-otp', body, "POST")
 }
+
+export const _getProfile = async () => {
+    console.log("---------- _getProfile Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/profile', null, "GET")
+}
+
+export const _updateNotificationSetting = async (body: any) => {
+    console.log("---------- _updateNotificationSetting Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/notification-settings', body, "POST")
+}
+
+export const _updateProfile = async (body: any) => {
+    console.log("---------- _updateProfile Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/update-profile', body, "POST")
+}
+
+export const _deleteAccount = async (body: any) => {
+    console.log("---------- _deleteAccount Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/delete-account', body, "POST")
+}
+
+export const _updatePassword = async (body: any) => {
+    console.log("---------- _updatePassword Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/change-password', body, "POST")
+}
+
+export const _mediaUpload = async (body: FormData) => {
+    console.log("---------- _mediaUpload Api Call ---------------")
+    return fetchApiData(config.API_URL + 'media/upload', body, "POST")
+}
+

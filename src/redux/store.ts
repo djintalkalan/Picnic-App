@@ -31,6 +31,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     isLoadingReducer: Reducers.isLoadingReducer,
     loadingMsgReducer: Reducers.loadingMsgReducer,
+    notificationSettings: Reducers.notificationSettingsReducer
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);

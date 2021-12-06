@@ -17,3 +17,8 @@ export const setLoadingMsg = (payload: string): action => {
     payload
   }
 }
+
+export const uploadFile = (payload: FormData): action => ({
+  type: ActionTypes.UPLOAD_FILE,
+  payload
+})

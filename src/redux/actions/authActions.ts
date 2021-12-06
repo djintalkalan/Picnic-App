@@ -58,3 +58,29 @@ export const tokenExpired = (payload?: any) => {
 }
 
 
+export const getProfile = () => {
+  return {
+    type: ActionTypes.GET_PROFILE,
+
+  };
+}
+
+export const updateProfile = (payload: any) => ({
+  type: ActionTypes.UPDATE_PROFILE,
+  payload
+})
+
+export const updateNotificationSettings = (payload: any) => ({
+  type: ActionTypes.UPDATE_NOTIFICATION_SETTINGS,
+  payload
+})
+
+export const deleteAccount = (payload: any) => ({
+  type: ActionTypes.DELETE_ACCOUNT,
+  payload
+})
+
+export const updatePassword = (payload: any) => ({
+  type: ActionTypes.UPDATE_PASSWORD,
+  payload
+})

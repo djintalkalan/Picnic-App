@@ -1,4 +1,4 @@
-import { resetPassword } from 'app-store/actions'
+import { updatePassword } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { TextInput } from 'custom-components'
 import Button from 'custom-components/Button'
@@ -30,9 +30,10 @@ const CreateNewPassword: FC<any> = (props) => {
     })
     const dispatch = useDispatch()
     const onSubmit = useCallback(() => handleSubmit(data => {
-        dispatch(resetPassword({
+        dispatch(updatePassword({
+            old_password: data?.oldPassword,
             password: data?.password,
-            ...props?.route?.params
+            password_confirmation: data?.confirmPassword
         }))
     })(), []);
 
@@ -58,8 +59,10 @@ const CreateNewPassword: FC<any> = (props) => {
                 <TextInput
                     ref={passwordRef}
                     placeholder={Language.old_password}
-                    rules={PasswordValidations}
                     name={'oldPassword'}
+                    rules={{
+                        required: "Old Password is required"
+                    }}
                     onPressIcon={() => setSecure1(!isSecure1)}
                     secureTextEntry={isSecure1}
                     icon={isSecure1 ? Images.ic_eye_open : Images.ic_eye_closed}
@@ -69,11 +72,10 @@ const CreateNewPassword: FC<any> = (props) => {
                     errors={errors}
                 />
 
-
                 <TextInput
                     ref={passwordRef}
                     placeholder={Language.new_password}
-                    rules={PasswordValidations}
+                    rules={{ ...PasswordValidations, required: "New Password is required" }}
                     name={'password'}
                     onPressIcon={() => setSecure3(!isSecure3)}
                     secureTextEntry={isSecure3}
@@ -105,7 +107,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     control={control}
                     errors={errors}
                 />
-                <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(25) }} textStyle={{ textTransform: 'capitalize' }} title={Language.change_password} onPress={onSubmit} />
+                <Button containerStyle={{ marginTop: scaler(25) }} textStyle={{ textTransform: 'capitalize' }} title={Language.change_password} onPress={onSubmit} />
 
             </View>
         </SafeAreaView>

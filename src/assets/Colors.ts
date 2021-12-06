@@ -5,7 +5,7 @@ export const colors = {
     colorBlack: '#000',
     colorBlackText: "#061D32",
     colorD: "#dddddd",
-    colorRed: "red",
+    colorRed: "#FF3B3B",
     colorBackground: "#F7F7F7",
     colorTextInputBackground: "#F6F6F6",
     colorGreyText: "#C2C2C2",

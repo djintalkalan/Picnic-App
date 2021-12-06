@@ -74,5 +74,11 @@ export const en = {
     privacy: "Privacy",
     share_picnic: "Share Picnic",
     logout: "Logout",
-    join_now: "Join now"
+    join_now: "Join now",
+    are_you_sure_want: "Are you sure you want to Logout",
+    cancel: "Cancel",
+    blocked_members: "Blocked member",
+    muted_group: "Muted group/event",
+    muted_post: "Muted post",
+    search_placeholder: "Search for groups and events near you",
 }

@@ -17,20 +17,22 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
         () => {
             if (isKeyboard) {
                 dismissKeyboard()
+            } else if (props?.onPress) {
+                props?.onPress()
             } else
                 NavigationService.goBack()
         },
-        [isKeyboard],
+        [isKeyboard, props?.onPress],
     )
 
-    const { onPress = onPressDefault, backEnabled = true, title } = props
+    const { backEnabled = true, title } = props
 
 
 
     return (
         <View style={styles.container} >
             {backEnabled &&
-                <TouchableOpacity onPress={onPress} style={[styles.button, {
+                <TouchableOpacity onPress={onPressDefault} style={[styles.button, {
                 }]} >
                     <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
                 </TouchableOpacity>}

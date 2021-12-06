@@ -1,14 +1,21 @@
+import { _mediaUpload } from 'api'
+import { getProfile, setLoadingAction, updateProfile } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
-import { Card, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
+import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
-import React, { FC, useMemo } from 'react'
+import { sub } from 'date-fns'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
+import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useDispatch } from 'react-redux'
+import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { scaler } from 'utils'
+import { dateFormat, NavigationService, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -17,13 +24,30 @@ type FormType = {
     phone: string
     phone_dialCode: string
     city: string
+    username: string
+    email: string
+    dob: string
+    location: string
+
 }
 
 const ProfileScreen: FC<any> = (props) => {
 
-    const source = useMemo(() => {
-        return Images.ic_profile_image
-    }, [])
+    const source = useMemo(() => Images.ic_profile_image, [])
+
+    const dispatch = useDispatch()
+
+    // const 
+    const birthDate = useRef<Date>(new Date())
+
+
+
+    const [isEditEnabled, setEditEnabled] = useState(props?.route?.params?.isEditEnabled)
+    const [profileImage, setProfileImage] = useState<any>()
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+
+    const [userData] = useDatabase<any>("userData")
 
     const { control, handleSubmit, getValues, setValue, setError, formState: { errors } } = useForm<FormType>({
         defaultValues: {
@@ -39,26 +63,76 @@ const ProfileScreen: FC<any> = (props) => {
         mode: 'onChange'
     })
 
+    useEffect(() => {
+        dispatch(getProfile())
+    }, [])
 
+    useEffect(() => {
+        setProfileData(userData)
+    }, [userData])
+
+    const pickImage = useCallback(() => {
+        setTimeout(() => {
+            ImagePicker.openPicker({
+                width: 400,
+                height: 400,
+                enableRotationGesture: true,
+                cropping: true,
+            }).then((image) => {
+                console.log(image);
+                setProfileImage(image)
+            }).catch(e => {
+                console.log(e)
+            });
+        }, 200);
+
+    }, [])
+
+
+    const setProfileData = useCallback((userData: any) => {
+        const { first_name, last_name, email, username, dial_code, phone_number, dob, bio } = userData
+        setValue("firstName", first_name)
+        setValue("lastName", last_name)
+        setValue("about", bio)
+        setValue("username", username)
+        setValue("email", email)
+        if (dob) {
+            birthDate.current = stringToDate(dob, "YYYY-MM-DD", "-")
+            setValue("dob", dateFormat(birthDate.current, "MMM DD, YYYY"))
+        }
+        setValue("phone", phone_number)
+        setValue("phone_dialCode", dial_code)
+        setValue("location", first_name)
+    }, [])
 
     return (
         <SafeAreaView style={styles.container} >
 
-            <MyHeader title={Language.profile} />
 
-            <ScrollView contentContainerStyle={{ alignItems: 'center', }} >
+            <MyHeader onPress={() => {
+                if (isEditEnabled) {
+                    setEditEnabled(false)
+                    setProfileData(userData)
+                } else NavigationService.goBack()
+            }} title={isEditEnabled ? Language.edit_profile : Language.profile} />
+            {/* <View> */}
+
+            <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
 
                 <View>
                     <View style={styles.imageContainer} >
-                        <Image style={styles.image} source={source} />
+                        <Image style={styles.image} source={
+                            profileImage ? { uri: profileImage?.path ?? profileImage } :
+                                source
+                        } />
                     </View>
 
-                    <TouchableOpacity style={styles.cameraButton} >
+                    {isEditEnabled ? <TouchableOpacity onPress={pickImage} style={styles.cameraButton} >
                         <Image style={styles.image} source={Images.ic_camera} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> : null}
                 </View>
 
-                <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(20) }} >
+                <View pointerEvents={isEditEnabled ? "auto" : 'none'} style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(20) }} >
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }} >
 
@@ -99,6 +173,9 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.email}
                         name={'email'}
                         required={true}
+                        onPress={() => {
+                            setError('email', { message: 'Contact support to change your email address' })
+                        }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         keyboardType={'email-address'}
@@ -107,11 +184,16 @@ const ProfileScreen: FC<any> = (props) => {
                         errors={errors}
                     />
 
+
                     <TextInput
                         placeholder={Language.birthday}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'dob'}
+                        onPress={() => setDatePickerVisibility(true)}
+                        required={true}
+                        icon={Images.ic_calender}
+                        iconSize={scaler(20)}
                         control={control}
                         errors={errors}
                     />
@@ -150,25 +232,94 @@ const ProfileScreen: FC<any> = (props) => {
                 </View>
 
             </ScrollView>
+            <DateTimePickerModal
+                style={{ zIndex: 20 }}
+                isVisible={isDatePickerVisible}
+                mode="date"
+                customConfirmButtonIOS={(props) => (
+                    <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorPrimary, textAlign: 'center', padding: scaler(10) }} >Confirm
+                    </Text>
+                )}
+                customCancelButtonIOS={(props) => (
+                    <View style={{ padding: scaler(7), backgroundColor: 'white', borderRadius: scaler(10), marginBottom: scaler(10) }} >
+                        <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorBlack, textAlign: 'center', padding: scaler(5) }} >Cancel</Text>
+                    </View>
+                )}
+                date={birthDate.current}
+                maximumDate={sub(new Date(), {
+                    years: 15,
+                })}
+                onConfirm={(date: Date) => {
+                    birthDate.current = date
+                    setValue("dob", dateFormat(date, "MMM DD, YYYY"), { shouldValidate: true })
+                    setDatePickerVisibility(false);
+                }}
+                onCancel={() => {
+                    setDatePickerVisibility(false);
+                }}
+            />
+            {/* </View> */}
 
-            {/* <CardContent title={Language.phoneNumber} content="+1 234 543 657" /> */}
+            <KeyboardHideView>
+
+                <Button onPress={() => {
+                    if (isEditEnabled) {
+                        handleSubmit(async (data) => {
+
+                            let imageFile = undefined
+                            if (profileImage?.path) {
+                                let formData = new FormData()
+                                formData.append('type', "users");
+                                let uri = profileImage?.path;
+                                let filename = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+                                let image = {
+                                    uri: uri,
+                                    name: filename,
+                                    type: 'image/jpeg',
+                                };
+                                formData.append('file', image);
+                                try {
+                                    dispatch(setLoadingAction(true))
+
+                                    let res = await _mediaUpload(formData)
+                                    dispatch(setLoadingAction(false))
+
+                                    console.log(res, "res")
+                                    if (res?.data) {
+                                        imageFile = res?.data?.file
+                                    }
+                                }
+                                catch (e) {
+                                    console.log(e)
+                                    dispatch(setLoadingAction(false))
+
+                                }
+
+                            }
+                            dispatch(updateProfile({
+                                first_name: data?.firstName,
+                                last_name: data?.lastName,
+                                username: data?.username,
+                                dial_code: data?.phone_dialCode,
+                                phone_number: data?.phone,
+                                bio: data?.about,
+                                // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
+                                image: imageFile,
+                            }))
+                        })()
+                    } else {
+                        setEditEnabled(true)
+                    }
+                }} containerStyle={{ marginTop: 0, marginBottom: scaler(10), marginHorizontal: scaler(15) }} title={isEditEnabled ? "Save" : "Edit"} />
+
+                {/* <CardContent title={Language.phoneNumber} content="+1 234 543 657" /> */}
+            </KeyboardHideView>
 
         </SafeAreaView>
     )
 }
 
 export default ProfileScreen
-
-const CardContent = (props: { title: string, content: string, style?: ViewStyle }) => (<Card
-    style={[styles.cardStyle, { ...props?.style }]}
-    cardElevation={1}
-    cornerRadius={scaler(15)}
-    cardMaxElevation={2}   >
-    <Text style={styles.about} >{props?.title}</Text>
-    <Text style={styles.aboutContent} >{props?.content}</Text>
-
-</Card>
-)
 
 const styles = StyleSheet.create({
     container: {

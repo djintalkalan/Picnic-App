@@ -13,6 +13,12 @@ export const Images = {
     ic_logout: require("./images/ic_logout.png"),
     ic_lock: require("./images/ic_lock.png"),
     ic_key: require("./images/ic_key.png"),
-    // ic_key: require("./images/ic_key.png"),
+    ic_blocked_members: require("./images/ic_blocked_members.png"),
+    ic_muted: require("./images/ic_muted.png"),
+    ic_right: require("./images/ic_right.png"),
+    ic_home_profile: require("./images/ic_home_profile.png"),
+    ic_setting: require("./images/ic_setting.png"),
+    ic_lens: require("./images/ic_lens.png"),
+    // ic_lens: require("./images/ic_lens.png"),
 
 }

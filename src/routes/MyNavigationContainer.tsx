@@ -15,6 +15,7 @@ import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import PrivacyScreen from 'screens/PrivacyScreen';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
 import { useDatabase } from 'src/database/Database';
@@ -42,7 +43,8 @@ const dashboardScreens = {
     Home: Home,
     ProfileScreen: ProfileScreen,
     Settings: Settings,
-    UpdatePassword:UpdatePassword,
+    UpdatePassword: UpdatePassword,
+    PrivacyScreen: PrivacyScreen,
 };
 
 const MyNavigationContainer = () => {

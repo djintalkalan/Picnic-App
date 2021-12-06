@@ -6264,6 +6264,11 @@ react-native-gorgeous-header@^0.1.0:
   resolved "https://registry.yarnpkg.com/react-native-gorgeous-header/-/react-native-gorgeous-header-0.1.0.tgz#6d6dbcd859f123c31bb5036885be0ac5dbefb353"
   integrity sha512-lJh+ZpY7lxQnJ45mZRKYjV4wxL3qKtUdXuE4PAq93YDaPpNT2GWyOHVhs/WZqM25vjTcH47/9MfIh/GCuxhjkw==
 
+react-native-image-crop-picker@^0.37.2:
+  version "0.37.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.37.2.tgz#3aadc4ae4812c9975c49a294d9a17ffae057dbb4"
+  integrity sha512-YwZXW21Km8+3tSt0smTaLVgY4398c0/OJcpcH6EP0JDOt1BNNxl/R8m6qdvnwdXdIoa0CCnMVW6TL9IN5ia9OA==
+
 react-native-indicators@^0.17.0:
   version "0.17.0"
   resolved "https://registry.yarnpkg.com/react-native-indicators/-/react-native-indicators-0.17.0.tgz#92f95efaf5fb53be576dfe4e1980a25655a93f55"
