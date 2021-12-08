@@ -3,9 +3,11 @@ import { config } from 'api';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { Share } from 'react-native';
+import Geocoder from 'react-native-geocoding';
+import { ILocation } from 'src/database/Database';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
-
+Geocoder.init(config.GOOGLE_MAP_API_KEY);
 
 // export const launchMap = (address: string | { lat: string | number, long: string | number },) => {
 //     if (address && typeof address === 'string') {
@@ -275,3 +277,34 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages', height: number, width: number) => {
     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
 }
+
+export const getAddressFromLocation = async (region: ILocation) => {
+    try {
+        const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
+        console.log('ADDRESS:', JSON.stringify(json));
+
+        var addressComponent = json.results[0].address_components;
+
+        const city = getCityFromAddress(addressComponent);
+
+        const formattedAddress = json.results[0].formatted_address;
+
+        return formattedAddress
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+export const getCityFromAddress = (addressComponent: any) => {
+    for (let i = 0; i < addressComponent.length - 1; i++) {
+        let locality = addressComponent[i];
+        let types = locality.types;
+        for (let j = 0; j < types.length - 1; j++) {
+            if (types[j] === 'locality') {
+                return locality.long_name
+            }
+        }
+    }
+}
+

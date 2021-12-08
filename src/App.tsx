@@ -2,6 +2,7 @@ import { persistor, store } from 'app-store/store';
 import { colors } from 'assets';
 import { Card, Loader, StatusBarProvider, Text } from 'custom-components';
 import { KeyboardProvider } from 'custom-components/KeyboardService';
+import { LocationServiceProvider } from 'custom-components/LocationService';
 import { PopupAlert } from 'custom-components/PopupAlert';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import React, { FC, useEffect } from 'react';
@@ -24,14 +25,16 @@ const App: FC = () => {
         <View style={styles.container} >
             <KeyboardProvider>
                 <StatusBarProvider backgroundColor={colors.colorWhite} barStyle={'dark-content'} >
-                    <Provider store={store}>
-                        <PersistGate persistor={persistor}>
-                            <MyNavigationContainer />
-                            <Loader />
-                        </PersistGate>
-                    </Provider>
-                    <DropdownAlertWithStatusBar />
-                    <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
+                    <LocationServiceProvider>
+                        <Provider store={store}>
+                            <PersistGate persistor={persistor}>
+                                <MyNavigationContainer />
+                                <Loader />
+                            </PersistGate>
+                        </Provider>
+                        <DropdownAlertWithStatusBar />
+                        <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
+                    </LocationServiceProvider>
                 </StatusBarProvider>
             </KeyboardProvider>
         </View>

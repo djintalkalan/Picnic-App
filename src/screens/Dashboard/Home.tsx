@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch } from 'react-redux'
 import GroupList from 'screens/GroupList'
-import { useDatabase } from 'src/database/Database'
+import { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import { getImageBaseUrl, NavigationService, scaler } from 'utils'
 
@@ -36,6 +36,9 @@ const Home: FC = () => {
     // console.log("language", language)
 
     const [userData] = useDatabase("userData");
+    const [currentLocation] = useDatabase<ILocation>("currentLocation")
+    const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
+
 
     const [profileImage, setProfileImage] = useState()
 
@@ -49,7 +52,7 @@ const Home: FC = () => {
                         NavigationService.navigate("SelectLocation")
                     }}
                     style={styles.settingButtonContainer} >
-                    <Text style={styles.locationText} >Los Angeles, USA</Text>
+                    <Text numberOfLines={1} style={styles.locationText} >{selectedLocation?.address}</Text>
                     <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
                 </TouchableOpacity>
 

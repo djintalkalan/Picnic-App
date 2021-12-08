@@ -4,14 +4,22 @@ import { LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
 
 export type LiteralUnion<T extends U, U = string> = T | (U & {});
-export type StorageType = "userData" | "isLogin" | "firebaseToken" | "authToken" | "selectedLanguage"
-const StorageVariables = ["userData", "isLogin", "firebaseToken", "authToken", "selectedLanguage"]
+export type StorageType = "userData" | "isLogin" | "firebaseToken" | "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation"
+const StorageVariables = ["userData", "isLogin", "firebaseToken", "authToken", "selectedLanguage", "currentLocation", "selectedLocation"]
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
     firebaseToken?: string
     authToken?: string
     selectedLanguage?: LanguageType
+    currentLocation?: ILocation
+    selectedLocation?: ILocation
+}
+
+export interface ILocation {
+    latitude: number
+    longitude: number
+    address?: string
 }
 
 
@@ -50,6 +58,14 @@ class Database {
         Database.phoneStorage.setString('selectedLanguage', language)
     }
 
+    public setCurrentLocation = (location: ILocation) => {
+        Database.phoneStorage.setMap('currentLocation', location)
+    }
+
+    public setSelectedLocation = (location: ILocation) => {
+        Database.phoneStorage.setMap('selectedLocation', location)
+    }
+
     public setMultipleValues = (data: DataBaseType) => {
         Object.keys(data).forEach((key) => {
             switch (key) {
@@ -62,23 +78,27 @@ class Database {
                     return Database.phoneStorage.setBool(key, data[key] ?? false)
 
                 case 'userData':
+                case 'currentLocation':
+                case 'selectedLocation':
                     return Database.phoneStorage.setMap(key, data[key] ?? null)
             }
         })
     }
 
-    public getStoredValue = <T = any>(key: StorageType): T | any => {
+    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T | any => {
         switch (key) {
             case 'authToken':
             case 'firebaseToken':
             case 'selectedLanguage':
-                return Database.phoneStorage.getString(key)
+                return Database.phoneStorage.getString(key) || defaultValue
 
             case 'isLogin':
-                return Database.phoneStorage.getBool(key)
+                return Database.phoneStorage.getBool(key) || defaultValue
 
             case 'userData':
-                return Database.phoneStorage.getMap(key)
+            case 'currentLocation':
+            case 'selectedLocation':
+                return Database.phoneStorage.getMap(key) || defaultValue
         }
     }
 
@@ -92,6 +112,8 @@ class Database {
                 return Database.phoneStorage.setBool(key, value ?? false)
 
             case 'userData':
+            case 'currentLocation':
+            case 'selectedLocation':
                 return Database.phoneStorage.setMap(key, value ?? null)
         }
     }

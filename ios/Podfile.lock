@@ -101,6 +101,12 @@ PODS:
     - MMKVCore (~> 1.2.10)
   - MMKVCore (1.2.10)
   - OpenSSL-Universal (1.1.180)
+  - Permission-LocationAccuracy (3.1.0):
+    - RNPermissions
+  - Permission-LocationAlways (3.1.0):
+    - RNPermissions
+  - Permission-LocationWhenInUse (3.1.0):
+    - RNPermissions
   - RCT-Folly (2021.04.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -421,6 +427,8 @@ PODS:
     - TOCropViewController
   - RNLocalize (2.1.5):
     - React-Core
+  - RNPermissions (3.1.0):
+    - React-Core
   - RNReanimated (2.2.4):
     - DoubleConversion
     - FBLazyVector
@@ -489,6 +497,9 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (~> 0.8.1)
   - libevent (~> 2.1.12)
+  - Permission-LocationAccuracy (from `../node_modules/react-native-permissions/ios/LocationAccuracy`)
+  - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways`)
+  - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -532,6 +543,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -572,6 +584,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  Permission-LocationAccuracy:
+    :path: "../node_modules/react-native-permissions/ios/LocationAccuracy"
+  Permission-LocationAlways:
+    :path: "../node_modules/react-native-permissions/ios/LocationAlways"
+  Permission-LocationWhenInUse:
+    :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -654,6 +672,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -688,6 +708,9 @@ SPEC CHECKSUMS:
   MMKV: 76033b9ace2006623308910a3afcc0e25eba3140
   MMKVCore: b00e7a09ec77a1b916aef336eedd3b99ec249978
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
+  Permission-LocationAccuracy: f2fa6140c0362473a061b771dd1b702db581138c
+  Permission-LocationAlways: f1e021c3b348946cd7c5760172925b749e5d07a6
+  Permission-LocationWhenInUse: d98db702ec75e93a3ff94bc297d0b66ea04231e1
   RCT-Folly: 0dd9e1eb86348ecab5ba76f910b56f4b5fef3c46
   RCTRequired: 6cf071ab2adfd769014b3d94373744ee6e789530
   RCTTypeSafety: b829c59453478bb5b02487b8de3336386ab93ab1
@@ -729,6 +752,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
   RNLocalize: 74b82db20cc3895ccc25af992c644879bcec2815
+  RNPermissions: 4b54095940aea8c03fa3e6c92d4ac3647b31ed4e
   RNReanimated: f58d4f027fcea2197b63588138decdf5f8ac5e89
   RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
@@ -736,6 +760,6 @@ SPEC CHECKSUMS:
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ce0d3d5d863a47840fd3ac38e072816602b6dcf4
+PODFILE CHECKSUM: c0c0358640f07b045d0a3fe2f0b33a56f87ada47
 
 COCOAPODS: 1.11.2

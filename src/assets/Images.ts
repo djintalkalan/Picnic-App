@@ -20,6 +20,7 @@ export const Images = {
     ic_setting: require("./images/ic_setting.png"),
     ic_lens: require("./images/ic_lens.png"),
     ic_group_icon: require("./images/ic_group_icon.png"),
-    // ic_group_icon: require("./images/ic_group_icon.png"),
+    ic_marker: require("./images/ic_marker.png"),
+    // ic_marker: require("./images/ic_marker.png"),
 
 }
