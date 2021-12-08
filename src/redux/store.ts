@@ -1,5 +1,6 @@
 
 import * as Reducers from 'app-store/reducers';
+import { INotificationSettings, IPrivacyData, IPrivacyState } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
@@ -9,6 +10,9 @@ import { mergeStorageInPersistedReducer } from 'src/database/Database';
 export interface RootState {
     isLoading: boolean,
     loadingMsg: string,
+    privacyState: IPrivacyState,
+    notificationSettings: INotificationSettings
+    privacyData: IPrivacyData,
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -31,7 +35,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
     isLoading: Reducers.isLoadingReducer,
     loadingMsg: Reducers.loadingMsgReducer,
-    notificationSettings: Reducers.notificationSettingsReducer
+    notificationSettings: Reducers.notificationSettingsReducer,
+    privacyState: Reducers.privacyStateReducer,
+    privacyData: Reducers.privacyDataReducer,
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);

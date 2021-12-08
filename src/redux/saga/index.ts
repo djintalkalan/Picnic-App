@@ -7,6 +7,6 @@ export function* rootSaga() {
   yield all([
     fork(watchAuth),
     fork(watchProfile),
-    fork(watchGroups)
+    fork(watchGroups),
   ]);
 }

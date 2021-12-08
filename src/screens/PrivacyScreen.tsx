@@ -1,11 +1,13 @@
 import { useFocusEffect } from '@react-navigation/core'
+import { RootState } from 'app-store'
 import { getMutedReportedCount } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
+import { isEqual } from 'lodash'
 import React, { FC, useCallback, useState } from 'react'
-import { Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, ImageSourcePropType, InteractionManager, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
@@ -19,29 +21,14 @@ const PrivacyScreen: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    const [blockedState, setBlockedState] = useState({
-        events: 0,
-        users: 0,
-        groups: 0,
-        posts: 0
-    })
-
-
+    const { privacyState } = useSelector((state: RootState) => ({
+        privacyState: state.privacyState
+    }), isEqual)
 
     useFocusEffect(useCallback(() => {
-        dispatch(getMutedReportedCount({
-            onSuccess: (data: any) => {
-                if (data) {
-                    setBlockedState({
-                        events: data?.muted?.messages || 0,
-                        users: data?.blocked?.users || 0,
-                        groups: data?.muted?.groups || 0,
-                        posts: data?.muted?.messages || 0,
-                    })
-                }
-            }
-        }))
-
+        InteractionManager.runAfterInteractions(() => {
+            dispatch(getMutedReportedCount())
+        })
     }, []))
 
 
@@ -61,7 +48,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_blocked_members}
                         title={Language.blocked_members}
-                        subtitle={blockedState?.users + " Users"}
+                        subtitle={privacyState?.users + " Users"}
                     />
 
                     <SettingButton
@@ -72,7 +59,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_muted}
                         title={Language.muted_group}
-                        subtitle={blockedState?.groups + " group / " + blockedState?.events + " events"}
+                        subtitle={privacyState?.groups + " group / " + privacyState?.events + " events"}
                     />
 
                     <SettingButton
@@ -81,7 +68,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_muted}
                         title={Language.muted_post}
-                        subtitle={blockedState?.posts + " Posts"}
+                        subtitle={privacyState?.posts + " Posts"}
                     />
 
                 </View>

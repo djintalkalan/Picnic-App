@@ -4,8 +4,8 @@ import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
 import { ListItemSeparator, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useRef } from 'react'
+import { InteractionManager, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -24,28 +24,16 @@ const BlockedMembers: FC<any> = (props) => {
 
     const [userData] = useDatabase("userData")
 
-    const isLoading = useSelector((state: RootState) => state.isLoading, isEqual)
+    const { isLoading, blockedUsers } = useSelector((state: RootState) => ({
+        isLoading: state.isLoading,
+        blockedUsers: state?.privacyData?.blockedUsers
+    }), isEqual)
 
     const paginationState = useRef<IPaginationState>(initialPaginationState)
 
-    const [blockedMembers, setBlockedMembers] = useState<Array<any>>([])
-
     const dispatch = useDispatch()
 
-    const swipeListRef = useRef<SwipeListView>()
-
-    const getCircularReplacer = () => {
-        const seen = new WeakSet();
-        return (key, value) => {
-            if (typeof value === "object" && value !== null) {
-                if (seen.has(value)) {
-                    return;
-                }
-                seen.add(value);
-            }
-            return value;
-        };
-    };
+    const swipeListRef = useRef<SwipeListView<any>>()
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => (
@@ -89,8 +77,10 @@ const BlockedMembers: FC<any> = (props) => {
     ), [])
 
     useEffect(() => {
-        paginationState.current = initialPaginationState
-        fetchBlockedMembers()
+        InteractionManager.runAfterInteractions(() => {
+            paginationState.current = initialPaginationState
+            fetchBlockedMembers()
+        })
     }, [])
 
     const fetchBlockedMembers = useCallback(() => {
@@ -98,14 +88,11 @@ const BlockedMembers: FC<any> = (props) => {
             return
         }
         let page = (paginationState?.current?.currentPage) + 1
-
-
         dispatch(getBlockedMembers({ page, onSuccess: onSuccess }))
     }, [])
 
-    const onSuccess = useCallback(({ pagination, data }) => {
+    const onSuccess = useCallback(({ pagination }) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
-        setBlockedMembers(_ => [..._, ...data])
     }, [])
 
 
@@ -123,20 +110,18 @@ const BlockedMembers: FC<any> = (props) => {
                     keyExtractor={(_, i) => i.toString()}
                     useFlatList
                     useNativeDriver
-                    data={blockedMembers}
+                    data={blockedUsers}
                     renderItem={_renderItem}
                     renderHiddenItem={_renderHiddenItem}
                     leftOpenValue={scaler(70)}
                     rightOpenValue={-scaler(70)}
-                    previewRowKey={'0'}
-                    previewOpenValue={-40}
-                    previewOpenDelay={3000}
                     onEndReached={() => {
-                        if (!isLoading) {
+                        if (!isLoading && paginationState.current?.currentPage != 0) {
                             fetchBlockedMembers()
                         }
                     }}
                     closeOnRowOpen={true}
+                    disableRightSwipe
                     ItemSeparatorComponent={ListItemSeparator}
                 />
             </View>

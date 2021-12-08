@@ -1,19 +1,26 @@
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction } from "app-store/actions";
+import { setBlockedMembers, setPrivacyState } from 'app-store/actions/profileActions';
+import { store } from 'app-store/store';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any, any, any> {
-    yield put(setLoadingAction(true));
+    // yield put(setLoadingAction(true));
 
     try {
         let res = yield call(ApiProvider._mutedBlockedReportedCount, payload);
         if (res.status == 200) {
-            if (payload?.onSuccess) {
-                payload?.onSuccess(res?.data)
+            let data = {
+                events: res?.data?.muted?.messages || 0,
+                users: res?.data?.blocked?.users || 0,
+                groups: res?.data?.muted?.groups || 0,
+                posts: res?.data?.muted?.messages || 0,
             }
+            yield put(setPrivacyState(data))
+            payload?.onSuccess && payload?.onSuccess(res?.data)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -28,7 +35,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
 }
 
 function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, any> {
-
+    let blockedUsers = store.getState()?.privacyData?.blockedUsers || []
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getBlockedMembers, payload?.page,);
@@ -41,6 +48,9 @@ function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, an
                 },
                 data: res?.data?.data
             })
+            if (res?.data?.pagination?.currentPage == 1) blockedUsers = []
+            yield put(setBlockedMembers([...blockedUsers, ...res?.data?.data]))
+
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
