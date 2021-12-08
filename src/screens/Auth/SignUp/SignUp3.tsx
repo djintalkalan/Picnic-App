@@ -7,6 +7,7 @@ import { Image, Platform, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
+import Database from 'src/database/Database'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
@@ -49,6 +50,8 @@ const SignUp3: FC<any> = (props) => {
     // }, 2000);
     // }, [])
 
+    // console.log("Database.DefaultCountry", Database.DefaultCountry)
+
     const calculateButtonDisability = useCallback(() => {
         if (!isTerms
             ||
@@ -87,7 +90,7 @@ const SignUp3: FC<any> = (props) => {
                         title={Language.phone}
                         placeholder={"0000-000-000"}
                         controlObject={{ control, getValues, setValue, setError }}
-                        defaultCountry={'US'}
+                        defaultCountry={Database.DefaultCountry}
                         errors={errors}
                     />
 

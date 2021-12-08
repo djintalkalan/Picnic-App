@@ -13,9 +13,9 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
-import { useDatabase } from 'src/database/Database'
+import Database, { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, getImageBaseUrl, NavigationService, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageBaseUrl, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -40,7 +40,8 @@ const ProfileScreen: FC<any> = (props) => {
 
 
 
-    const [isEditEnabled, setEditEnabled] = useState(props?.route?.params?.isEditEnabled)
+    // const [isEditEnabled, setEditEnabled] = useState(props?.route?.params?.isEditEnabled)
+    const [isEditEnabled, setEditEnabled] = useState(true)
     const [profileImage, setProfileImage] = useState<any>()
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -60,6 +61,7 @@ const ProfileScreen: FC<any> = (props) => {
         },
         mode: 'onChange'
     })
+
 
     useEffect(() => {
         dispatch(getProfile())
@@ -108,16 +110,18 @@ const ProfileScreen: FC<any> = (props) => {
         <SafeAreaView style={styles.container} >
 
 
-            <MyHeader onPress={() => {
-                if (isEditEnabled) {
-                    setEditEnabled(false)
-                    setProfileData(userData)
-                    setProfileImage(null)
-                    clearErrors("email")
-                    clearErrors("dob")
+            <MyHeader
+                // onPress={() => {
+                //     if (isEditEnabled) {
+                //         setEditEnabled(false)
+                //         setProfileData(userData)
+                //         setProfileImage(null)
+                //         clearErrors("email")
+                //         clearErrors("dob")
 
-                } else NavigationService.goBack()
-            }} title={isEditEnabled ? Language.edit_profile : Language.profile} />
+                //     } else NavigationService.goBack()
+                // }}
+                title={isEditEnabled ? Language.edit_profile : Language.profile} />
             {/* <View> */}
 
             <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
@@ -199,6 +203,7 @@ const ProfileScreen: FC<any> = (props) => {
 
                         required={true}
                         // icon={Images.ic_calender}
+
                         iconSize={scaler(20)}
                         control={control}
                         errors={errors}
@@ -219,7 +224,7 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         controlObject={{ control, getValues, setValue, setError }}
-                        defaultCountry={'IN'}
+                        defaultCountry={Database.DefaultCountry}
                         required
                         errors={errors}
                     />
@@ -239,6 +244,7 @@ const ProfileScreen: FC<any> = (props) => {
 
             </ScrollView>
             <DateTimePickerModal
+                themeVariant={'light'}
                 style={{ zIndex: 20 }}
                 isVisible={isDatePickerVisible}
                 mode="date"

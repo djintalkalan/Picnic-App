@@ -161,12 +161,19 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                 }}
                                 defaultCountry={defaultCountry || "IN"}
                                 phoneInputStyle={{
-                                    paddingVertical: 0, marginLeft: scaler(5), fontFamily: Fonts.regular, fontSize: scaler(13)
+                                    paddingVertical: 0, marginLeft: scaler(5),
+                                    fontFamily: Fonts.regular, fontSize: scaler(13),
+                                    color: colors.colorBlack,
                                 }}
                                 dialCodeTextStyle={{}}
                                 placeholderTextColor={colors.colorGreyText}
                                 filterText={props.filterText}
-                                flagStyle={{ fontSize: scaler(15), paddingRight: scaler(5) }}
+                                filterInputStyle={{ fontFamily: Fonts.regular }}
+                                modalCountryItemCountryNameStyle={{ fontFamily: Fonts.regular }}
+                                modalCountryItemCountryDialCodeStyle={{ fontFamily: Fonts.regular }}
+                                closeText={'Close'}
+                                closeTextStyle={{ fontFamily: Fonts.regular }}
+                                flagStyle={{ fontSize: scaler(18), paddingRight: scaler(5) }}
                                 selectedPhone={value || ''}
                             />
                             {icon ? <Image source={icon}

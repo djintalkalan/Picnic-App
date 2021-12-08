@@ -1,3 +1,4 @@
+import * as RNLocalize from "react-native-localize";
 import MMKVStorage, { useMMKVStorage } from "react-native-mmkv-storage";
 import { LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
@@ -13,6 +14,7 @@ type DataBaseType = {
     selectedLanguage?: LanguageType
 }
 
+
 class Database {
 
     private static mInstance: Database
@@ -25,6 +27,8 @@ class Database {
     }
 
     static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
+
+    DefaultCountry = RNLocalize.getCountry()
 
     public setLogin = (isLogin?: boolean) => {
         Database.phoneStorage.setBool('isLogin', isLogin ?? false)

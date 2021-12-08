@@ -14,6 +14,15 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
+// Map 
+#import <GoogleMaps/GoogleMaps.h>
+
+// Splash Screen
+#import "RNBootSplash.h"
+
+// ENV
+#import <react-native-ultimate-config/ConfigValues.h>
+
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
@@ -29,6 +38,8 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+ [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY]; // add this line using the api key obtained from Google Console
+
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
@@ -38,17 +49,23 @@ static void InitializeFlipper(UIApplication *application) {
                                                    moduleName:@"Picnic"
                                             initialProperties:nil];
 
-  if (@available(iOS 13.0, *)) {
-      rootView.backgroundColor = [UIColor systemBackgroundColor];
-  } else {
-      rootView.backgroundColor = [UIColor whiteColor];
-  }
+  // if (@available(iOS 13.0, *)) {
+  //     rootView.backgroundColor = [UIColor systemBackgroundColor];
+  // } else {
+  //     rootView.backgroundColor = [UIColor whiteColor];
+  // }
+
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  if(@available(iOS 13.0,*)){
+    rootView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+  }
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
   return YES;
 }

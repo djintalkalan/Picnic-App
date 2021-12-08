@@ -119,6 +119,7 @@ const SignUp2: FC<any> = (props) => {
                 </View>
             </ScrollView>
             <DateTimePickerModal
+                themeVariant={'light'}
                 style={{ zIndex: 20 }}
                 isVisible={isDatePickerVisible}
                 mode="date"
