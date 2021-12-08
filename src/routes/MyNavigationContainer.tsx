@@ -18,6 +18,7 @@ import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
+import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
 import { useDatabase } from 'src/database/Database';
@@ -49,6 +50,7 @@ const dashboardScreens = {
     PrivacyScreen: PrivacyScreen,
     BlockedMembers: BlockedMembers,
     MutedGroupsEvents: MutedGroupsEvents,
+    SelectLocation: SelectLocation,
 };
 
 const MyNavigationContainer = () => {

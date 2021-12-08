@@ -1,7 +1,7 @@
 import { colors } from 'assets'
 import { MyHeader } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React from 'react'
+import React, { FC } from 'react'
 import { StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Language from 'src/language/Language'
@@ -23,7 +23,7 @@ const tabs: TabProps[] = [
     }
 ]
 
-const MutedGroupsEvents = () => {
+const MutedGroupsEvents: FC<any> = () => {
     return (
         <SafeAreaView style={styles.container} >
             <MyHeader title={Language.muted} />

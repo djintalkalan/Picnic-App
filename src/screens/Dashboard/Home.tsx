@@ -44,10 +44,14 @@ const Home: FC = () => {
 
             <View style={styles.headerContainer} >
 
-                <View style={styles.settingButtonContainer} >
+                <TouchableOpacity
+                    onPress={() => {
+                        NavigationService.navigate("SelectLocation")
+                    }}
+                    style={styles.settingButtonContainer} >
                     <Text style={styles.locationText} >Los Angeles, USA</Text>
                     <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
-                </View>
+                </TouchableOpacity>
 
                 <TouchableOpacity style={{ borderRadius: scaler(18), }} onPress={() => {
                     NavigationService.navigate("ProfileScreen")
