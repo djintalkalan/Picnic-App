@@ -21,6 +21,10 @@ export const Images = {
     ic_lens: require("./images/ic_lens.png"),
     ic_group_icon: require("./images/ic_group_icon.png"),
     ic_marker: require("./images/ic_marker.png"),
-    // ic_marker: require("./images/ic_marker.png"),
+    ic_left: require("./images/ic_left.png"),
+    ic_search_location: require("./images/ic_search_location.png"),
+    ic_search_send: require("./images/ic_search_send.png"),
+    ic_location: require("./images/ic_location.png"),
+    // ic_location: require("./images/ic_location.png"),
 
 }

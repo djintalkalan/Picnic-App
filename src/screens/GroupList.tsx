@@ -40,9 +40,6 @@ const GroupList: FC<any> = (props) => {
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}
                 rightOpenValue={-scaler(80)}
-                previewRowKey={'0'}
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
                 ItemSeparatorComponent={ListItemSeparator}
 
                 keyExtractor={(_, i) => i.toString()}

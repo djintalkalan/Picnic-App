@@ -52,7 +52,7 @@ const Home: FC = () => {
                         NavigationService.navigate("SelectLocation")
                     }}
                     style={styles.settingButtonContainer} >
-                    <Text numberOfLines={1} style={styles.locationText} >{selectedLocation?.address}</Text>
+                    <Text numberOfLines={1} style={styles.locationText} >{selectedLocation?.address?.main_text}</Text>
                     <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
                 </TouchableOpacity>
 

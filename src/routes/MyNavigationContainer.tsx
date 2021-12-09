@@ -16,6 +16,7 @@ import VerifyOTP from 'screens/Auth/VerifyOTP';
 import BlockedMembers from 'screens/BlockedMembers';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
@@ -51,6 +52,7 @@ const dashboardScreens = {
     BlockedMembers: BlockedMembers,
     MutedGroupsEvents: MutedGroupsEvents,
     SelectLocation: SelectLocation,
+    GooglePlacesTextInput: GooglePlacesTextInput
 };
 
 const MyNavigationContainer = () => {

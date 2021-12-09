@@ -287,12 +287,40 @@ export const getAddressFromLocation = async (region: ILocation) => {
 
         const city = getCityFromAddress(addressComponent);
 
-        const formattedAddress = json.results[0].formatted_address;
+        const formattedAddress = getFormattedAddress(addressComponent) //json.results[0].formatted_address;
+        console.log('ADDRESS:', JSON.stringify(formattedAddress));
 
         return formattedAddress
     }
     catch (e) {
         console.log(e)
+    }
+}
+
+export const getFormattedAddress = (addressComponent: any) => {
+    let main_text = ""
+    let secondary_text = ""
+    let b = false
+    for (let i = 0; i < addressComponent.length - 1; i++) {
+        let locality = addressComponent[i];
+        let types = locality.types;
+
+        if (!types.includes('plus_code') && !types.includes('locality')) {
+            if (b) {
+                secondary_text += locality?.long_name + ", "
+            } else
+                main_text += locality?.long_name + ", "
+        }
+        if (types.includes('locality')) {
+            b = true
+            if (main_text)
+                secondary_text += locality?.long_name + ", "
+            else
+                main_text += locality?.long_name + ", "
+        }
+    }
+    return {
+        main_text: main_text?.trim().slice(0, -1), secondary_text: secondary_text?.trim().slice(0, -1)
     }
 }
 
