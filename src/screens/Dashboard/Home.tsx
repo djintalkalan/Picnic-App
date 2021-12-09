@@ -28,7 +28,11 @@ const tabs: TabProps[] = [
 
 
 const Home: FC = () => {
-
+    const defaultLocation: ILocation = {
+        latitude: 34.055101,
+        longitude: -118.244797,
+        address: { main_text: "Los Angeles, USA", secondary_text: "" }
+    }
     const dispatch = useDispatch()
 
     const updateLanguage = useUpdateLanguage()
@@ -36,7 +40,7 @@ const Home: FC = () => {
     // console.log("language", language)
 
     const [userData] = useDatabase("userData");
-    const [currentLocation] = useDatabase<ILocation>("currentLocation")
+    const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
 
 

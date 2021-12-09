@@ -17,10 +17,7 @@ const LocationContext = createContext<LocationServiceValues>({
     askPermission: () => null
 })
 
-
-
 export const LocationServiceProvider: FC<any> = ({ children }) => {
-
 
 
     const getPermissionResult = useCallback(async (result) => {
@@ -77,6 +74,11 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     }, [])
 
     useEffect(() => {
+        const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+        const currentLocation: ILocation = Database.getStoredValue<ILocation | null>("currentLocation")
+        if (currentLocation && currentLocation?.address?.main_text && (!selectedLocation || !selectedLocation?.address?.main_text)) {
+            Database.setSelectedLocation(currentLocation)
+        }
         InteractionManager.runAfterInteractions(async () => {
             startChecking()
         })
@@ -94,6 +96,10 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                     }
                     let address = await getAddressFromLocation(location)
                     Database.setCurrentLocation({ ...location, address })
+                    const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+                    if (!selectedLocation || !selectedLocation?.address?.main_text) {
+                        Database.setSelectedLocation({ ...location, address })
+                    }
                 },
                 (error) => {
                     // See error code charts below.
