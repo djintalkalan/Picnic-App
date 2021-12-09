@@ -7,6 +7,7 @@ import { Dimensions, FlatList, Image, StyleSheet, TouchableHighlight, TouchableO
 import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Database, { IRecentSearches, useDatabase } from 'src/database/Database'
+import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 
 
@@ -21,9 +22,9 @@ const GooglePlacesTextInput: FC<any> = (props) => {
 
     const [recentSearches] = useDatabase<Array<IRecentSearches>>("recentSearches", [])
 
-    const _renderRow = useCallback((data, index) => {
+    const _renderRow = useCallback((data, index, icon = Images.ic_search_location) => {
         return <View style={styles.rowContainer} >
-            <Image style={{ height: scaler(40), width: scaler(40) }} source={Images.ic_search_location} />
+            <Image style={{ height: scaler(40), width: scaler(40) }} source={icon} />
             <View style={{ marginLeft: scaler(20), flex: 1 }} >
                 <Text style={styles.mainText} >{data?.structured_formatting?.main_text}</Text>
                 <Text style={styles.secondaryText}>{data?.structured_formatting?.secondary_text}</Text>
@@ -65,8 +66,8 @@ const GooglePlacesTextInput: FC<any> = (props) => {
 
                 <GooglePlacesAutocomplete
                     ref={placeInputRef}
-                    placeholder='Search Location'
-                    minLength={2}
+                    placeholder={Language.search_location}
+                    minLength={3}
                     autoFocus={false}
                     returnKeyType={'search'}
                     fetchDetails={true}
@@ -146,7 +147,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                                 //   onPress={() => _onPress(rowData)}
                                 underlayColor={'#c8c7cc'}
                             >
-                                {_renderRow(item?.data, index)}
+                                {_renderRow(item?.data, index, Images.ic_recent_search)}
                             </TouchableHighlight>
                         }}
                         ItemSeparatorComponent={ListItemSeparator}

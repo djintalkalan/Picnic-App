@@ -294,6 +294,7 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
     catch (e) {
         console.log(e)
+        _showErrorMessage("Location : " + e?.message)
     }
 }
 

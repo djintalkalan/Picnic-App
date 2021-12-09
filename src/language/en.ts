@@ -81,10 +81,13 @@ export const en = {
     muted_group: "Muted group/event",
     muted_post: "Muted post",
     search_placeholder: "Search for groups and events near you",
+    search_location: "Search location",
     tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
     unblock: "Unblock",
     muted: "Muted",
     mute_groups: "Mute groups",
     mute_events: "Mute events",
+    create_group: "Create group",
+    host_event: "Host Event",
 
 }

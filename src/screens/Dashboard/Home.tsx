@@ -2,7 +2,7 @@ import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useState } from 'react'
-import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch } from 'react-redux'
@@ -28,6 +28,7 @@ const tabs: TabProps[] = [
 
 
 const Home: FC = () => {
+    const [isFABOpen, setFABOpen] = useState(true)
     const defaultLocation: ILocation = {
         latitude: 34.055101,
         longitude: -118.244797,
@@ -103,9 +104,32 @@ const Home: FC = () => {
             <TopTab
 
                 swipeEnabled={false} tabs={tabs} />
-
+            <View style={{ alignSelf: 'baseline', position: 'absolute', bottom: scaler(40), right: scaler(15), }} >
+                {isFABOpen &&
+                    <View style={styles.fabActionContainer} >
+                        <InnerButton title={Language.share_picnic} icon={Images.ic_share_picnic} />
+                        <InnerButton title={Language.create_group} icon={Images.ic_create_group} />
+                        <InnerButton title={Language.host_event} icon={Images.ic_host_event} />
+                    </View>
+                }
+                <TouchableOpacity onPress={() => {
+                    setFABOpen(!isFABOpen)
+                }} style={{ alignSelf: 'flex-end' }} >
+                    <Image style={{ height: scaler(90), width: scaler(90) }} source={isFABOpen ? Images.ic_fab_open : Images.ic_add_fab} />
+                </TouchableOpacity>
+            </View>
 
         </SafeAreaView>
+    )
+}
+
+const InnerButton = (props: { title: string, icon: ImageSourcePropType, onPress?: (e?: GestureResponderEvent) => void }) => {
+    const { onPress, title, icon } = props
+    return (
+        <TouchableOpacity onPress={onPress} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }} >
+            <Text style={{ fontWeight: '500', fontSize: scaler(12), color: colors.colorBlackText }} >{title}</Text>
+            <Image style={{ height: scaler(50), width: scaler(50) }} source={icon} />
+        </TouchableOpacity>
     )
 }
 
@@ -152,5 +176,12 @@ const styles = StyleSheet.create({
         top: scaler(10),
         left: scaler(25),
         resizeMode: 'contain'
+    },
+    fabActionContainer: {
+        borderRadius: scaler(10),
+        paddingHorizontal: scaler(10),
+        backgroundColor: colors.colorWhite,
+        elevation: 2, marginRight: scaler(8),
+        justifyContent: 'flex-end',
     }
 })

@@ -25,6 +25,12 @@ export const Images = {
     ic_search_location: require("./images/ic_search_location.png"),
     ic_search_send: require("./images/ic_search_send.png"),
     ic_location: require("./images/ic_location.png"),
-    // ic_location: require("./images/ic_location.png"),
+    ic_add_fab: require("./images/ic_create_group.png"),
+    ic_recent_search: require("./images/ic_recent_search.png"),
+    ic_create_group: require("./images/ic_create_group_2.png"),
+    ic_host_event: require("./images/ic_host_event.png"),
+    ic_share_picnic: require("./images/ic_share_picnic.png"),
+    ic_fab_open: require("./images/ic_fab_open.png"),
+    // ic_fab_open: require("./images/ic_fab_open.png"),
 
 }

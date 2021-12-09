@@ -59,7 +59,8 @@ const SelectLocation: FC<any> = (props) => {
 
     const setPosition = useCallback(async (location: ILocation) => {
         let address = await getAddressFromLocation(location)
-        setLocalLocation({ ...location, address })
+        if (address)
+            setLocalLocation({ ...location, address })
     }, [])
 
     const onMapPress = useCallback((e) => {
@@ -98,9 +99,15 @@ const SelectLocation: FC<any> = (props) => {
                     <SafeAreaView edges={['top']} style={{
                         width: '100%',
                     }} >
-                        <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.closeButton} >
-                            <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
-                        </TouchableOpacity>
+                        <View style={{
+                            alignSelf: 'flex-end', backgroundColor: colors.colorWhite, marginTop: scaler(25),
+                            marginHorizontal: scaler(20),
+                            borderRadius: scaler(20)
+                        }} >
+                            <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.closeButton} >
+                                <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
+                            </TouchableOpacity>
+                        </View>
                         <View style={{
                             marginVertical: scaler(10)
                         }} >
@@ -117,7 +124,7 @@ const SelectLocation: FC<any> = (props) => {
                                         onFocus={() => {
 
                                         }}
-                                        placeholder={Language.search_placeholder}
+                                        placeholder={Language.search_location}
                                         placeholderTextColor={colors.colorGreyInactive}
                                     />
                                 </View>
@@ -197,10 +204,8 @@ const styles = StyleSheet.create({
         height: scaler(30),
         width: scaler(30),
         borderRadius: scaler(15),
-        marginTop: scaler(30),
-        marginHorizontal: scaler(20),
         elevation: 2,
-        backgroundColor: colors.colorBackground
+        backgroundColor: 'rgba(0, 0, 0, 0.1)'
     },
     drag: {
         color: '#9A9A9A',
