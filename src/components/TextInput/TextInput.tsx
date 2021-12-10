@@ -2,7 +2,7 @@ import { colors, Fonts } from "assets";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
-import { ColorValue, GestureResponderEvent, Image, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ColorValue, GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { Text } from "../Text";
@@ -17,7 +17,7 @@ interface TextInputProps extends RNTextInputProps {
     title?: string
     height?: number
     control?: Control<any>
-    required?: boolean
+    required?: boolean | string
     icon?: ImageSourcePropType
     iconSize?: number
     name?: string
@@ -38,7 +38,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
 
         return StyleSheet.create({
             textInputStyle: {
-                paddingRight: scaler(5),
+                paddingRight: icon ? scaler(40) : scaler(5),
                 fontSize: scaler(13),
                 fontFamily: Fonts?.[fontFamily],
                 // flex: 1,
@@ -61,7 +61,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
             }
         })
 
-    }, [style, height, containerStyle, fontFamily])
+    }, [style, height, containerStyle, fontFamily, icon])
 
     return (
         <TouchableOpacity
@@ -95,7 +95,6 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     defaultValue=""
                     render={({ field: { onChange, onBlur: onBlurC, value } }) => (
                         <>
-
                             <RNTextInput {...rest}
                                 ref={ref}
                                 // onContentSizeChange={(e) => {

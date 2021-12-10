@@ -104,7 +104,13 @@ const Home: FC = () => {
                 {isFABOpen &&
                     <View style={styles.fabActionContainer} >
                         <InnerButton title={Language.share_picnic} icon={Images.ic_share_picnic} />
-                        <InnerButton title={Language.create_group} icon={Images.ic_create_group} />
+                        <InnerButton onPress={() => {
+                            NavigationService.navigate("CreateGroup");
+                            setTimeout(() => {
+                                setFABOpen(false)
+
+                            }, 1000);
+                        }} title={Language.create_group} icon={Images.ic_create_group} />
                         <InnerButton title={Language.host_event} icon={Images.ic_host_event} />
                     </View>
                 }

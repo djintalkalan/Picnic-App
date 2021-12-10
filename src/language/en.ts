@@ -92,6 +92,14 @@ export const en = {
     permission_required: "Permission required",
     app_needs_location_permission: "App needs location permission to verify your current location",
     give_permission: "Give Permission",
-    deny: "Deny"
+    deny: "Deny",
+    group_name: "Group name",
+    group_purpose: "Group purpose",
+    select_location: "Select location",
+    write_something_about_group: "Write something about group",
+    group_name_required: "Group name is required",
+    group_purpose_required: "Group purpose is required",
+    group_location_required: "Group location is required",
+
 
 }

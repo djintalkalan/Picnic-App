@@ -12,13 +12,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageBaseUrl, scaler } from 'utils'
-
-const initialPaginationState: IPaginationState = {
-    currentPage: 0,
-    totalPages: -1,
-    perPage: 20
-}
+import { getImageBaseUrl, InitialPaginationState, scaler } from 'utils'
 
 const BlockedMembers: FC<any> = (props) => {
 
@@ -29,11 +23,11 @@ const BlockedMembers: FC<any> = (props) => {
         blockedUsers: state?.privacyData?.blockedUsers
     }), isEqual)
 
-    const paginationState = useRef<IPaginationState>(initialPaginationState)
+    const paginationState = useRef<IPaginationState>(InitialPaginationState)
 
     const dispatch = useDispatch()
 
-    const swipeListRef = useRef<SwipeListView<any>>()
+    const swipeListRef = useRef<SwipeListView<any>>(null)
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => (
@@ -78,7 +72,7 @@ const BlockedMembers: FC<any> = (props) => {
 
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {
-            paginationState.current = initialPaginationState
+            paginationState.current = InitialPaginationState
             fetchBlockedMembers()
         })
     }, [])

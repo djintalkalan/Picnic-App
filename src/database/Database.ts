@@ -70,6 +70,11 @@ export interface ILocation {
         main_text: string,
         secondary_text: string
     }
+    otherData?: {
+        city?: string
+        state?: string
+        country?: string
+    } | null
 }
 
 

@@ -127,12 +127,15 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                         latitude: position?.coords?.latitude,
                         longitude: position?.coords?.longitude,
                     }
-                    let address = await getAddressFromLocation(location)
-                    Database.setCurrentLocation({ ...location, address })
-                    const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-                    if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
-                        Database.setSelectedLocation({ ...location, address })
+                    const { address, otherData } = await getAddressFromLocation(location)
+                    if (address) {
+                        Database.setCurrentLocation({ ...location, address, otherData })
+                        const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+                        if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
+                            Database.setSelectedLocation({ ...location, address, otherData })
+                        }
                     }
+
                 },
                 (error) => {
                     // See error code charts below.

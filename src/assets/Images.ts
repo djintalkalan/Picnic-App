@@ -31,6 +31,8 @@ export const Images = {
     ic_host_event: require("./images/ic_host_event.png"),
     ic_share_picnic: require("./images/ic_share_picnic.png"),
     ic_fab_open: require("./images/ic_fab_open.png"),
-    // ic_fab_open: require("./images/ic_fab_open.png"),
+    ic_gps: require("./images/ic_gps.png"),
+    ic_arrow_dropdown: require("./images/ic_arrow_dropdown.png"),
+    // ic_arrow_dropdown: require("./images/ic_arrow_dropdown.png"),
 
 }

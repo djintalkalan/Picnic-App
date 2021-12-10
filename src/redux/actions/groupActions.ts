@@ -1,5 +1,66 @@
 import ActionTypes from "app-store/action-types";
 
+export const createGroup = (payload: any) => ({
+    type: ActionTypes.CREATE_GROUP,
+    payload
+})
+
+export const updateGroup = (payload: any) => ({
+    type: ActionTypes.UPDATE_GROUP,
+    payload
+})
+
+
+export const deleteGroup = (payload: any) => ({
+    type: ActionTypes.DELETE_GROUP,
+    payload
+})
+
+export const joinGroup = (payload: any) => ({
+    type: ActionTypes.JOIN_GROUP,
+    payload
+})
+
+export const leaveGroup = (payload: any) => ({
+    type: ActionTypes.LEAVE_GROUP,
+    payload
+})
+
+export const getGroupDetail = (payload: any) => ({
+    type: ActionTypes.GET_GROUP_DETAIL,
+    payload
+})
+
+export const getGroupMembers = (payload: any) => ({
+    type: ActionTypes.GET_GROUP_MEMBERS,
+    payload
+})
+
+export const removeGroupMember = (payload: any) => ({
+    type: ActionTypes.REMOVE_GROUP_MEMBER,
+    payload
+})
+
+export const getAllGroups = (payload: any) => ({
+    type: ActionTypes.GET_ALL_GROUPS,
+    payload
+})
+
+export const getGroupChat = (payload: any) => ({
+    type: ActionTypes.GET_GROUP_CHAT,
+    payload
+})
+
+export const addInGroup = (payload: Array<any>) => ({
+    type: ActionTypes.ADD_IN_GROUPS,
+    payload
+})
+
+export const setAllGroups = (payload: Array<any>) => ({
+    type: ActionTypes.SET_ALL_GROUPS,
+    payload
+})
+
 export const getMutedReportedCount = (payload?: any) => ({
     type: ActionTypes.GET_MUTED_REPORTED_COUNT,
     payload

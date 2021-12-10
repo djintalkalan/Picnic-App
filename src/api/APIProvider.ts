@@ -184,6 +184,53 @@ export const _getMutedResources = async (body: any, page: number) => {
     return fetchApiData(config.API_URL + 'common/muted-resources?resource_type=' + body + '&page=' + page + '&limit=20', null, "GET")
 }
 
+export const _getAllGroups = async (body: any, page: number) => {
+    console.log("---------- _getMutedResources Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/get-all-groups?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
+}
+
+export const _getGroupChat = async (body: any, page: number) => {
+    console.log("---------- _getGroupChat Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/get-all-groups?load_more=0&page=' + page + '&id=' + body?.id + '&q=' + body?.q + '&limit=20', null, "GET")
+}
+
+export const _createGroup = async (body: any) => {
+    console.log("---------- _createGroup Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/create', body, "POST")
+}
+
+export const _updateGroup = async (body: any) => {
+    console.log("---------- _updateGroup Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/update', body, "POST")
+}
 
 
+export const _getGroupMembers = async (body: string) => {
+    console.log("---------- _getGroupMembers Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/members?id=' + body, null, "GET")
+}
 
+export const _getGroupDetail = async (body: string) => {
+    console.log("---------- _getGroupDetail Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/detail/' + body, null, "GET")
+}
+
+export const _joinGroup = async (body: string) => {
+    console.log("---------- _joinGroup Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/join/' + body, null, "PUT")
+}
+
+export const _leaveGroup = async (body: any) => {
+    console.log("---------- _leaveGroup Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/leave/' + body, null, "PUT")
+}
+
+export const _removeGroupMember = async (body: any) => {
+    console.log("---------- _removeGroupMember Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/delete-group-member', body, "DELETE")
+}
+
+export const _deleteGroup = async (body: any) => {
+    console.log("---------- _leaveGroup Api Call ---------------")
+    return fetchApiData(config.API_URL + 'group/delete-group/' + body, null, "DELETE")
+}

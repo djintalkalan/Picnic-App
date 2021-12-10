@@ -1,10 +1,12 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setLoadingAction } from "app-store/actions";
+import { setAllGroups, setLoadingAction } from "app-store/actions";
 import { setBlockedMembers, setPrivacyState } from 'app-store/actions/profileActions';
 import { store } from 'app-store/store';
+import { defaultLocation } from 'custom-components';
 import { call, put, takeLatest } from "redux-saga/effects";
+import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any, any, any> {
@@ -113,6 +115,60 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
     }
 }
 
+function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._createGroup, payload);
+        if (res.status == 200) {
+            _showSuccessMessage(res.message);
+            NavigationService.goBack()
+            if (payload.onSuccess) payload.onSuccess(res?.data)
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
+    // const state:RootState = 
+    let groupList = store.getState()?.allGroups
+    if (!groupList?.length)
+        yield put(setLoadingAction(true));
+    try {
+        const location = Database?.getStoredValue("selectedLocation", defaultLocation)
+        let res = yield call(ApiProvider._getAllGroups, location, payload?.page);
+        if (res.status == 200) {
+            if (payload.onSuccess) payload.onSuccess({
+                pagination: {
+                    currentPage: res?.data?.pagination?.currentPage,
+                    totalPages: res?.data?.pagination?.totalPages,
+                    perPage: res?.data?.pagination?.limit
+                },
+                data: res?.data?.data
+            })
+            if (res?.data?.pagination?.currentPage == 1) groupList = []
+            yield put(setAllGroups([...groupList, ...res?.data?.data]))
+
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchGroups() {
@@ -120,5 +176,9 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
     yield takeLatest(ActionTypes.GET_MUTED_RESOURCES, _getMutedResources);
     yield takeLatest(ActionTypes.BLOCK_UNBLOCK_RESOURCE, _blockUnblockResource);
+
+    yield takeLatest(ActionTypes.CREATE_GROUP, _createGroup);
+    yield takeLatest(ActionTypes.GET_ALL_GROUPS, _getAllGroups);
+
 
 };

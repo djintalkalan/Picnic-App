@@ -21,9 +21,9 @@ const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outlin
 const App: FC = () => {
     useEffect(() => {
         Database.setMultipleValues({
-            selectedLocation: null,
-            currentLocation: null,
-            recentSearches: null
+            // selectedLocation: null,
+            // currentLocation: null,
+            // recentSearches: null
         })
     }, [])
     return (

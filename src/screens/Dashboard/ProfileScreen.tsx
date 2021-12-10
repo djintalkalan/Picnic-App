@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, getImageBaseUrl, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageBaseUrl, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -73,12 +73,7 @@ const ProfileScreen: FC<any> = (props) => {
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
-            ImagePicker.openPicker({
-                width: 400,
-                height: 400,
-                enableRotationGesture: true,
-                cropping: true,
-            }).then((image) => {
+            ImagePicker.openPicker(ProfileImagePickerOptions).then((image) => {
                 console.log(image);
                 setProfileImage(image)
             }).catch(e => {
@@ -233,7 +228,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.tell_us_about}
                         name={'about'}
                         multiline
-                        style={{ minHeight: scaler(80) }}
+                        style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         control={control}

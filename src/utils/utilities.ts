@@ -1,5 +1,6 @@
 
 import { config } from 'api';
+import { IPaginationState } from 'app-store/actions';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { Share } from 'react-native';
@@ -278,6 +279,16 @@ export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages'
     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
 }
 
+export const ProfileImagePickerOptions = {
+    width: 400,
+    height: 400,
+    compressImageQuality: 0.5,
+    compressImageMaxWidth: 400,
+    compressImageMaxHeight: 400,
+    enableRotationGesture: true,
+    cropping: true,
+}
+
 export const getAddressFromLocation = async (region: ILocation) => {
     try {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
@@ -285,16 +296,16 @@ export const getAddressFromLocation = async (region: ILocation) => {
 
         var addressComponent = json.results[0].address_components;
 
-        const city = getCityFromAddress(addressComponent);
+        const otherData = getOtherData(addressComponent);
 
-        const formattedAddress = getFormattedAddress(addressComponent) //json.results[0].formatted_address;
-        console.log('ADDRESS:', JSON.stringify(formattedAddress));
-
-        return formattedAddress
+        const address = getFormattedAddress(addressComponent) //json.results[0].formatted_address;
+        console.log('ADDRESS:', JSON.stringify(address));
+        return { address, otherData }
     }
     catch (e) {
         console.log(e)
         _showErrorMessage("Location : " + e?.message)
+        return { address: null, otherData: null }
     }
 }
 
@@ -325,15 +336,28 @@ export const getFormattedAddress = (addressComponent: any) => {
     }
 }
 
-export const getCityFromAddress = (addressComponent: any) => {
+export const getOtherData = (addressComponent: any) => {
+    let city = "", state = "", country = "";
     for (let i = 0; i < addressComponent.length - 1; i++) {
         let locality = addressComponent[i];
         let types = locality.types;
         for (let j = 0; j < types.length - 1; j++) {
             if (types[j] === 'locality') {
-                return locality.long_name
+                city = locality.long_name
+            }
+            if (types[j] === 'administrative_area_level_1') {
+                state = locality.long_name
+            }
+            if (types[j] === 'country') {
+                country = locality.long_name
             }
         }
     }
+    return { city, state, country }
 }
 
+export const InitialPaginationState: IPaginationState = {
+    currentPage: 0,
+    totalPages: -1,
+    perPage: 20
+}

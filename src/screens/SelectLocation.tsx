@@ -21,14 +21,15 @@ const DefaultDelta = {
     longitudeDelta: 0.1 * ASPECT_RATIO,
 }
 const SelectLocation: FC<any> = (props) => {
-
+    const onSelectLocation = props?.route?.params?.onSelectLocation
+    const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
     const { askPermission } = useLocationService()
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
-    const [localLocation, setLocalLocation] = useState(selectedLocation)
+    const [localLocation, setLocalLocation] = useState(onSelectLocation ? prevSelectedLocation : selectedLocation)
     useEffect(() => {
         askPermission && askPermission()
     }, [])
@@ -54,9 +55,9 @@ const SelectLocation: FC<any> = (props) => {
     }, []))
 
     const setPosition = useCallback(async (location: ILocation) => {
-        let address = await getAddressFromLocation(location)
+        let { address, otherData } = await getAddressFromLocation(location)
         if (address)
-            setLocalLocation({ ...location, address })
+            setLocalLocation({ ...location, address, otherData })
     }, [])
 
     const onMapPress = useCallback((e) => {
@@ -79,30 +80,31 @@ const SelectLocation: FC<any> = (props) => {
                                 latitude: e.nativeEvent.coordinate.latitude,
                                 longitude: e.nativeEvent.coordinate.longitude,
                             }
-                            let address = await getAddressFromLocation(coords)
+                            let { address, otherData } = await getAddressFromLocation(coords)
                             address && Database.setCurrentLocation({
-                                ...coords, address
+                                ...coords, address, otherData
                             })
                         }}
                         initialRegion={{
-                            latitude: localLocation?.latitude ?? defaultLocation?.latitude,
-                            longitude: localLocation?.longitude ?? defaultLocation?.longitude,
+                            latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
+                            longitude: localLocation?.longitude ?? currentLocation?.longitude ?? defaultLocation?.longitude,
                             ...DefaultDelta
                         }}
                         showsUserLocation
                         onPress={onMapPress}
                         customMapStyle={MapStyle}>
-                        <Marker
-                            // draggable
-                            coordinate={{
-                                latitude: localLocation?.latitude ?? defaultLocation?.latitude,
-                                longitude: localLocation?.longitude ?? defaultLocation?.longitude,
-                                ...DefaultDelta
-                            }}
-                        >
-                            <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
+                        {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
+                            <Marker
+                                // draggable
+                                coordinate={{
+                                    latitude: localLocation?.latitude ?? defaultLocation?.latitude,
+                                    longitude: localLocation?.longitude ?? defaultLocation?.longitude,
+                                    ...DefaultDelta
+                                }}
+                            >
+                                <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
 
-                        </Marker>
+                            </Marker> : null}
                     </MapView> : null}
                 <SafeAreaView edges={['top']} style={{
                     width: '100%',
@@ -151,9 +153,7 @@ const SelectLocation: FC<any> = (props) => {
                     }} style={styles.currentLocationButton} >
                         <MaterialCommunityIcons name={'crosshairs-gps'} size={scaler(20)} color={colors.colorWhite} />
                     </TouchableOpacity>
-
                 </SafeAreaView>
-
 
             </View>
             {
@@ -179,7 +179,9 @@ const SelectLocation: FC<any> = (props) => {
                     </View>
 
                     <Button onPress={() => {
-                        setSelectedLocation(localLocation)
+                        onSelectLocation ?
+                            onSelectLocation(localLocation) :
+                            setSelectedLocation(localLocation)
                         NavigationService.goBack()
                     }} containerStyle={{ marginTop: scaler(20) }} title={'Confirm Location'} />
 
