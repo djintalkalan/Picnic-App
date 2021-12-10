@@ -31,3 +31,8 @@ export const setBlockedMembers = (payload: Array<any>) => ({
     type: ActionTypes.SET_BLOCKED_MEMBERS,
     payload
 })
+
+export const removeFromBlockedMember = (payload: string) => ({
+    type: ActionTypes.REMOVE_BLOCKED_MEMBER,
+    payload
+})

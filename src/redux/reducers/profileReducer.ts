@@ -48,6 +48,8 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
     switch (action.type) {
         case ActionTypes.SET_BLOCKED_MEMBERS:
             return { ...state, blockedUsers: action?.payload }
+        case ActionTypes.REMOVE_BLOCKED_MEMBER:
+            return { ...state, blockedUsers: state.blockedUsers.filter(_ => _._id != action.payload) }
         case ActionTypes.SET_MUTED_EVENTS:
             return { ...state, mutedEvents: action?.payload }
         case ActionTypes.SET_MUTED_GROUPS:
