@@ -89,5 +89,9 @@ export const en = {
     mute_events: "Mute events",
     create_group: "Create group",
     host_event: "Host Event",
+    permission_required: "Permission required",
+    app_needs_location_permission: "App needs location permission to verify your current location",
+    give_permission: "Give Permission",
+    deny: "Deny"
 
 }

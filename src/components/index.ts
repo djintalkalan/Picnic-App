@@ -5,6 +5,7 @@ export * from './CheckBox';
 export * from './KeyboardService';
 export * from './KeyboardTopView';
 export * from './Loader';
+export * from './LocationService';
 export * from './Modal';
 export * from './MyHeader';
 export * from './PopupAlert';

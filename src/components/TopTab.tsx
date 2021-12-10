@@ -25,11 +25,11 @@ export const TopTab = (props: TopTabProps) => {
     const { tabs, swipeEnabled = true, disableTitleColor = colors.colorGreyInactive, activeTitleColor = colors.colorBlackText } = props
     // useScrollToTop(tabs[0].initialParams?.scrollRef);
     return (
-        <Tab.Navigator swipeEnabled={swipeEnabled} backBehavior={'none'} keyboardDismissMode={'auto'}
+        <Tab.Navigator backBehavior={'none'} keyboardDismissMode={'auto'}
             tabBar={(tabBarProps: any) => <MyTabBar {...tabBarProps} onChangeIndex={() => {
 
             }} />}
-            tabBarOptions={{ allowFontScaling: false }} >
+            screenOptions={{ tabBarAllowFontScaling: false, swipeEnabled }} >
             {tabs && tabs.map((tab, index) => {
                 const { title, name, screen, initialParams, ...rest } = tab
                 return <Tab.Screen key={index} options={{ title, activeTitleColor, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={screen} />

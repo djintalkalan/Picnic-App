@@ -8,7 +8,7 @@ import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch } from 'react-redux'
 import GroupList from 'screens/GroupList'
 import { ILocation, useDatabase } from 'src/database/Database'
-import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
+import Language from 'src/language/Language'
 import { getImageBaseUrl, NavigationService, scaler } from 'utils'
 
 const tabs: TabProps[] = [
@@ -28,17 +28,13 @@ const tabs: TabProps[] = [
 
 
 const Home: FC = () => {
-    const [isFABOpen, setFABOpen] = useState(true)
+    const [isFABOpen, setFABOpen] = useState(false)
     const defaultLocation: ILocation = {
         latitude: 34.055101,
         longitude: -118.244797,
         address: { main_text: "Los Angeles, USA", secondary_text: "" }
     }
     const dispatch = useDispatch()
-
-    const updateLanguage = useUpdateLanguage()
-    const language = useLanguage()
-    // console.log("language", language)
 
     const [userData] = useDatabase("userData");
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
@@ -112,9 +108,12 @@ const Home: FC = () => {
                         <InnerButton title={Language.host_event} icon={Images.ic_host_event} />
                     </View>
                 }
-                <TouchableOpacity onPress={() => {
-                    setFABOpen(!isFABOpen)
-                }} style={{ alignSelf: 'flex-end' }} >
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                        setFABOpen(!isFABOpen)
+                    }}
+                    style={{ alignSelf: 'flex-end' }} >
                     <Image style={{ height: scaler(90), width: scaler(90) }} source={isFABOpen ? Images.ic_fab_open : Images.ic_add_fab} />
                 </TouchableOpacity>
             </View>
@@ -180,8 +179,9 @@ const styles = StyleSheet.create({
     fabActionContainer: {
         borderRadius: scaler(10),
         paddingHorizontal: scaler(10),
-        backgroundColor: colors.colorWhite,
-        elevation: 2, marginRight: scaler(8),
+        // backgroundColor: colors.colorWhite,
+        // elevation: 2,
+        marginRight: scaler(8),
         justifyContent: 'flex-end',
     }
 })

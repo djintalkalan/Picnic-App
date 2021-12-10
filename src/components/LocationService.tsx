@@ -1,25 +1,54 @@
-import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
+import { isEqual } from 'lodash'
+import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Alert, InteractionManager, Platform } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
 import Database, { ILocation } from 'src/database/Database'
+import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
+
+export const defaultLocation: ILocation = {
+    latitude: 34.055101,
+    longitude: -118.244797,
+    address: { main_text: "Los Angeles, USA", secondary_text: "" }
+}
 
 interface LocationServiceValues {
     isLocationEnabled: boolean
     currentLocation?: ILocation
-    askPermission?: () => void
+    askPermission: () => Promise<void>
 }
 
 const LocationContext = createContext<LocationServiceValues>({
     isLocationEnabled: false,
     currentLocation: undefined,
-    askPermission: () => null
+    askPermission: (async () => { })
 })
+navigator.geolocation = Geolocation
+
 
 export const LocationServiceProvider: FC<any> = ({ children }) => {
 
+    const askedForBlocked = useCallback(() => {
+        Alert.alert(Language.permission_required, Language.app_needs_location_permission, [
+            {
+                text: Language.give_permission, onPress: async () => {
+                    await openSettings().then(() => {
+                    }).catch(e => console.log("Open Setting Error", e)).finally(() => {
+                        startChecking()
+                    })
+                },
 
+            },
+            {
+                text: Language.cancel,
+
+            }
+
+        ], { cancelable: true })
+    }, [])
+
+    let denyTime = useRef(0)
     const getPermissionResult = useCallback(async (result) => {
         switch (result) {
             case RESULTS.UNAVAILABLE:
@@ -29,7 +58,17 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
             case RESULTS.DENIED:
                 console.log('The permission is DENIED: No actions is possible');
                 setLocationEnabled(false)
-                await askLocationPermission()
+                // _showErrorMessage("Location Permission denied")
+                if (denyTime.current) {
+
+                    askedForBlocked()
+                }
+                else {
+                    denyTime.current = denyTime.current + 1
+
+                    await askLocationPermission()
+
+                }
             case RESULTS.LIMITED:
                 console.log('The permission is limited: some actions are possible');
                 setLocationEnabled(true)
@@ -40,18 +79,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                 return true
 
             case RESULTS.BLOCKED:
-                Alert.alert("Need Permission", "This app need location permission to continue", [
-                    {
-                        text: "Give Permission", onPress: async () => {
-                            await openSettings().then(() => {
-                            }).catch(e => console.log("Open Setting Error", e)).finally(() => {
-                                startChecking()
-                            })
-                        },
-
-                    },
-
-                ], { cancelable: true })
+                askedForBlocked()
                 break;
         }
     }, [])
@@ -64,10 +92,10 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
 
     const askLocationPermission = useCallback(async () => {
         const result = await request(Platform.OS == 'android' ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE, {
-            title: "Required Permission",
-            message: "App needs location permission to verify your current location",
-            buttonPositive: "Give Permission",
-            buttonNegative: "Deny",
+            title: Language.permission_required,
+            message: Language.app_needs_location_permission,
+            buttonPositive: Language.give_permission,
+            buttonNegative: Language.deny,
         })
         await getPermissionResult(result);
 
@@ -76,8 +104,13 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     useEffect(() => {
         const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
         const currentLocation: ILocation = Database.getStoredValue<ILocation | null>("currentLocation")
-        if (currentLocation && currentLocation?.address?.main_text && (!selectedLocation || !selectedLocation?.address?.main_text)) {
-            Database.setSelectedLocation(currentLocation)
+        if (currentLocation && currentLocation?.address?.main_text) {
+            if ((!selectedLocation || !selectedLocation?.address?.main_text))
+                Database.setSelectedLocation(currentLocation)
+        } else {
+            console.log("currentLocation", currentLocation)
+            console.log("selectedLocation", selectedLocation)
+            Database.setSelectedLocation(defaultLocation)
         }
         InteractionManager.runAfterInteractions(async () => {
             startChecking()
@@ -97,7 +130,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                     let address = await getAddressFromLocation(location)
                     Database.setCurrentLocation({ ...location, address })
                     const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-                    if (!selectedLocation || !selectedLocation?.address?.main_text) {
+                    if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
                         Database.setSelectedLocation({ ...location, address })
                     }
                 },

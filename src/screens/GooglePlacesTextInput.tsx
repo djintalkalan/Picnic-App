@@ -15,8 +15,14 @@ interface IGooglePlacesTextInput {
 
 }
 
+
 const GooglePlacesTextInput: FC<any> = (props) => {
-    const placeInputRef = useRef<GooglePlacesAutocompleteRef>();
+
+    // props.navigation.setOptions({
+    //     // hi: "dj"
+    // })
+    // console.log("navigation", props.navigation.getState(), props)
+    const placeInputRef = useRef<GooglePlacesAutocompleteRef>(null);
 
     const [searchText, setSearchText] = useState("");
 
@@ -68,10 +74,10 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                     ref={placeInputRef}
                     placeholder={Language.search_location}
                     minLength={3}
-                    autoFocus={false}
-                    returnKeyType={'search'}
                     fetchDetails={true}
                     textInputProps={{
+                        autoFocus: true,
+                        returnKeyType: 'search',
                         placeholderTextColor: colors.colorGreyInactive,
                         onChangeText: (text) => { setSearchText(text) },
                         rightIcon: { type: 'font-awesome', name: 'chevron-left', color: 'black' },
@@ -79,7 +85,6 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                     enablePoweredByContainer={false}
                     enableHighAccuracyLocation={true}
                     nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                    placeholderTextColor={colors.colorBlack}
                     query={{
                         key: config.GOOGLE_MAP_API_KEY,
                         language: 'en',
@@ -115,7 +120,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                             color: 'white',
                         },
                     }}
-                    currentLocation={true}
+                    currentLocation={false}
                 />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => { NavigationService.goBack() }} style={styles.closeButton} >

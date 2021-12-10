@@ -15,14 +15,16 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { scaler } from 'utils';
 import { DropDownHolder } from 'utils/DropdownHolder';
 import { PopupAlertHolder } from 'utils/PopupAlertHolder';
+import Database from './database/Database';
 import MyNavigationContainer from './routes/MyNavigationContainer';
 const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
 const App: FC = () => {
     useEffect(() => {
-        // Database.setMultipleValues({
-        //     selectedLocation: null,
-        //     currentLocation: null
-        // })
+        Database.setMultipleValues({
+            selectedLocation: null,
+            currentLocation: null,
+            recentSearches: null
+        })
     }, [])
     return (
         <View style={styles.container} >

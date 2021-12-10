@@ -1,21 +1,17 @@
 import { useFocusEffect } from '@react-navigation/core'
 import { Images, MapStyle } from 'assets'
 import { colors } from 'assets/Colors'
-import { Button, Text, useStatusBar } from 'custom-components'
-import { useLocationService } from 'custom-components/LocationService'
+import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
+import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { ILocation, useDatabase } from 'src/database/Database'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getAddressFromLocation, NavigationService, scaler } from 'utils'
-const defaultLocation: ILocation = {
-    latitude: 34.055101,
-    longitude: -118.244797,
-    address: { main_text: "Los Angeles, USA", secondary_text: "" }
-}
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,7 +24,7 @@ const SelectLocation: FC<any> = (props) => {
 
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
-    const mapRef = useRef<MapView>()
+    const mapRef = useRef<MapView>(null)
     const { askPermission } = useLocationService()
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
@@ -39,7 +35,7 @@ const SelectLocation: FC<any> = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-            mapRef?.current?.animateToCoordinate(localLocation, 0)
+            localLocation && mapRef?.current?.animateCamera({ center: localLocation }, { duration: 500 })
         }, 200)
     }, [localLocation])
 
@@ -70,12 +66,24 @@ const SelectLocation: FC<any> = (props) => {
 
     return (
         <View style={styles.container} >
-            {focused ?
-                <View style={styles.map} >
+
+            <View style={styles.map} >
+                {focused ?
                     <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                         style={styles.map}
                         minZoomLevel={2}
+                        showsMyLocationButton={false}
                         ref={mapRef}
+                        onUserLocationChange={async (e) => {
+                            const coords = {
+                                latitude: e.nativeEvent.coordinate.latitude,
+                                longitude: e.nativeEvent.coordinate.longitude,
+                            }
+                            let address = await getAddressFromLocation(coords)
+                            address && Database.setCurrentLocation({
+                                ...coords, address
+                            })
+                        }}
                         initialRegion={{
                             latitude: localLocation?.latitude ?? defaultLocation?.latitude,
                             longitude: localLocation?.longitude ?? defaultLocation?.longitude,
@@ -95,76 +103,90 @@ const SelectLocation: FC<any> = (props) => {
                             <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
 
                         </Marker>
-                    </MapView>
-                    <SafeAreaView edges={['top']} style={{
-                        width: '100%',
+                    </MapView> : null}
+                <SafeAreaView edges={['top']} style={{
+                    width: '100%',
+                }} >
+                    <View style={{
+                        alignSelf: 'flex-end', backgroundColor: colors.colorWhite, marginTop: scaler(25),
+                        marginHorizontal: scaler(20),
+                        borderRadius: scaler(20)
                     }} >
-                        <View style={{
-                            alignSelf: 'flex-end', backgroundColor: colors.colorWhite, marginTop: scaler(25),
-                            marginHorizontal: scaler(20),
-                            borderRadius: scaler(20)
-                        }} >
-                            <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.closeButton} >
-                                <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
-                            </TouchableOpacity>
+                        <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.closeButton} >
+                            <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ marginVertical: scaler(10) }} >
+                        <TouchableOpacity activeOpacity={0.9} onPress={() => {
+                            NavigationService.navigate("GooglePlacesTextInput", {
+                                onSelectLocation: (location: ILocation) => {
+                                    setLocalLocation(location)
+
+                                }
+                            })
+                        }} style={{}} >
+                            <View pointerEvents={'none'}>
+                                <TextInput style={styles.searchInput}
+                                    onFocus={() => {
+
+                                    }}
+                                    placeholder={Language.search_location}
+                                    placeholderTextColor={colors.colorGreyInactive}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                        <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
+
+                    </View>
+
+                    <TouchableOpacity onPress={() => {
+                        console.log("currentLocation", currentLocation)
+                        if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
+                            setLocalLocation(currentLocation)
+                        } else {
+                            askPermission().then(() => {
+                                setLocalLocation(Database.getStoredValue('currentLocation'))
+                            })
+                        }
+                    }} style={styles.currentLocationButton} >
+                        <MaterialCommunityIcons name={'crosshairs-gps'} size={scaler(20)} color={colors.colorWhite} />
+                    </TouchableOpacity>
+
+                </SafeAreaView>
+
+
+            </View>
+            {
+                localLocation?.address?.main_text ? <View style={{
+                    width: '100%',
+                    borderRadius: scaler(10),
+                    backgroundColor: colors.colorWhite,
+                    padding: scaler(20),
+                    bottom: 0,
+                    position: 'absolute',
+                }} >
+                    <Text style={styles.drag} >{"Drag pin to select location"}</Text>
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+
+                    }} >
+                        <Image style={{ height: scaler(35), width: scaler(35) }} source={Images.ic_location} />
+                        <View style={{ marginLeft: scaler(10), flex: 1 }}>
+                            <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
                         </View>
-                        <View style={{
-                            marginVertical: scaler(10)
-                        }} >
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                                NavigationService.navigate("GooglePlacesTextInput", {
-                                    onSelectLocation: (location: ILocation) => {
-                                        setLocalLocation(location)
+                    </View>
 
-                                    }
-                                })
-                            }} style={{}} >
-                                <View pointerEvents={'none'}>
-                                    <TextInput style={styles.searchInput}
-                                        onFocus={() => {
+                    <Button onPress={() => {
+                        setSelectedLocation(localLocation)
+                        NavigationService.goBack()
+                    }} containerStyle={{ marginTop: scaler(20) }} title={'Confirm Location'} />
 
-                                        }}
-                                        placeholder={Language.search_location}
-                                        placeholderTextColor={colors.colorGreyInactive}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                            <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
-
-                        </View>
-                    </SafeAreaView>
 
                 </View> : null
             }
-            {localLocation?.address?.main_text ? <View style={{
-                width: '100%',
-                borderRadius: scaler(10),
-                backgroundColor: colors.colorWhite,
-                padding: scaler(20),
-                bottom: 0,
-                position: 'absolute',
-            }} >
-                <Text style={styles.drag} >{"Drag pin to select location"}</Text>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-
-                }} >
-                    <Image style={{ height: scaler(35), width: scaler(35) }} source={Images.ic_location} />
-                    <View style={{ marginLeft: scaler(10), flex: 1 }}>
-                        <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
-                        <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
-                    </View>
-                </View>
-
-                <Button onPress={() => {
-                    setSelectedLocation(localLocation)
-                    NavigationService.goBack()
-                }} containerStyle={{ marginTop: scaler(20) }} title={'Confirm Location'} />
-
-
-            </View> : null}
-        </View>
+        </View >
     )
 }
 
@@ -224,5 +246,16 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: scaler(12),
         fontWeight: '400',
+    },
+    currentLocationButton: {
+        alignSelf: 'flex-end',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: scaler(30),
+        width: scaler(30),
+        borderRadius: scaler(15),
+        elevation: 2,
+        marginEnd: scaler(10),
+        backgroundColor: colors.colorPrimary
     }
 })
