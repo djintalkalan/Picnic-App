@@ -6,6 +6,7 @@ import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInpu
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch } from 'react-redux'
+import EventList from 'screens/EventList'
 import GroupList from 'screens/GroupList'
 import { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
@@ -22,7 +23,7 @@ const tabs: TabProps[] = [
         title: "Events",
         icon: Images.ic_calender,
         name: "EventTab",
-        screen: GroupList
+        screen: EventList
     }
 ]
 
@@ -108,7 +109,6 @@ const Home: FC = () => {
                             NavigationService.navigate("CreateGroup");
                             setTimeout(() => {
                                 setFABOpen(false)
-
                             }, 1000);
                         }} title={Language.create_group} icon={Images.ic_create_group} />
                         <InnerButton title={Language.host_event} icon={Images.ic_host_event} />

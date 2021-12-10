@@ -275,6 +275,16 @@ const ProfileScreen: FC<any> = (props) => {
 
                             let imageFile = undefined
                             if (profileImage?.path) {
+
+                                // dispatch(uploadFile({
+                                //     image: profileImage,
+                                //     onSuccess: (url) => {
+
+                                //     },
+                                //     prefixType: 'users'
+                                // }))
+                                // return
+
                                 let formData = new FormData()
                                 formData.append('type', "users");
                                 let uri = profileImage?.path;

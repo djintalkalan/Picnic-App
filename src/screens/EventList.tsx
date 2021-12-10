@@ -1,11 +1,10 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { RootState } from 'app-store';
 import { getAllGroups, IPaginationState } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
+import React, { FC, useCallback, useRef } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -14,11 +13,11 @@ import { useDatabase } from 'src/database/Database';
 import { InitialPaginationState, scaler } from 'utils';
 
 
-const GroupList: FC<any> = (props) => {
+const EventList: FC<any> = (props) => {
 
     const { isLoading, allGroups } = useSelector((state: RootState) => ({
         isLoading: state.isLoading,
-        allGroups: state?.allGroups
+        allGroups: []
     }), isEqual)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
@@ -27,17 +26,17 @@ const GroupList: FC<any> = (props) => {
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
 
-    useFocusEffect(useCallback(() => {
+    // useFocusEffect(useCallback(() => {
 
-    }, []))
+    // }, []))
 
-    useLayoutEffect(() => {
-        console.log("selectedLocation changed", selectedLocation)
-        paginationState.current = InitialPaginationState
-        fetchGroupList()
-    }, [selectedLocation])
+    // useLayoutEffect(() => {
+    //     console.log("selectedLocation changed", selectedLocation)
+    //     paginationState.current = InitialPaginationState
+    //     fetchEventList()
+    // }, [selectedLocation])
 
-    const fetchGroupList = useCallback(() => {
+    const fetchEventList = useCallback(() => {
         if (paginationState?.current?.currentPage == paginationState?.current?.totalPages) {
             return
         }
@@ -77,7 +76,7 @@ const GroupList: FC<any> = (props) => {
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = InitialPaginationState
-                        fetchGroupList()
+                        fetchEventList()
                     }}
                 />}
                 data={allGroups}
@@ -92,7 +91,7 @@ const GroupList: FC<any> = (props) => {
                 useNativeDriver
                 onEndReached={() => {
                     if (!isLoading && paginationState.current?.currentPage != 0) {
-                        fetchGroupList()
+                        fetchEventList()
                     }
                 }}
                 closeOnRowOpen={true}
@@ -101,7 +100,7 @@ const GroupList: FC<any> = (props) => {
     )
 }
 
-export default GroupList
+export default EventList
 
 const styles = StyleSheet.create({
     container: {

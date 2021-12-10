@@ -18,7 +18,7 @@ export const setLoadingMsg = (payload: string): action => {
   }
 }
 
-export const uploadFile = (payload: FormData): action => ({
+export const uploadFile = (payload: { image: any, onSuccess?: (url: string) => void, prefixType: 'users' | 'events' | 'groups' | 'messages' }): action => ({
   type: ActionTypes.UPLOAD_FILE,
   payload
 })

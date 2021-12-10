@@ -75,6 +75,7 @@ const SelectLocation: FC<any> = (props) => {
                         minZoomLevel={2}
                         showsMyLocationButton={false}
                         ref={mapRef}
+
                         onUserLocationChange={async (e) => {
                             const coords = {
                                 latitude: e.nativeEvent.coordinate.latitude,
@@ -95,7 +96,8 @@ const SelectLocation: FC<any> = (props) => {
                         customMapStyle={MapStyle}>
                         {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
                             <Marker
-                                // draggable
+                                draggable
+                                onDragEnd={onMapPress}
                                 coordinate={{
                                     latitude: localLocation?.latitude ?? defaultLocation?.latitude,
                                     longitude: localLocation?.longitude ?? defaultLocation?.longitude,

@@ -3,10 +3,10 @@ import { store } from 'app-store';
 import { setLoadingAction } from 'app-store/actions';
 import axios, { Method } from 'axios';
 import { DeviceEventEmitter } from 'react-native';
+import { RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
 import { _showErrorMessage } from 'utils';
-
 interface header {
     Accept: string;
     "Content-Type": string;
@@ -95,6 +95,31 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
     } catch (error: any) {
         throw new Error(error)
     }
+}
+
+const callUploadFileAWS = async (file: { uri: string, name: string, type: any }, prefix: any) => {
+    console.log("Body S3", JSON.stringify(file))
+
+    const options = {
+        keyPrefix: config.AWS3_KEY_PREFIX + prefix + "/",
+        bucket: config.AWS3_BUCKET,
+        region: config.AWS3_REGION,
+        accessKey: config.AWS3_ACCESS_KEY,
+        secretKey: config.AWS3_SECRET_KEY,
+        successActionStatus: 200
+    }
+    return RNS3.put(file, options).then(response => {
+        if (response.status !== 200)
+            throw new Error("Failed to upload image to S3");
+        // console.log("res" + response.body);
+        return response
+    }).catch((error) => {
+        console.log("AWS ERROR ", JSON.stringify(error));
+    })
+}
+
+export const uploadFileAWS = async (body: any, prefix: any) => {
+    return callUploadFileAWS(body, prefix)
 }
 
 

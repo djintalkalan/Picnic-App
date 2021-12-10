@@ -118,7 +118,7 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
 function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._createGroup, payload);
+        let res = yield call(ApiProvider._createGroup, payload?.data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             NavigationService.goBack()

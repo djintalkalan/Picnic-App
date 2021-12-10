@@ -9,7 +9,7 @@ import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
-import { ILocation } from 'src/database/Database'
+import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { NavigationService, ProfileImagePickerOptions, scaler } from 'utils'
 
@@ -85,12 +85,16 @@ const CreateGroup: FC = () => {
             location: {
                 type: 'Point',
                 coordinates: [
-                    latitude,
-                    longitude
+                    longitude,
+                    latitude
                 ]
             }
         }
-        dispatch(createGroup(payload))
+        dispatch(createGroup({
+            data: payload, onSuccess: () => {
+                Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
+            }
+        }))
     })(), [profileImage]);
 
     const calculateButtonDisability = useCallback(() => {
@@ -113,12 +117,11 @@ const CreateGroup: FC = () => {
 
     }, [])
 
-
     return (
         <SafeAreaView style={styles.container} >
 
             <MyHeader title={Language.create_group} />
-            <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
+            <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
                 <View>
                     <View style={styles.imageContainer} >
                         <Image onError={(err) => {
