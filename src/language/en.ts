@@ -100,6 +100,12 @@ export const en = {
     group_name_required: "Group name is required",
     group_purpose_required: "Group purpose is required",
     group_location_required: "Group location is required",
+    no_groups_close: "No groups are close to you,",
+    create_one: "create one",
+    you_can: "You can",
+    by_clicking_here: " by clicking here or",
+    change_the_location: "change the location",
+    more: "More",
 
 
 }

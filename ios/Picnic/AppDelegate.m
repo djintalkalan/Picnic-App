@@ -4,7 +4,14 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+// Map
+#import <GoogleMaps/GoogleMaps.h>
+
+// Splash Screen
 #import "RNBootSplash.h"
+
+// ENV
+#import <react-native-ultimate-config/ConfigValues.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -13,15 +20,6 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
-
-// Map 
-#import <GoogleMaps/GoogleMaps.h>
-
-// Splash Screen
-#import "RNBootSplash.h"
-
-// ENV
-#import <react-native-ultimate-config/ConfigValues.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];

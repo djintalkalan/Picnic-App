@@ -1,16 +1,17 @@
+import { RootState } from 'app-store'
 import { colors, Images } from 'assets'
-import { Text } from 'custom-components'
+import { Card, Text } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/EventList'
 import GroupList from 'screens/GroupList'
 import { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageBaseUrl, NavigationService, scaler } from 'utils'
+import { getImageUrl, NavigationService, scaler } from 'utils'
 
 const tabs: TabProps[] = [
     {
@@ -37,13 +38,18 @@ const Home: FC = () => {
     }
     const dispatch = useDispatch()
 
+    const { groupLength, eventLength } = useSelector((state: RootState) => ({
+        eventLength: 0,
+        groupLength: state?.allGroups?.length
+    }))
+    const [currentTabIndex, setCurrentTabIndex] = useState(0)
     const [userData] = useDatabase("userData");
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
 
 
     const [profileImage, setProfileImage] = useState()
-
+    const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
     return (
         <SafeAreaView style={styles.container} >
 
@@ -63,7 +69,7 @@ const Home: FC = () => {
                 }} >
                     <Image style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
                         onError={(err) => setProfileImage(Images.ic_home_profile)} source={
-                            profileImage ?? userData?.image ? { uri: getImageBaseUrl('users', scaler(35), scaler(35)) + userData?.image } :
+                            profileImage ?? userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
                                 Images.ic_home_profile
                         }
                     />
@@ -98,12 +104,11 @@ const Home: FC = () => {
                 <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
             </View>
 
-            <TopTab
+            <TopTab onChangeIndex={setCurrentTabIndex} swipeEnabled={false} tabs={tabs} />
 
-                swipeEnabled={false} tabs={tabs} />
             <View style={{ alignSelf: 'baseline', position: 'absolute', bottom: scaler(40), right: scaler(15), }} >
                 {isFABOpen &&
-                    <View style={styles.fabActionContainer} >
+                    <Card cardElevation={isFabTransparent ? 0 : 2} style={[styles.fabActionContainer, { backgroundColor: (isFabTransparent) ? 'transparent' : colors.colorWhite }]} >
                         <InnerButton title={Language.share_picnic} icon={Images.ic_share_picnic} />
                         <InnerButton onPress={() => {
                             NavigationService.navigate("CreateGroup");
@@ -112,7 +117,7 @@ const Home: FC = () => {
                             }, 1000);
                         }} title={Language.create_group} icon={Images.ic_create_group} />
                         <InnerButton title={Language.host_event} icon={Images.ic_host_event} />
-                    </View>
+                    </Card>
                 }
                 <TouchableOpacity
                     activeOpacity={0.7}
@@ -185,8 +190,8 @@ const styles = StyleSheet.create({
     fabActionContainer: {
         borderRadius: scaler(10),
         paddingHorizontal: scaler(10),
-        // backgroundColor: colors.colorWhite,
-        // elevation: 2,
+        backgroundColor: colors.colorWhite,
+        elevation: 2,
         marginRight: scaler(8),
         justifyContent: 'flex-end',
     }

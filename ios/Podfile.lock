@@ -99,7 +99,7 @@ PODS:
   - libevent (2.1.12)
   - MMKV (1.2.10):
     - MMKVCore (~> 1.2.10)
-  - MMKVCore (1.2.10)
+  - MMKVCore (1.2.11)
   - OpenSSL-Universal (1.1.180)
   - Permission-LocationAccuracy (3.1.0):
     - RNPermissions
@@ -706,7 +706,7 @@ SPEC CHECKSUMS:
   hermes-engine: 7dcd1dbd908e6353bd7e4a4add72dba7bf76bf84
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   MMKV: 76033b9ace2006623308910a3afcc0e25eba3140
-  MMKVCore: b00e7a09ec77a1b916aef336eedd3b99ec249978
+  MMKVCore: f9e4f56742fdebbd042f7a273e278927f182cee7
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   Permission-LocationAccuracy: f2fa6140c0362473a061b771dd1b702db581138c
   Permission-LocationAlways: f1e021c3b348946cd7c5760172925b749e5d07a6

@@ -1,5 +1,4 @@
-import { _mediaUpload } from 'api'
-import { createGroup, setLoadingAction } from 'app-store/actions'
+import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, FixedDropdown, MyHeader, TextInput } from 'custom-components'
 import React, { FC, useCallback, useRef, useState } from 'react'
@@ -25,7 +24,7 @@ const DropDownData = ["Personal", "Professional", "Charitable"]
 
 const CreateGroup: FC = () => {
 
-    const uploadImage = useRef("")
+    const uploadedImage = useRef("")
 
     const dispatch = useDispatch()
     const isValidEmail = useRef(false)
@@ -43,41 +42,32 @@ const CreateGroup: FC = () => {
         mode: 'onChange'
     })
 
-    const onSubmit = useCallback(() => handleSubmit(async data => {
-        const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
-        if (!uploadImage.current && profileImage?.path) {
-            let formData = new FormData()
-            formData.append('type', "groups");
-            let uri = profileImage?.path;
-            let filename = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            let image = {
-                uri: uri,
-                name: filename,
-                type: 'image/jpeg',
-            };
-            formData.append('file', image);
-            try {
-                dispatch(setLoadingAction(true))
-                let res = await _mediaUpload(formData)
-                dispatch(setLoadingAction(false))
-                console.log(res, "res")
-                if (res?.data) {
-                    uploadImage.current = res?.data?.file
-                }
+    const onSubmit = useCallback(() => handleSubmit(data => {
+        if (!uploadedImage.current && profileImage?.path) {
+            if (profileImage?.path) {
+                dispatch(uploadFile({
+                    image: profileImage,
+                    onSuccess: (url) => {
+                        console.log("URL is ", url)
+                        uploadedImage.current = url
+                        callCreateGroupApi(data);
+                    },
+                    prefixType: 'groups'
+                }))
             }
-            catch (e) {
-                console.log(e)
-                dispatch(setLoadingAction(false))
-            }
-
         }
 
+
+    })(), [profileImage]);
+
+    const callCreateGroupApi = useCallback((data) => {
+        const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
         let payload = {
             name: data?.name,
             category: data?.purpose?.toLowerCase(),
             short_description: data?.about,
             details: data?.about,
-            image: uploadImage.current,
+            image: uploadedImage.current,
             address: data?.location,
             city: otherData?.city,
             state: otherData?.state,
@@ -95,7 +85,7 @@ const CreateGroup: FC = () => {
                 Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
             }
         }))
-    })(), [profileImage]);
+    }, [])
 
     const calculateButtonDisability = useCallback(() => {
         if (!getValues('name') || !getValues('purpose') || !getValues('location')
@@ -108,7 +98,7 @@ const CreateGroup: FC = () => {
         setTimeout(() => {
             ImagePicker.openPicker(ProfileImagePickerOptions).then((image) => {
                 console.log(image);
-                uploadImage.current = ""
+                uploadedImage.current = ""
                 setProfileImage(image)
             }).catch(e => {
                 console.log(e)
@@ -125,10 +115,10 @@ const CreateGroup: FC = () => {
                 <View>
                     <View style={styles.imageContainer} >
                         <Image onError={(err) => {
-                            setProfileImage(Images.ic_home_profile)
+                            setProfileImage(Images.ic_group_placeholder)
                         }} style={styles.image} source={
                             profileImage ? profileImage?.path ? { uri: profileImage?.path } : profileImage :
-                                Images.ic_home_profile
+                                Images.ic_group_placeholder
                         } />
                     </View>
                     {isEditEnabled ? <TouchableOpacity onPress={pickImage} style={styles.cameraButton} >

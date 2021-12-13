@@ -1,5 +1,4 @@
-import { _mediaUpload } from 'api'
-import { getProfile, setLoadingAction, updateProfile } from 'app-store/actions'
+import { getProfile, updateProfile, uploadFile } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
 import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
@@ -15,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, getImageBaseUrl, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -85,7 +84,7 @@ const ProfileScreen: FC<any> = (props) => {
 
 
     const setProfileData = useCallback((userData: any) => {
-        console.log("getImageBaseUrl('users', scaler(100), scaler(100))", getImageBaseUrl('users', scaler(100), scaler(100)))
+        console.log("getImageUrl('users', scaler(100), scaler(100))", getImageUrl(userData?.image, { type: 'users', width: scaler(100) }))
         const { first_name, image, last_name, email, username, dial_code, phone_number, dob, bio } = userData
         setValue("firstName", first_name)
         setValue("lastName", last_name)
@@ -99,6 +98,19 @@ const ProfileScreen: FC<any> = (props) => {
         setValue("phone", phone_number)
         setValue("phone_dialCode", dial_code)
         setValue("location", first_name)
+    }, [])
+
+    const callUpdateApi = useCallback((data: any, imageFile?: string) => {
+        dispatch(updateProfile({
+            first_name: data?.firstName,
+            last_name: data?.lastName,
+            username: data?.username,
+            dial_code: data?.phone_dialCode,
+            phone_number: data?.phone,
+            bio: data?.about,
+            // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
+            image: imageFile,
+        }))
     }, [])
 
     return (
@@ -127,7 +139,7 @@ const ProfileScreen: FC<any> = (props) => {
                             setProfileImage(Images.ic_home_profile)
                         }} style={styles.image} source={
                             profileImage ? profileImage?.path ? { uri: profileImage?.path } : profileImage :
-                                userData?.image ? { uri: getImageBaseUrl('users', scaler(100), scaler(100)) + userData?.image } :
+                                userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
                                     Images.ic_home_profile
                         } />
                     </View>
@@ -268,61 +280,22 @@ const ProfileScreen: FC<any> = (props) => {
             {/* </View> */}
 
             <KeyboardHideView>
-
                 <Button onPress={() => {
                     if (isEditEnabled) {
                         handleSubmit(async (data) => {
-
-                            let imageFile = undefined
                             if (profileImage?.path) {
-
-                                // dispatch(uploadFile({
-                                //     image: profileImage,
-                                //     onSuccess: (url) => {
-
-                                //     },
-                                //     prefixType: 'users'
-                                // }))
-                                // return
-
-                                let formData = new FormData()
-                                formData.append('type', "users");
-                                let uri = profileImage?.path;
-                                let filename = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-                                let image = {
-                                    uri: uri,
-                                    name: filename,
-                                    type: 'image/jpeg',
-                                };
-                                formData.append('file', image);
-                                try {
-                                    dispatch(setLoadingAction(true))
-
-                                    let res = await _mediaUpload(formData)
-                                    dispatch(setLoadingAction(false))
-
-                                    console.log(res, "res")
-                                    if (res?.data) {
-                                        imageFile = res?.data?.file
-                                    }
-                                }
-                                catch (e) {
-                                    console.log(e)
-                                    dispatch(setLoadingAction(false))
-
-                                }
-
+                                dispatch(uploadFile({
+                                    image: profileImage,
+                                    onSuccess: (url) => {
+                                        console.log("URL is ", url)
+                                        callUpdateApi(data, url);
+                                    },
+                                    prefixType: 'users'
+                                }))
                             }
-                            dispatch(updateProfile({
-                                first_name: data?.firstName,
-                                last_name: data?.lastName,
-                                username: data?.username,
-                                dial_code: data?.phone_dialCode,
-                                phone_number: data?.phone,
-                                bio: data?.about,
-                                // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
-                                image: imageFile,
-                            }))
+                            else {
+                                callUpdateApi(data);
+                            }
                         })()
                     } else {
                         setEditEnabled(true)

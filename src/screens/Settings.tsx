@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageBaseUrl, NavigationService, scaler } from 'utils'
+import { getImageUrl, NavigationService, scaler } from 'utils'
 
 
 const Settings: FC<any> = (props) => {
@@ -34,7 +34,7 @@ const Settings: FC<any> = (props) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >
                     <TouchableOpacity onPress={() => NavigationService.navigate("ProfileScreen")}>
                         <Image onError={(err) => setProfileImage(Images.ic_home_profile)} style={{ height: scaler(60), width: scaler(60), borderRadius: scaler(30) }}
-                            source={profileImage ?? userData?.image ? { uri: getImageBaseUrl('users', scaler(60), scaler(60)) + userData?.image } :
+                            source={profileImage ?? userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
                                 Images.ic_home_profile} />
                     </TouchableOpacity>
                     <View style={{ marginLeft: scaler(10) }} >

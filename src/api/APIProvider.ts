@@ -106,10 +106,11 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
         region: config.AWS3_REGION,
         accessKey: config.AWS3_ACCESS_KEY,
         secretKey: config.AWS3_SECRET_KEY,
-        successActionStatus: 200
+        successActionStatus: 201
     }
-    return RNS3.put(file, options).then(response => {
-        if (response.status !== 200)
+    return RNS3.put(file, options).then((response) => {
+        console.log("response", response)
+        if (response.status !== 201)
             throw new Error("Failed to upload image to S3");
         // console.log("res" + response.body);
         return response

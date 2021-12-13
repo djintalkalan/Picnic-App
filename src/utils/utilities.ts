@@ -101,7 +101,7 @@ export const dateFormat = (date: Date, toFormat: string) => {
     }
     catch (e) {
         console.log("Error", encodeURIComponent)
-        return date
+        return date.toDateString()
     }
 }
 
@@ -275,9 +275,14 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 //     }
 // }
 
-export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages', height: number, width: number) => {
-    return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
+// export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages', height: number, width: number) => {
+//     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
+// }
+
+export const getImageUrl = (url: string, options: { width: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
+    return config.IMAGE_URL + options?.type + "/" + url + "?width=" + options?.width + "&height=" + (options?.height || "")
 }
+
 
 export const ProfileImagePickerOptions = {
     width: 400,

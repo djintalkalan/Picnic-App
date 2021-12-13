@@ -7,7 +7,7 @@ import { scaler } from 'utils'
 interface ListItemProps {
     title: string
     subtitle: string
-    icon: ImageSourcePropType
+    icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
     isSelected: boolean
 }
@@ -21,6 +21,7 @@ interface MemberListItemProps {
 
 export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, isSelected = false }) => {
     const [isError, setError] = useState(false)
+    console.log("ICON", icon)
     return (
         <View style={styles.container} >
             <Image onError={() => {
@@ -28,7 +29,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
             }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
             <View style={styles.textContainer} >
                 <Text style={styles.title} >{title}</Text>
-                <Text style={styles.subtitle}>{subtitle}</Text>
+                <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
             </View>
         </View>
     )
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
     subtitle: {
         color: colors.colorGreyInactive,
         fontWeight: '400',
-        fontSize: scaler(11)
+        fontSize: scaler(11),
+        maxWidth: '80%'
     }
 })

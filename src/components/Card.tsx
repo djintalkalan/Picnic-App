@@ -7,7 +7,7 @@ interface ICardProps {
     cardMaxElevation?: number
     cornerRadius?: number
     useCompatPadding?: boolean
-    style?: ViewStyle
+    style?: ViewStyle | Array<ViewStyle>
     onPress?: (e: any) => void
 }
 

@@ -33,6 +33,8 @@ export const Images = {
     ic_fab_open: require("./images/ic_fab_open.png"),
     ic_gps: require("./images/ic_gps.png"),
     ic_arrow_dropdown: require("./images/ic_arrow_dropdown.png"),
-    // ic_arrow_dropdown: require("./images/ic_arrow_dropdown.png"),
+    ic_line: require("./images/ic_line.png"),
+    ic_group_placeholder: require("./images/ic_group_placeholder.png"),
+    // ic_group_placeholder: require("./images/ic_group_placeholder.png"),
 
 }

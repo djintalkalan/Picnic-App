@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageBaseUrl, InitialPaginationState, scaler } from 'utils'
+import { getImageUrl, InitialPaginationState, scaler } from 'utils'
 
 const BlockedMembers: FC<any> = (props) => {
 
@@ -34,8 +34,8 @@ const BlockedMembers: FC<any> = (props) => {
     const _renderItem = useCallback(({ item, index }, rowMap) => (
         <MemberListItem
             title={item?.blocked_users?.display_name}
-            icon={item?.blocked_users?.image ? { uri: getImageBaseUrl('users', scaler(50), scaler(50)) + item?.blocked_users?.image } : null}
-            defaultIcon={Images.ic_profile_image}
+            icon={item?.blocked_users?.image ? { uri: getImageUrl(item?.blocked_users?.image, { type: 'users', width: scaler(50) }) } : undefined}
+            defaultIcon={Images.ic_home_profile}
             isSelected={false}
         />
     ), [])

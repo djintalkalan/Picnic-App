@@ -12,5 +12,6 @@ export const colors = {
     colorPlaceholder: "#7D7F85",
     transparent: "transparent",
     colorGreyInactive: "#797979",
+    colorGreyMore: "#A5A5A5",
 
 }
