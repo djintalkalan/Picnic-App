@@ -35,6 +35,7 @@ export const Images = {
     ic_arrow_dropdown: require("./images/ic_arrow_dropdown.png"),
     ic_line: require("./images/ic_line.png"),
     ic_group_placeholder: require("./images/ic_group_placeholder.png"),
-    // ic_group_placeholder: require("./images/ic_group_placeholder.png"),
+    ic_hidden_posts: require("./images/ic_hidden_posts.png"),
+    // ic_hidden_posts: require("./images/ic_hidden_posts.png"),
 
 }

@@ -66,8 +66,8 @@ const PrivacyScreen: FC<any> = (props) => {
                         onPress={() => {
 
                         }}
-                        image={Images.ic_muted}
-                        title={Language.muted_post}
+                        image={Images.ic_hidden_posts}
+                        title={Language.hidden_posts}
                         subtitle={privacyState?.posts + " Posts"}
                     />
 

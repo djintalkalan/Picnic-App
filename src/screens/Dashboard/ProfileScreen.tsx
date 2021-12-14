@@ -131,7 +131,7 @@ const ProfileScreen: FC<any> = (props) => {
                 title={isEditEnabled ? Language.edit_profile : Language.profile} />
             {/* <View> */}
 
-            <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
+            <ScrollView extraScrollHeight={40} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
 
                 <View>
                     <View style={styles.imageContainer} >
@@ -240,7 +240,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.tell_us_about}
                         name={'about'}
                         multiline
-                        style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
+                        style={{ minHeight: scaler(80), maxHeight: scaler(160), textAlignVertical: 'top' }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         control={control}

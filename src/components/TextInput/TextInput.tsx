@@ -2,7 +2,7 @@ import { colors, Fonts } from "assets";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
-import { ColorValue, GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { Text } from "../Text";
@@ -58,6 +58,14 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 marginTop: scaler(5),
                 padding: scaler(2),
                 ...Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle])),
+            },
+            accessory: {
+                width: Dimensions.get('window').width,
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                backgroundColor: '#F8F8F8',
+                paddingHorizontal: scaler(8)
             }
         })
 
@@ -106,6 +114,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 allowFontScaling={false}
                                 value={value}
                                 multiline={multiline}
+                                inputAccessoryViewID={multiline ? name : undefined}
                                 autoCorrect={false}
                                 onFocus={(e) => {
                                     setFocused(true)
@@ -126,6 +135,14 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     <Image style={{ height: iconSize, width: iconSize }} source={icon} />
                                 </TouchableOpacity>
                                 : null}
+                            {multiline && <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={name}   >
+                                <View style={styles.accessory}>
+                                    <Button
+                                        onPress={() => Keyboard.dismiss()}
+                                        title="Done"
+                                    />
+                                </View>
+                            </InputAccessoryView>}
                         </>
                     )}
                 /> :
@@ -139,6 +156,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                             style={styles.textInputStyle}
                             value={value}
                             multiline={multiline}
+                            inputAccessoryViewID={multiline ? name : undefined}
                             // placeholder={!isFocused ? placeholder : ""}
                             onFocus={(e) => {
                                 setFocused(true)
@@ -153,6 +171,14 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 if (onChangeText) onChangeText(text);
                             }}
                         />
+                        {multiline && <InputAccessoryView nativeID={name}   >
+                            <View style={styles.accessory}>
+                                <Button
+                                    onPress={() => Keyboard.dismiss()}
+                                    title="Done"
+                                />
+                            </View>
+                        </InputAccessoryView>}
                     </>}
             </View>
             {/* {console.log("errors", errors)} */}
