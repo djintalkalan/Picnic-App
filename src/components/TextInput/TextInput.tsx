@@ -2,7 +2,7 @@ import { colors, Fonts } from "assets";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
-import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, Platform, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { Text } from "../Text";
@@ -135,7 +135,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     <Image style={{ height: iconSize, width: iconSize }} source={icon} />
                                 </TouchableOpacity>
                                 : null}
-                            {multiline && <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={name}   >
+                            {multiline && Platform.OS == 'ios' && <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={name}   >
                                 <View style={styles.accessory}>
                                     <Button
                                         onPress={() => Keyboard.dismiss()}

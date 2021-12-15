@@ -26,7 +26,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
     return axios({
         method: methodType, //you can set what request you want to be
         url: urlString,
-        data: methodType != "GET" ? body : undefined,// isMultipart ? body : (methodType != "GET" && body) ? body : undefined,
+        data: methodType != "GET" && body ? body : undefined,// isMultipart ? body : (methodType != "GET" && body) ? body : undefined,
         headers: header
     }).then(res => {
         if (config.REACTOTRON_STATUS == 'false') {
@@ -259,4 +259,14 @@ export const _removeGroupMember = async (body: any) => {
 export const _deleteGroup = async (body: any) => {
     console.log("---------- _leaveGroup Api Call ---------------")
     return fetchApiData(config.API_URL + 'group/delete-group/' + body, null, "DELETE")
+}
+
+export const _muteUnmuteResource = async (body: any) => {
+    console.log("---------- _muteUnmuteResource Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/mute-unmute-resource', body, "POST")
+}
+
+export const _reportResource = async (body: any) => {
+    console.log("---------- _reportResource Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/report-resource', body, "POST")
 }

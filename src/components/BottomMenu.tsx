@@ -57,8 +57,12 @@ export class BottomMenu extends PureComponent<BottomMenuProps, { alertVisible: b
 
     _renderButtonItem = ({ item, index }: { item: IBottomMenuButton, index: number }) => {
         return <>
-            {index > 0 && <View style={{ height: 0.5, width: '100%', backgroundColor: 'rgba(17, 17, 17, 0.3)' }} />}
-            <TouchableOpacity onPress={item?.onPress} style={[{ paddingVertical: scaler(15) }, item?.buttonContainerStyle]} >
+            {index > 0 && <View style={{ height: 1, width: '100%', backgroundColor: colors.colorD }} />}
+            <TouchableOpacity onPress={() => {
+                item?.onPress && item?.onPress()
+                this.setState({ alertVisible: false })
+
+            }} style={[{ paddingVertical: scaler(15) }, item?.buttonContainerStyle]} >
                 <Text style={[styles.title, item?.textStyle]} >{item?.title}</Text>
             </TouchableOpacity>
         </>
@@ -100,7 +104,7 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: colors.colorWhite,
-        paddingVertical: scaler(7),
+        paddingVertical: scaler(5),
         width: '100%',
         elevation: 3,
         alignItems: 'center',

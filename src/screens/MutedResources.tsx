@@ -1,9 +1,8 @@
 import { RootState } from 'app-store'
-import { blockUnblockResource, getBlockedMembers, IPaginationState } from 'app-store/actions'
+import { getMutedResources, IPaginationState, IResourceType, muteUnmuteResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
-import { ListItemSeparator, MemberListItem } from 'custom-components/ListItem/ListItem'
-import { isEqual } from 'lodash'
+import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,7 +11,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler } from 'utils'
+import { getImageUrl, getShortAddress, scaler } from 'utils'
 
 const initialPaginationState: IPaginationState = {
     currentPage: 0,
@@ -23,13 +22,24 @@ const initialPaginationState: IPaginationState = {
 const MutedResources: FC<any> = (props) => {
 
     const [userData] = useDatabase("userData")
+    const type: IResourceType = props?.route?.params?.type
 
-    const isLoading = useSelector((state: RootState) => state.isLoading, isEqual)
+    const { isLoading, mutedGroups, mutedEvents } = useSelector((state: RootState) => {
+        console.log("state", state)
+        return ({
+            isLoading: state.isLoading,
+            mutedGroups: state?.privacyData?.mutedGroups,
+            mutedEvents: state?.privacyData?.mutedEvents
+        })
+    })
+
+    const mutedResource = type == 'group' ? mutedGroups : mutedEvents
+
+    console.log("mutedResource : " + type, mutedResource)
 
     const paginationState = useRef<IPaginationState>(initialPaginationState)
 
     const [resources, setResources] = useState<Array<any>>([])
-    const type: 'event' | 'group' | 'message' = props?.route?.params?.type
 
     const dispatch = useDispatch()
 
@@ -37,17 +47,24 @@ const MutedResources: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => (
-        <MemberListItem
-            title={item?.blocked_users?.display_name}
-            icon={item?.blocked_users?.image ? { uri: getImageUrl(item?.blocked_users?.image, { type: 'users', width: scaler(50) }) } : null}
-            defaultIcon={Images.ic_profile_image}
-            isSelected={false}
+        <ListItem
+            defaultIcon={Images.ic_group_placeholder}
+            title={item?.muted_groups?.name}
+            icon={item?.muted_groups?.image ? { uri: getImageUrl(item?.muted_groups?.image, { width: scaler(50), type: 'groups' }) } : undefined}
+            subtitle={getShortAddress(item?.muted_groups?.address, item?.muted_groups?.state)}
+            // isSelected={is_group_member}
+            onPress={() => {
+
+            }}
+            onPressImage={() => {
+
+            }}
         />
     ), [])
 
+
+
     const _renderHiddenItem = useCallback(({ item, index }, rowMap) => (
-
-
         <View style={{
             alignItems: 'center',
             backgroundColor: colors.colorRed,
@@ -57,19 +74,19 @@ const MutedResources: FC<any> = (props) => {
         }}>
             <TouchableOpacity onPress={() => {
                 swipeListRef?.current?.closeAllOpenRows()
-                dispatch(blockUnblockResource({
+                dispatch(muteUnmuteResource({
                     data: {
-                        resource_id: item?.blocked_user_id,
+                        resource_id: item?.resource_id,
                         resource_type: item?.resource_type,
-                        is_blocked: '0'
+                        is_mute: '0'
                     },
                     onSuccess: (res) => {
                         setResources(_ => _.filter(_ => _._id != item?._id))
                     }
                 }))
             }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(70), backgroundColor: colors.colorRed }}>
-                <MaterialCommunityIcons color={colors.colorWhite} name={'block-helper'} size={scaler(17)} />
-                <Text style={{ marginTop: scaler(10), fontSize: scaler(11), color: colors.colorWhite }} >{Language.unblock}</Text>
+                <MaterialCommunityIcons color={colors.colorWhite} name={'volume-mute'} size={scaler(17)} />
+                <Text style={{ marginTop: scaler(10), fontSize: scaler(11), color: colors.colorWhite }} >{Language.unmute}</Text>
             </TouchableOpacity>
 
 
@@ -77,24 +94,22 @@ const MutedResources: FC<any> = (props) => {
     ), [])
 
     useEffect(() => {
-        return
         paginationState.current = initialPaginationState
-        fetchBlockedMembers()
+        fetchResources()
     }, [])
 
-    const fetchBlockedMembers = useCallback(() => {
+    const fetchResources = useCallback(() => {
         if (paginationState?.current?.currentPage == paginationState?.current?.totalPages) {
             return
         }
         let page = (paginationState?.current?.currentPage) + 1
 
 
-        dispatch(getBlockedMembers({ page, onSuccess: onSuccess }))
+        dispatch(getMutedResources({ resource_type: type, page, onSuccess: onSuccess }))
     }, [])
 
-    const onSuccess = useCallback(({ pagination, data }) => {
+    const onSuccess = useCallback(({ pagination }) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
-        setResources(_ => [..._, ...data])
     }, [])
 
 
@@ -108,13 +123,14 @@ const MutedResources: FC<any> = (props) => {
                     keyExtractor={(_, i) => i.toString()}
                     useFlatList
                     useNativeDriver
-                    data={resources}
+                    data={mutedResource}
+                    extraData={mutedResource}
                     renderItem={_renderItem}
                     renderHiddenItem={_renderHiddenItem}
                     rightOpenValue={-scaler(70)}
                     onEndReached={() => {
-                        if (!isLoading) {
-                            fetchBlockedMembers()
+                        if (!isLoading && paginationState?.current?.currentPage) {
+                            fetchResources()
                         }
                     }}
                     closeOnRowOpen={true}

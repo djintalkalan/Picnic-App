@@ -1,5 +1,5 @@
 import ActionTypes from "app-store/action-types";
-
+export type IResourceType = 'event' | 'group' | 'message'
 export const createGroup = (payload: any) => ({
     type: ActionTypes.CREATE_GROUP,
     payload
@@ -76,7 +76,7 @@ export const getMutedReportedCount = (payload?: any) => ({
     payload
 })
 
-export const getMutedResources = (payload?: { resource_type: 'event' | 'group' | 'message', page: number, onSuccess: (data: any) => void }) => ({
+export const getMutedResources = (payload?: { resource_type: IResourceType, page: number, onSuccess: (data: any) => void }) => ({
     type: ActionTypes.GET_MUTED_RESOURCES,
     payload
 })
@@ -86,8 +86,21 @@ export const getBlockedMembers = (payload?: { onSuccess: (data: any) => void, pa
     payload
 })
 
-export const blockUnblockResource = (payload: { data: { resource_id: string, resource_type: "user", is_blocked: '1' | '0' }, onSuccess: (res: any) => void }) => ({
+export const blockUnblockResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_blocked: '1' | '0' }, onSuccess: (res: any) => void }) => ({
     type: ActionTypes.BLOCK_UNBLOCK_RESOURCE,
     payload
 })
+
+export const muteUnmuteResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_mute: "1" | "0" }, onSuccess?: (res: any) => void }) => ({
+    type: ActionTypes.MUTE_UNMUTE_RESOURCE,
+    payload
+})
+
+export const reportResource = (payload?: { resource_id: string, resource_type: IResourceType }) => ({
+    type: ActionTypes.REPORT_RESOURCE,
+    payload
+})
+
+
+
 

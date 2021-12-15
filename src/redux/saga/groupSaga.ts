@@ -1,17 +1,16 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getGroupMembers, setAllGroups, setGroupDetail, setGroupMembers, setLoadingAction } from "app-store/actions";
-import { setBlockedMembers, setPrivacyState } from 'app-store/actions/profileActions';
+import { getGroupDetail, getGroupMembers, IResourceType, setAllGroups, setGroupDetail, setGroupMembers, setLoadingAction } from "app-store/actions";
+import { addMutedResource, setBlockedMembers, setMutedResource, setPrivacyState } from 'app-store/actions/profileActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
+import { navigationRef, NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any, any, any> {
     // yield put(setLoadingAction(true));
-
     try {
         let res = yield call(ApiProvider._mutedBlockedReportedCount, payload);
         if (res.status == 200) {
@@ -88,11 +87,58 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
     }
 }
 
-function* _getMutedResources({ type, payload, }: action): Generator<any, any, any> {
+function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, any> {
+    const { resource_type }: { resource_type: IResourceType } = payload?.data
+    yield put(setLoadingAction(true));
 
+    try {
+        let res = yield call(ApiProvider._muteUnmuteResource, payload?.data);
+        if (res.status == 200) {
+            _showSuccessMessage(res.message)
+            // if (payload.onSuccess) payload.onSuccess(res?.data)
+            if (payload?.data?.is_mute == "1")
+                yield put(setAllGroups(store?.getState()?.group?.allGroups.filter(_ => _._id != payload?.data?.resource_id)))
+            else {
+                const oldData = store?.getState()?.privacyData?.[resource_type == 'group' ? 'mutedGroups' : resource_type == 'event' ? 'mutedEvents' : "mutedPosts"]
+                yield put(setMutedResource({ data: oldData.filter(_ => _.resource_id != payload?.data?.resource_id), type: resource_type }))
+            }
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _reportResource({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._blockUnblockResource, payload?.data);
+        let res = yield call(ApiProvider._reportResource, { ...payload, is_reported: "1" });
+        if (res.status == 200) {
+            _showSuccessMessage(res.message)
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _getMutedResources({ type, payload, }: action): Generator<any, any, any> {
+    const { resource_type, page }: { resource_type: IResourceType, page: number } = payload
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._getMutedResources, resource_type, page);
         if (res.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
@@ -100,8 +146,12 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
                     totalPages: res?.data?.pagination?.totalPages,
                     perPage: res?.data?.pagination?.limit
                 },
-                data: res?.data?.data
             })
+            if (res?.data?.pagination?.currentPage == 1) {
+                yield put(setMutedResource({ data: res?.data?.data, type: resource_type }))
+            } else
+                yield put(addMutedResource({ data: res?.data?.data, type: resource_type }))
+
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -176,8 +226,8 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let groupDetail = store.getState()?.group?.groupDetail
-    if (!groupDetail)
+    let group = store.getState()?.group?.groupDetail?.group
+    if (!group)
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getGroupDetail, payload);
@@ -217,18 +267,71 @@ function* _getGroupMembers({ type, payload, }: action): Generator<any, any, any>
     }
 }
 
+function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._joinGroup, payload);
+        if (res.status == 200) {
+            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
+            let { allGroups } = store?.getState().group
+            allGroups = allGroups.map(_ => (_._id == payload ? { ..._, is_group_member: true } : _))
+            yield put(setAllGroups(allGroups))
+            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+                yield put(getGroupDetail(payload))
+            }
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._leaveGroup, payload);
+        if (res.status == 200) {
+            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
+            let { allGroups } = store?.getState().group
+            allGroups = allGroups.map(_ => (_._id == payload ? { ..._, is_group_member: false } : _))
+            yield put(setAllGroups(allGroups))
+            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+                NavigationService.goBack()
+            }
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchGroups() {
-    yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
-    yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
-    yield takeLatest(ActionTypes.GET_MUTED_RESOURCES, _getMutedResources);
+    yield takeEvery(ActionTypes.GET_MUTED_RESOURCES, _getMutedResources);
     yield takeLatest(ActionTypes.BLOCK_UNBLOCK_RESOURCE, _blockUnblockResource);
-
+    yield takeLatest(ActionTypes.MUTE_UNMUTE_RESOURCE, _muteUnmuteResource);
+    yield takeLatest(ActionTypes.REPORT_RESOURCE, _reportResource);
     yield takeLatest(ActionTypes.CREATE_GROUP, _createGroup);
     yield takeLatest(ActionTypes.GET_ALL_GROUPS, _getAllGroups);
     yield takeLatest(ActionTypes.GET_GROUP_DETAIL, _getGroupDetail);
     yield takeLatest(ActionTypes.GET_GROUP_MEMBERS, _getGroupMembers);
+    yield takeLatest(ActionTypes.JOIN_GROUP, _joinGroup);
+    yield takeLatest(ActionTypes.LEAVE_GROUP, _leaveGroup);
+    yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
+    yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
 
 
 };

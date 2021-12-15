@@ -1,5 +1,6 @@
 import ActionTypes from "app-store/action-types";
 import { INotificationSettings, IPrivacyState } from "app-store/reducers";
+import { IResourceType } from ".";
 
 export const setNotificationSettings = (payload: INotificationSettings) => ({
     type: ActionTypes.SET_NOTIFICATION_SETTINGS,
@@ -14,6 +15,16 @@ export const setPrivacyState = (payload: IPrivacyState) => ({
 
 export const setMutedGroups = (payload: Array<any>) => ({
     type: ActionTypes.SET_MUTED_GROUPS,
+    payload
+})
+
+export const addMutedResource = (payload: { data: any, type: IResourceType }) => ({
+    type: ActionTypes.ADD_MUTED_RESOURCE,
+    payload
+})
+
+export const setMutedResource = (payload: { data: any, type: IResourceType }) => ({
+    type: ActionTypes.SET_MUTED_RESOURCE,
     payload
 })
 

@@ -1,23 +1,61 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { RootState, store } from 'app-store';
-import { getAllGroups, IPaginationState, setGroupDetail } from 'app-store/actions';
+import { getAllGroups, IPaginationState, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setGroupDetail } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
-import { Text } from 'custom-components';
+import { Button, Modal, Text } from 'custom-components';
+import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
-import Language from 'src/language/Language';
-import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService, scaler } from 'utils';
+import Language, { useLanguage } from 'src/language/Language';
+import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService, scaler, _showBottomMenu } from 'utils';
 
 
 const GroupList: FC<any> = (props) => {
+
+    const getButtons = useCallback((item: any) => {
+        const { is_group_member, _id } = item
+        const buttons: Array<IBottomMenuButton> = [
+            {
+                title: Language.mute_group, onPress: () => {
+                    dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "group", resource_id: _id } }))
+                }
+            },
+            {
+                title: Language.group_details, onPress: () => {
+                    if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
+                        dispatch(setGroupDetail(null))
+                    }
+                    setTimeout(() => {
+                        NavigationService.navigate("GroupDetail", { id: item?._id })
+                    }, 0);
+                }
+            },
+            {
+                title: Language.report_group, onPress: () => {
+                    dispatch(reportResource({ resource_id: _id, resource_type: 'group' }))
+                    // reportedItemRef.current = item
+                    // setReportAlert(true)
+                }
+            },
+
+        ]
+        if (is_group_member) {
+            buttons.push({
+                title: Language.leave_group, textStyle: { color: colors.colorRed }, onPress: () => {
+                    dispatch(leaveGroup(_id))
+                }
+            })
+        }
+        return buttons
+    }, [useLanguage()])
 
     const { isLoading, allGroups } = useSelector<RootState, any>((state) => ({
         isLoading: state.isLoading,
@@ -25,6 +63,9 @@ const GroupList: FC<any> = (props) => {
     }), isEqual)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const reportedItemRef = useRef<any>(null)
+    const [isReportAlert, setReportAlert] = useState(false)
+
     const [selectedLocation] = useDatabase('selectedLocation')
     const dispatch = useDispatch()
 
@@ -52,24 +93,34 @@ const GroupList: FC<any> = (props) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
-    const _renderItem = useCallback(({ item }, rowMap) => (
-        <ListItem
-            defaultIcon={Images.ic_group_placeholder}
-            title={item?.name}
-            icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'groups' }) } : undefined}
-            subtitle={getShortAddress(item.address, item?.state)}
-            isSelected={false}
-            onPressImage={() => {
-                if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                    dispatch(setGroupDetail(null))
-                }
-                NavigationService.navigate("GroupDetail", { id: item?._id })
-            }}
-        />
-    ), [])
+    const _renderItem = useCallback(({ item }, rowMap) => {
+        const { is_group_member } = item
 
-    const _renderHiddenItem = useCallback(({ item }, rowMap) => (
-        <View style={{ flex: 1, flexDirection: 'row', }} >
+        return (
+            <ListItem
+                defaultIcon={Images.ic_group_placeholder}
+                title={item?.name}
+                icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'groups' }) } : undefined}
+                subtitle={getShortAddress(item.address, item?.state)}
+                isSelected={is_group_member}
+                onPress={() => {
+
+                }}
+                onPressImage={() => {
+                    if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
+                        dispatch(setGroupDetail(null))
+                    }
+                    setTimeout(() => {
+                        NavigationService.navigate("GroupDetail", { id: item?._id })
+                    }, 0);
+                }}
+            />
+        )
+    }, [])
+
+    const _renderHiddenItem = useCallback(({ item }, rowMap) => {
+        const { is_group_member } = item
+        return (<View style={{ flex: 1, flexDirection: 'row', }} >
             <View style={{
                 alignItems: 'center',
                 flex: 1,
@@ -78,10 +129,14 @@ const GroupList: FC<any> = (props) => {
                 justifyContent: 'flex-start'
             }}>
                 <TouchableOpacity onPress={() => {
-
-                }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: colors.colorPrimary }}>
-                    <Ionicons color={colors.colorWhite} name={'checkmark-sharp'} size={scaler(24)} />
-                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{"Join"}</Text>
+                    swipeListRef?.current?.closeAllOpenRows()
+                    if (!is_group_member) {
+                        dispatch(joinGroup(item?._id))
+                    }
+                }}
+                    style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: colors.colorPrimary }}>
+                    <Ionicons color={colors.colorWhite} name={is_group_member ? 'checkmark-sharp' : "person-add-sharp"} size={scaler(24)} />
+                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_group_member ? Language.joined : Language?.join}</Text>
                 </TouchableOpacity>
 
 
@@ -94,6 +149,10 @@ const GroupList: FC<any> = (props) => {
                 justifyContent: 'flex-end'
             }}>
                 <TouchableOpacity onPress={() => {
+                    swipeListRef?.current?.closeAllOpenRows()
+                    _showBottomMenu({
+                        buttons: getButtons(item)
+                    })
 
                 }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: "#DFDFDF" }}>
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(24)} />
@@ -103,7 +162,8 @@ const GroupList: FC<any> = (props) => {
 
             </View>
         </View>
-    ), [])
+        )
+    }, [])
     return (
         <View style={styles.container} >
             <SwipeListView
@@ -147,6 +207,30 @@ const GroupList: FC<any> = (props) => {
                 }}
                 closeOnRowOpen={true}
             />
+            <Modal transparent visible={isReportAlert} >
+
+                <View style={{ flex: 1, padding: '10%', backgroundColor: 'rgba(0, 0, 0, 0.49)', alignItems: 'center', justifyContent: 'center' }} >
+                    <View style={styles.alertContainer} >
+
+                        <Text style={{ marginTop: scaler(10), paddingHorizontal: '10%', textAlign: 'center', color: colors.colorPlaceholder, fontSize: scaler(14), fontWeight: '500' }} >{Language.are_you_sure_want}</Text>
+
+                        <Button
+                            onPress={() => {
+                                setReportAlert(false)
+                            }}
+                            backgroundColor={colors.colorRed}
+                            containerStyle={{ marginTop: scaler(30), marginBottom: scaler(20) }}
+                            fontSize={scaler(14)}
+                            paddingHorizontal={scaler(30)}
+                            title={'Yes, Logout'}
+                            paddingVertical={scaler(10)}
+                        />
+                        <Text onPress={() => setReportAlert(false)} style={{ paddingHorizontal: '10%', textAlign: 'center', color: colors.colorBlackText, fontSize: scaler(14), fontWeight: '400' }} >{Language.cancel}</Text>
+                    </View>
+                </View>
+
+
+            </Modal>
         </View>
     )
 }
@@ -179,5 +263,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         textAlign: 'center',
 
+    },
+    alertContainer: {
+        backgroundColor: colors.colorWhite,
+        padding: scaler(20),
+        width: '100%',
+        elevation: 3,
+        alignItems: 'center',
+        borderRadius: scaler(20)
     },
 })

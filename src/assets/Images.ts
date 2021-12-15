@@ -44,6 +44,8 @@ export const Images = {
     ic_delete: require("./images/ic_delete.png"),
     ic_leave_group: require("./images/ic_leave_group.png"),
     ic_report_group: require("./images/ic_report_group.png"),
-    // ic_delete: require("./images/ic_delete.png"),
+    ic_member_tick: require("./images/ic_member_tick.png"),
+    ic_leave_in_group: require("./images/ic_leave_in_group.png"),
+    // ic_leave_in_group: require("./images/ic_leave_in_group.png"),
 
 }

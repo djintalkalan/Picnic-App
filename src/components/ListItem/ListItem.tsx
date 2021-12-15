@@ -1,3 +1,4 @@
+import { Images } from 'assets'
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
 import React, { FC, useState } from 'react'
@@ -9,7 +10,7 @@ interface ListItemProps {
     subtitle: string
     icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
-    isSelected: boolean
+    isSelected?: boolean
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     containerStyle?: StyleProp<ViewStyle>
@@ -32,9 +33,9 @@ interface MemberListItemProps {
 export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false }) => {
     const [isError, setError] = useState(false)
     return (
-        <TouchableHighlight onPress={onPressImage} underlayColor={colors.colorPrimary} >
+        <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
             <View style={styles.container} >
-                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
+                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
                     <Image onError={() => {
                         setError(true)
                     }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
@@ -43,6 +44,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
                     <Text style={styles.title} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
                 </View>
+                {isSelected ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
             </View>
         </TouchableHighlight>
     )
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
         color: colors.colorGreyInactive,
         fontWeight: '400',
         fontSize: scaler(11),
-        maxWidth: '80%'
+        maxWidth: '90%'
     },
     rightText: {
         color: colors.colorPrimary,

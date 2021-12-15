@@ -4,7 +4,7 @@ import { Button, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, Platform, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
@@ -21,9 +21,12 @@ const Login: FC = () => {
     const [isSecure, setSecure] = useState(true)
 
     const { control, handleSubmit, getValues, formState: { errors } } = useForm<LoginFormType>({
-        defaultValues: {
+        defaultValues: Platform.OS == 'ios' ? {
             email: "mukeshkaushal2008@gmail.com",
             password: "Mukesh@123",
+        } : {
+            email: "deepak@shinewebservices.com",
+            password: "Deepak@123",
         },
         mode: 'onChange'
     })

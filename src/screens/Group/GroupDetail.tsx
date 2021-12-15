@@ -1,13 +1,13 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getGroupDetail } from 'app-store/actions'
+import { deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, FlatList, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,12 +48,12 @@ const GroupDetail: FC<any> = (props) => {
     const dispatch = useDispatch()
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
-    const { group, groupMembers } = useSelector((state: RootState) => ({
+    const { group, groupMembers, is_group_joined } = useSelector((state: RootState) => ({
         group: state?.group?.groupDetail?.group,
         groupMembers: state?.group?.groupDetail?.groupMembers,
+        is_group_joined: state?.group?.groupDetail?.is_group_joined
     }), isEqual)
 
-    // console.log("group", group)
 
     useLayoutEffect(() => {
         // console.log("payload", props)
@@ -84,107 +84,139 @@ const GroupDetail: FC<any> = (props) => {
         )
     }, [])
 
-    if (group)
-        return (
-            <SafeAreaView style={styles.container} edges={['bottom']} >
-                <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                    <Image source={group?.image ? { uri: getImageUrl(group?.image, { width: width, type: 'groups' }) } : Images.ic_group_placeholder}
-                        style={{ width: width, height: width, resizeMode: 'cover' }} />
-                    <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-                    <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
-                        <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={Images.ic_back_group} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={Images.ic_more_group} />
-                        </TouchableOpacity>
-                    </View>
-                    {isEditButtonOpened ?
-                        <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
-                            <Card cardElevation={2} style={styles.fabActionContainer} >
-                                <InnerButton visible={group?.is_admin ? true : false} onPress={() => {
-                                    NavigationService.navigate("CreateGroup", { group })
-                                    setEditButtonOpened(false)
-                                }} title={Language.edit} />
-                                <InnerButton title={Language.share} />
-                                <InnerButton title={Language.export_chat} />
-                                <InnerButton title={Language.import_chat}
-                                    hideBorder
-                                />
-                            </Card>
+    const renderBottomActionButtons = useCallback(() => {
+        return <View style={{ paddingHorizontal: scaler(15), paddingBottom: scaler(20) }} >
+            <BottomButton
+                title={Language.delete_group}
+                icon={Images.ic_delete}
+                visibility={group?.is_admin}
+                onPress={() => {
+                    dispatch(deleteGroup(group?._id))
+                }} />
 
-                        </View> : null
+            <BottomButton
+                title={Language.leave_group}
+                icon={Images.ic_leave_group}
+                visibility={is_group_joined}
+                onPress={() => {
+                    dispatch(leaveGroup(group?._id))
+                }} />
 
-                    }
-                    <View style={styles.infoContainer} >
-                        <View style={styles.nameContainer}>
-                            <View style={{ flex: 1, marginEnd: scaler(12) }} >
-                                <Text style={styles.name} >{group?.name}</Text>
-                                <Text style={styles.address} >{getShortAddress(group?.address, group?.state)}</Text>
-                            </View>
-                            <View style={styles.typeContainer} >
-                                <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
-                                <Text style={styles.groupType}>{group?.category}</Text>
-                            </View>
+            <BottomButton
+                title={Language.join_now}
+                icon={Images.ic_leave_group}
+                visibility={!is_group_joined}
+                onPress={() => {
+                    dispatch(joinGroup(group?._id))
+                }} />
+
+            <BottomButton
+                title={Language.report_group}
+                icon={Images.ic_report_group}
+                visibility
+                onPress={() => {
+                    dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
+                }} />
+        </View>
+    }, [group])
+
+    // if (group)
+    return (
+        <SafeAreaView style={styles.container} edges={['bottom']} >
+            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+                <Image source={group?.image ? { uri: getImageUrl(group?.image, { width: width, type: 'groups' }) } : Images.ic_group_placeholder}
+                    style={{ width: width, height: width, resizeMode: 'cover' }} />
+                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+                <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
+                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
+                        <Image style={styles.imgBack} source={Images.ic_back_group} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => group?.is_admin && setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
+                        <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
+                    </TouchableOpacity>
+                </View>
+                {isEditButtonOpened ?
+                    <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
+                        <Card cardElevation={2} style={styles.fabActionContainer} >
+                            <InnerButton visible={group?.is_admin ? true : false} onPress={() => {
+                                NavigationService.navigate("CreateGroup", { group })
+                                setEditButtonOpened(false)
+                            }} title={Language.edit} />
+                            <InnerButton title={Language.share} />
+                            <InnerButton title={Language.export_chat} />
+                            <InnerButton title={Language.import_chat}
+                                hideBorder
+                            />
+                        </Card>
+
+                    </View> : null
+
+                }
+                <View style={styles.infoContainer} >
+                    <View style={styles.nameContainer}>
+                        <View style={{ flex: 1, marginEnd: scaler(12) }} >
+                            <Text style={styles.name} >{group?.name}</Text>
+                            <Text style={styles.address} >{getShortAddress(group?.address, group?.state)}</Text>
                         </View>
-                        <Text style={styles.about} >{group?.details}</Text>
+                        <View style={styles.typeContainer} >
+                            <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
+                            <Text style={styles.groupType}>{group?.category}</Text>
+                        </View>
                     </View>
-                    <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                    {group?.is_admin ? <View style={styles.memberContainer} >
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
-                            <Text style={styles.events} >{Language.events}</Text>
-                            <Image style={{ height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                        </TouchableOpacity>
-                        <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
-                        <Text style={styles.members} >Members <Text style={styles.membersCount} >({groupMembers?.length})</Text></Text>
-                        <FlatList
-                            nestedScrollEnabled
-                            // onLayout={(e) => {
-                            //     const height = e.nativeEvent.layout.height
-                            //     if (!isOpened) {
-                            //         flatListHeightRef.current = height
-                            //     }
-                            // }}
-                            // style={{ height: isOpened ? flatListHeightRef?.current : undefined }}
-                            data={isOpened ? groupMembers : groupMembers.slice(0, 5)}
-                            renderItem={_renderGroupMembers}
-                            ItemSeparatorComponent={() => (
-                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                            )}
-                        />
-                        {(!isOpened && groupMembers?.length > 5) && <>
+                    <Text style={styles.about} >{group?.details}</Text>
+                </View>
+                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                {group?.is_admin ?
+                    <>
+                        <View style={styles.memberContainer} >
+                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} >
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
+                                <Text style={styles.events} >{Language.events}</Text>
+                                <Image style={{ height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
+                            </TouchableOpacity>
+                            <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
+                            <Text style={styles.members} >Members <Text style={styles.membersCount} >({groupMembers?.length})</Text></Text>
+                            {(isOpened ? groupMembers : groupMembers.slice(0, 5)).map((item, index) => {
+                                return <>
+                                    {index > 0 &&
+                                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                    }
+                                    {_renderGroupMembers({ item, index })}
+
+                                </>
+                            })}
+                            {/* <FlatList
+                        scrollEnabled={false}
+                        // onLayout={(e) => {
+                        //     const height = e.nativeEvent.layout.height
+                        //     if (!isOpened) {
+                        //         flatListHeightRef.current = height
+                        //     }
+                        // }}
+                        // style={{ height: isOpened ? flatListHeightRef?.current : undefined }}
+                        data={isOpened ? groupMembers : groupMembers.slice(0, 5)}
+                        renderItem={_renderGroupMembers}
+                        ItemSeparatorComponent={() => (
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                            <TouchableOpacity onPress={() => setOpened(true)} style={{ flex: 1, alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
-                                <Text style={styles.events} >{(groupMembers?.length - 5)} {Language.more}</Text>
-                                <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                            </TouchableOpacity></>}
-                    </View> : null}
-                    <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                        )}
+                    /> */}
+                            {(!isOpened && groupMembers?.length > 5) && <>
+                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
+                                    <Text style={styles.events} >{(groupMembers?.length - 5)} {Language.more}</Text>
+                                    <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
+                                </TouchableOpacity></>}
+                        </View>
+                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                        {renderBottomActionButtons()}
+                    </>
 
+                    : null}
 
-                    <View style={{ paddingHorizontal: scaler(15) }} >
-                        <BottomButton
-                            title={Language.delete_group}
-                            icon={Images.ic_delete}
-                            visibility={group?.is_admin}
-                            onPress={() => { }} />
-
-                        <BottomButton
-                            title={Language.leave_group}
-                            icon={Images.ic_leave_group}
-                            visibility
-                            onPress={() => { }} />
-
-                        <BottomButton
-                            title={Language.report_group}
-                            icon={Images.ic_report_group}
-                            visibility
-                            onPress={() => { }} />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        )
+            </ScrollView>
+            {group?.is_admin ? null : renderBottomActionButtons()}
+        </SafeAreaView>
+    )
     return null
 }
 interface IBottomButton {
@@ -197,7 +229,7 @@ const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPre
 
     return visibility ? (
         <>
-            <TouchableOpacity style={{ paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
+            <TouchableOpacity onPress={onPress} style={{ paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
                 <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
                 <Text style={{ color: colors.colorRed, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>

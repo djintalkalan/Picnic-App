@@ -7,10 +7,12 @@ export interface IGroupReducer {
 
 export interface IGroupDetail {
     group: any,
+    is_group_joined: any,
     groupMembers: Array<any>
 }
 const initialGroupDetailState = {
     group: null,
+    is_group_joined: 0,
     groupMembers: []
 }
 

@@ -1,4 +1,5 @@
 import ActionTypes, { action } from "app-store/action-types";
+import { IResourceType } from "app-store/actions";
 
 export interface INotificationSettings { message: number, group_message: number, event_creation: number, event_of_interests: number, is_notification_enabled: number }
 export interface IPrivacyState { events: number, users: number, groups: number, posts: number }
@@ -45,6 +46,8 @@ export const privacyStateReducer = (state: IPrivacyState = initialPrivacyState, 
 }
 
 export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, action: action): IPrivacyData => {
+    let newState = { ...state }
+    const { type, data }: { type: IResourceType, data: Array<any> } = action?.payload ?? {}
     switch (action.type) {
         case ActionTypes.SET_BLOCKED_MEMBERS:
             return { ...state, blockedUsers: action?.payload }
@@ -56,6 +59,31 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
             return { ...state, mutedGroups: action?.payload }
         case ActionTypes.SET_MUTED_POSTS:
             return { ...state, mutedPosts: action?.payload }
+        case ActionTypes.SET_MUTED_RESOURCE:
+            switch (type) {
+                case "message":
+                    return { ...state, mutedPosts: data }
+                case "event":
+                    return { ...state, mutedEvents: data }
+                case "group":
+                    return { ...state, mutedGroups: data }
+                default:
+                    break;
+            }
+            console.log("Changed State is ", state, data, type)
+            return newState
+        case ActionTypes.ADD_MUTED_RESOURCE:
+            switch (type) {
+                case "message":
+                    return { ...state, mutedPosts: [...state?.mutedPosts, ...data] }
+                case "event":
+                    return { ...state, mutedEvents: [...state?.mutedEvents, ...data] }
+                case "group":
+                    return { ...state, mutedGroups: [...state?.mutedGroups, ...data] }
+                default:
+                    break;
+            }
+            return newState
         default:
             return state
     }

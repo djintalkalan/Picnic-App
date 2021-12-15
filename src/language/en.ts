@@ -75,6 +75,8 @@ export const en = {
     share_picnic: "Share Picnic",
     logout: "Logout",
     join_now: "Join now",
+    join: "Join",
+    joined: "Joined",
     are_you_sure_want: "Are you sure you want to Logout",
     cancel: "Cancel",
     blocked_members: "Blocked member",
@@ -85,8 +87,10 @@ export const en = {
     search_location: "Search location",
     tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
     unblock: "Unblock",
+    unmute: "Unmute",
     muted: "Muted",
     mute_groups: "Mute groups",
+    mute_group: "Mute group",
     mute_events: "Mute events",
     create_group: "Create group",
     host_event: "Host Event",
@@ -119,5 +123,6 @@ export const en = {
     block: "Block",
     remove: "Remove",
     report: "Report",
+    group_details: "Group details",
 
 }

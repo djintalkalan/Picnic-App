@@ -17,6 +17,7 @@ const tabs: TabProps[] = [
     {
         title: Language.mute_events,
         name: "MuteEventTab",
+        // screen: (() => <View />),
         screen: MutedResources,
         initialParams: { type: 'event' }
 
