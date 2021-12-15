@@ -116,5 +116,8 @@ export const en = {
     export_chat: "Export chat",
     import_chat: "Import chat",
     update_group: "Update group",
+    block: "Block",
+    remove: "Remove",
+    report: "Report",
 
 }

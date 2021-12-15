@@ -121,8 +121,13 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createGroup, payload?.data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
+            if (payload?.data?._id) {
+                const groupDetail = store.getState().group?.groupDetail
+                yield put(setGroupDetail({ ...groupDetail, group: { ...groupDetail?.group, ...res?.data } }))
+            }
             NavigationService.goBack()
             if (payload.onSuccess) payload.onSuccess(res?.data)
+
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

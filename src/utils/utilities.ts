@@ -1,11 +1,13 @@
 
 import { config } from 'api';
 import { IPaginationState } from 'app-store/actions';
+import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import { ILocation } from 'src/database/Database';
+import { BottomMenuHolder } from './BottomMenuHolder';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
@@ -208,6 +210,10 @@ export const _showSuccessMessage = async (msg: string, showAlert = false) => {
 
 export const _showPopUpAlert = (data: IAlertType) => {
     PopupAlertHolder.alert(data)
+}
+
+export const _showBottomMenu = (data: IBottomMenu) => {
+    BottomMenuHolder.show(data)
 }
 
 

@@ -1,9 +1,10 @@
 import { persistor, store } from 'app-store/store';
 import { colors } from 'assets';
 import { Card, Loader, StatusBarProviderMemoized, Text } from 'custom-components';
+import { BottomMenu } from 'custom-components/BottomMenu';
 import { KeyboardProvider } from 'custom-components/KeyboardService';
 import { LocationServiceProvider } from 'custom-components/LocationService';
-import { PopupAlert } from 'custom-components/PopupAlert';
+// import { PopupAlert } from 'custom-components/PopupAlert';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import React, { FC, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -13,8 +14,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { scaler } from 'utils';
+import { BottomMenuHolder } from 'utils/BottomMenuHolder';
 import { DropDownHolder } from 'utils/DropdownHolder';
-import { PopupAlertHolder } from 'utils/PopupAlertHolder';
+// import { PopupAlertHolder } from 'utils/PopupAlertHolder';
 import Database from './database/Database';
 import MyNavigationContainer from './routes/MyNavigationContainer';
 const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
@@ -35,7 +37,8 @@ const App: FC = () => {
                 </PersistGate>
             </Provider>
             <DropdownAlertWithStatusBar />
-            <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
+            {/* <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} /> */}
+            <BottomMenu ref={ref => BottomMenuHolder.setBottomMenu(ref)} />
         </LocationServiceProvider>
     }, [])
     return (

@@ -24,6 +24,9 @@ interface MemberListItemProps {
     containerStyle?: StyleProp<ViewStyle>
     customRightTextStyle?: StyleProp<ViewStyle>
     customRightText?: string
+    onPressImage?: (e?: GestureResponderEvent) => void
+    onPress?: (e?: GestureResponderEvent) => void
+    onLongPress?: (e?: GestureResponderEvent) => void
 }
 
 export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false }) => {
@@ -45,24 +48,28 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
     )
 }
 
-export const MemberListItem: FC<MemberListItemProps> = ({ title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
+export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
     const [isError, setError] = useState(false)
     return (
-        <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
-            <Image onError={() => {
-                setError(true)
-            }} source={(isError || !icon) ? defaultIcon : icon} style={[styles.iconStyle, {
-                height: scaler(40),
-                width: scaler(40),
-            }]} />
-            <View style={[styles.textContainer, { justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }]} >
-                <Text style={styles.memberListTitle} >{title}</Text>
-                {customRightText ?
-                    <Text style={[styles.rightText, { ...StyleSheet.flatten(customRightTextStyle) }]} >{customRightText}</Text>
-                    : null}
-            </View>
+        <TouchableHighlight onLongPress={onLongPress} onPress={onPressImage} underlayColor={colors.colorWhite} >
+            <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
+                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
+                    <Image onError={() => {
+                        setError(true)
+                    }} source={(isError || !icon) ? defaultIcon : icon} style={[styles.iconStyle, {
+                        height: scaler(40),
+                        width: scaler(40),
+                    }]} />
+                </TouchableHighlight>
+                <View style={[styles.textContainer, { justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }]} >
+                    <Text style={styles.memberListTitle} >{title}</Text>
+                    {customRightText ?
+                        <Text style={[styles.rightText, { ...StyleSheet.flatten(customRightTextStyle) }]} >{customRightText}</Text>
+                        : null}
+                </View>
 
-        </View>
+            </View>
+        </TouchableHighlight>
     )
 }
 

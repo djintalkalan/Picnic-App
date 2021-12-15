@@ -3,17 +3,44 @@ import { RootState } from 'app-store'
 import { getGroupDetail } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
+import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { isEqual } from 'lodash'
+import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Dimensions, FlatList, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
-import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, scaler } from 'utils'
+import Language, { useLanguage } from 'src/language/Language'
+import { getImageUrl, getShortAddress, NavigationService, scaler, _showBottomMenu } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
+
+
+
 const GroupDetail: FC<any> = (props) => {
+    const language = useLanguage()
+    const BottomMenuButtons = useMemo<Array<IBottomMenuButton>>(() => [
+        {
+            title: Language.block,
+            onPress: () => {
+
+            }
+        },
+        {
+            title: Language.report,
+            onPress: () => {
+
+            }
+        },
+        {
+            title: Language.remove,
+            onPress: () => {
+
+            },
+            textStyle: { color: colors.colorRed }
+        }
+    ], [language])
 
     const [isOpened, setOpened] = useState(false)
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
@@ -21,13 +48,15 @@ const GroupDetail: FC<any> = (props) => {
     const dispatch = useDispatch()
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
-    const { group, groupMembers } = useSelector<RootState, { group: any, groupMembers: Array<any> }>(state => ({
+    const { group, groupMembers } = useSelector((state: RootState) => ({
         group: state?.group?.groupDetail?.group,
         groupMembers: state?.group?.groupDetail?.groupMembers,
-    }))
+    }), isEqual)
+
+    // console.log("group", group)
 
     useLayoutEffect(() => {
-        console.log("payload", props)
+        // console.log("payload", props)
         dispatch(getGroupDetail(props?.route?.params?.id))
     }, [])
 
@@ -41,6 +70,11 @@ const GroupDetail: FC<any> = (props) => {
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
             <MemberListItem
+                onLongPress={item?.is_admin ? undefined : () => {
+                    _showBottomMenu({
+                        buttons: BottomMenuButtons
+                    })
+                }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.display_name}
                 customRightText={item?.is_admin ? Language?.admin : ""}
