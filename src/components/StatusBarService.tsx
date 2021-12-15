@@ -62,3 +62,5 @@ export const withStatusBar = (Component: any) => {
     };
 };
 
+export const StatusBarProviderMemoized: FC<StatusBarProviderProps> = React.memo(StatusBarProvider)
+

@@ -1,11 +1,11 @@
 import { persistor, store } from 'app-store/store';
 import { colors } from 'assets';
-import { Card, Loader, StatusBarProvider, Text } from 'custom-components';
+import { Card, Loader, StatusBarProviderMemoized, Text } from 'custom-components';
 import { KeyboardProvider } from 'custom-components/KeyboardService';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { PopupAlert } from 'custom-components/PopupAlert';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -26,21 +26,24 @@ const App: FC = () => {
             // recentSearches: null
         })
     }, [])
+    const getChildren = useCallback(() => {
+        return <LocationServiceProvider>
+            <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                    <MyNavigationContainer />
+                    <Loader />
+                </PersistGate>
+            </Provider>
+            <DropdownAlertWithStatusBar />
+            <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
+        </LocationServiceProvider>
+    }, [])
     return (
         <View style={styles.container} >
             <KeyboardProvider>
-                <StatusBarProvider backgroundColor={colors.colorWhite} barStyle={'dark-content'} >
-                    <LocationServiceProvider>
-                        <Provider store={store}>
-                            <PersistGate persistor={persistor}>
-                                <MyNavigationContainer />
-                                <Loader />
-                            </PersistGate>
-                        </Provider>
-                        <DropdownAlertWithStatusBar />
-                        <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
-                    </LocationServiceProvider>
-                </StatusBarProvider>
+                <StatusBarProviderMemoized backgroundColor={colors.colorWhite} barStyle={'dark-content'} >
+                    {getChildren()}
+                </StatusBarProviderMemoized>
             </KeyboardProvider>
         </View>
     )

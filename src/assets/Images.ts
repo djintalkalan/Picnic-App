@@ -36,6 +36,14 @@ export const Images = {
     ic_line: require("./images/ic_line.png"),
     ic_group_placeholder: require("./images/ic_group_placeholder.png"),
     ic_hidden_posts: require("./images/ic_hidden_posts.png"),
-    // ic_hidden_posts: require("./images/ic_hidden_posts.png"),
+    ic_group_example: require("./images/ic_group_example.png"),
+    ic_briefcase: require("./images/ic_briefcase.png"),
+    ic_group_events: require("./images/ic_group_events.png"),
+    ic_back_group: require("./images/ic_back_group.png"),
+    ic_more_group: require("./images/ic_more_group.png"),
+    ic_delete: require("./images/ic_delete.png"),
+    ic_leave_group: require("./images/ic_leave_group.png"),
+    ic_report_group: require("./images/ic_report_group.png"),
+    // ic_delete: require("./images/ic_delete.png"),
 
 }

@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/EventList'
-import GroupList from 'screens/GroupList'
+import GroupList from 'screens/Group/GroupList'
 import { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler } from 'utils'
@@ -38,9 +38,9 @@ const Home: FC = () => {
     }
     const dispatch = useDispatch()
 
-    const { groupLength, eventLength } = useSelector((state: RootState) => ({
+    const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
         eventLength: 0,
-        groupLength: state?.allGroups?.length
+        groupLength: state?.group?.allGroups?.length
     }))
     const [currentTabIndex, setCurrentTabIndex] = useState(0)
     const [userData] = useDatabase("userData");

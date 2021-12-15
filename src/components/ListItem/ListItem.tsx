@@ -1,7 +1,7 @@
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
 import React, { FC, useState } from 'react'
-import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native'
+import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, View, ViewStyle } from 'react-native'
 import { scaler } from 'utils'
 
 interface ListItemProps {
@@ -10,44 +10,58 @@ interface ListItemProps {
     icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
     isSelected: boolean
+    onPressImage?: (e?: GestureResponderEvent) => void
+    onPress?: (e?: GestureResponderEvent) => void
+    containerStyle?: StyleProp<ViewStyle>
+
 }
 
 interface MemberListItemProps {
     title: string
-    icon: ImageSourcePropType
+    icon?: ImageSourcePropType | null
     defaultIcon: ImageSourcePropType
-    isSelected: boolean
+    isSelected?: boolean,
+    containerStyle?: StyleProp<ViewStyle>
+    customRightTextStyle?: StyleProp<ViewStyle>
+    customRightText?: string
 }
 
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, isSelected = false }) => {
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false }) => {
     const [isError, setError] = useState(false)
-    console.log("ICON", icon)
     return (
-        <View style={styles.container} >
-            <Image onError={() => {
-                setError(true)
-            }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
-            <View style={styles.textContainer} >
-                <Text style={styles.title} >{title}</Text>
-                <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
+        <TouchableHighlight onPress={onPressImage} underlayColor={colors.colorPrimary} >
+            <View style={styles.container} >
+                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
+                    <Image onError={() => {
+                        setError(true)
+                    }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
+                </TouchableHighlight>
+                <View style={styles.textContainer} >
+                    <Text style={styles.title} >{title}</Text>
+                    <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
+                </View>
             </View>
-        </View>
+        </TouchableHighlight>
     )
 }
 
-export const MemberListItem: FC<MemberListItemProps> = ({ title, icon, defaultIcon, isSelected = false }) => {
+export const MemberListItem: FC<MemberListItemProps> = ({ title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
     const [isError, setError] = useState(false)
     return (
-        <View style={styles.container} >
+        <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
             <Image onError={() => {
                 setError(true)
             }} source={(isError || !icon) ? defaultIcon : icon} style={[styles.iconStyle, {
                 height: scaler(40),
                 width: scaler(40),
             }]} />
-            <View style={[styles.textContainer, { justifyContent: 'center' }]} >
+            <View style={[styles.textContainer, { justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }]} >
                 <Text style={styles.memberListTitle} >{title}</Text>
+                {customRightText ?
+                    <Text style={[styles.rightText, { ...StyleSheet.flatten(customRightTextStyle) }]} >{customRightText}</Text>
+                    : null}
             </View>
+
         </View>
     )
 }
@@ -76,6 +90,7 @@ const styles = StyleSheet.create({
     },
     memberListTitle: {
         color: "#272727",
+        flex: 1,
         fontWeight: '400',
         fontSize: scaler(14)
     },
@@ -84,5 +99,10 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: scaler(11),
         maxWidth: '80%'
+    },
+    rightText: {
+        color: colors.colorPrimary,
+        fontWeight: '500',
+        fontSize: scaler(11),
     }
 })

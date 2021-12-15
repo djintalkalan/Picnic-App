@@ -14,10 +14,11 @@ import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
 import BlockedMembers from 'screens/BlockedMembers';
-import CreateGroup from 'screens/CreateGroup/CreateGroup';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
+import CreateGroup from 'screens/Group/CreateGroup';
+import GroupDetail from 'screens/Group/GroupDetail';
 import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
@@ -55,6 +56,7 @@ const dashboardScreens = {
     SelectLocation: SelectLocation,
     GooglePlacesTextInput: GooglePlacesTextInput,
     CreateGroup: CreateGroup,
+    GroupDetail: GroupDetail,
 };
 
 const MyNavigationContainer = () => {

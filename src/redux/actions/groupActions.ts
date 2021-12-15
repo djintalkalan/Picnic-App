@@ -31,8 +31,18 @@ export const getGroupDetail = (payload: any) => ({
     payload
 })
 
+export const setGroupDetail = (payload: any) => ({
+    type: ActionTypes.SET_GROUP_DETAIL,
+    payload
+})
+
 export const getGroupMembers = (payload: any) => ({
     type: ActionTypes.GET_GROUP_MEMBERS,
+    payload
+})
+
+export const setGroupMembers = (payload: Array<any>) => ({
+    type: ActionTypes.SET_GROUP_MEMBERS,
     payload
 })
 

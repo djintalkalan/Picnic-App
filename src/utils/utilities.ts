@@ -366,3 +366,11 @@ export const InitialPaginationState: IPaginationState = {
     totalPages: -1,
     perPage: 20
 }
+
+export const getShortAddress = (address: string, state: string, city?: string) => {
+    try {
+        return address.substring(0, address?.indexOf(city ?? state) - 2) || address
+    } catch (e) {
+        return address
+    }
+}

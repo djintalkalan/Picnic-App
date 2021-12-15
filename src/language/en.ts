@@ -107,6 +107,14 @@ export const en = {
     by_clicking_here: " by clicking here or",
     change_the_location: "change the location",
     more: "More",
-
+    delete_group: "Delete group",
+    leave_group: "Leave group",
+    report_group: "Report group",
+    admin: "Admin",
+    edit: "Edit",
+    share: "Share",
+    export_chat: "Export chat",
+    import_chat: "Import chat",
+    update_group: "Update group",
 
 }

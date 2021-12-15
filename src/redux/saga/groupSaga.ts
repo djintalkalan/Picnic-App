@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setAllGroups, setLoadingAction } from "app-store/actions";
+import { getGroupMembers, setAllGroups, setGroupDetail, setGroupMembers, setLoadingAction } from "app-store/actions";
 import { setBlockedMembers, setPrivacyState } from 'app-store/actions/profileActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
@@ -118,7 +118,7 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
 function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._createGroup, payload?.data);
+        let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createGroup, payload?.data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             NavigationService.goBack()
@@ -138,7 +138,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let groupList = store.getState()?.allGroups
+    let groupList = store.getState()?.group?.allGroups
     if (!groupList?.length)
         yield put(setLoadingAction(true));
     try {
@@ -169,6 +169,49 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> {
+    // const state:RootState = 
+    let groupDetail = store.getState()?.group?.groupDetail
+    if (!groupDetail)
+        yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._getGroupDetail, payload);
+        if (res.status == 200) {
+            if (res?.data?.group?.is_admin)
+                yield put(getGroupMembers(payload))
+            yield put(setGroupDetail(res?.data))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _getGroupMembers({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let res = yield call(ApiProvider._getGroupMembers, payload);
+        if (res.status == 200) {
+            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
+            yield put(setGroupMembers(res?.data))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchGroups() {
@@ -179,6 +222,8 @@ export default function* watchGroups() {
 
     yield takeLatest(ActionTypes.CREATE_GROUP, _createGroup);
     yield takeLatest(ActionTypes.GET_ALL_GROUPS, _getAllGroups);
+    yield takeLatest(ActionTypes.GET_GROUP_DETAIL, _getGroupDetail);
+    yield takeLatest(ActionTypes.GET_GROUP_MEMBERS, _getGroupMembers);
 
 
 };
