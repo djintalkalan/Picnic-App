@@ -1,9 +1,10 @@
-import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
 
 type KeyboardValues = {
     isKeyboard: boolean
     dismissKeyboard: () => void
+    openKeyboardAccessory: (v: ReactNode) => void
     keyboardHeight: number
 }
 const KeyboardContext = createContext<KeyboardValues>({
@@ -11,14 +12,24 @@ const KeyboardContext = createContext<KeyboardValues>({
     dismissKeyboard: () => {
 
     },
+    openKeyboardAccessory: () => { },
     keyboardHeight: 0
 })
 
 export const KeyboardProvider: FC<any> = ({ children }) => {
     const [isKeyboard, setKeyboard] = useState(false)
+    const [toggle, setToggle] = useState(false)
     const keyboardHeight = useRef(0);
     const dismissKeyboard = useCallback(() => {
         Keyboard.dismiss()
+    }, [])
+
+    let accessoryView = useRef<ReactNode>(null)
+
+    const openKeyboardAccessory = useCallback((MyView: ReactNode) => {
+        console.log("opening", MyView)
+        accessoryView.current = MyView
+        setToggle(_ => !_)
     }, [])
 
 
@@ -28,6 +39,9 @@ export const KeyboardProvider: FC<any> = ({ children }) => {
             setKeyboard(true)
         })
         const willHide = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
+            // if (accessoryView.current) {
+            //     accessoryView.current = null
+            // }
             keyboardHeight.current = 0
             setKeyboard(false)
         })
@@ -38,9 +52,12 @@ export const KeyboardProvider: FC<any> = ({ children }) => {
         }
     }, [])
 
+    console.log(accessoryView)
+
     return (
-        <KeyboardContext.Provider value={{ isKeyboard, dismissKeyboard, keyboardHeight: keyboardHeight.current }}  >
+        <KeyboardContext.Provider value={{ openKeyboardAccessory, isKeyboard, dismissKeyboard, keyboardHeight: keyboardHeight.current }}  >
             {children}
+            {isKeyboard && Platform.OS == 'android' && accessoryView.current}
         </KeyboardContext.Provider>)
 }
 

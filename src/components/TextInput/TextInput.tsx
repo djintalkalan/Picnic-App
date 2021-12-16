@@ -1,4 +1,5 @@
 import { colors, Fonts } from "assets";
+import { useKeyboardService } from "custom-components";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
@@ -34,6 +35,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
     const [isFocused, setFocused] = useState(false)
     const { style, borderColor = "#E9E9E9", backgroundColor, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
+    const { openKeyboardAccessory } = useKeyboardService()
     const styles = useMemo(() => {
 
         return StyleSheet.create({
@@ -44,7 +46,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 // flex: 1,
                 paddingLeft: scaler(10),
                 // backgroundColor: 'red',
-                height: !multiline ? height : 'auto',
+                // height: !multiline ? height : 'auto',
                 minHeight: multiline ? height + scaler(4) : undefined,
                 color: colors.colorBlack,
                 // backgroundColor: 'red',
@@ -117,10 +119,20 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 inputAccessoryViewID={multiline ? name : undefined}
                                 autoCorrect={false}
                                 onFocus={(e) => {
+                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory(
+                                        <View style={styles.accessory}>
+                                            <TouchableOpacity onPress={() => {
+                                                Keyboard.dismiss()
+                                            }} style={{ padding: scaler(8) }} >
+                                                <Text style={{ fontWeight: '500', color: colors.colorPrimary, fontSize: scaler(14) }} >{Language.done}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
                                     setFocused(true)
                                     onFocus && onFocus(e)
                                 }}
                                 onBlur={(e) => {
+                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory(null)
                                     setFocused(false)
                                     onBlurC()
                                     onBlur && onBlur(e)
@@ -135,14 +147,15 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     <Image style={{ height: iconSize, width: iconSize }} source={icon} />
                                 </TouchableOpacity>
                                 : null}
-                            {multiline && Platform.OS == 'ios' && <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={name}   >
-                                <View style={styles.accessory}>
-                                    <Button
-                                        onPress={() => Keyboard.dismiss()}
-                                        title="Done"
-                                    />
-                                </View>
-                            </InputAccessoryView>}
+                            {multiline && Platform.OS == 'ios' &&
+                                <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={name}   >
+                                    <View style={styles.accessory}>
+                                        <Button
+                                            onPress={() => Keyboard.dismiss()}
+                                            title="Done"
+                                        />
+                                    </View>
+                                </InputAccessoryView>}
                         </>
                     )}
                 /> :
@@ -159,10 +172,18 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                             inputAccessoryViewID={multiline ? name : undefined}
                             // placeholder={!isFocused ? placeholder : ""}
                             onFocus={(e) => {
+                                (multiline && Platform.OS == 'android') && openKeyboardAccessory(
+                                    <View style={styles.accessory}>
+                                        <TouchableOpacity style={{ padding: scaler(10) }} >
+                                            <Text>{Language.done}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
                                 setFocused(true)
                                 onFocus && onFocus(e)
                             }}
                             onBlur={(e) => {
+                                (multiline && Platform.OS == 'android') && openKeyboardAccessory(null)
                                 setFocused(false)
                                 onBlur && onBlur(e)
                             }}
@@ -176,7 +197,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 <Image style={{ height: iconSize, width: iconSize }} source={icon} />
                             </TouchableOpacity>
                             : null}
-                        {multiline && <InputAccessoryView nativeID={name}   >
+                        {multiline && Platform.OS == 'ios' && <InputAccessoryView nativeID={name}   >
                             <View style={styles.accessory}>
                                 <Button
                                     onPress={() => Keyboard.dismiss()}
