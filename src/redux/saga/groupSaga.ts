@@ -1,6 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getGroupDetail, getGroupMembers, IResourceType, setAllGroups, setGroupDetail, setGroupMembers, setLoadingAction } from "app-store/actions";
-import { addMutedResource, setBlockedMembers, setMutedResource, setPrivacyState } from 'app-store/actions/profileActions';
+import { addMutedResource, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -90,7 +89,6 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
 function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, any> {
     const { resource_type }: { resource_type: IResourceType } = payload?.data
     yield put(setLoadingAction(true));
-
     try {
         let res = yield call(ApiProvider._muteUnmuteResource, payload?.data);
         if (res.status == 200) {
@@ -99,8 +97,7 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
             if (payload?.data?.is_mute == "1")
                 yield put(setAllGroups(store?.getState()?.group?.allGroups.filter(_ => _._id != payload?.data?.resource_id)))
             else {
-                const oldData = store?.getState()?.privacyData?.[resource_type == 'group' ? 'mutedGroups' : resource_type == 'event' ? 'mutedEvents' : "mutedPosts"]
-                yield put(setMutedResource({ data: oldData.filter(_ => _.resource_id != payload?.data?.resource_id), type: resource_type }))
+                yield put(removeMutedResource({ data: payload?.data?.resource_id, type: resource_type }))
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -172,8 +169,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
-                const groupDetail = store.getState().group?.groupDetail
-                yield put(setGroupDetail({ ...groupDetail, group: { ...groupDetail?.group, ...res?.data } }))
+                yield put(updateGroupDetail(res?.data))
             }
             NavigationService.goBack()
             if (payload.onSuccess) payload.onSuccess(res?.data)
@@ -272,10 +268,7 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._joinGroup, payload);
         if (res.status == 200) {
-            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
-            let { allGroups } = store?.getState().group
-            allGroups = allGroups.map(_ => (_._id == payload ? { ..._, is_group_member: true } : _))
-            yield put(setAllGroups(allGroups))
+            yield put(joinGroupSuccess(payload))
             if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
                 yield put(getGroupDetail(payload))
             }
@@ -297,10 +290,7 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leaveGroup, payload);
         if (res.status == 200) {
-            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
-            let { allGroups } = store?.getState().group
-            allGroups = allGroups.map(_ => (_._id == payload ? { ..._, is_group_member: false } : _))
-            yield put(setAllGroups(allGroups))
+            yield put(leaveGroupSuccess(payload))
             if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
                 NavigationService.goBack()
             }

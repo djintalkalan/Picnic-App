@@ -28,6 +28,11 @@ export const setMutedResource = (payload: { data: any, type: IResourceType }) =>
     payload
 })
 
+export const removeMutedResource = (payload: { data: string, type: IResourceType }) => ({
+    type: ActionTypes.REMOVE_MUTED_RESOURCE,
+    payload
+})
+
 export const setMutedEvents = (payload: Array<any>) => ({
     type: ActionTypes.SET_MUTED_EVENTS,
     payload

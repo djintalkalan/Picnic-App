@@ -28,10 +28,10 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         }
     }
 
-    title: string = ""
+    title: string = "Hello"
     image: ImageURISource | null = null
-    message: string = ""
-    buttonText: string = ''
+    message: string = "This is me"
+    buttonText: string = 'Press me'
     isCloseButton = false
     onPressButton: () => (undefined | null | void) | undefined | null = () => this.setState({ alertVisible: false })
     onPressCloseButton: () => void = () => this.setState({ alertVisible: false })

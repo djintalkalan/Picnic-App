@@ -46,8 +46,20 @@ export const privacyStateReducer = (state: IPrivacyState = initialPrivacyState, 
 }
 
 export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, action: action): IPrivacyData => {
-    let newState = { ...state }
-    const { type, data }: { type: IResourceType, data: Array<any> } = action?.payload ?? {}
+    const { type, data }: { type: IResourceType, data: any } = action?.payload ?? {}
+    let updateKey: 'mutedGroups' | 'mutedPosts' | 'mutedEvents'
+    switch (type) {
+        case "message":
+            updateKey = "mutedPosts"
+            break;
+        case "event":
+            updateKey = "mutedEvents"
+            break;
+        case "group":
+            updateKey = "mutedGroups"
+            break;
+    }
+
     switch (action.type) {
         case ActionTypes.SET_BLOCKED_MEMBERS:
             return { ...state, blockedUsers: action?.payload }
@@ -60,30 +72,11 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
         case ActionTypes.SET_MUTED_POSTS:
             return { ...state, mutedPosts: action?.payload }
         case ActionTypes.SET_MUTED_RESOURCE:
-            switch (type) {
-                case "message":
-                    return { ...state, mutedPosts: data }
-                case "event":
-                    return { ...state, mutedEvents: data }
-                case "group":
-                    return { ...state, mutedGroups: data }
-                default:
-                    break;
-            }
-            console.log("Changed State is ", state, data, type)
-            return newState
+            return { ...state, [updateKey]: data }
+        case ActionTypes.REMOVE_MUTED_RESOURCE:
+            return { ...state, [updateKey]: state?.[updateKey]?.filter(_ => _?.resource_id != data) }
         case ActionTypes.ADD_MUTED_RESOURCE:
-            switch (type) {
-                case "message":
-                    return { ...state, mutedPosts: [...state?.mutedPosts, ...data] }
-                case "event":
-                    return { ...state, mutedEvents: [...state?.mutedEvents, ...data] }
-                case "group":
-                    return { ...state, mutedGroups: [...state?.mutedGroups, ...data] }
-                default:
-                    break;
-            }
-            return newState
+            return { ...state, [updateKey]: [...state?.[updateKey], ...data] }
         default:
             return state
     }

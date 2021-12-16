@@ -8,7 +8,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useDispatch, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getImageUrl, getShortAddress, scaler } from 'utils'
@@ -25,13 +25,12 @@ const MutedResources: FC<any> = (props) => {
     const type: IResourceType = props?.route?.params?.type
 
     const { isLoading, mutedGroups, mutedEvents } = useSelector((state: RootState) => {
-        console.log("state", state)
         return ({
             isLoading: state.isLoading,
             mutedGroups: state?.privacyData?.mutedGroups,
             mutedEvents: state?.privacyData?.mutedEvents
         })
-    })
+    }, shallowEqual)
 
     const mutedResource = type == 'group' ? mutedGroups : mutedEvents
 

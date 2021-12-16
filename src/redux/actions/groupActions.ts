@@ -36,6 +36,11 @@ export const setGroupDetail = (payload: any) => ({
     payload
 })
 
+export const updateGroupDetail = (payload: any) => ({
+    type: ActionTypes.UPDATE_GROUP_DETAIL,
+    payload
+})
+
 export const getGroupMembers = (payload: any) => ({
     type: ActionTypes.GET_GROUP_MEMBERS,
     payload
@@ -68,6 +73,16 @@ export const addInGroup = (payload: Array<any>) => ({
 
 export const setAllGroups = (payload: Array<any>) => ({
     type: ActionTypes.SET_ALL_GROUPS,
+    payload
+})
+
+export const joinGroupSuccess = (payload: Array<any>) => ({
+    type: ActionTypes.JOIN_GROUP_SUCCESS,
+    payload
+})
+
+export const leaveGroupSuccess = (payload: Array<any>) => ({
+    type: ActionTypes.LEAVE_GROUP_SUCCESS,
     payload
 })
 
