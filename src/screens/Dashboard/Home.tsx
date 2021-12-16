@@ -64,7 +64,7 @@ const Home: FC = () => {
                     <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{ borderRadius: scaler(18), }} onPress={() => {
+                <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
                     NavigationService.navigate("ProfileScreen")
                 }} >
                     <Image style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}

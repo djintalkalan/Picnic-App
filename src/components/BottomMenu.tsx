@@ -1,7 +1,7 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
-import React, { PureComponent } from "react";
-import { FlatList, GestureResponderEvent, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import React, { Component } from "react";
+import { FlatList, GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -25,7 +25,7 @@ export interface IBottomMenu {
     cancelButtonContainerStyle?: StyleProp<ViewStyle>
 }
 
-export class BottomMenu extends PureComponent<BottomMenuProps, { alertVisible: boolean }> {
+export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boolean }> {
     constructor(props: BottomMenuProps) {
         super(props)
         this.state = {
@@ -80,7 +80,7 @@ export class BottomMenu extends PureComponent<BottomMenuProps, { alertVisible: b
                         />
                     </View>
 
-                    <TouchableOpacity onPress={this.onPressCloseButton} activeOpacity={0.9} style={[styles.alertContainer, { paddingVertical: scaler(15) }, this.cancelButtonContainerStyle]} >
+                    <TouchableOpacity onPress={this.onPressCloseButton} activeOpacity={0.9} style={[styles.alertContainer, { paddingVertical: scaler(15), marginBottom: Platform.OS == 'android' ? scaler(10) : 0 }, this.cancelButtonContainerStyle]} >
                         <Text style={[styles.title, this.cancelTextStyle]} >{this.cancelButtonText}</Text>
                     </TouchableOpacity>
 

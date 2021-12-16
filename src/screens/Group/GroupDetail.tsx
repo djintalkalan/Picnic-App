@@ -1,16 +1,16 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
-import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
+import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, getShortAddress, NavigationService, scaler, _showBottomMenu } from 'utils'
 const { height, width } = Dimensions.get('screen')
@@ -20,27 +20,39 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 
 const GroupDetail: FC<any> = (props) => {
     const language = useLanguage()
-    const BottomMenuButtons = useMemo<Array<IBottomMenuButton>>(() => [
-        {
-            title: Language.block,
-            onPress: () => {
-
-            }
-        },
-        {
-            title: Language.report,
-            onPress: () => {
-
-            }
-        },
-        {
-            title: Language.remove,
-            onPress: () => {
-
+    const userData = useDatabase('userData')
+    const getBottomMenuButtons = useCallback((item) => {
+        console.log("Item", item)
+        return [
+            {
+                title: Language.block,
+                onPress: () => {
+                    dispatch(blockUnblockResource({
+                        data: { resource_id: item?.user_id, resource_type: 'user', is_blocked: '1' }
+                    }))
+                }
             },
-            textStyle: { color: colors.colorRed }
-        }
-    ], [language])
+            {
+                title: Language.report,
+                onPress: () => {
+                    dispatch(reportResource({
+                        resource_type: 'user',
+                        resource_id: item?.user_id
+                    }))
+                }
+            },
+            {
+                title: Language.remove,
+                onPress: () => {
+                    dispatch(removeGroupMember({
+                        resource_id: item?.resource_id,
+                        user_id: item?.user_id
+                    }))
+                },
+                textStyle: { color: colors.colorRed }
+            }
+        ]
+    }, [language])
 
     const [isOpened, setOpened] = useState(false)
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
@@ -72,7 +84,7 @@ const GroupDetail: FC<any> = (props) => {
             <MemberListItem
                 onLongPress={item?.is_admin ? undefined : () => {
                     _showBottomMenu({
-                        buttons: BottomMenuButtons
+                        buttons: getBottomMenuButtons(item)
                     })
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
@@ -97,7 +109,7 @@ const GroupDetail: FC<any> = (props) => {
             <BottomButton
                 title={Language.leave_group}
                 icon={Images.ic_leave_group}
-                visibility={is_group_joined}
+                visibility={is_group_joined && !group?.is_admin}
                 onPress={() => {
                     dispatch(leaveGroup(group?._id))
                 }} />
@@ -113,7 +125,7 @@ const GroupDetail: FC<any> = (props) => {
             <BottomButton
                 title={Language.report_group}
                 icon={Images.ic_report_group}
-                visibility
+                visibility={!group?.is_admin}
                 onPress={() => {
                     dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
                 }} />

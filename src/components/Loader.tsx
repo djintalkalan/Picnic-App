@@ -1,4 +1,5 @@
 import { RootState } from 'app-store';
+import { colors } from 'assets/Colors';
 import { isEqual } from 'lodash';
 import React, { FC } from 'react';
 import Spinner from "react-native-loading-spinner-overlay";
@@ -20,7 +21,7 @@ export const Loader: FC<LoaderProps> = (props) => {
         return (
             <Spinner
                 visible={props?.loading || isLoading}
-                color={'#fc9f04'}
+                color={colors.colorPrimary}
                 overlayColor={'rgba(0, 0, 0, 0.6)'}
             />
         )

@@ -171,6 +171,11 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 if (onChangeText) onChangeText(text);
                             }}
                         />
+                        {icon && iconPosition == 'right' ?
+                            <TouchableOpacity disabled={!onPressIcon} onPress={onPressIcon} activeOpacity={0.7} style={{ position: 'absolute', end: scaler(15), justifyContent: 'center' }} >
+                                <Image style={{ height: iconSize, width: iconSize }} source={icon} />
+                            </TouchableOpacity>
+                            : null}
                         {multiline && <InputAccessoryView nativeID={name}   >
                             <View style={styles.accessory}>
                                 <Button

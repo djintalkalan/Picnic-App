@@ -77,7 +77,7 @@ export const en = {
     join_now: "Join now",
     join: "Join",
     joined: "Joined",
-    are_you_sure_want: "Are you sure you want to Logout",
+    are_you_sure_logout: "Are you sure you want to Logout",
     cancel: "Cancel",
     blocked_members: "Blocked member",
     muted_group: "Muted group/event",
@@ -112,6 +112,7 @@ export const en = {
     change_the_location: "change the location",
     more: "More",
     delete_group: "Delete group",
+    delete_account: "Delete account",
     leave_group: "Leave group",
     report_group: "Report group",
     admin: "Admin",
@@ -124,5 +125,9 @@ export const en = {
     remove: "Remove",
     report: "Report",
     group_details: "Group details",
+    are_you_sure_delete_account: "Are you sure you want to Delete account",
+    yes_delete_account: "Yes, Delete account",
+    yes_logout: "Yes, Logout",
+    enter_password_to_delete: "Enter password to delete the account"
 
 }

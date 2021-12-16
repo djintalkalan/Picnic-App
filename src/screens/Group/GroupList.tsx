@@ -100,6 +100,7 @@ const GroupList: FC<any> = (props) => {
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
                 title={item?.name}
+                // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'groups' }) } : undefined}
                 subtitle={getShortAddress(item.address, item?.state)}
                 isSelected={is_group_member}
@@ -212,7 +213,7 @@ const GroupList: FC<any> = (props) => {
                 <View style={{ flex: 1, padding: '10%', backgroundColor: 'rgba(0, 0, 0, 0.49)', alignItems: 'center', justifyContent: 'center' }} >
                     <View style={styles.alertContainer} >
 
-                        <Text style={{ marginTop: scaler(10), paddingHorizontal: '10%', textAlign: 'center', color: colors.colorPlaceholder, fontSize: scaler(14), fontWeight: '500' }} >{Language.are_you_sure_want}</Text>
+                        <Text style={{ marginTop: scaler(10), paddingHorizontal: '10%', textAlign: 'center', color: colors.colorPlaceholder, fontSize: scaler(14), fontWeight: '500' }} >{Language.are_you_sure_logout}</Text>
 
                         <Button
                             onPress={() => {

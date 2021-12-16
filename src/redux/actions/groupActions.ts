@@ -1,5 +1,5 @@
 import ActionTypes from "app-store/action-types";
-export type IResourceType = 'event' | 'group' | 'message'
+export type IResourceType = 'event' | 'group' | 'message' | 'user'
 export const createGroup = (payload: any) => ({
     type: ActionTypes.CREATE_GROUP,
     payload
@@ -56,6 +56,13 @@ export const removeGroupMember = (payload: any) => ({
     payload
 })
 
+export const removeGroupMemberSuccess = (payload: any) => ({
+    type: ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS,
+    payload
+})
+
+
+
 export const getAllGroups = (payload: any) => ({
     type: ActionTypes.GET_ALL_GROUPS,
     payload
@@ -101,7 +108,7 @@ export const getBlockedMembers = (payload?: { onSuccess: (data: any) => void, pa
     payload
 })
 
-export const blockUnblockResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_blocked: '1' | '0' }, onSuccess: (res: any) => void }) => ({
+export const blockUnblockResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_blocked: '1' | '0' }, onSuccess?: (res: any) => void }) => ({
     type: ActionTypes.BLOCK_UNBLOCK_RESOURCE,
     payload
 })

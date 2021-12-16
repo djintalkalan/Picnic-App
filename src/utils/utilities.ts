@@ -212,6 +212,10 @@ export const _showPopUpAlert = (data: IAlertType) => {
     PopupAlertHolder.alert(data)
 }
 
+export const _hidePopUpAlert = () => {
+    PopupAlertHolder.hide()
+}
+
 export const _showBottomMenu = (data: IBottomMenu) => {
     BottomMenuHolder.show(data)
 }
