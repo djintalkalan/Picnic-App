@@ -240,6 +240,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.tell_us_about}
                         name={'about'}
                         multiline
+                        limit={20}
                         style={{ minHeight: scaler(80), maxHeight: scaler(160), textAlignVertical: 'top' }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}

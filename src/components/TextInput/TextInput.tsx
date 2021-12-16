@@ -25,6 +25,7 @@ interface TextInputProps extends RNTextInputProps {
     iconPosition?: 'left' | 'right',
     errors?: FieldErrors
     backgroundColor?: ColorValue
+    limit?: number
     borderColor?: ColorValue
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
 }
@@ -33,7 +34,7 @@ interface TextInputProps extends RNTextInputProps {
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, borderColor = "#E9E9E9", backgroundColor, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
     const { openKeyboardAccessory } = useKeyboardService()
     const styles = useMemo(() => {
@@ -90,10 +91,11 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
                     backgroundColor: backgroundColor ?? colors.colorWhite,
                     // padding: scaler(2),
-                    paddingVertical: scaler(10),
+                    paddingTop: scaler(10),
+                    paddingBottom: (multiline && limit) ? scaler(25) : scaler(10),
                     marginTop: scaler(5),
                     borderWidth: scaler(1.2),
-                    borderRadius: scaler(8),
+                    borderRadius: scaler(8)
                     // shadowOffset: { width: 0, height: 1 },
                     // shadowRadius: scaler(1),
                     // elevation: 2,
@@ -118,6 +120,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 multiline={multiline}
                                 inputAccessoryViewID={multiline ? name : undefined}
                                 autoCorrect={false}
+                                maxLength={limit}
                                 onFocus={(e) => {
                                     (multiline && Platform.OS == 'android') && openKeyboardAccessory(
                                         <View style={styles.accessory}>
@@ -156,6 +159,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                         />
                                     </View>
                                 </InputAccessoryView>}
+                            {multiline && limit && isFocused && <Text style={{ position: 'absolute', color: "#9A9A9A", fontSize: scaler(10), end: scaler(10), bottom: scaler(5) }} >{value?.length || 0}/{limit}</Text>}
                         </>
                     )}
                 /> :
@@ -205,6 +209,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 />
                             </View>
                         </InputAccessoryView>}
+                        {multiline && limit && isFocused && <Text style={{ position: 'absolute', color: "#9A9A9A", fontSize: scaler(10), end: scaler(10), bottom: scaler(5) }} >{value?.length || 0}/{limit}</Text>}
                     </>}
             </View>
             {/* {console.log("errors", errors)} */}
