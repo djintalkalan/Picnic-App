@@ -1,6 +1,14 @@
 import {createGroup, uploadFile} from 'app-store/actions';
 import {colors, Images} from 'assets';
-import {Button, FixedDropdown, MyHeader, TextInput} from 'custom-components';
+import {
+  Button,
+  CheckBox,
+  FixedDropdown,
+  MyHeader,
+  Stepper,
+  Text,
+  TextInput,
+} from 'custom-components';
 import {capitalize} from 'lodash';
 import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -27,22 +35,19 @@ import {
 
 type FormType = {
   name: string;
-  purpose: string;
+  selectGroup: string;
   location: string;
   about: string;
 };
 
 const DropDownData = ['Personal', 'Professional', 'Charitable'];
 
-const CreateGroup: FC<any> = props => {
-  const {group} = props?.route?.params ?? {};
+const Event1: FC<any> = props => {
   const uploadedImage = useRef('');
-  const dispatch = useDispatch();
-  const [isEditEnabled, setEditEnabled] = useState(false);
   const [profileImage, setProfileImage] = useState<any>();
   const locationRef = useRef<ILocation>();
   const locationInputRef = useRef<RNTextInput>(null);
-  const [isDropdown, setDropdown] = useState(false);
+  const [isOnlineEvent, setIsOnlineEvent] = useState(false);
   const {
     control,
     handleSubmit,
@@ -59,97 +64,11 @@ const CreateGroup: FC<any> = props => {
     mode: 'onChange',
   });
 
-  const onSubmit = useCallback(
-    () =>
-      handleSubmit(data => {
-        if (!uploadedImage.current && profileImage?.path) {
-          dispatch(
-            uploadFile({
-              image: profileImage,
-              onSuccess: url => {
-                console.log('URL is ', url);
-                uploadedImage.current = url;
-                callCreateGroupApi(data);
-              },
-              prefixType: 'groups',
-            }),
-          );
-        } else {
-          callCreateGroupApi(data);
-        }
-      })(),
-    [profileImage],
-  );
-
-  useEffect(() => {
-    if (group) {
-      console.log(group);
-      locationRef.current = {
-        latitude: group?.location?.coordinates[1],
-        longitude: group?.location?.coordinates[0],
-        address: {
-          main_text: getShortAddress(group?.address, group?.state, group?.city),
-          secondary_text:
-            group?.city + ', ' + group?.state + ', ' + group?.country,
-        },
-        otherData: {
-          city: group?.city,
-          state: group?.state,
-          country: group?.country,
-        },
-      };
-      setValue('about', group?.details);
-      setValue('location', group?.address);
-      setValue('name', group?.name);
-      setValue('purpose', capitalize(group?.category ?? ''));
-      // setEditEnabled(true)
-      if (group?.image) {
-        setProfileImage({
-          uri: getImageUrl(group?.image, {type: 'groups', width: scaler(100)}),
-        });
-      } else {
-        setProfileImage(null);
-      }
-    }
-  }, [group]);
-
-  const callCreateGroupApi = useCallback(data => {
-    const {latitude, longitude, address, otherData} =
-      locationRef?.current ?? {};
-    let payload = {
-      _id: group?._id,
-      name: data?.name,
-      category: data?.purpose?.toLowerCase(),
-      short_description: data?.about,
-      details: data?.about,
-      image: uploadedImage.current || undefined,
-      address: data?.location,
-      city: otherData?.city,
-      state: otherData?.state,
-      country: otherData?.country,
-      location: {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      },
-    };
-    dispatch(
-      createGroup({
-        data: payload,
-        onSuccess: () => {
-          Database.setSelectedLocation(
-            Database.getStoredValue('selectedLocation'),
-          );
-        },
-      }),
-    );
-  }, []);
-
   const calculateButtonDisability = useCallback(() => {
     if (
       !getValues('name') ||
-      !getValues('purpose') ||
       !getValues('location') ||
-      (errors && (errors.name || errors.purpose || errors.location))
+      (errors && (errors.name || errors.location))
     )
       return true;
     return false;
@@ -171,7 +90,8 @@ const CreateGroup: FC<any> = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <MyHeader title={group ? Language.update_group : Language.create_group} />
+      <MyHeader title={Language.host_an_event} />
+      <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
       <ScrollView
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
@@ -204,37 +124,43 @@ const CreateGroup: FC<any> = props => {
           }}>
           <TextInput
             containerStyle={{flex: 1, marginEnd: scaler(4)}}
-            placeholder={Language.group_name}
+            placeholder={Language.event_name}
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'name'}
-            required={Language.group_name_required}
+            required={Language.event_name_required}
             control={control}
             errors={errors}
           />
           <View style={{flex: 1, width: '100%'}}>
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
-              placeholder={Language.group_purpose}
+              placeholder={Language.select_group}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
-              name={'purpose'}
+              name={'selectGroup'}
               icon={Images.ic_arrow_dropdown}
-              onPress={() => {
-                setDropdown(!isDropdown);
-              }}
+              //   onPress={() => {
+              //     setDropdown(!isDropdown);
+              //   }}
               required={Language.group_purpose_required}
               control={control}
               errors={errors}
             />
-            <FixedDropdown
+            {/* <FixedDropdown
               visible={isDropdown}
               data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
               onSelect={data => {
                 setDropdown(false);
                 setValue('purpose', data?.title, {shouldValidate: true});
               }}
-            />
+            /> */}
+            <View style={styles.eventView}>
+              <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
+              <Text style={{marginLeft: scaler(5)}}>
+                {Language.online_event}
+              </Text>
+            </View>
 
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
@@ -271,7 +197,7 @@ const CreateGroup: FC<any> = props => {
             />
 
             <TextInput
-              placeholder={Language.write_something_about_group}
+              placeholder={Language.write_something_about_event}
               name={'about'}
               multiline
               style={{minHeight: scaler(80), textAlignVertical: 'top'}}
@@ -285,8 +211,8 @@ const CreateGroup: FC<any> = props => {
           <Button
             disabled={calculateButtonDisability()}
             containerStyle={{marginTop: scaler(20)}}
-            title={group ? Language.update_group : Language.create_group}
-            onPress={onSubmit}
+            title={Language.next}
+            onPress={() => NavigationService.navigate('Event2')}
           />
         </View>
       </ScrollView>
@@ -294,7 +220,7 @@ const CreateGroup: FC<any> = props => {
   );
 };
 
-export default CreateGroup;
+export default Event1;
 
 const styles = StyleSheet.create({
   container: {
@@ -321,6 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: scaler(50),
     // borderWidth: scaler(4),
     // borderColor: '#F6F6F7',
+    marginTop: scaler(20),
     height: scaler(100),
     width: scaler(100),
   },
@@ -328,5 +255,10 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
+  },
+  eventView: {
+    marginTop: scaler(12),
+    flexDirection: 'row',
+    marginLeft: scaler(5),
   },
 });
