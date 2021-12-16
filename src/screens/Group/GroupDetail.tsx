@@ -132,12 +132,21 @@ const GroupDetail: FC<any> = (props) => {
         </View>
     }, [group])
 
+    const [isDefault, setDefault] = useState<boolean>(false)
+
     // if (group)
     return (
         <SafeAreaView style={styles.container} edges={['bottom']} >
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                <Image source={group?.image ? { uri: getImageUrl(group?.image, { width: width, type: 'groups' }) } : Images.ic_group_placeholder}
-                    style={{ width: width, height: width, resizeMode: 'cover' }} />
+
+                {isDefault || !group?.image ?
+                    <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                        <Image source={Images.ic_group_placeholder} />
+                    </View>
+                    : <Image onError={() => {
+                        setDefault(true)
+                    }} source={group?.image ? { uri: getImageUrl(group?.image, { width: width, type: 'groups' }) } : Images.ic_group_placeholder}
+                        style={{ width: width, height: width, resizeMode: 'cover' }} />}
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
                 <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >

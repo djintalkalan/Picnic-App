@@ -21,38 +21,40 @@ import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService
 const GroupList: FC<any> = (props) => {
 
     const getButtons = useCallback((item: any) => {
-        const { is_group_member, _id } = item
-        const buttons: Array<IBottomMenuButton> = [
-            {
+        const { is_group_member, _id, is_group_admin } = item
+        const buttons: Array<IBottomMenuButton> = []
+        if (!is_group_admin) {
+            buttons.push({
                 title: Language.mute_group, onPress: () => {
                     dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "group", resource_id: _id } }))
                 }
-            },
-            {
-                title: Language.group_details, onPress: () => {
-                    if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                        dispatch(setGroupDetail(null))
-                    }
-                    setTimeout(() => {
-                        NavigationService.navigate("GroupDetail", { id: item?._id })
-                    }, 0);
+            })
+        }
+        buttons?.push({
+            title: Language.group_details, onPress: () => {
+                if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
+                    dispatch(setGroupDetail(null))
                 }
-            },
-            {
+                setTimeout(() => {
+                    NavigationService.navigate("GroupDetail", { id: item?._id })
+                }, 0);
+            }
+        })
+        if (!is_group_admin) {
+            buttons.push({
                 title: Language.report_group, onPress: () => {
                     dispatch(reportResource({ resource_id: _id, resource_type: 'group' }))
                     // reportedItemRef.current = item
                     // setReportAlert(true)
                 }
-            },
-
-        ]
-        if (is_group_member) {
-            buttons.push({
-                title: Language.leave_group, textStyle: { color: colors.colorRed }, onPress: () => {
-                    dispatch(leaveGroup(_id))
-                }
             })
+            if (is_group_member) {
+                buttons.push({
+                    title: Language.leave_group, textStyle: { color: colors.colorRed }, onPress: () => {
+                        dispatch(leaveGroup(_id))
+                    }
+                })
+            }
         }
         return buttons
     }, [useLanguage()])

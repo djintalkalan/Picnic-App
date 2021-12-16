@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -308,6 +308,30 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._deleteGroup, payload);
+        if (res.status == 200) {
+            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+                NavigationService.goBack()
+            }
+            yield put(deleteGroupSuccess(payload))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+
+
 function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
@@ -346,6 +370,7 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.LEAVE_GROUP, _leaveGroup);
     yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
     yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
+    yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
 
 
 };

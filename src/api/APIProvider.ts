@@ -257,7 +257,7 @@ export const _removeGroupMember = async (body: any) => {
 }
 
 export const _deleteGroup = async (body: any) => {
-    console.log("---------- _leaveGroup Api Call ---------------")
+    console.log("---------- _deleteGroup Api Call ---------------")
     return fetchApiData(config.API_URL + 'group/delete-group/' + body, null, "DELETE")
 }
 

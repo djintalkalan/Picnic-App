@@ -16,6 +16,13 @@ export const deleteGroup = (payload: any) => ({
     payload
 })
 
+export const deleteGroupSuccess = (payload: any) => ({
+    type: ActionTypes.DELETE_GROUP_SUCCESS,
+    payload
+})
+
+
+
 export const joinGroup = (payload: any) => ({
     type: ActionTypes.JOIN_GROUP,
     payload
