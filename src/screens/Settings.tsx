@@ -72,7 +72,7 @@ const Settings: FC<any> = (props) => {
                             NavigationService.navigate("PrivacyScreen")
                         }}
                         image={Images.ic_lock}
-                        title={Language.privacy}
+                        title={Language.review}
                     />
 
                     <SettingButton

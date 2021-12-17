@@ -50,5 +50,8 @@ export const es = {
     we_have_sent_you: "We have sent an OTP to your email.",
     something_went_wrong: 'Something went wrong',
     verify_otp: "Verify OTP",
-    please_accept_terms: "Please accept terms and conditions"
+    please_accept_terms: "Please accept terms and conditions",
+    done: "Done",
+    review: "Review",
+    restore: "Restore"
 }

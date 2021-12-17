@@ -35,7 +35,7 @@ const PrivacyScreen: FC<any> = (props) => {
     return (
         <SafeAreaView style={styles.container} >
 
-            <MyHeader title={Language.privacy} />
+            <MyHeader title={Language.review} />
 
 
 
@@ -47,8 +47,8 @@ const PrivacyScreen: FC<any> = (props) => {
                             NavigationService.navigate("BlockedMembers")
                         }}
                         image={Images.ic_blocked_members}
-                        title={Language.blocked_members}
-                        subtitle={privacyState?.users + " Users"}
+                        title={Language.unblock}
+                        subtitle={privacyState?.users + " members"}
                     />
 
                     <SettingButton
@@ -58,8 +58,8 @@ const PrivacyScreen: FC<any> = (props) => {
 
                         }}
                         image={Images.ic_muted}
-                        title={Language.muted_group}
-                        subtitle={privacyState?.groups + " group / " + privacyState?.events + " events"}
+                        title={Language.unmute}
+                        subtitle={privacyState?.groups + " groups / " + privacyState?.events + " events"}
                     />
 
                     <SettingButton
@@ -67,8 +67,8 @@ const PrivacyScreen: FC<any> = (props) => {
 
                         }}
                         image={Images.ic_hidden_posts}
-                        title={Language.hidden_posts}
-                        subtitle={privacyState?.posts + " Posts"}
+                        title={Language.restore}
+                        subtitle={privacyState?.posts + " messages"}
                     />
 
                 </View>

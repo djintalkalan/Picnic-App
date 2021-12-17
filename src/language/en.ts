@@ -129,6 +129,7 @@ export const en = {
     yes_delete_account: "Yes, Delete account",
     yes_logout: "Yes, Logout",
     enter_password_to_delete: "Enter password to delete the account",
-    done: "Done"
-
+    done: "Done",
+    review: "Review",
+    restore: "Restore"
 }
