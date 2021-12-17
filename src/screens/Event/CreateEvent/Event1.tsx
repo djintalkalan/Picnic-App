@@ -91,16 +91,16 @@ const Event1: FC<any> = props => {
   return (
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
-      <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
       <ScrollView
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
         contentContainerStyle={{alignItems: 'center'}}>
+      <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View>
           <View style={styles.imageContainer}>
             <Image
               onError={err => {
-                setProfileImage(Images.ic_group_placeholder);
+                setProfileImage(Images.ic_event_placeholder);
               }}
               style={styles.image}
               source={
@@ -108,7 +108,7 @@ const Event1: FC<any> = props => {
                   ? profileImage?.path
                     ? {uri: profileImage?.path}
                     : profileImage
-                  : Images.ic_group_placeholder
+                  : Images.ic_event_placeholder
               }
             />
           </View>
@@ -157,7 +157,7 @@ const Event1: FC<any> = props => {
             /> */}
             <View style={styles.eventView}>
               <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
-              <Text style={{marginLeft: scaler(5)}}>
+              <Text style={{marginLeft: scaler(5),fontSize:scaler(13),fontWeight:'400'}}>
                 {Language.online_event}
               </Text>
             </View>
@@ -199,6 +199,7 @@ const Event1: FC<any> = props => {
             <TextInput
               placeholder={Language.write_something_about_event}
               name={'about'}
+              limit={400}
               multiline
               style={{minHeight: scaler(80), textAlignVertical: 'top'}}
               borderColor={colors.colorTextInputBackground}
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     height: scaler(35),
     width: scaler(35),
     end: 2,
-    bottom: 2,
+    bottom: -5,
     padding: scaler(4),
     zIndex: 10,
     backgroundColor: colors.colorWhite,
@@ -245,8 +246,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     overflow: 'hidden',
     borderRadius: scaler(50),
-    // borderWidth: scaler(4),
-    // borderColor: '#F6F6F7',
+    borderWidth: scaler(5),
+    borderColor: '#EAEAEA',
     marginTop: scaler(20),
     height: scaler(100),
     width: scaler(100),

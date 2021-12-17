@@ -48,5 +48,8 @@ export const Images = {
   ic_leave_in_group: require('./images/ic_leave_in_group.png'),
   ic_ticket: require('./images/ic_ticket.png'),
   ic_clock: require('./images/ic_clock.png'),
+  ic_event_placeholder: require('./images/ic_event_placeholder.png'),
+  ic_paypal: require("./images/ic_paypal.png"),
+  ic_empty_wallet: require("./images/ic_empty_wallet.png"),
   // ic_leave_in_group: require("./images/ic_leave_in_group.png"),
 };

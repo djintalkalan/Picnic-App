@@ -113,7 +113,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 //     console.log(e.nativeEvent.contentSize)
                                 // }}
                                 style={[styles.textInputStyle]}
-                                placeholderTextColor={colors.colorGreyText}
+                                placeholderTextColor={colors.colorTextPlaceholder}
                                 // placeholder={!isFocused ? placeholder : ""}
                                 allowFontScaling={false}
                                 value={value}

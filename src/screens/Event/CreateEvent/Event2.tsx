@@ -1,29 +1,16 @@
 import {colors, Images} from 'assets';
-import {
-  Button,
-  CheckBox,
-  FixedDropdown,
-  MyHeader,
-  Stepper,
-  Text,
-  TextInput,
-} from 'custom-components';
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {
-  Image,
   StyleSheet,
-  TextInput as RNTextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import {sub} from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Database, {ILocation} from 'src/database/Database';
-import Language from 'src/language/Language';
 import {dateFormat, NavigationService, scaler} from 'utils';
+import Language from 'src/language/Language';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
 
 type FormType = {
   capacity: string;
@@ -35,14 +22,18 @@ type FormType = {
   currency: string;
 };
 
+const DropDownData = ['$', 'USD', 'Rupee'];
+
 const Event2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
+  const [isDropdown, setDropdown] = useState(false);
   const eventDate = useRef<Date>(new Date());
+  const [isStartTime, setIsStartTime] = useState(false)
+  const [isEndTime, setIsEndTime] = useState(false)
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
     control,
-    handleSubmit,
     getValues,
     setValue,
     formState: {errors},
@@ -70,15 +61,16 @@ const Event2: FC<any> = props => {
           errors.currency))
     ) {
       return true;
-    } else if (
-      (isFreeEvent &&
-        (!getValues('eventDate') ||
-          !getValues('capacity') ||
-          !getValues('startTime'))) ||
-      (errors && (errors.eventDate || errors.startTime || errors.capacity))
-    ) {
-      return true;
     }
+    // else if (
+    //   (isFreeEvent &&
+    //     (!getValues('eventDate') ||
+    //       !getValues('capacity') ||
+    //       !getValues('startTime'))) ||
+    //   (errors && (errors.eventDate || errors.startTime || errors.capacity))
+    // ) {
+    //   return true;
+    // }
 
     return false;
   }, [errors]);
@@ -90,18 +82,18 @@ const Event2: FC<any> = props => {
   return (
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
-      <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+      <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <CheckBox
             checked={isUnlimitedCapacity}
             setChecked={setIsUnlimitedCapacity}
           />
-          <Text style={{marginLeft: scaler(8), marginRight: scaler(18)}}>
+          <Text style={{marginLeft: scaler(8), marginRight: scaler(18),fontSize:scaler(14)}}>
             {Language.umlimited_capacity}
           </Text>
           <CheckBox checked={isFreeEvent} setChecked={setIsFreeEvent} />
-          <Text style={{marginLeft: scaler(8)}}>{Language.free_event}</Text>
+          <Text style={{marginLeft: scaler(8),fontSize:scaler(14)}}>{Language.free_event}</Text>
         </View>
         <View
           style={{
@@ -115,6 +107,8 @@ const Event2: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
+            keyboardType={'number-pad'}
+            disabled={isUnlimitedCapacity?true:false}
             required={
               isUnlimitedCapacity ? undefined : Language.capacity_required
             }
@@ -130,11 +124,11 @@ const Event2: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'ticketPrice'}
+              keyboardType={'number-pad'}
+              disabled={isFreeEvent?true:false}
               iconSize={scaler(18)}
+              onBlur={()=>{setValue('ticketPrice',getValues('currency') ? getValues('currency')+getValues('ticketPrice'):'$'+getValues('ticketPrice'))}}
               icon={Images.ic_ticket}
-              //   onPress={() => {
-              //     setDropdown(!isDropdown);
-              //   }}
               required={
                 isFreeEvent ? undefined : Language.ticket_price_required
               }
@@ -157,7 +151,7 @@ const Event2: FC<any> = props => {
               backgroundColor={colors.colorTextInputBackground}
               style={{fontSize: scaler(13)}}
               name={'eventDate'}
-              onPress={openDatePicker}
+              onPress={()=>(setIsStartTime(false),setIsEndTime(false),openDatePicker())}
               required={Language.date_required}
               icon={Images.ic_calender}
               iconSize={scaler(20)}
@@ -171,20 +165,20 @@ const Event2: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'startTime'}
-              // required={Language.event_name_required}
               iconSize={scaler(18)}
               required={Language.start_time_required}
+              onPress={()=>(setIsStartTime(true),setIsEndTime(false),openDatePicker())}
               icon={Images.ic_clock}
               control={control}
               errors={errors}
             />
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
-              placeholder={Language.select_end_time}
+              placeholder={Language.select_end_time+' ('+Language.optional+")"}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'endTime'}
-              // required={Language.event_name_required}
+              onPress={()=>(setIsEndTime(true),setIsStartTime(false),openDatePicker())}
               iconSize={scaler(18)}
               icon={Images.ic_clock}
               control={control}
@@ -208,24 +202,34 @@ const Event2: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'currency'}
+            disabled={isFreeEvent ? true : false}
             icon={Images.ic_arrow_dropdown}
             required={isFreeEvent ? undefined : Language.event_name_required}
             control={control}
+            onPress={()=>{setDropdown(true)}}
             errors={errors}
           />
+           <FixedDropdown
+              visible={isDropdown}
+              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
+              onSelect={data => {
+                setDropdown(false);
+                setValue('currency', data?.title, {shouldValidate: true});
+              }}
+            />
 
           <Button
             disabled={calculateButtonDisability()}
             containerStyle={{marginTop: scaler(20)}}
             title={Language.next}
-            // onPress={onSubmit}
+            onPress={()=>NavigationService.navigate('Event3')}
           />
         </View>
         <DateTimePickerModal
           themeVariant={'light'}
-          style={{zIndex: 20}}
+          style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
-          mode="date"
+          mode={isStartTime || isEndTime ? 'datetime' : "date"}
           customConfirmButtonIOS={props => (
             <Text
               onPress={props.onPress}
@@ -266,6 +270,10 @@ const Event2: FC<any> = props => {
           //   })}
           onConfirm={(date: Date) => {
             eventDate.current = date;
+            let hour = ((date?.getHours())%12||12) > 9 ?((date?.getHours())%12||12) : '0'+((date?.getHours())%12||12);
+            let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
+            let isAMPM = date?.getHours() >12 ?'PM':'AM'
+            isStartTime? setValue('startTime',hour+':'+min+' '+isAMPM) :isEndTime ? setValue('endTime',hour+':'+min+' '+isAMPM):
             setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
               shouldValidate: true,
             });
@@ -298,5 +306,6 @@ const styles = StyleSheet.create({
     marginTop: scaler(20),
     flexDirection: 'row',
     marginHorizontal: scaler(25),
+    alignItems:'center'
   },
 });

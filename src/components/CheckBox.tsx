@@ -18,7 +18,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
             height: size,
             borderRadius: scaler(3),
             borderWidth: checked ? scaler(1) : scaler(1.5),
-            borderColor: checked ? colors.colorPrimary : '#858B95',
+            borderColor: checked ? colors.colorPrimary : colors.colorPrimary,
             backgroundColor: checked ? colors.colorPrimary : 'transparent',
             alignItems: 'center',
             justifyContent: 'center'
