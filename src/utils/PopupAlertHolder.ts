@@ -20,4 +20,8 @@ export class PopupAlertHolder {
     static alert(data: IAlertType) {
         (this.modalPopupAlert || this.popupAlert)?.showAlert(data)
     }
+
+    static hide() {
+        (this.modalPopupAlert || this.popupAlert)?.hideAlert()
+    }
 }

@@ -1,6 +1,5 @@
 import { RootState } from 'app-store'
 import { blockUnblockResource, getBlockedMembers, IPaginationState } from 'app-store/actions'
-import { removeFromBlockedMember } from 'app-store/actions/profileActions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
 import { ListItemSeparator, MemberListItem } from 'custom-components/ListItem/ListItem'
@@ -57,9 +56,6 @@ const BlockedMembers: FC<any> = (props) => {
                         resource_id: item?.blocked_user_id,
                         resource_type: item?.resource_type,
                         is_blocked: '0'
-                    },
-                    onSuccess: (res) => {
-                        dispatch(removeFromBlockedMember(item?._id))
                     }
                 }))
             }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(70), backgroundColor: colors.colorRed }}>

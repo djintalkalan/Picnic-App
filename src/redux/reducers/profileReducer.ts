@@ -40,6 +40,8 @@ export const privacyStateReducer = (state: IPrivacyState = initialPrivacyState, 
     switch (action.type) {
         case ActionTypes.SET_PRIVACY_STATE:
             return action.payload
+        case ActionTypes.REMOVE_BLOCKED_MEMBER:
+            return { ...state, users: (state?.users || 1) - 1 }
         default:
             return state
     }
@@ -47,7 +49,7 @@ export const privacyStateReducer = (state: IPrivacyState = initialPrivacyState, 
 
 export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, action: action): IPrivacyData => {
     const { type, data }: { type: IResourceType, data: any } = action?.payload ?? {}
-    let updateKey: 'mutedGroups' | 'mutedPosts' | 'mutedEvents'
+    let updateKey: 'mutedGroups' | 'mutedPosts' | 'mutedEvents' = "mutedPosts"
     switch (type) {
         case "message":
             updateKey = "mutedPosts"
@@ -64,7 +66,7 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
         case ActionTypes.SET_BLOCKED_MEMBERS:
             return { ...state, blockedUsers: action?.payload }
         case ActionTypes.REMOVE_BLOCKED_MEMBER:
-            return { ...state, blockedUsers: state.blockedUsers.filter(_ => _._id != action.payload) }
+            return { ...state, blockedUsers: state.blockedUsers.filter(_ => _.blocked_user_id != action.payload) }
         case ActionTypes.SET_MUTED_EVENTS:
             return { ...state, mutedEvents: action?.payload }
         case ActionTypes.SET_MUTED_GROUPS:

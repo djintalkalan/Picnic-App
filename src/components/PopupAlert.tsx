@@ -1,23 +1,25 @@
-import { BlurView } from "@react-native-community/blur";
 import { colors } from "assets";
 import { Text } from "custom-components";
-import React, { Component } from "react";
-import { Image, ImageURISource, StyleSheet, TouchableOpacity, View } from "react-native";
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import React, { Component, FC } from "react";
+import { GestureResponderEvent, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Language from "src/language/Language";
 import { scaler } from "utils";
 import Button from "./Button";
 
 interface PopupAlertProps {
 
 }
+
 export interface IAlertType {
-    onPressButton?: () => (undefined | null | void) | null | undefined
+    onPressButton?: (e?: GestureResponderEvent) => any
     title?: string
-    image?: ImageURISource | null
+    customView?: FC<any>
     message?: string
-    buttonText?: string
-    isCloseButton?: boolean
-    onPressCloseButton?: () => void
+    buttonText: string
+    buttonStyle?: StyleProp<ViewStyle>
+    cancelButtonText?: string
+    onPressCancel?: () => void
 }
 
 export class PopupAlert extends Component<PopupAlertProps, any> {
@@ -28,53 +30,65 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         }
     }
 
-    title: string = "Hello"
-    image: ImageURISource | null = null
-    message: string = "This is me"
-    buttonText: string = 'Press me'
-    isCloseButton = false
-    onPressButton: () => (undefined | null | void) | undefined | null = () => this.setState({ alertVisible: false })
-    onPressCloseButton: () => void = () => this.setState({ alertVisible: false })
-    showAlert = ({ title, image, message, buttonText, onPressButton, isCloseButton, onPressCloseButton }: IAlertType) => {
+    title: string = "Confirm payment method"
+    customView?: FC
+    message: string = "Are you sure you want to pay using CASH?"
+    buttonText: string = 'Pay ‭$2'
+    buttonStyle: StyleProp<ViewStyle> = {}
+    cancelButtonText = Language.cancel
+    onPressCancel: any = null
+    onPressButton: any = null
+
+    showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel }: IAlertType) => {
         this.title = title || ""
-        this.image = image || null
         this.message = message || ""
         this.buttonText = buttonText || ""
-        this.isCloseButton = isCloseButton || false
-        this.onPressButton = onPressButton || (() => this.setState({ alertVisible: false }));
-        this.setState({ alertVisible: true })
+        this.buttonStyle = StyleSheet.flatten(buttonStyle) || {}
+        this.cancelButtonText = cancelButtonText || Language.cancel
+        this.customView = customView
+        this.onPressCancel = () => {
+            onPressCancel && onPressCancel()
+            this.hideAlert()
+        }
+        this.onPressButton = onPressButton
+        this.state.alertVisible = true
+        this.forceUpdate()
+    }
 
+    hideAlert = () => {
+        this.setState({ alertVisible: false })
+    }
+
+    shouldComponentUpdate = (nextProps: Readonly<PopupAlertProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
+        return this.state.alertVisible != nextState.alertVisible
     }
 
     render() {
         if (this.state.alertVisible)
             return (
-                <BlurView style={styles.absolute}
-                    blurType="dark"
-                    blurAmount={5}
-                    reducedTransparencyFallbackColor="white" >
+                <SafeAreaView style={styles.absolute}  >
                     <View style={styles.alertContainer} >
-                        {this.isCloseButton && <TouchableOpacity style={{ padding: scaler(5), position: 'absolute', end: scaler(5), top: scaler(5) }} >
-                            <AntDesign size={scaler(20)} name={'closecircle'} color={colors.colorPrimary} />
 
-                        </TouchableOpacity>}
 
-                        {this.image ?
-                            <Image style={styles.image} source={this.image} /> : null}
+                        {this.title ? <Text style={[styles.title]} >{this.title}</Text> : null}
+                        {this.message ? <Text style={[styles.message]} >{this.message}</Text> : null}
 
-                        {this.title ? <Text style={[styles.title, { marginTop: this.image ? scaler(10) : 0 }]} >{this.title}</Text> : null}
-                        {this.message ? <Text style={[styles.message, { marginTop: (this.image || this.title) ? scaler(10) : 0 }]} >{this.message}</Text> : null}
+                        {this.customView ?
+                            <this.customView />
+                            : null}
 
                         {this.buttonText ?
                             <Button
                                 containerStyle={styles.button}
                                 title={this.buttonText}
-                                paddingVertical={scaler(8)}
-                                radius={scaler(7)}
+                                paddingVertical={scaler(10)}
+                                buttonStyle={this.buttonStyle}
+                                radius={scaler(10)}
                                 onPress={this.onPressButton} /> : null}
+                        {this.cancelButtonText ?
+                            <Text onPress={this.onPressCancel} style={styles.cancelText} >{this.cancelButtonText}</Text> : null}
                     </View>
-
-                </BlurView>
+                </SafeAreaView>
             )
         return null
     }
@@ -87,6 +101,7 @@ const styles = StyleSheet.create({
         left: 0,
         bottom: 0,
         right: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)',
         paddingHorizontal: scaler(20),
         alignItems: 'center',
         justifyContent: 'center'
@@ -100,29 +115,31 @@ const styles = StyleSheet.create({
         borderRadius: scaler(10)
     },
     title: {
-        fontWeight: '600',
-        fontSize: scaler(15),
+        fontWeight: '500',
+        fontSize: scaler(14),
         lineHeight: scaler(24),
-        marginTop: scaler(10),
+        marginBottom: scaler(10),
         textAlign: 'center',
         maxWidth: '80%'
     },
     message: {
         fontWeight: '400',
-        fontSize: scaler(15),
+        fontSize: scaler(14),
         lineHeight: scaler(24),
-        marginTop: scaler(10),
+        color: "#7D7F85",
+        marginBottom: scaler(10),
         textAlign: 'center',
         maxWidth: '80%'
     },
     button: {
-        width: '80%',
+        width: '90%',
         marginTop: scaler(20)
     },
-    image: {
-        alignSelf: 'center',
-        width: scaler(60),
-        height: scaler(60),
-        resizeMode: 'contain'
+    cancelText: {
+        fontWeight: '400',
+        fontSize: scaler(13),
+        lineHeight: scaler(24),
+        marginTop: scaler(10),
+        color: colors.colorBlackText,
     }
 })

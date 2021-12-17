@@ -80,62 +80,38 @@ const Home: FC = () => {
             size={scaler(18)}
           />
         </TouchableOpacity>
+                <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
+                    NavigationService.navigate("ProfileScreen")
+                }} >
+                    <Image style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
+                        onError={(err) => setProfileImage(Images.ic_home_profile)} source={
+                            profileImage ?? userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
+                                Images.ic_home_profile
+                        }
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => NavigationService.navigate("Settings")} >
+                    <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
+                </TouchableOpacity>
 
-        <TouchableOpacity
-          style={{borderRadius: scaler(18)}}
-          onPress={() => {
-            NavigationService.navigate('ProfileScreen');
-          }}>
-          <Image
-            style={{
-              borderRadius: scaler(18),
-              height: scaler(35),
-              width: scaler(35),
-              resizeMode: 'contain',
-            }}
-            onError={err => setProfileImage(Images.ic_home_profile)}
-            source={
-              profileImage ?? userData?.image
-                ? {
-                    uri: getImageUrl(userData?.image, {
-                      type: 'users',
-                      width: scaler(60),
-                    }),
-                  }
-                : Images.ic_home_profile
-            }
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => NavigationService.navigate('Settings')}>
-          <Image
-            style={{
-              marginLeft: scaler(10),
-              height: scaler(25),
-              width: scaler(25),
-              resizeMode: 'contain',
-            }}
-            source={Images.ic_setting}
-          />
-        </TouchableOpacity>
-      </View>
+            </View>
 
-      <View
-        style={{
-          paddingBottom: scaler(20),
-          borderBottomColor: 'rgba(0, 0, 0, 0.04)',
-          borderBottomWidth: 2,
-          marginBottom: scaler(2),
-          // shadowColor: "#000",
-          // shadowOffset: {
-          //     width: 0,
-          //     height: 1,
-          // },
-          // shadowOpacity: 0.20,
-          // shadowRadius: 1.41,
+            <View style={{
+                paddingBottom: scaler(20),
+                borderBottomColor: 'rgba(0, 0, 0, 0.04)',
+                borderBottomWidth: 2,
+                marginBottom: scaler(2),
+                // shadowColor: "#000",
+                // shadowOffset: {
+                //     width: 0,
+                //     height: 1,
+                // },
+                // shadowOpacity: 0.20,
+                // shadowRadius: 1.41,
 
-          // elevation: 2,
-        }}>
+                // elevation: 2,
+
+            }} >
         <TextInput
           style={styles.searchInput}
           placeholder={Language.search_placeholder}

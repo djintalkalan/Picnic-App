@@ -26,6 +26,8 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
     switch (action.type) {
         case ActionTypes.SET_ALL_GROUPS:
             return { ...state, allGroups: action?.payload }
+        case ActionTypes.DELETE_GROUP_SUCCESS:
+            return { ...state, allGroups: state?.allGroups.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_GROUP_SUCCESS:
             return { ...state, allGroups: state.allGroups.map(_ => (_._id == action?.payload ? { ..._, is_group_member: true } : _)) }
         case ActionTypes.LEAVE_GROUP_SUCCESS:
@@ -38,6 +40,8 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
             return { ...state, groupDetail: { ...state?.groupDetail, group: { ...state?.groupDetail?.group, ...action?.payload } } }
         case ActionTypes.SET_GROUP_MEMBERS:
             return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: action?.payload } }
+        case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
+            return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: state?.groupDetail?.groupMembers?.filter(_ => _.user_id != action?.payload) } }
         default:
             return state
     }

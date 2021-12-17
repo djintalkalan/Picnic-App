@@ -1,13 +1,13 @@
 import { colors } from "assets";
 import * as React from "react";
-import { ColorValue, GestureResponderEvent, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ColorValue, GestureResponderEvent, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import { scaler } from "utils";
 import { Text } from "./Text";
 
 interface ButtonProps {
     disabled?: boolean
     onPress?: (event: GestureResponderEvent) => void;
-    buttonStyle?: ViewStyle;
+    buttonStyle?: StyleProp<ViewStyle>;
     containerStyle?: ViewStyle;
     center?: boolean;
     backgroundColor?: ColorValue

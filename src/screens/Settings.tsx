@@ -1,14 +1,14 @@
-import { doLogout } from 'app-store/actions'
+import { deleteAccount, doLogout } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Modal, Text } from 'custom-components'
+import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
-import React, { FC, useState } from 'react'
-import { Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { FC, useRef, useState } from 'react'
+import { Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler } from 'utils'
+import { getImageUrl, NavigationService, scaler, _showErrorMessage, _showPopUpAlert } from 'utils'
 
 
 const Settings: FC<any> = (props) => {
@@ -18,6 +18,8 @@ const Settings: FC<any> = (props) => {
     const [isLogoutAlert, setLogoutAlert] = useState(false)
 
     const dispatch = useDispatch()
+
+    const passwordRef = useRef("")
 
 
     const [profileImage, setProfileImage] = useState()
@@ -75,55 +77,81 @@ const Settings: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
-                            setLogoutAlert(true)
+                            _showPopUpAlert({
+                                message: Language.are_you_sure_logout,
+                                buttonText: Language.yes_logout,
+                                buttonStyle: { backgroundColor: colors.colorRed },
+                                onPressButton: () => dispatch(doLogout())
+                            })
                         }}
                         divider={false}
                         titleColor={colors.colorPrimary}
                         image={Images.ic_logout}
+                        fontWeight={'500'}
                         title={Language.logout} />
+
+
+                    {1 == 2 && <SettingButton
+                        containerStyle={{ paddingTop: 0 }}
+                        onPress={() => {
+                            _showPopUpAlert({
+                                message: Language.are_you_sure_delete_account,
+                                buttonText: Language.yes_delete_account,
+                                buttonStyle: { backgroundColor: colors.colorRed },
+                                onPressButton: () => {
+                                    _showPopUpAlert({
+                                        message: Language.enter_password_to_delete,
+                                        buttonText: Language.delete_account,
+                                        buttonStyle: { backgroundColor: colors.colorRed },
+                                        customView: () => {
+                                            const [isSecure, setSecure] = useState(true)
+                                            return <View style={{ width: '100%' }} >
+                                                <TextInput
+                                                    placeholder={Language.password}
+                                                    style={{ fontSize: scaler(13) }}
+                                                    name={'password'}
+                                                    onChangeText={(text) => passwordRef.current = text}
+                                                    onPressIcon={() => setSecure(!isSecure)}
+                                                    secureTextEntry={isSecure}
+                                                    icon={isSecure ? Images.ic_eye_open : Images.ic_eye_closed}
+                                                    iconSize={scaler(18)}
+                                                    required={true}
+                                                />
+                                            </View>
+                                        },
+                                        onPressButton: () => {
+                                            if (passwordRef?.current) {
+                                                dispatch(deleteAccount({ password: passwordRef?.current }))
+                                            } else {
+                                                _showErrorMessage(Language.password_required)
+                                            }
+                                        }
+
+
+                                    })
+                                }
+                            })
+                        }}
+                        divider={false}
+                        titleColor={colors.colorRed}
+                        fontWeight={'500'}
+                        image={Images.ic_delete}
+                        title={Language.delete_account} />}
 
 
                 </View>
             </View>
-
-            <Modal transparent visible={isLogoutAlert} >
-
-                <View style={{ flex: 1, padding: '10%', backgroundColor: 'rgba(0, 0, 0, 0.49)', alignItems: 'center', justifyContent: 'center' }} >
-                    <View style={styles.alertContainer} >
-
-                        <Text style={{ marginTop: scaler(10), paddingHorizontal: '10%', textAlign: 'center', color: colors.colorPlaceholder, fontSize: scaler(14), fontWeight: '500' }} >{Language.are_you_sure_want}</Text>
-
-                        <Button
-                            onPress={() => {
-                                setLogoutAlert(false)
-                                setTimeout(() => dispatch(doLogout()), 200)
-
-                            }}
-                            backgroundColor={colors.colorRed}
-                            containerStyle={{ marginTop: scaler(30), marginBottom: scaler(20) }}
-                            fontSize={scaler(14)}
-                            paddingHorizontal={scaler(30)}
-                            title={'Yes, Logout'}
-                            paddingVertical={scaler(10)}
-                        />
-                        <Text onPress={() => setLogoutAlert(false)} style={{ paddingHorizontal: '10%', textAlign: 'center', color: colors.colorBlackText, fontSize: scaler(14), fontWeight: '400' }} >{Language.cancel}</Text>
-
-                    </View>
-                </View>
-
-
-            </Modal>
         </SafeAreaView>
     )
 }
 
-const SettingButton = ({ divider = true, ...props }: { divider?: boolean, titleColor?: string, onPress: () => void, title: string, image: ImageSourcePropType }) => {
+const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, onPress: () => void, title: string, image: ImageSourcePropType }) => {
     return (
         <>
             <TouchableOpacity onPress={props?.onPress}
-                style={styles.buttonContainer} >
+                style={[styles.buttonContainer, { ...StyleSheet.flatten(containerStyle) }]} >
                 <Image style={{ height: scaler(22), width: scaler(22) }} source={props?.image} />
-                <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText }]} >{props?.title}</Text>
+                <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{props?.title}</Text>
 
             </TouchableOpacity>
             {divider ? <View style={styles.divider} /> : null}

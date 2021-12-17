@@ -3,7 +3,7 @@ import { setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } f
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
@@ -146,19 +146,41 @@ function* doLogout({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._logoutApi);
         if (res.status == 200) {
-
         } else if (res.status == 400) {
             // _showErrorMessage(res.message);
         } else {
             // _showErrorMessage(Language.something_went_wrong);
         }
+        _hidePopUpAlert()
         yield put(tokenExpiredAction(false));
         yield put(setLoadingAction(false));
 
     }
     catch (error) {
         console.log("Catch Error", error);
+        _hidePopUpAlert()
         yield put(tokenExpiredAction(false));
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* deleteAccount({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._deleteAccount, payload);
+        if (res.status == 200) {
+            _showErrorMessage(res.message);
+            _hidePopUpAlert()
+            yield put(tokenExpiredAction(false));
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -191,5 +213,7 @@ export default function* watchAuth() {
     yield takeLatest(ActionTypes.DO_LOGOUT, doLogout);
     yield takeLatest(ActionTypes.TOKEN_EXPIRED, tokenExpired);
     yield takeLatest(ActionTypes.CHECK_EMAIL, checkEmail);
+    yield takeLatest(ActionTypes.DELETE_ACCOUNT, deleteAccount);
+
 
 };

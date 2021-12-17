@@ -274,6 +274,7 @@ const CreateGroup: FC<any> = props => {
               placeholder={Language.write_something_about_group}
               name={'about'}
               multiline
+              limit={400}
               style={{minHeight: scaler(80), textAlignVertical: 'top'}}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
