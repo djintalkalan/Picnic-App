@@ -1,16 +1,17 @@
 import {colors, Images} from 'assets';
-import React, {FC, useCallback, useRef, useState} from 'react';
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {dateFormat, NavigationService, scaler} from 'utils';
+import {dateFormat, NavigationService, scaler, _showPopUpAlert} from 'utils';
 import Language from 'src/language/Language';
-import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader, PopupAlert, Stepper, Text, TextInput } from 'custom-components';
 
 type FormType = {
   capacity: string;
@@ -22,60 +23,53 @@ type FormType = {
   currency: string;
 };
 
-const DropDownData = ['$', 'USD', 'Rupee'];
+const DropDownData = ['$', '₹', '£'];
+
+type IEventDateTime =  {
+  selectedType:"eventDate"|"startTime"|"endTime",
+    eventDate: Date,
+    startTime: Date,
+    endTime: Date,
+}
 
 const Event2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
-  const eventDate = useRef<Date>(new Date());
-  const [isStartTime, setIsStartTime] = useState(false)
-  const [isEndTime, setIsEndTime] = useState(false)
+  const eventDateTime = useRef<IEventDateTime>({
+    selectedType:'eventDate',
+    eventDate: new Date(),
+    startTime: new Date(),
+    endTime:new Date()
+  });
+
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
     control,
     getValues,
     setValue,
+    clearErrors,
+    handleSubmit,
     formState: {errors},
-    setError,
   } = useForm<FormType>({
-    defaultValues: {
-      // email: "deepakq@testings.com",
-      // password: "Dj@123456",
-      // confirmPassword: "Dj@123456"
-    },
-    mode: 'onChange',
+    mode: 'onChange',defaultValues:{'currency':'$'}
   });
 
   const calculateButtonDisability = useCallback(() => {
-    if (
-      (isUnlimitedCapacity &&
-        (!getValues('ticketPrice') ||
-          !getValues('eventDate') ||
-          !getValues('startTime') ||
-          !getValues('currency'))) ||
-      (errors &&
-        (errors.ticketPrice ||
-          errors.eventDate ||
-          errors.startTime ||
-          errors.currency))
+    if (!getValues('eventDate') ||
+        // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
+        // (!getValues('capacity')&&!isUnlimitedCapacity) ||
+        !getValues('currency') ||
+        !getValues('startTime') ||
+      (errors && (errors.eventDate || errors.ticketPrice || errors.currency  || errors.startTime || errors.capacity))
     ) {
       return true;
-    }
-    // else if (
-    //   (isFreeEvent &&
-    //     (!getValues('eventDate') ||
-    //       !getValues('capacity') ||
-    //       !getValues('startTime'))) ||
-    //   (errors && (errors.eventDate || errors.startTime || errors.capacity))
-    // ) {
-    //   return true;
-    // }
-
+  }
     return false;
-  }, [errors]);
+  }, [errors, isUnlimitedCapacity, isFreeEvent]);
 
-  const openDatePicker = useCallback(() => {
+  const openDatePicker = useCallback((type:"eventDate"|"startTime"|"endTime") => {
+    eventDateTime.current.selectedType=type
     setDatePickerVisibility(true);
   }, []);
 
@@ -85,15 +79,33 @@ const Event2: FC<any> = props => {
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
       <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
-          <CheckBox
-            checked={isUnlimitedCapacity}
-            setChecked={setIsUnlimitedCapacity}
-          />
-          <Text style={{marginLeft: scaler(8), marginRight: scaler(18),fontSize:scaler(14)}}>
-            {Language.umlimited_capacity}
-          </Text>
-          <CheckBox checked={isFreeEvent} setChecked={setIsFreeEvent} />
-          <Text style={{marginLeft: scaler(8),fontSize:scaler(14)}}>{Language.free_event}</Text>
+          <TouchableOpacity onPress={()=>setIsUnlimitedCapacity(!isUnlimitedCapacity)} style={{flexDirection:'row'}}>
+            <CheckBox
+              checked={isUnlimitedCapacity}
+              setChecked={(b) => {
+                if (b) {
+                clearErrors('capacity')
+                  setValue('capacity',"")
+                }
+                setIsUnlimitedCapacity(b)
+              }}
+            />
+            <Text style={{marginLeft: scaler(8), marginRight: scaler(18),fontSize:scaler(14)}}>
+              {Language.umlimited_capacity}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=> setIsFreeEvent(!isFreeEvent)} style={{flexDirection:'row'}}>
+            <CheckBox checked={isFreeEvent}
+              setChecked={(b) => {
+                if (b) {
+                  clearErrors('ticketPrice')
+                    setValue('ticketPrice',"")
+                  }
+                setIsFreeEvent(b)
+              }}
+             />
+              <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
+           </TouchableOpacity>
         </View>
         <View
           style={{
@@ -115,19 +127,46 @@ const Event2: FC<any> = props => {
             control={control}
             errors={errors}
           />
-          <View style={{flex: 1, width: '100%'}}>
+
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex:10}}>
+            <View>
+            <TextInput
+            containerStyle={{marginEnd: scaler(4)}}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            name={'currency'}
+            disabled={isFreeEvent ? true : false}
+            icon={Images.ic_arrow_dropdown}
+            onChangeText={(text) => {
+                  
+            }}
+            required={isFreeEvent ? undefined : Language.event_name_required}
+                  control={control}
+                  iconContainerStyle={{end:scaler(4)}}
+            onPress={()=>{setDropdown(_=>!_)}}
+            errors={errors}
+          />
+          <FixedDropdown
+              visible={isDropdown}
+              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
+              onSelect={data => {
+                setDropdown(false);
+                setValue('currency', data?.title, {shouldValidate: true});
+              }}
+              />
+              </View>
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
               placeholder={
                 Language.event_ticket_price + ' (' + Language.per_person + ')'
               }
+              style={{paddingLeft:scaler(20)}}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'ticketPrice'}
               keyboardType={'number-pad'}
               disabled={isFreeEvent?true:false}
               iconSize={scaler(18)}
-              onBlur={()=>{setValue('ticketPrice',getValues('currency') ? getValues('currency')+getValues('ticketPrice'):'$'+getValues('ticketPrice'))}}
               icon={Images.ic_ticket}
               required={
                 isFreeEvent ? undefined : Language.ticket_price_required
@@ -135,15 +174,7 @@ const Event2: FC<any> = props => {
               control={control}
               errors={errors}
             />
-            {/* <FixedDropdown
-              visible={isDropdown}
-              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
-              onSelect={data => {
-                setDropdown(false);
-                setValue('purpose', data?.title, {shouldValidate: true});
-              }}
-            /> */}
-
+          </View>
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
               placeholder={Language.select_date}
@@ -151,7 +182,7 @@ const Event2: FC<any> = props => {
               backgroundColor={colors.colorTextInputBackground}
               style={{fontSize: scaler(13)}}
               name={'eventDate'}
-              onPress={()=>(setIsStartTime(false),setIsEndTime(false),openDatePicker())}
+              onPress={()=>(openDatePicker("eventDate"))}
               required={Language.date_required}
               icon={Images.ic_calender}
               iconSize={scaler(20)}
@@ -167,7 +198,7 @@ const Event2: FC<any> = props => {
               name={'startTime'}
               iconSize={scaler(18)}
               required={Language.start_time_required}
-              onPress={()=>(setIsStartTime(true),setIsEndTime(false),openDatePicker())}
+              onPress={()=>(openDatePicker("startTime"))}
               icon={Images.ic_clock}
               control={control}
               errors={errors}
@@ -178,7 +209,7 @@ const Event2: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'endTime'}
-              onPress={()=>(setIsEndTime(true),setIsStartTime(false),openDatePicker())}
+              onPress={()=>(openDatePicker("endTime"))}
               iconSize={scaler(18)}
               icon={Images.ic_clock}
               control={control}
@@ -195,41 +226,32 @@ const Event2: FC<any> = props => {
               control={control}
               errors={errors}
             />
-          </View>
-          <TextInput
-            containerStyle={{flex: 1, marginEnd: scaler(4)}}
-            placeholder={Language.select_currency}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'currency'}
-            disabled={isFreeEvent ? true : false}
-            icon={Images.ic_arrow_dropdown}
-            required={isFreeEvent ? undefined : Language.event_name_required}
-            control={control}
-            onPress={()=>{setDropdown(true)}}
-            errors={errors}
-          />
-           <FixedDropdown
-              visible={isDropdown}
-              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
-              onSelect={data => {
-                setDropdown(false);
-                setValue('currency', data?.title, {shouldValidate: true});
-              }}
-            />
-
           <Button
             disabled={calculateButtonDisability()}
             containerStyle={{marginTop: scaler(20)}}
             title={Language.next}
-            onPress={()=>NavigationService.navigate('Event3')}
+            onPress={handleSubmit(() => {
+              isFreeEvent ?
+              _showPopUpAlert({
+                message: Language.join_now_to_access_payment_processing,
+                buttonText: Language.join_now,
+                cancelButtonText: Language.no_thanks_create_my_event,
+                onPressButton: () => {
+                  
+                },
+                onPressCancel: () => {
+                  
+                }
+              }) :
+              NavigationService.navigate('Event3')
+            })}
           />
         </View>
         <DateTimePickerModal
           themeVariant={'light'}
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
-          mode={isStartTime || isEndTime ? 'datetime' : "date"}
+          mode={(eventDateTime.current?.selectedType=='eventDate') ? 'date' : "time"}
           customConfirmButtonIOS={props => (
             <Text
               onPress={props.onPress}
@@ -264,19 +286,25 @@ const Event2: FC<any> = props => {
               </Text>
             </View>
           )}
-          date={eventDate.current}
+          date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
+
+        //  eventDateTime.current?.[startTime]
           //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
           onConfirm={(date: Date) => {
-            eventDate.current = date;
+            const {selectedType} =eventDateTime.current
+            eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
             let hour = ((date?.getHours())%12||12) > 9 ?((date?.getHours())%12||12) : '0'+((date?.getHours())%12||12);
             let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-            let isAMPM = date?.getHours() >12 ?'PM':'AM'
-            isStartTime? setValue('startTime',hour+':'+min+' '+isAMPM) :isEndTime ? setValue('endTime',hour+':'+min+' '+isAMPM):
-            setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
-              shouldValidate: true,
-            });
+            let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
+            if (selectedType == 'eventDate') {
+              setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
+                shouldValidate: true,
+              });
+            } else {
+              setValue(selectedType,hour+':'+min+' '+isAMPM,{shouldValidate:true})
+            }
             setDatePickerVisibility(false);
           }}
           onCancel={() => {
@@ -306,6 +334,7 @@ const styles = StyleSheet.create({
     marginTop: scaler(20),
     flexDirection: 'row',
     marginHorizontal: scaler(25),
-    alignItems:'center'
+    alignItems: 'center',
+    flex:1
   },
 });

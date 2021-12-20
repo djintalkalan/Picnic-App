@@ -12,13 +12,12 @@ import {scaler} from 'utils';
 import { Button, MyHeader, Stepper, Text, TextInput } from 'custom-components';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Language from 'src/language/Language';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 type FormType = {
   id: string;
   policy: string;
 };
-
-const DropDownData = ['$', 'USD', 'Rupee'];
 
 const Event3: FC<any> = props => {
     const [isPayByCash, setIsPayByCash] = useState(false)
@@ -26,9 +25,7 @@ const Event3: FC<any> = props => {
   const {
     control,
     getValues,
-    setValue,
     formState: {errors},
-    setError,
   } = useForm<FormType>({
     mode: 'onChange',
   });
@@ -54,25 +51,21 @@ const Event3: FC<any> = props => {
           <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
             <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
               
-             <View style={styles.eventView}>
-          {/* <CheckBox
-            checked={isUnlimitedCapacity}
-            setChecked={setIsUnlimitedCapacity}
-          /> */}
+        <View style={styles.eventView}>
           <Text style={{marginLeft: scaler(8),fontSize:scaler(14),fontWeight:'500'}}>
             {Language.select_payment_options}
                   </Text>
-                  <View style={styles.payView}>
+                  <TouchableOpacity style={styles.payView}  onPress={()=>setIsPayByCash(!isPayByCash)}>
                       <Image source={Images.ic_empty_wallet} style={{height:scaler(16),width:scaler(19)}} />
                       <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500',flex:1}}>{Language.pay_by_cash}</Text>
-                      <MaterialIcons name={isPayByCash ? 'check-circle': 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} onPress={()=>setIsPayByCash(!isPayByCash)}/>
-                  </View>
+                      <MaterialIcons name={isPayByCash ? 'check-circle': 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary}/>
+                  </TouchableOpacity>
                   <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-                  <View style={styles.payView}>
+                  <TouchableOpacity style={styles.payView} onPress={()=>setIsPayByPaypal(!isPayByPaypal)}>
                       <Image source={Images.ic_paypal} style={{height:scaler(16),width:scaler(19)}} />
                       <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500',flex:1}}>{Language.pay_by_paypal}</Text>
-                      <MaterialIcons name={isPayByPaypal ? 'check-circle': 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} onPress={()=>setIsPayByPaypal(!isPayByPaypal)}/>
-                  </View>
+                      <MaterialIcons name={isPayByPaypal ? 'check-circle': 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                  </TouchableOpacity>
         </View>
         <View
           style={{
@@ -83,14 +76,14 @@ const Event3: FC<any> = props => {
                   {isPayByPaypal ?
                       <TextInput
                           containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        //   placeholder={Language.email}
+                          placeholder={Language.paypal_id}
                           borderColor={colors.colorTextInputBackground}
                           backgroundColor={colors.colorTextInputBackground}
                           name={'id'}
                           keyboardType={'number-pad'}
-                        //   required={
-                        //       isUnlimitedCapacity ? undefined : Language.capacity_required
-                        //   }
+                          required={
+                              Language.paypal_id_required
+                          }
                           control={control}
                           errors={errors}
                       /> : undefined
@@ -102,7 +95,8 @@ const Event3: FC<any> = props => {
               placeholder={Language.write_refund_policy}
               name={'policy'}
               multiline
-              style={{minHeight: scaler(200), textAlignVertical: 'top'}}
+              style={{ minHeight: scaler(200), textAlignVertical: 'top' }}
+              limit={1000}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               control={control}
@@ -137,7 +131,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   eventView: {
-    marginTop: scaler(20),
+    marginTop: scaler(25),
     marginHorizontal: scaler(15),
     },
   payView:{ flexDirection: 'row', marginVertical: scaler(16), alignItems: 'center',marginHorizontal:scaler(5) }

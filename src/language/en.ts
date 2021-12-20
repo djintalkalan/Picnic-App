@@ -158,7 +158,11 @@ export const en = {
     pay_by_cash: 'Pay by cash',
     pay_by_paypal: 'Pay by paypal',
     write_refund_policy: 'Write refund policy',
-    //   host_an_event: 'Host an event',
-    //   host_an_event: 'Host an event',
-
+    paypal_id: 'Paypal Id',
+    paypal_id_required: 'Paypal id is required',
+    join_now_to_access_payment_processing: 'Join now to access payment processing',
+    no_thanks_create_my_event:'No, Thanks Create my event'
+    // no_thanks_create_my_event:'No, Thanks Create my event'
+    // no_thanks_create_my_event:'No, Thanks Create my event'
+    // no_thanks_create_my_event:'No, Thanks Create my event'
 }

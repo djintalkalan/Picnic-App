@@ -270,3 +270,8 @@ export const _reportResource = async (body: any) => {
     console.log("---------- _reportResource Api Call ---------------")
     return fetchApiData(config.API_URL + 'common/report-resource', body, "POST")
 }
+
+export const _getMyGroups = async () => {
+    console.log("---------- _getMyGroups Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/get-my-groups', null, "GET")
+}

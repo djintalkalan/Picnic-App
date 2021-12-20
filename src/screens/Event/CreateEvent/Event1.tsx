@@ -1,4 +1,4 @@
-import {createGroup, uploadFile} from 'app-store/actions';
+import {getMyGroups} from 'app-store/actions';
 import {colors, Images} from 'assets';
 import {
   Button,
@@ -9,7 +9,6 @@ import {
   Text,
   TextInput,
 } from 'custom-components';
-import {capitalize} from 'lodash';
 import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {
@@ -22,53 +21,56 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
-import Database, {ILocation} from 'src/database/Database';
+import {useDispatch, useSelector} from 'react-redux';
+import  {ILocation} from 'database';
 import Language from 'src/language/Language';
 import {
-  getImageUrl,
-  getShortAddress,
   NavigationService,
   ProfileImagePickerOptions,
   scaler,
 } from 'utils';
+import { RootState } from 'app-store';
 
 type FormType = {
-  name: string;
+  eventName: string;
   selectGroup: string;
   location: string;
-  about: string;
+  aboutEvent: string;
 };
 
-const DropDownData = ['Personal', 'Professional', 'Charitable'];
+
 
 const Event1: FC<any> = props => {
   const uploadedImage = useRef('');
-  const [profileImage, setProfileImage] = useState<any>();
+  const [eventImage, setEventImage] = useState<any>();
   const locationRef = useRef<ILocation>();
   const locationInputRef = useRef<RNTextInput>(null);
+  const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
+  const [isDropdown, setDropdown] = useState(false);
+
+  const { myGroups } = useSelector((state: RootState) => ({
+    myGroups:state?.group?.myGroups
+  }))
+
+  const dispatch = useDispatch();
   const {
     control,
-    handleSubmit,
     getValues,
     setValue,
+    handleSubmit,
     formState: {errors},
-    setError,
   } = useForm<FormType>({
-    defaultValues: {
-      // email: "deepakq@testings.com",
-      // password: "Dj@123456",
-      // confirmPassword: "Dj@123456"
-    },
     mode: 'onChange',
   });
 
+  
+
   const calculateButtonDisability = useCallback(() => {
     if (
-      !getValues('name') ||
+      !getValues('eventName') ||
       !getValues('location') ||
-      (errors && (errors.name || errors.location))
+      (errors && (errors.eventName || errors.location))
     )
       return true;
     return false;
@@ -80,13 +82,18 @@ const Event1: FC<any> = props => {
         .then(image => {
           console.log(image);
           uploadedImage.current = '';
-          setProfileImage(image);
+          setEventImage(image);
         })
         .catch(e => {
           console.log(e);
         });
     }, 200);
   }, []);
+
+
+  useEffect(() => {
+    dispatch(getMyGroups())
+  },[])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -100,14 +107,14 @@ const Event1: FC<any> = props => {
           <View style={styles.imageContainer}>
             <Image
               onError={err => {
-                setProfileImage(Images.ic_event_placeholder);
+                setEventImage(Images.ic_event_placeholder);
               }}
               style={styles.image}
               source={
-                profileImage
-                  ? profileImage?.path
-                    ? {uri: profileImage?.path}
-                    : profileImage
+                eventImage
+                  ? eventImage?.path
+                    ? {uri: eventImage?.path}
+                    : eventImage
                   : Images.ic_event_placeholder
               }
             />
@@ -127,7 +134,7 @@ const Event1: FC<any> = props => {
             placeholder={Language.event_name}
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
-            name={'name'}
+            name={'eventName'}
             required={Language.event_name_required}
             control={control}
             errors={errors}
@@ -140,27 +147,28 @@ const Event1: FC<any> = props => {
               backgroundColor={colors.colorTextInputBackground}
               name={'selectGroup'}
               icon={Images.ic_arrow_dropdown}
-              //   onPress={() => {
-              //     setDropdown(!isDropdown);
-              //   }}
+                onPress={() => {
+                  setDropdown(!isDropdown);
+                }}
               required={Language.group_purpose_required}
               control={control}
               errors={errors}
             />
-            {/* <FixedDropdown
+             <FixedDropdown
               visible={isDropdown}
-              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
+              data={myGroups.map((_, i) => ({id: _?.id, data: _?.data, title: _?.name}))}
               onSelect={data => {
                 setDropdown(false);
-                setValue('purpose', data?.title, {shouldValidate: true});
+                selectedGroupRef.current = data;
+                setValue('selectGroup', data?.title, {shouldValidate: true});
               }}
-            /> */}
-            <View style={styles.eventView}>
+            /> 
+            <TouchableOpacity style={styles.eventView} onPress={()=>setIsOnlineEvent(!isOnlineEvent)}>
               <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
               <Text style={{marginLeft: scaler(5),fontSize:scaler(13),fontWeight:'400'}}>
                 {Language.online_event}
               </Text>
-            </View>
+            </TouchableOpacity>
 
             <TextInput
               containerStyle={{flex: 1, marginEnd: scaler(4)}}
@@ -198,7 +206,7 @@ const Event1: FC<any> = props => {
 
             <TextInput
               placeholder={Language.write_something_about_event}
-              name={'about'}
+              name={'aboutEvent'}
               limit={400}
               multiline
               style={{minHeight: scaler(80), textAlignVertical: 'top'}}
@@ -213,7 +221,13 @@ const Event1: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{marginTop: scaler(20)}}
             title={Language.next}
-            onPress={() => NavigationService.navigate('Event2')}
+            onPress={
+              handleSubmit(
+              (defaultValues) => NavigationService.navigate('Event2',
+              {
+                eventName: defaultValues?.eventName, myGroup: selectedGroupRef.current, isOnlineEvent: isOnlineEvent,
+                location: locationRef.current, aboutEvent: defaultValues?.aboutEvent,eventImage:eventImage
+              }))}
           />
         </View>
       </ScrollView>
