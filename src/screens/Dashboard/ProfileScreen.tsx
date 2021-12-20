@@ -6,15 +6,15 @@ import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
-import Database, { useDatabase } from 'src/database/Database'
+import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
 
 type FormType = {
     about: string
@@ -36,6 +36,8 @@ const ProfileScreen: FC<any> = (props) => {
 
     // const 
     const birthDate = useRef<Date>(new Date())
+    const locationRef = useRef<ILocation>();
+    const locationInputRef = useRef<RNTextInput>(null);
 
 
 
@@ -84,8 +86,22 @@ const ProfileScreen: FC<any> = (props) => {
 
 
     const setProfileData = useCallback((userData: any) => {
-        console.log("getImageUrl('users', scaler(100), scaler(100))", getImageUrl(userData?.image, { type: 'users', width: scaler(100) }))
-        const { first_name, image, last_name, email, username, dial_code, phone_number, dob, bio } = userData
+        const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_number, dob, bio, location } = userData
+
+        locationRef.current = {
+            latitude: location?.coordinates[1],
+            longitude: location?.coordinates[0],
+            address: {
+                main_text: getShortAddress(address, state, city),
+                secondary_text: city + ", " + state + ", " + country
+            },
+            otherData: {
+                city: city,
+                state: state,
+                country: country
+            }
+        }
+
         setValue("firstName", first_name)
         setValue("lastName", last_name)
         setValue("about", bio)
@@ -97,10 +113,11 @@ const ProfileScreen: FC<any> = (props) => {
         }
         setValue("phone", phone_number)
         setValue("phone_dialCode", dial_code)
-        setValue("location", first_name)
+        setValue("location", address)
     }, [])
 
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {
+        const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
         dispatch(updateProfile({
             first_name: data?.firstName,
             last_name: data?.lastName,
@@ -110,6 +127,17 @@ const ProfileScreen: FC<any> = (props) => {
             bio: data?.about,
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             image: imageFile,
+            address: data?.location,
+            city: otherData?.city,
+            state: otherData?.state,
+            country: otherData?.country,
+            location: {
+                type: 'Point',
+                coordinates: [
+                    longitude,
+                    latitude
+                ]
+            }
         }))
     }, [])
 
@@ -217,10 +245,30 @@ const ProfileScreen: FC<any> = (props) => {
                     />
 
                     <TextInput
+                        containerStyle={{ flex: 1, marginEnd: scaler(4), }}
                         placeholder={Language.location}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'location'}
+                        ref={locationInputRef}
+                        icon={Images.ic_gps}
+                        onPress={() => {
+                            NavigationService.navigate("SelectLocation", {
+                                prevSelectedLocation: locationRef.current,
+                                onSelectLocation: (location: ILocation) => {
+                                    locationRef.current = location;
+                                    setValue("location", location?.address?.main_text + ", " + location?.address?.secondary_text, { shouldValidate: true })
+                                    locationInputRef?.current?.setNativeProps({
+                                        selection: {
+                                            start: 0,
+                                            end: 0
+                                        }
+                                    })
+                                }
+
+                            })
+                        }}
+                        required={Language.group_location_required}
                         control={control}
                         errors={errors}
                     />

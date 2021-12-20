@@ -1,7 +1,7 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component } from "react";
-import { FlatList, GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import { BackHandler, FlatList, GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -31,10 +31,21 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
         this.state = {
             alertVisible: false,
         }
+        this.onBackPress = this.onBackPress.bind(this)
     }
 
     shouldComponentUpdate = (nextProps: Readonly<BottomMenuProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
+        if (nextState?.alertVisible && this.state.alertVisible != nextState.alertVisible) {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+        } else {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
+        }
         return this.state.alertVisible != nextState.alertVisible
+    }
+
+    onBackPress = () => {
+        this.setState({ alertVisible: false })
+        return true
     }
 
     buttons: Array<IBottomMenuButton> = []

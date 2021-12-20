@@ -126,8 +126,6 @@ const Settings: FC<any> = (props) => {
                                                 _showErrorMessage(Language.password_required)
                                             }
                                         }
-
-
                                     })
                                 }
                             })

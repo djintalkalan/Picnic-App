@@ -35,7 +35,11 @@ export const FixedDropdown: FC<IFixedDropdown> = (props) => {
             cardMaxElevation={3}
             cardElevation={2}
             cornerRadius={scaler(10)} >
-            <FlatList nestedScrollEnabled contentContainerStyle={{ paddingVertical: scaler(8) }}
+            <FlatList onTouchEndCapture={() => {
+                console.log("Touched 2");
+
+            }} style={{ maxHeight: scaler(150) }}
+                nestedScrollEnabled contentContainerStyle={{ paddingVertical: scaler(8) }}
                 data={data}
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={_renderDropdownItem}

@@ -4,7 +4,7 @@ import { Button, FixedDropdown, MyHeader, TextInput } from 'custom-components'
 import { capitalize } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Keyboard, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -154,6 +154,7 @@ const CreateGroup: FC<any> = (props) => {
                 </View>
                 <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15) }} >
                     <TextInput
+                        onFocus={() => setDropdown(false)}
                         containerStyle={{ flex: 1, marginEnd: scaler(4), }}
                         placeholder={Language.group_name}
                         borderColor={colors.colorTextInputBackground}
@@ -165,6 +166,7 @@ const CreateGroup: FC<any> = (props) => {
                     />
                     <View style={{ flex: 1, width: '100%' }} >
                         <TextInput
+                            onFocus={() => setDropdown(false)}
                             containerStyle={{ flex: 1, marginEnd: scaler(4), }}
                             placeholder={Language.group_purpose}
                             borderColor={colors.colorTextInputBackground}
@@ -172,6 +174,7 @@ const CreateGroup: FC<any> = (props) => {
                             name={'purpose'}
                             icon={Images.ic_arrow_dropdown}
                             onPress={() => {
+                                Keyboard.dismiss()
                                 setDropdown(!isDropdown)
                             }}
                             required={Language.group_purpose_required}
@@ -212,6 +215,7 @@ const CreateGroup: FC<any> = (props) => {
                                     }
 
                                 })
+                                setDropdown(false)
                             }}
                             required={Language.group_location_required}
                             control={control}
@@ -219,6 +223,7 @@ const CreateGroup: FC<any> = (props) => {
                         />
 
                         <TextInput
+                            onFocus={() => setDropdown(false)}
                             placeholder={Language.write_something_about_group}
                             name={'about'}
                             multiline

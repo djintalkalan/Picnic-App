@@ -88,7 +88,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
-                title={item?.user?.display_name}
+                title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
                 customRightText={item?.is_admin ? Language?.admin : ""}
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_home_profile}
