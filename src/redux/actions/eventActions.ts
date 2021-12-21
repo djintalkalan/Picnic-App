@@ -1,5 +1,4 @@
 import ActionTypes from "app-store/action-types";
-export type IResourceType = 'event' | 'group' | 'message' | 'user'
 
 
 export const getMyGroups = () => ({
@@ -8,6 +7,39 @@ export const getMyGroups = () => ({
 
 export const setMyGroups = (payload:Array<any>) => ({
     type: ActionTypes.SET_MY_GROUPS,
+    payload
+})
+
+export const createEvent = (payload: any) => ({
+    type: ActionTypes.CREATE_EVENT,
+    payload
+})
+
+export const updateEvent = (payload: any) => ({
+    type: ActionTypes.UPDATE_EVENT,
+    payload
+})
+
+
+export const deleteEvent = (payload: any) => ({
+    type: ActionTypes.DELETE_EVENT,
+    payload
+})
+
+export const deleteEventSuccess = (payload: any) => ({
+    type: ActionTypes.DELETE_EVENT_SUCCESS,
+    payload
+})
+
+
+
+export const joinEvent = (payload: any) => ({
+    type: ActionTypes.JOIN_EVENT,
+    payload
+})
+
+export const leaveEvent = (payload: any) => ({
+    type: ActionTypes.LEAVE_EVENT,
     payload
 })
 

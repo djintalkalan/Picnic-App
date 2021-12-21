@@ -80,7 +80,6 @@ const Event3: FC<any> = props => {
                           borderColor={colors.colorTextInputBackground}
                           backgroundColor={colors.colorTextInputBackground}
                           name={'id'}
-                          keyboardType={'number-pad'}
                           required={
                               Language.paypal_id_required
                           }
@@ -89,8 +88,6 @@ const Event3: FC<any> = props => {
                       /> : undefined
         }
           <View style={{flex: 1, width: '100%'}}>
-           
-
             <TextInput
               placeholder={Language.write_refund_policy}
               name={'policy'}

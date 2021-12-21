@@ -1,5 +1,5 @@
 import {colors, Images} from 'assets';
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
+import React, {FC, useCallback, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {
   StyleSheet,
@@ -11,7 +11,10 @@ import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {dateFormat, NavigationService, scaler, _showPopUpAlert} from 'utils';
 import Language from 'src/language/Language';
-import { Button, CheckBox, FixedDropdown, MyHeader, PopupAlert, Stepper, Text, TextInput } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader,  Stepper, Text, TextInput } from 'custom-components';
+import Database, { useDatabase } from 'database';
+import { createEvent } from 'app-store/actions';
+import { useDispatch } from 'react-redux';
 
 type FormType = {
   capacity: string;
@@ -23,7 +26,7 @@ type FormType = {
   currency: string;
 };
 
-const DropDownData = ['$', '₹', '£'];
+const DropDownData = [{title:'USD',value:'usd'},{title:'EUR',value:'eur'},{title:'GBP',value:'gbp'},{title:'COP',value:'cop'}];
 
 type IEventDateTime =  {
   selectedType:"eventDate"|"startTime"|"endTime",
@@ -36,12 +39,16 @@ const Event2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
+  const dispatch = useDispatch();
   const eventDateTime = useRef<IEventDateTime>({
     selectedType:'eventDate',
     eventDate: new Date(),
     startTime: new Date(),
     endTime:new Date()
   });
+  const [userData] = useDatabase("userData")
+
+  console.log('userData123', props?.route?.params);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
@@ -52,8 +59,52 @@ const Event2: FC<any> = props => {
     handleSubmit,
     formState: {errors},
   } = useForm<FormType>({
-    mode: 'onChange',defaultValues:{'currency':'$'}
+    mode: 'onChange',defaultValues:{'currency':'USD'}
   });
+
+  const bodyData=props?.route?.parama
+
+  const callCreateEventApi = useCallback(data => {
+    const {latitude, longitude, address} =
+      bodyData?.location ?? {};
+    let payload = {
+      image:bodyData?.eventImage,
+      name: bodyData?.eventName,
+      group_id: bodyData?.myGroup?.id,
+      is_online_event:bodyData?.isOnlineEvent ? '1' :'0',
+      short_description: bodyData?.aboutEvent,
+      address: data?.location,
+      city: address?.city,
+      state: address?.state,
+      country: address?.country,
+      location: {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      },
+      capacity_type: isUnlimitedCapacity ? 'unlimited':"limited",
+      capacity: data?.capacity,
+      is_free_event: isFreeEvent ? '1':"0",
+      event_fees: data?.ticketPrice,
+      event_date: data?.eventDate,
+      event_start_time: data?.startTime,
+      event_end_time:data?.endTime,
+      details: data?.additionalInfo,
+      event_currency: data?.currency,
+      payment_method: "paypal",
+      payment_email: "mukesh@yopmail.com",
+      event_refund_policy: "sf t g ty hyj yj yj "
+    };
+    dispatch(
+      createEvent({
+        data: payload,
+        onSuccess: () => {
+          Database.setSelectedLocation(
+            Database.getStoredValue('selectedLocation'),
+          );
+        },
+      }),
+    );
+  }, []);
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
@@ -148,7 +199,7 @@ const Event2: FC<any> = props => {
           />
           <FixedDropdown
               visible={isDropdown}
-              data={DropDownData.map((_, i) => ({id: i, data: _, title: _}))}
+              data={DropDownData.map((_, i) => ({id: i, data: _, title: _?.title}))}
               onSelect={data => {
                 setDropdown(false);
                 setValue('currency', data?.title, {shouldValidate: true});
@@ -231,19 +282,21 @@ const Event2: FC<any> = props => {
             containerStyle={{marginTop: scaler(20)}}
             title={Language.next}
             onPress={handleSubmit(() => {
-              isFreeEvent ?
+              userData?.is_premium ? NavigationService.navigate('Event3') :
+              // isFreeEvent ?
               _showPopUpAlert({
                 message: Language.join_now_to_access_payment_processing,
                 buttonText: Language.join_now,
                 cancelButtonText: Language.no_thanks_create_my_event,
-                onPressButton: () => {
-                  
-                },
+                onPressButton: handleSubmit( (defaultValues) => {
+                  callCreateEventApi(defaultValues)
+                }),
                 onPressCancel: () => {
                   
                 }
-              }) :
-              NavigationService.navigate('Event3')
+              }) 
+            //   :
+            //  undefined
             })}
           />
         </View>

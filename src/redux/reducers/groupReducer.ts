@@ -28,7 +28,7 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
     switch (action.type) {
         case ActionTypes.SET_ALL_GROUPS:
             return { ...state, allGroups: action?.payload }
-            case ActionTypes.SET_MY_GROUPS:
+        case ActionTypes.SET_MY_GROUPS:
                 return { ...state, myGroups: action?.payload }
         case ActionTypes.DELETE_GROUP_SUCCESS:
             return { ...state, allGroups: state?.allGroups.filter(_ => _._id != action?.payload) }

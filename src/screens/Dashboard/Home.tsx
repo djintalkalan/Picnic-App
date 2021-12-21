@@ -15,7 +15,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {useDispatch, useSelector} from 'react-redux';
-import EventList from 'screens/EventList';
+import EventList from 'screens/Event/EventList';
 import GroupList from 'screens/Group/GroupList';
 import {ILocation, useDatabase} from 'src/database/Database';
 import Language from 'src/language/Language';

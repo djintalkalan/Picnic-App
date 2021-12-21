@@ -161,8 +161,11 @@ export const en = {
     paypal_id: 'Paypal Id',
     paypal_id_required: 'Paypal id is required',
     join_now_to_access_payment_processing: 'Join now to access payment processing',
-    no_thanks_create_my_event:'No, Thanks Create my event'
-    // no_thanks_create_my_event:'No, Thanks Create my event'
-    // no_thanks_create_my_event:'No, Thanks Create my event'
+    no_thanks_create_my_event: 'No, Thanks Create my event',
+    no_events_close: "No events are close to you,",
+    mute_event: 'Mute event',
+    event_details: 'Event Details',
+    report_event:'Report event',
+    leave_event:'Cancel reservation'
     // no_thanks_create_my_event:'No, Thanks Create my event'
 }
