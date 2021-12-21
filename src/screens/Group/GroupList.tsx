@@ -59,9 +59,10 @@ const GroupList: FC<any> = (props) => {
         return buttons
     }, [useLanguage()])
 
-    const { isLoading, allGroups } = useSelector<RootState, any>((state) => ({
+    const { isLoading, allGroups, searchedGroups } = useSelector<RootState, any>((state) => ({
         isLoading: state.isLoading,
-        allGroups: state?.group?.allGroups
+        allGroups: state?.group?.allGroups,
+        searchedGroups: state?.homeData?.searchedGroups
     }), isEqual)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
@@ -97,7 +98,6 @@ const GroupList: FC<any> = (props) => {
 
     const _renderItem = useCallback(({ item }, rowMap) => {
         const { is_group_member } = item
-
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
@@ -141,8 +141,6 @@ const GroupList: FC<any> = (props) => {
                     <Ionicons color={colors.colorWhite} name={is_group_member ? 'checkmark-sharp' : "person-add-sharp"} size={scaler(24)} />
                     <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_group_member ? Language.joined : Language?.join}</Text>
                 </TouchableOpacity>
-
-
             </View>
             <View style={{
                 alignItems: 'center',
@@ -170,14 +168,14 @@ const GroupList: FC<any> = (props) => {
     return (
         <View style={styles.container} >
             <SwipeListView
-                refreshControl={<RefreshControl
+                refreshControl={searchedGroups ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = InitialPaginationState
                         fetchGroupList()
                     }}
                 />}
-                data={allGroups}
+                data={searchedGroups ? searchedGroups : allGroups}
                 contentContainerStyle={{ flex: allGroups?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}

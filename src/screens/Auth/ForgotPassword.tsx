@@ -1,9 +1,7 @@
 // import { useFocusEffect } from '@react-navigation/core'
 import { forgotPassword } from 'app-store/actions'
 import { colors } from 'assets'
-import {
-    Button, Text, TextInput
-} from 'custom-components'
+import { Button, Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useRef } from 'react'

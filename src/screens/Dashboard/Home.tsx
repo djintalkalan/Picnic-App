@@ -1,8 +1,10 @@
 import { RootState } from 'app-store'
+import { searchAtHome, setSearchedData } from 'app-store/actions/homeaActions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useState } from 'react'
+import _ from 'lodash'
+import React, { FC, useCallback, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
@@ -31,6 +33,7 @@ const tabs: TabProps[] = [
 
 const Home: FC = () => {
     const [isFABOpen, setFABOpen] = useState(false)
+    const [searchText, setSearchText] = useState("")
     const defaultLocation: ILocation = {
         latitude: 34.055101,
         longitude: -118.244797,
@@ -50,6 +53,15 @@ const Home: FC = () => {
 
     const [profileImage, setProfileImage] = useState()
     const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
+
+    const debounceSearch = useCallback(_.debounce((text) => {
+        dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups' }))
+    }, 500), [currentTabIndex])
+
+    const debounceClear = useCallback(_.debounce(() => {
+        dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
+    }, 1000), [])
+
     return (
         <SafeAreaView style={styles.container} >
 
@@ -97,14 +109,27 @@ const Home: FC = () => {
 
             }} >
 
-                <TextInput style={styles.searchInput}
+                <TextInput
+                    onChangeText={(text) => {
+                        setSearchText(text)
+                        debounceSearch(text?.trim()?.length > 2 ? text : null)
+                        text?.trim()?.length < 3 && debounceClear()
+                    }}
+                    style={styles.searchInput}
+                    value={searchText}
                     placeholder={Language.search_placeholder}
                     placeholderTextColor={colors.colorGreyInactive}
                 />
                 <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
             </View>
 
-            <TopTab onChangeIndex={setCurrentTabIndex} swipeEnabled={false} tabs={tabs} />
+            <TopTab onChangeIndex={(i) => {
+                if (searchText.trim()) {
+                    setSearchText("");
+                    debounceSearch(null);
+                }
+                setCurrentTabIndex(i);
+            }} swipeEnabled={false} tabs={tabs} />
 
             <View style={{ alignSelf: 'baseline', position: 'absolute', bottom: scaler(40), right: scaler(15), }} >
                 {isFABOpen &&

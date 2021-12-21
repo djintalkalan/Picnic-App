@@ -178,7 +178,7 @@ const ProfileScreen: FC<any> = (props) => {
 
                 <View pointerEvents={isEditEnabled ? "auto" : 'none'} style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(20) }} >
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', width: '100%' }} >
 
                         <TextInput
                             containerStyle={{ flex: 1, marginEnd: scaler(4), }}
