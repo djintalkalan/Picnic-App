@@ -181,6 +181,8 @@ export const en = {
   mute_event: 'Mute event',
   event_details: 'Event Details',
   report_event: 'Report event',
-  leave_event: 'Cancel reservation'
+  leave_event: 'Cancel reservation',
+  unlimited: 'Unlimited',
+  pin: 'Pin',
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { RootState } from 'app-store';
-import { IPaginationState, joinEvent, muteUnmuteResource, reportResource } from 'app-store/actions';
+import { getAllEvents, IPaginationState, joinEvent, muteUnmuteResource, reportResource } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, Modal, Text } from 'custom-components';
@@ -90,7 +90,7 @@ const EventList: FC<any> = (props) => {
             return
         }
         let page = (paginationState?.current?.currentPage) + 1
-        // dispatch(getAllEvents({ page, onSuccess: onSuccess }))
+        dispatch(getAllEvents({ page, onSuccess: onSuccess }))
     }, [])
 
     const onSuccess = useCallback(({ pagination }) => {
@@ -107,10 +107,11 @@ const EventList: FC<any> = (props) => {
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'events' }) } : undefined}
                 subtitle={getShortAddress(item.address, item?.state)}
-                isSelected={is_event_member}
+                // customView={item?.capacity_type == 'unlimited' ? <View style={{ alignSelf: 'center',ba }}><Text style={{ fontSize: scaler(9) }}>{Language.unlimited}</Text></View>}
                 onPress={() => {
 
                 }}
+
             // onPressImage={() => {
             //     if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
             //         dispatch(setGroupDetail(null))
@@ -124,7 +125,7 @@ const EventList: FC<any> = (props) => {
     }, [])
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member } = item
+        const { is_event_pinned_by_me } = item
         return (<View style={{ flex: 1, flexDirection: 'row', }} >
             <View style={{
                 alignItems: 'center',
@@ -135,13 +136,13 @@ const EventList: FC<any> = (props) => {
             }}>
                 <TouchableOpacity onPress={() => {
                     swipeListRef?.current?.closeAllOpenRows()
-                    if (!is_event_member) {
+                    if (!is_event_pinned_by_me) {
                         dispatch(joinEvent(item?._id))
                     }
                 }}
                     style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: colors.colorPrimary }}>
-                    <Ionicons color={colors.colorWhite} name={is_event_member ? 'checkmark-sharp' : "person-add-sharp"} size={scaler(24)} />
-                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_event_member ? Language.joined : Language?.join}</Text>
+                    <Ionicons color={colors.colorWhite} name={'checkmark-sharp'} size={scaler(24)} />
+                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_event_pinned_by_me ? Language.joined : Language?.pin}</Text>
                 </TouchableOpacity>
 
 

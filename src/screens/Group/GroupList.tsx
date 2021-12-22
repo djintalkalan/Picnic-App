@@ -121,7 +121,7 @@ const GroupList: FC<any> = (props) => {
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'groups' }) } : undefined}
                 subtitle={getShortAddress(item.address, item?.state)}
-                isSelected={is_group_member}
+                customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
                 onPress={() => {
 
                 }}

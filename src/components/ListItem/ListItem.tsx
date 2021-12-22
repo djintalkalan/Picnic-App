@@ -1,4 +1,3 @@
-import { Images } from 'assets'
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
 import React, { FC, useState } from 'react'
@@ -11,6 +10,7 @@ interface ListItemProps {
     icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
     isSelected?: boolean
+    customView?: React.ReactElement | null
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     containerStyle?: StyleProp<ViewStyle>
@@ -30,7 +30,7 @@ interface MemberListItemProps {
     onLongPress?: (e?: GestureResponderEvent) => void
 }
 
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false }) => {
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView }) => {
     const [isError, setError] = useState(false)
     return (
         <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
@@ -44,7 +44,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
                     <Text style={styles.title} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
                 </View>
-                {isSelected ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
+                {customView}
             </View>
         </TouchableHighlight>
     )

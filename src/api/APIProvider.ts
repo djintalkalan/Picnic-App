@@ -289,3 +289,8 @@ export const _createEvent = async (body: any) => {
     console.log("---------- _createEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/create', body, "POST")
 }
+
+export const _getAllEvents = async (body: any, page: number) => {
+    console.log("---------- _getAllEvents Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/get-all-events?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
+}
