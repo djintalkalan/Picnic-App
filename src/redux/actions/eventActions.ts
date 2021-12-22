@@ -5,7 +5,7 @@ export const getMyGroups = () => ({
     type: ActionTypes.GET_MY_GROUPS,
 })
 
-export const setMyGroups = (payload:Array<any>) => ({
+export const setMyGroups = (payload: Array<any>) => ({
     type: ActionTypes.SET_MY_GROUPS,
     payload
 })
@@ -40,6 +40,16 @@ export const joinEvent = (payload: any) => ({
 
 export const leaveEvent = (payload: any) => ({
     type: ActionTypes.LEAVE_EVENT,
+    payload
+})
+
+export const getAllEvents = (payload: any) => ({
+    type: ActionTypes.GET_ALL_EVENTS,
+    payload
+})
+
+export const setAllEvents = (payload: Array<any>) => ({
+    type: ActionTypes.SET_ALL_EVENTS,
     payload
 })
 

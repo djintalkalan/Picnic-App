@@ -26,7 +26,7 @@ type FormType = {
   currency: string;
 };
 
-const DropDownData = [{ title: 'USD', value: 'usd' }, { title: 'EUR', value: 'eur' }, { title: 'GBP', value: 'gbp' }, { title: 'COP', value: 'cop' }];
+const DropDownData = ['USD', 'EUR', 'GBP', 'COP'];
 
 type IEventDateTime = {
   selectedType: "eventDate" | "startTime" | "endTime",
@@ -86,7 +86,7 @@ const CreateEvent2: FC<any> = props => {
     [bodyData?.eventImage],
   );
 
-  console.log('userData123', bodyData);
+  // console.log('userData123', bodyData);
 
   const callCreateEventApi = useCallback(data => {
     const { latitude, longitude, address, otherData } =
@@ -105,9 +105,9 @@ const CreateEvent2: FC<any> = props => {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      capacity_type: isUnlimitedCapacity ? 'unlimited' : "limited",
+      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
       capacity: data?.capacity,
-      is_free_event: isFreeEvent ? '1' : "0",
+      is_free_event: isFreeEvent ? '1' : '0',
       event_fees: data?.ticketPrice,
       event_date: data?.eventDate,
       event_start_time: data?.startTime,
@@ -223,7 +223,7 @@ const CreateEvent2: FC<any> = props => {
               />
               <FixedDropdown
                 visible={isDropdown}
-                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _?.title }))}
+                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
                 onSelect={data => {
                   setDropdown(false);
                   setValue('currency', data?.title, { shouldValidate: true });
