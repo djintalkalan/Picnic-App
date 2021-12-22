@@ -27,7 +27,6 @@ const CreateGroup: FC<any> = (props) => {
     const { group } = props?.route?.params ?? {}
     const uploadedImage = useRef("")
     const dispatch = useDispatch()
-    const [isEditEnabled, setEditEnabled] = useState(false)
     const [profileImage, setProfileImage] = useState<any>()
     const locationRef = useRef<ILocation>();
     const locationInputRef = useRef<RNTextInput>(null);
@@ -77,7 +76,6 @@ const CreateGroup: FC<any> = (props) => {
             setValue('location', group?.address)
             setValue('name', group?.name)
             setValue('purpose', capitalize(group?.category ?? ""))
-            // setEditEnabled(true)
             if (group?.image) {
                 setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
             } else {

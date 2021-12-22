@@ -91,7 +91,7 @@ const Settings: FC<any> = (props) => {
                         title={Language.logout} />
 
 
-                    {1 == 2 && <SettingButton
+                    <SettingButton
                         containerStyle={{ paddingTop: 0 }}
                         onPress={() => {
                             _showPopUpAlert({
@@ -134,7 +134,7 @@ const Settings: FC<any> = (props) => {
                         titleColor={colors.colorRed}
                         fontWeight={'500'}
                         image={Images.ic_delete}
-                        title={Language.delete_account} />}
+                        title={Language.delete_account} />
 
 
                 </View>

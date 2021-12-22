@@ -58,7 +58,6 @@ const ForgotPassword: FC = () => {
         <SafeAreaView style={styles.container} >
             <BackButton />
 
-
             <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(0) }} >
 
                 <Text style={styles.heading} >{Language.forgot_password}</Text>
@@ -76,7 +75,11 @@ const ForgotPassword: FC = () => {
                     control={control}
                     errors={errors}
                 />
-                <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(25) }} title={Language.submit} onPress={onSubmit} />
+
+                <Button
+                    disabled={calculateButtonDisability()}
+                    containerStyle={{ marginTop: scaler(25) }}
+                    title={Language.submit} onPress={onSubmit} />
 
             </View>
 

@@ -131,5 +131,20 @@ export const en = {
     enter_password_to_delete: "Enter password to delete the account",
     done: "Done",
     review: "Review",
-    restore: "Restore"
+    restore: "Restore",
+    are_you_sure_mute_group: "Are you sure you want to mute group ?",
+    yes_mute: "Yes, Mute",
+    are_you_sure_leave_group: "Are you sure you want to leave group ?",
+    yes_leave: "Yes, Leave",
+    are_you_sure_report_group: "Are you sure you want to report group ?",
+    are_you_sure_report_member: "Are you sure you want to report member ?",
+    yes_report: "Yes, Report",
+    are_you_sure_block_member: "Are you sure you want to block member ?",
+    yes_block: "Yes, Block",
+    are_you_sure_delete_group: "Are you sure you want to delete group ?",
+    yes_delete: "Yes, Delete",
+    are_you_sure_remove_member: "Are you sure you want to remove member ?",
+    yes_remove: "Yes, Remove",
+    close: "Close",
+
 }

@@ -1,11 +1,22 @@
 {
-    "cSpell.words": [
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "cSpell.userWords": [
+        "Octicons",
         "dropdownalert",
         "Entypo",
         "Fontisto",
         "Ionicons",
         "MMKV",
         "Reactotron",
-        "REGX"
+        "REGX",
+        "Persistor",
+        "Signup",
     ]
 }

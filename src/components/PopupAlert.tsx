@@ -35,7 +35,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     message: string = "Are you sure you want to pay using CASH?"
     buttonText: string = 'Pay ‭$2'
     buttonStyle: StyleProp<ViewStyle> = {}
-    cancelButtonText = Language.cancel
+    cancelButtonText = Language.close
     onPressCancel: any = null
     onPressButton: any = null
 
@@ -44,7 +44,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         this.message = message || ""
         this.buttonText = buttonText || ""
         this.buttonStyle = StyleSheet.flatten(buttonStyle) || {}
-        this.cancelButtonText = cancelButtonText || Language.cancel
+        this.cancelButtonText = cancelButtonText || Language.close
         this.customView = customView
         this.onPressCancel = () => {
             onPressCancel && onPressCancel()
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         width: '100%',
         elevation: 3,
         alignItems: 'center',
-        borderRadius: scaler(10)
+        borderRadius: scaler(20)
     },
     title: {
         fontWeight: '500',

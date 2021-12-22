@@ -6,13 +6,13 @@ import { Card, Text, useStatusBar } from 'custom-components'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, scaler, _showBottomMenu } from 'utils'
+import { getImageUrl, getShortAddress, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -27,27 +27,53 @@ const GroupDetail: FC<any> = (props) => {
             {
                 title: Language.block,
                 onPress: () => {
-                    dispatch(blockUnblockResource({
-                        data: { resource_id: item?.user_id, resource_type: 'user', is_blocked: '1' }
-                    }))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_block_member,
+                        onPressButton: () => {
+                            dispatch(blockUnblockResource({
+                                data: { resource_id: item?.user_id, resource_type: 'user', is_blocked: '1' }
+                            }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_block
+                    })
+
                 }
             },
             {
                 title: Language.report,
                 onPress: () => {
-                    dispatch(reportResource({
-                        resource_type: 'user',
-                        resource_id: item?.user_id
-                    }))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_report_member,
+                        onPressButton: () => {
+                            dispatch(reportResource({
+                                resource_type: 'user',
+                                resource_id: item?.user_id
+                            }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_report
+                    })
+
                 }
             },
             {
                 title: Language.remove,
                 onPress: () => {
-                    dispatch(removeGroupMember({
-                        resource_id: item?.resource_id,
-                        user_id: item?.user_id
-                    }))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_remove_member,
+                        onPressButton: () => {
+                            dispatch(removeGroupMember({
+                                resource_id: item?.resource_id,
+                                user_id: item?.user_id
+                            }))
+                            _hidePopUpAlert()
+                        },
+                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonText: Language.yes_remove
+                    })
+
+
                 },
                 textStyle: { color: colors.colorRed }
             }
@@ -69,7 +95,9 @@ const GroupDetail: FC<any> = (props) => {
 
     useLayoutEffect(() => {
         // console.log("payload", props)
-        dispatch(getGroupDetail(props?.route?.params?.id))
+        InteractionManager.runAfterInteractions(() => {
+            dispatch(getGroupDetail(props?.route?.params?.id))
+        })
     }, [])
 
     useFocusEffect(useCallback(() => {
@@ -103,7 +131,15 @@ const GroupDetail: FC<any> = (props) => {
                 icon={Images.ic_delete}
                 visibility={group?.is_admin}
                 onPress={() => {
-                    dispatch(deleteGroup(group?._id))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_delete_group,
+                        onPressButton: () => {
+                            dispatch(deleteGroup(group?._id))
+                            _hidePopUpAlert()
+                        },
+                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonText: Language.yes_delete
+                    })
                 }} />
 
             <BottomButton
@@ -111,7 +147,15 @@ const GroupDetail: FC<any> = (props) => {
                 icon={Images.ic_leave_group}
                 visibility={is_group_joined && !group?.is_admin}
                 onPress={() => {
-                    dispatch(leaveGroup(group?._id))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_leave_group,
+                        onPressButton: () => {
+                            dispatch(leaveGroup(group?._id))
+                            _hidePopUpAlert()
+                        },
+                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonText: Language.yes_leave
+                    })
                 }} />
 
             <BottomButton
@@ -127,7 +171,14 @@ const GroupDetail: FC<any> = (props) => {
                 icon={Images.ic_report_group}
                 visibility={!group?.is_admin}
                 onPress={() => {
-                    dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_report_group,
+                        onPressButton: () => {
+                            dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_report
+                    })
                 }} />
         </View>
     }, [group])

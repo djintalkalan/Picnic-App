@@ -36,9 +36,9 @@ const App: FC = () => {
                     <Loader />
                 </PersistGate>
             </Provider>
-            <DropdownAlertWithStatusBar />
             <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
             <BottomMenu ref={ref => BottomMenuHolder.setBottomMenu(ref)} />
+            <DropdownAlertWithStatusBar />
         </LocationServiceProvider>
     }, [])
     return (

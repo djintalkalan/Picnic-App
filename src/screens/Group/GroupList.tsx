@@ -1,13 +1,12 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { RootState, store } from 'app-store';
 import { getAllGroups, IPaginationState, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setGroupDetail } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
-import { Button, Modal, Text } from 'custom-components';
+import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -15,7 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService, scaler, _showBottomMenu } from 'utils';
+import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 
 const GroupList: FC<any> = (props) => {
@@ -26,7 +25,14 @@ const GroupList: FC<any> = (props) => {
         if (!is_group_admin) {
             buttons.push({
                 title: Language.mute_group, onPress: () => {
-                    dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "group", resource_id: _id } }))
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_mute_group,
+                        onPressButton: () => {
+                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "group", resource_id: _id } }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_mute
+                    })
                 }
             })
         }
@@ -43,15 +49,28 @@ const GroupList: FC<any> = (props) => {
         if (!is_group_admin) {
             buttons.push({
                 title: Language.report_group, onPress: () => {
-                    dispatch(reportResource({ resource_id: _id, resource_type: 'group' }))
-                    // reportedItemRef.current = item
-                    // setReportAlert(true)
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_report_group,
+                        onPressButton: () => {
+                            dispatch(reportResource({ resource_id: _id, resource_type: 'group' }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_report
+                    })
                 }
             })
             if (is_group_member) {
                 buttons.push({
                     title: Language.leave_group, textStyle: { color: colors.colorRed }, onPress: () => {
-                        dispatch(leaveGroup(_id))
+                        _showPopUpAlert({
+                            message: Language.are_you_sure_leave_group,
+                            onPressButton: () => {
+                                dispatch(leaveGroup(_id))
+                                _hidePopUpAlert()
+                            },
+                            buttonStyle: { backgroundColor: colors.colorRed },
+                            buttonText: Language.yes_leave
+                        })
                     }
                 })
             }
@@ -65,18 +84,15 @@ const GroupList: FC<any> = (props) => {
         searchedGroups: state?.homeData?.searchedGroups
     }), isEqual)
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
-    const reportedItemRef = useRef<any>(null)
-    const [isReportAlert, setReportAlert] = useState(false)
+    useEffect(() => {
+        console.log("allGroups changed")
+    }, [allGroups])
 
+    const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')
     const dispatch = useDispatch()
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
-
-    useFocusEffect(useCallback(() => {
-
-    }, []))
 
     useLayoutEffect(() => {
         console.log("selectedLocation changed", selectedLocation)
@@ -176,7 +192,7 @@ const GroupList: FC<any> = (props) => {
                     }}
                 />}
                 data={searchedGroups ? searchedGroups : allGroups}
-                contentContainerStyle={{ flex: allGroups?.length ? undefined : 1 }}
+                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}
@@ -208,30 +224,6 @@ const GroupList: FC<any> = (props) => {
                 }}
                 closeOnRowOpen={true}
             />
-            <Modal transparent visible={isReportAlert} >
-
-                <View style={{ flex: 1, padding: '10%', backgroundColor: 'rgba(0, 0, 0, 0.49)', alignItems: 'center', justifyContent: 'center' }} >
-                    <View style={styles.alertContainer} >
-
-                        <Text style={{ marginTop: scaler(10), paddingHorizontal: '10%', textAlign: 'center', color: colors.colorPlaceholder, fontSize: scaler(14), fontWeight: '500' }} >{Language.are_you_sure_logout}</Text>
-
-                        <Button
-                            onPress={() => {
-                                setReportAlert(false)
-                            }}
-                            backgroundColor={colors.colorRed}
-                            containerStyle={{ marginTop: scaler(30), marginBottom: scaler(20) }}
-                            fontSize={scaler(14)}
-                            paddingHorizontal={scaler(30)}
-                            title={'Yes, Logout'}
-                            paddingVertical={scaler(10)}
-                        />
-                        <Text onPress={() => setReportAlert(false)} style={{ paddingHorizontal: '10%', textAlign: 'center', color: colors.colorBlackText, fontSize: scaler(14), fontWeight: '400' }} >{Language.cancel}</Text>
-                    </View>
-                </View>
-
-
-            </Modal>
         </View>
     )
 }

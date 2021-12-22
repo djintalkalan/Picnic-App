@@ -4,7 +4,7 @@ import { Images } from 'assets/Images'
 import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -64,11 +64,11 @@ const ProfileScreen: FC<any> = (props) => {
     })
 
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         dispatch(getProfile())
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setProfileData(userData)
     }, [userData])
 
