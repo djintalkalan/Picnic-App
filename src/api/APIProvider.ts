@@ -275,3 +275,8 @@ export const _searchAtHome = async (body: any) => {
     console.log("---------- _searchAtHome Api Call ---------------")
     return fetchApiData(config.API_URL + (body?.type == 'events' ? 'event/get-all-events' : 'group/get-all-groups') + '?page=' + 1 + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=100000&q=' + body?.text, null, "GET")
 }
+
+export const _getMyEvents = async (body: any) => {
+    console.log("---------- _getMyEvents Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/get-my-events' + '?page=' + 1 + '&group_id=' + body?.groupId + '&event_filter_type=' + body?.type + '&limit=100000&q=' + (body?.text ?? ""), null, "GET")
+}

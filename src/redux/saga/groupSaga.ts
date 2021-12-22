@@ -354,6 +354,24 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._getMyEvents, payload);
+        if (res.status == 200) {
+
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
 
 // Watcher: watch auth request
 export default function* watchGroups() {
@@ -371,6 +389,7 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
     yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
     yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
+    yield takeLatest(ActionTypes.GET_MY_EVENTS, _getMyEvents);
 
 
 };

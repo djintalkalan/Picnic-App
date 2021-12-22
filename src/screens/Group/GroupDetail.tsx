@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupDetail, getMyEvents, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
@@ -241,7 +241,9 @@ const GroupDetail: FC<any> = (props) => {
                 {group?.is_admin ?
                     <>
                         <View style={styles.memberContainer} >
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} >
+                            <TouchableOpacity onPress={() => {
+                                dispatch(getMyEvents({ groupId: props?.route?.params?.id, type: 'upcoming' }))
+                            }} style={{ flexDirection: 'row', alignItems: 'center' }} >
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
                                 <Text style={styles.events} >{Language.events}</Text>
                                 <Image style={{ height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />

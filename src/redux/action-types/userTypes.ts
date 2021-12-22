@@ -69,6 +69,9 @@ const UserTypes = {
   SET_SEARCHED_DATA: "SET_SEARCHED_DATA",
 
 
+  GET_MY_EVENTS: "GET_MY_EVENTS",
+
+
 
 }
 
