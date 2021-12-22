@@ -19,13 +19,13 @@ const tabs: TabProps[] = [
   {
     title: 'Groups',
     icon: Images.ic_group_icon,
-    name: 'GroupTab',
+    name: 'HomeGroupTab',
     screen: GroupList,
   },
   {
     title: 'Events',
     icon: Images.ic_calender,
-    name: 'EventTab',
+    name: 'HomeEventTab',
     screen: EventList,
   },
 ];

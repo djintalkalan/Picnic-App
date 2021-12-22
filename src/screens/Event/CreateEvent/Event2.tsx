@@ -320,7 +320,7 @@ const Event2: FC<any> = props => {
           />
         </View>
         <DateTimePickerModal
-          themeVariant={'light'}
+          themeVariant={'dark'}
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
           mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
@@ -354,7 +354,7 @@ const Event2: FC<any> = props => {
                   textAlign: 'center',
                   padding: scaler(5),
                 }}>
-                Cancel
+                Close
               </Text>
             </View>
           )}

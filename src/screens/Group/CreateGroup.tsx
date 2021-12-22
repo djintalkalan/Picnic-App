@@ -11,17 +11,17 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, ProfileImagePickerOptions, scaler } from 'utils'
+import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler } from 'utils'
 
 
 type FormType = {
-  name: string;
-  purpose: string;
-  location: string;
-  about: string;
-};
+  name: string
+  purpose: string
+  location: string
+  about: string
+}
 
-const DropDownData = ['Personal', 'Professional', 'Charitable'];
+const DropDownData = ["Personal", "Professional", "Charitable"]
 
 const CreateGroup: FC<any> = (props) => {
   const { group } = props?.route?.params ?? {}
@@ -40,25 +40,21 @@ const CreateGroup: FC<any> = (props) => {
     mode: 'onChange'
   })
 
-  const onSubmit = useCallback(
-    () =>
-      handleSubmit(data => {
-        if (!uploadedImage.current && profileImage?.path) {
-          dispatch(
-            uploadFile({
-              image: profileImage,
-              onSuccess: url => {
-                console.log('URL is ', url);
-                uploadedImage.current = url;
-                callCreateGroupApi(data);
-              },
-              prefixType: 'groups',
-            }),
-          );
-        } else {
+  const onSubmit = useCallback(() => handleSubmit(data => {
+    if (!uploadedImage.current && profileImage?.path) {
+      dispatch(uploadFile({
+        image: profileImage,
+        onSuccess: (url) => {
+          console.log("URL is ", url)
+          uploadedImage.current = url
           callCreateGroupApi(data);
-        }
-      })(), [profileImage]);
+        },
+        prefixType: 'groups'
+      }))
+    } else {
+      callCreateGroupApi(data);
+    }
+  })(), [profileImage]);
 
   useEffect(() => {
     if (group) {
@@ -190,69 +186,39 @@ const CreateGroup: FC<any> = (props) => {
                 setDropdown(false)
                 setValue("purpose", data?.title, { shouldValidate: true })
 
-                const callCreateGroupApi = useCallback(data => {
-                  const { latitude, longitude, address, otherData } =
-                    locationRef?.current ?? {};
-                  let payload = {
-                    _id: group?._id,
-                    name: data?.name,
-                    category: data?.purpose?.toLowerCase(),
-                    short_description: data?.about,
-                    details: data?.about,
-                    image: uploadedImage.current || undefined,
-                    address: data?.location,
-                    city: otherData?.city,
-                    state: otherData?.state,
-                    country: otherData?.country,
-                    location: {
-                      type: 'Point',
-                      coordinates: [longitude, latitude],
-                    },
-                  };
-                  dispatch(
-                    createGroup({
-                      data: payload,
-                      onSuccess: () => {
-                        Database.setSelectedLocation(
-                          Database.getStoredValue('selectedLocation'),
-                        );
-                      },
-                    }),
-                  );
-                }, []);
+              }}
 
-                const calculateButtonDisability = useCallback(() => {
-                  if (
-                    !getValues('name') ||
-                    !getValues('purpose') ||
-                    !getValues('location') ||
-                    (errors && (errors.name || errors.purpose || errors.location))
-                  )
-                    return true;
-                  return false;
-                }, [errors]);
+            />
 
-                const pickImage = useCallback(() => {
-                  setTimeout(() => {
-                    ImagePicker.openPicker(ProfileImagePickerOptions)
-                      .then(image => {
-                        console.log(image);
-                        uploadedImage.current = '';
-                        setProfileImage(image);
-                      })
-                      .catch(e => {
-                        console.log(e);
-                      });
-                  }, 200);
-                }, []);
+            <TextInput
+              containerStyle={{ flex: 1, marginEnd: scaler(4), }}
+              placeholder={Language.select_location}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              name={'location'}
+              ref={locationInputRef}
+              icon={Images.ic_gps}
+              onPress={() => {
+                NavigationService.navigate("SelectLocation", {
+                  prevSelectedLocation: locationRef.current,
+                  onSelectLocation: (location: ILocation) => {
+                    locationRef.current = location;
+                    setValue("location", location?.address?.main_text + ", " + location?.address?.secondary_text, { shouldValidate: true })
+                    locationInputRef?.current?.setNativeProps({
+                      selection: {
+                        start: 0,
+                        end: 0
+                      }
+                    })
+                  }
 
-              })
-            setDropdown(false)
-                            }}
-            required={Language.group_location_required}
-            control={control}
-            errors={errors}
-                        />
+                })
+                setDropdown(false)
+              }}
+              required={Language.group_location_required}
+              control={control}
+              errors={errors}
+            />
 
             <TextInput
               onFocus={() => setDropdown(false)}
@@ -268,38 +234,23 @@ const CreateGroup: FC<any> = (props) => {
             />
           </View>
 
-          <TextInput
-            placeholder={Language.write_something_about_group}
-            name={'about'}
-            multiline
-            limit={400}
-            style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            control={control}
-            errors={errors}
-          />
+          <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }}
+            title={group ? Language.update_group : Language.create_group}
+            onPress={onSubmit} />
+
         </View>
-
-        <Button
-          disabled={calculateButtonDisability()}
-          containerStyle={{ marginTop: scaler(20) }}
-          title={group ? Language.update_group : Language.create_group}
-          onPress={onSubmit}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView >
-  );
-};
+  )
+}
 
-export default CreateGroup;
+export default CreateGroup
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.colorWhite,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   cameraButton: {
     position: 'absolute',
@@ -313,7 +264,7 @@ const styles = StyleSheet.create({
     bottom: 2,
     padding: scaler(4),
     zIndex: 10,
-    backgroundColor: colors.colorWhite,
+    backgroundColor: colors.colorWhite
   },
   imageContainer: {
     overflow: 'hidden',
@@ -321,11 +272,12 @@ const styles = StyleSheet.create({
     // borderWidth: scaler(4),
     // borderColor: '#F6F6F7',
     height: scaler(100),
-    width: scaler(100),
+    width: scaler(100)
   },
   image: {
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
   },
-});
+
+})

@@ -33,7 +33,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
             if (payload?.data?._id) {
                 // yield put(updateGroupDetail(res?.data))
             }
-            NavigationService.navigate('Home')
+            NavigationService.navigate('HomeEventTab')
             if (payload.onSuccess) payload.onSuccess(res?.data)
 
         } else if (res.status == 400) {
