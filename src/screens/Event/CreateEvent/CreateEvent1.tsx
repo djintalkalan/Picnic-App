@@ -40,7 +40,7 @@ type FormType = {
 
 
 
-const Event1: FC<any> = props => {
+const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
   const [eventImage, setEventImage] = useState<any>();
   const locationRef = useRef<ILocation>();
@@ -224,7 +224,7 @@ const Event1: FC<any> = props => {
             title={Language.next}
             onPress={
               handleSubmit(
-                (defaultValues) => NavigationService.navigate('Event2',
+                (defaultValues) => NavigationService.navigate('CreateEvent2',
                   {
                     eventName: defaultValues?.eventName, myGroup: selectedGroupRef.current, isOnlineEvent: isOnlineEvent,
                     location: locationRef.current, aboutEvent: defaultValues?.aboutEvent, eventImage: eventImage
@@ -236,7 +236,7 @@ const Event1: FC<any> = props => {
   );
 };
 
-export default Event1;
+export default CreateEvent1;
 
 const styles = StyleSheet.create({
   container: {

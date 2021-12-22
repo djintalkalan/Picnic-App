@@ -165,7 +165,7 @@ const Home: FC = () => {
             <InnerButton
               title={Language.host_event}
               onPress={() => {
-                NavigationService.navigate('Event1');
+                NavigationService.navigate('CreateEvent1');
                 setTimeout(() => {
                   setFABOpen(false);
                 }, 1000);

@@ -87,7 +87,7 @@ const UserTypes = {
 
 
   GET_MY_EVENTS: "GET_MY_EVENTS",
-
+  SET_UPCOMING_EVENTS: "SET_UPCOMING_EVENTS"
 
 
 }

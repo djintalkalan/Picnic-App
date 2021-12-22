@@ -1,11 +1,11 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {setLoadingAction, tokenExpired} from 'app-store/actions';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { setLoadingAction, tokenExpired } from 'app-store/actions';
 import * as React from 'react';
-import {useCallback, useEffect} from 'react';
-import {DeviceEventEmitter, LogBox} from 'react-native';
+import { useCallback, useEffect } from 'react';
+import { DeviceEventEmitter, LogBox } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
@@ -14,22 +14,24 @@ import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
 import BlockedMembers from 'screens/BlockedMembers';
+import GroupChat from 'screens/Chat/GroupChat';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
-import Event1 from 'screens/Event/CreateEvent/Event1';
-import Event2 from 'screens/Event/CreateEvent/Event2';
-import Event3 from 'screens/Event/CreateEvent/Event3';
+import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
+import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
+import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
+import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
 import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
-import {useDatabase} from 'src/database/Database';
+import { useDatabase } from 'src/database/Database';
 // import { useLanguage } from 'src/language/Language';
-import {navigationRef} from 'utils';
+import { navigationRef } from 'utils';
 
 export let TOKEN_EXPIRED = false;
 
@@ -59,9 +61,11 @@ const dashboardScreens = {
   GooglePlacesTextInput: GooglePlacesTextInput,
   CreateGroup: CreateGroup,
   GroupDetail: GroupDetail,
-  Event1: Event1,
-  Event2: Event2,
-  Event3: Event3,
+  Events: Events,
+  GroupChat: GroupChat,
+  CreateEvent1: CreateEvent1,
+  CreateEvent2: CreateEvent2,
+  CreateEvent3: CreateEvent3,
 };
 
 const MyNavigationContainer = () => {
@@ -101,7 +105,7 @@ const MyNavigationContainer = () => {
     <NavigationContainer
       ref={ref => (navigationRef.current = ref)}
       onReady={() => RNBootSplash.hide()}>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Object.entries({
           // Use some screens conditionally based on some condition
           ...(isLogin ? dashboardScreens : authScreens),

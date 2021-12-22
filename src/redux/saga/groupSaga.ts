@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -359,7 +359,9 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._getMyEvents, payload);
         if (res.status == 200) {
-
+            if (payload?.type == 'upcoming') {
+                yield put(setUpcomingEvents(res?.data?.data))
+            }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

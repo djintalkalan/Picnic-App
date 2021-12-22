@@ -192,7 +192,7 @@ const EventList: FC<any> = (props) => {
                     return <View style={{ flex: 1, }} >
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '35%' }} >
                             <Text style={styles.noGroup} >{Language.no_events_close}</Text>
-                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("Event1")} style={styles.youCanPress} >{Language.create_one} </Text>
+                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("CreateEvent1")} style={styles.youCanPress} >{Language.create_one} </Text>
                                 {Language.by_clicking_here}
                             </Text>
                             <Text onPress={() => NavigationService.navigate("SelectLocation")} style={styles.youCanPress} >{Language.change_the_location}</Text>

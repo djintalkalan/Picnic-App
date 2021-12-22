@@ -135,6 +135,14 @@ export const getMyEvents = (payload: { groupId: string, type: 'upcoming' | 'past
     payload
 })
 
+export const setUpcomingEvents = (payload: Array<any>) => ({
+    type: ActionTypes.SET_UPCOMING_EVENTS,
+    payload
+})
+
+
+
+
 
 
 

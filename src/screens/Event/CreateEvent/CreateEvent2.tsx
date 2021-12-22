@@ -35,7 +35,7 @@ type IEventDateTime = {
   endTime: Date,
 }
 
-const Event2: FC<any> = props => {
+const CreateEvent2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const uploadedImage = useRef('');
@@ -306,7 +306,7 @@ const Event2: FC<any> = props => {
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={handleSubmit(() => {
-              userData?.is_premium ? NavigationService.navigate('Event3') :
+              userData?.is_premium ? NavigationService.navigate('CreateEvent3') :
                 // isFreeEvent ?
                 _showPopUpAlert({
                   message: Language.join_now_to_access_payment_processing,
@@ -387,7 +387,7 @@ const Event2: FC<any> = props => {
   );
 };
 
-export default Event2;
+export default CreateEvent2;
 
 const styles = StyleSheet.create({
   container: {

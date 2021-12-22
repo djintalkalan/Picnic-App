@@ -3,24 +3,26 @@ import ActionTypes, { action } from "app-store/action-types";
 export interface IGroupReducer {
     allGroups: Array<any>,
     groupDetail: IGroupDetail,
-    myGroups:Array<any>,
+    myGroups: Array<any>,
 }
 
 export interface IGroupDetail {
     group: any,
     is_group_joined: any,
     groupMembers: Array<any>
+    upcomingEvents: Array<any>
 }
 const initialGroupDetailState = {
     group: null,
     is_group_joined: 0,
-    groupMembers: []
+    groupMembers: [],
+    upcomingEvents: []
 }
 
 const initialGroupState = {
     allGroups: [],
     groupDetail: initialGroupDetailState,
-    myGroups:[]
+    myGroups: [],
 }
 
 
@@ -29,7 +31,7 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
         case ActionTypes.SET_ALL_GROUPS:
             return { ...state, allGroups: action?.payload }
         case ActionTypes.SET_MY_GROUPS:
-                return { ...state, myGroups: action?.payload }
+            return { ...state, myGroups: action?.payload }
         case ActionTypes.DELETE_GROUP_SUCCESS:
             return { ...state, allGroups: state?.allGroups.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_GROUP_SUCCESS:
@@ -46,6 +48,8 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
             return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: action?.payload } }
         case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
             return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: state?.groupDetail?.groupMembers?.filter(_ => _.user_id != action?.payload) } }
+        case ActionTypes.SET_UPCOMING_EVENTS:
+            return { ...state, groupDetail: { ...state?.groupDetail, upcomingEvents: action?.payload } }
         default:
             return state
     }

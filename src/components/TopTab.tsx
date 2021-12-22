@@ -9,6 +9,7 @@ export interface TabProps {
     title: string,
     name: string,
     icon?: ImageSourcePropType,
+    disable?: boolean,
     screen: React.ComponentType<any>,
     initialParams?: any
 }
@@ -82,6 +83,7 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                 return (
                     <TouchableOpacity
                         key={index}
+                        disabled={options?.disable ? true : false}
                         // accessibilityRole="button"
                         // accessibilityStates={isFocused ? ['selected'] : []}
                         accessibilityLabel={options.tabBarAccessibilityLabel}
