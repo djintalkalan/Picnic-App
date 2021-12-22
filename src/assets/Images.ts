@@ -51,5 +51,7 @@ export const Images = {
   ic_event_placeholder: require('./images/ic_event_placeholder.png'),
   ic_paypal: require("./images/ic_paypal.png"),
   ic_empty_wallet: require("./images/ic_empty_wallet.png"),
-  // ic_leave_in_group: require("./images/ic_leave_in_group.png"),
+  ic_ticket_2: require("./images/ic_ticket_2.png"),
+  ic_crown: require("./images/ic_crown.png"),
+  // ic_crown: require("./images/ic_crown.png"),
 };

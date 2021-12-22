@@ -3,7 +3,7 @@ import { RootState } from 'app-store'
 import { getMyEvents } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
-import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
+import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect } from 'react'
 import { InteractionManager, StyleSheet, View } from 'react-native'
@@ -28,14 +28,13 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
     }, isEqual)
 
     const _renderItem = useCallback(({ item, index }) => {
-        console.log("Item : ", item)
         return (
             <ListItem
                 title={item?.name}
-                subtitle={dateStringFormat(item?.event_start_date_time, "MMMM DD, YYYY, hh:mm A")}
+                subtitle={dateStringFormat(item?.event_date + " " + item?.event_start_time, "MMMM DD, YYYY, hh:mm A", "YYYY-MM-DD")}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_group_icon}
-
+                customView={<TicketView {...item} is_event_admin={true} />}
             >
 
             </ListItem>

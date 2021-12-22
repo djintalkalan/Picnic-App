@@ -28,6 +28,7 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
+
     yield put(setLoadingAction(true));
     try {
         let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createEvent, payload?.data);

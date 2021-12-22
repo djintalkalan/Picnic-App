@@ -5,7 +5,7 @@ import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -249,15 +249,14 @@ const GroupDetail: FC<any> = (props) => {
                                 <Image style={{ height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
                             </TouchableOpacity>
                             <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
-                            <Text style={styles.members} >Members <Text style={styles.membersCount} >({groupMembers?.length})</Text></Text>
+                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({groupMembers?.length})</Text></Text>
                             {(isOpened ? groupMembers : groupMembers.slice(0, 5)).map((item, index) => {
-                                return <>
+                                return <Fragment key={index} >
                                     {index > 0 &&
                                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                                     }
                                     {_renderGroupMembers({ item, index })}
-
-                                </>
+                                </Fragment>
                             })}
                             {/* <FlatList
                         scrollEnabled={false}

@@ -1,7 +1,9 @@
 import { colors } from 'assets/Colors'
+import { Images } from 'assets/Images'
 import { Text } from 'custom-components'
-import React, { FC, ReactElement, useState } from 'react'
+import React, { FC, ReactElement, useMemo, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, View, ViewStyle } from 'react-native'
+import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
 interface ListItemProps {
@@ -74,6 +76,53 @@ export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, 
             </View>
         </TouchableHighlight>
     )
+}
+
+interface ITicketView {
+    capacity_type: 'limited' | 'unlimited',
+    is_event_admin: boolean,
+    total_sold_tickets: number | string,
+    capacity: number | string
+    is_event_member: boolean
+}
+
+export const TicketView: FC<ITicketView> = ({ capacity_type, is_event_admin, capacity, is_event_member, total_sold_tickets }) => {
+    const styles = useMemo(() => {
+        const color = (is_event_member && !is_event_admin) ? colors.colorPrimary : "#DBDBDB"
+        const tintColor = (is_event_member && !is_event_admin) ? colors.colorPrimary : colors.colorBlackText
+        return StyleSheet.create({
+            container: {
+                padding: scaler(7),
+                paddingVertical: scaler(9),
+                borderRadius: scaler(50),
+                flexDirection: 'row',
+                alignSelf: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+                // minWidth: scaler(60),
+                borderWidth: 0.8,
+                borderColor: color
+            },
+            image: {
+                height: scaler(14),
+                width: scaler(14),
+                marginRight: scaler(6),
+                tintColor: tintColor
+            },
+            unlimited: {
+                fontSize: scaler(9),
+                color: colors.colorBlackText
+            }
+        })
+
+    }, [is_event_member, is_event_admin])
+
+
+
+    return <View style={styles?.container} >
+        <Image style={styles.image} source={is_event_admin ? Images.ic_crown : Images.ic_ticket_2} />
+        <Text style={styles.unlimited} >{capacity_type == 'limited' ? (total_sold_tickets + "/" + capacity) : Language.unlimited}</Text>
+    </View>
 }
 
 export const ListItemSeparator = () => (

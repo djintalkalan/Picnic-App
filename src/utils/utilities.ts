@@ -74,7 +74,7 @@ export const stringToDate = (_date: string, _format: string = "YYYY-MM-DD", _del
         return dates
     }
     catch (e) {
-        console.log("e")
+        console.log("e", e)
         return new Date()
     }
 }

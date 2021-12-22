@@ -41,7 +41,7 @@ const Home: FC = () => {
   const dispatch = useDispatch()
 
   const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
-    eventLength: 0,
+    eventLength: state?.event?.allEvents?.length,
     groupLength: state?.group?.allGroups?.length
   }))
   const [currentTabIndex, setCurrentTabIndex] = useState(0)

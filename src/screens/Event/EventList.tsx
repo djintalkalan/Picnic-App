@@ -5,7 +5,7 @@ import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, Modal, Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
-import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
+import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -111,6 +111,7 @@ const EventList: FC<any> = (props) => {
                 onPress={() => {
 
                 }}
+                customView={<TicketView {...item} />}
 
             // onPressImage={() => {
             //     if (store?.getState().group?.groupDetail?.group?._id != item?._id) {

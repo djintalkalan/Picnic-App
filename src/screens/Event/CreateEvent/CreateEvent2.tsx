@@ -91,6 +91,8 @@ const CreateEvent2: FC<any> = props => {
   const callCreateEventApi = useCallback(data => {
     const { latitude, longitude, address, otherData } =
       bodyData?.location ?? {};
+
+    const { startTime, endTime, eventDate } = eventDateTime.current
     let payload = {
       image: uploadedImage?.current,
       name: bodyData?.eventName,
@@ -109,14 +111,14 @@ const CreateEvent2: FC<any> = props => {
       capacity: data?.capacity,
       is_free_event: isFreeEvent ? '1' : '0',
       event_fees: data?.ticketPrice,
-      event_date: data?.eventDate,
-      event_start_time: data?.startTime,
-      event_end_time: data?.endTime,
+      event_date: dateFormat(eventDate, "YYYY-MM-DD"),
+      event_start_time: dateFormat(startTime, "HH:mm:ss"),
+      event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
       details: data?.additionalInfo,
       event_currency: data?.currency.toLowerCase(),
       payment_method: "paypal",
       payment_email: "mukesh@yopmail.com",
-      event_refund_policy: "sf t g ty hyj yj yj "
+      event_refund_policy: ""
     };
     dispatch(
       createEvent({
@@ -305,7 +307,7 @@ const CreateEvent2: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={handleSubmit(() => {
+            onPress={() => handleSubmit(() => {
               userData?.is_premium ? NavigationService.navigate('CreateEvent3') :
                 // isFreeEvent ?
                 _showPopUpAlert({
@@ -316,7 +318,7 @@ const CreateEvent2: FC<any> = props => {
                 })
               //   :
               //  undefined
-            })}
+            })()}
           />
         </View>
         <DateTimePickerModal

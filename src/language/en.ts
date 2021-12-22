@@ -184,5 +184,6 @@ export const en = {
   leave_event: 'Cancel reservation',
   unlimited: 'Unlimited',
   pin: 'Pin',
+  members: "Members",
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }
