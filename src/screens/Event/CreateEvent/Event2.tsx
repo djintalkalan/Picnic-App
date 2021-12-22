@@ -166,7 +166,7 @@ const Event2: FC<any> = props => {
               }}
             />
             <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
-              {Language.umlimited_capacity}
+              {Language.unlimited_capacity}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsFreeEvent(!isFreeEvent)} style={{ flexDirection: 'row' }}>
@@ -292,7 +292,7 @@ const Event2: FC<any> = props => {
           />
 
           <TextInput
-            placeholder={Language.write_additonal_information_about_event}
+            placeholder={Language.write_additional_information_about_event}
             name={'additionalInfo'}
             multiline
             style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
