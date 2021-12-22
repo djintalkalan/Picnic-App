@@ -1,6 +1,6 @@
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
-import React, { FC, useState } from 'react'
+import React, { FC, ReactElement, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, View, ViewStyle } from 'react-native'
 import { scaler } from 'utils'
 
@@ -10,7 +10,7 @@ interface ListItemProps {
     icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
     isSelected?: boolean
-    customView?: React.ReactElement | null
+    customView?: FC<any> | ReactElement<any, any> | null
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     containerStyle?: StyleProp<ViewStyle>
@@ -44,7 +44,8 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
                     <Text style={styles.title} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
                 </View>
-                {customView}
+                {customView ? React.isValidElement(customView) ?
+                    customView : <customView /> : null}
             </View>
         </TouchableHighlight>
     )
