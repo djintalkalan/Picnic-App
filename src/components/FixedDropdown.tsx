@@ -1,11 +1,11 @@
 import { colors } from 'assets'
 import { Card } from 'custom-components'
 import React, { FC, useCallback } from 'react'
-import { FlatList, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
+import { FlatList, StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
 import { scaler } from 'utils'
 
 interface IFixedDropdown {
-    containerStyle?: ViewStyle
+    containerStyle?: StyleProp<ViewStyle>
     visible: boolean
     data: Array<IFixedDropdownItem>
     selectedId?: number

@@ -3,6 +3,7 @@ import ActionTypes, { action } from "app-store/action-types";
 export interface IGroupReducer {
     allGroups: Array<any>,
     groupDetail: IGroupDetail,
+    myGroups:Array<any>,
 }
 
 export interface IGroupDetail {
@@ -19,6 +20,7 @@ const initialGroupDetailState = {
 const initialGroupState = {
     allGroups: [],
     groupDetail: initialGroupDetailState,
+    myGroups:[]
 }
 
 
@@ -26,6 +28,8 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
     switch (action.type) {
         case ActionTypes.SET_ALL_GROUPS:
             return { ...state, allGroups: action?.payload }
+        case ActionTypes.SET_MY_GROUPS:
+                return { ...state, myGroups: action?.payload }
         case ActionTypes.DELETE_GROUP_SUCCESS:
             return { ...state, allGroups: state?.allGroups.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_GROUP_SUCCESS:

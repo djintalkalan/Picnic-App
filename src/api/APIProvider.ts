@@ -280,3 +280,12 @@ export const _getMyEvents = async (body: any) => {
     console.log("---------- _getMyEvents Api Call ---------------")
     return fetchApiData(config.API_URL + 'user/get-my-events' + '?page=' + 1 + '&group_id=' + body?.groupId + '&event_filter_type=' + body?.type + '&limit=100000&q=' + (body?.text ?? ""), null, "GET")
 }
+export const _getMyGroups = async () => {
+    console.log("---------- _getMyGroups Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/get-my-groups', null, "GET")
+}
+
+export const _createEvent = async (body: any) => {
+    console.log("---------- _createEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/create', body, "POST")
+}

@@ -1,11 +1,11 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { setLoadingAction, tokenExpired } from 'app-store/actions';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {setLoadingAction, tokenExpired} from 'app-store/actions';
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { DeviceEventEmitter, LogBox } from 'react-native';
-import RNBootSplash from "react-native-bootsplash";
-import { useDispatch } from 'react-redux';
+import {useCallback, useEffect} from 'react';
+import {DeviceEventEmitter, LogBox} from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
+import {useDispatch} from 'react-redux';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
@@ -16,6 +16,9 @@ import VerifyOTP from 'screens/Auth/VerifyOTP';
 import BlockedMembers from 'screens/BlockedMembers';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import Event1 from 'screens/Event/CreateEvent/Event1';
+import Event2 from 'screens/Event/CreateEvent/Event2';
+import Event3 from 'screens/Event/CreateEvent/Event3';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import GroupDetail from 'screens/Group/GroupDetail';
@@ -24,82 +27,92 @@ import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
-import { useDatabase } from 'src/database/Database';
+import {useDatabase} from 'src/database/Database';
 // import { useLanguage } from 'src/language/Language';
-import { navigationRef } from 'utils';
+import {navigationRef} from 'utils';
 
-export let TOKEN_EXPIRED = false
+export let TOKEN_EXPIRED = false;
 
 const Stack = createStackNavigator();
 
-const commonScreens = {
-};
+const commonScreens = {};
 
 const authScreens = {
-    Login: Login,
-    ForgotPassword: ForgotPassword,
-    VerifyOTP: VerifyOTP,
-    CreateNewPassword: CreateNewPassword,
-    SignUp1: SignUp1,
-    SignUp2: SignUp2,
-    SignUp3: SignUp3,
+  Login: Login,
+  ForgotPassword: ForgotPassword,
+  VerifyOTP: VerifyOTP,
+  CreateNewPassword: CreateNewPassword,
+  SignUp1: SignUp1,
+  SignUp2: SignUp2,
+  SignUp3: SignUp3,
 };
 
 const dashboardScreens = {
-    Home: Home,
-    ProfileScreen: ProfileScreen,
-    Settings: Settings,
-    UpdatePassword: UpdatePassword,
-    PrivacyScreen: PrivacyScreen,
-    BlockedMembers: BlockedMembers,
-    MutedGroupsEvents: MutedGroupsEvents,
-    SelectLocation: SelectLocation,
-    GooglePlacesTextInput: GooglePlacesTextInput,
-    CreateGroup: CreateGroup,
-    GroupDetail: GroupDetail,
+  Home: Home,
+  ProfileScreen: ProfileScreen,
+  Settings: Settings,
+  UpdatePassword: UpdatePassword,
+  PrivacyScreen: PrivacyScreen,
+  BlockedMembers: BlockedMembers,
+  MutedGroupsEvents: MutedGroupsEvents,
+  SelectLocation: SelectLocation,
+  GooglePlacesTextInput: GooglePlacesTextInput,
+  CreateGroup: CreateGroup,
+  GroupDetail: GroupDetail,
+  Event1: Event1,
+  Event2: Event2,
+  Event3: Event3,
 };
 
 const MyNavigationContainer = () => {
-    const dispatch = useDispatch()
-    const [isLogin] = useDatabase<boolean>("isLogin", false)
-    // const language = useLanguage();
-    // console.log("language", language)
-    useEffect(() => {
-        LogBox.ignoreAllLogs()
-        const loaderListener = DeviceEventEmitter.addListener("STOP_LOADER_EVENT", stopLoader)
-        const tokenListener = DeviceEventEmitter.addListener("TOKEN_EXPIRED", tokenExpiredLocal)
-        return () => {
-            loaderListener.remove()
-            tokenListener.remove()
-        }
-    }, [])
-
-    const stopLoader = useCallback(() => {
-        dispatch(setLoadingAction(false))
-    }, [])
-
-    const tokenExpiredLocal = useCallback(() => {
-        if (!TOKEN_EXPIRED) {
-            TOKEN_EXPIRED = true
-            console.log("Logout Dispatched")
-            dispatch(tokenExpired())
-        }
-    }, [])
-
-    return (
-        <NavigationContainer ref={ref => navigationRef.current = ref} onReady={() => RNBootSplash.hide()} >
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                {Object.entries({
-                    // Use some screens conditionally based on some condition
-                    ...(isLogin ? dashboardScreens : authScreens),
-                    // Use the screens normally
-                    ...commonScreens,
-                }).map(([name, component]) => (
-                    <Stack.Screen key={name} name={name} component={component} />
-                ))}
-            </Stack.Navigator>
-        </NavigationContainer>
+  const dispatch = useDispatch();
+  const [isLogin] = useDatabase<boolean>('isLogin', false);
+  // const language = useLanguage();
+  // console.log("language", language)
+  useEffect(() => {
+    LogBox.ignoreAllLogs();
+    const loaderListener = DeviceEventEmitter.addListener(
+      'STOP_LOADER_EVENT',
+      stopLoader,
     );
-}
+    const tokenListener = DeviceEventEmitter.addListener(
+      'TOKEN_EXPIRED',
+      tokenExpiredLocal,
+    );
+    return () => {
+      loaderListener.remove();
+      tokenListener.remove();
+    };
+  }, []);
 
-export default MyNavigationContainer
+  const stopLoader = useCallback(() => {
+    dispatch(setLoadingAction(false));
+  }, []);
+
+  const tokenExpiredLocal = useCallback(() => {
+    if (!TOKEN_EXPIRED) {
+      TOKEN_EXPIRED = true;
+      console.log('Logout Dispatched');
+      dispatch(tokenExpired());
+    }
+  }, []);
+
+  return (
+    <NavigationContainer
+      ref={ref => (navigationRef.current = ref)}
+      onReady={() => RNBootSplash.hide()}>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {Object.entries({
+          // Use some screens conditionally based on some condition
+          ...(isLogin ? dashboardScreens : authScreens),
+          // Use the screens normally
+          ...commonScreens,
+        }).map(([name, component]) => (
+          <Stack.Screen key={name} name={name} component={component} />
+        ))}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default MyNavigationContainer;

@@ -3,7 +3,7 @@ import { useKeyboardService } from "custom-components";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
-import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, Platform, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, Platform, StyleProp, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { Text } from "../Text";
@@ -11,6 +11,7 @@ import { Text } from "../Text";
 interface TextInputProps extends RNTextInputProps {
     fontFamily?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic"
     containerStyle?: ViewStyle
+    iconContainerStyle?:StyleProp<ViewStyle>
     disabled?: boolean
     onPress?: (e?: GestureResponderEvent) => void
     onPressIcon?: (e?: GestureResponderEvent) => void
@@ -34,7 +35,7 @@ interface TextInputProps extends RNTextInputProps {
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const {iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
     const { openKeyboardAccessory } = useKeyboardService()
     const styles = useMemo(() => {
@@ -51,7 +52,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 minHeight: multiline ? height + scaler(4) : undefined,
                 color: colors.colorBlack,
                 // backgroundColor: 'red',
-                ...Object.assign({}, ...(Array.isArray(style) ? style : [style])),
+                ...StyleSheet.flatten(style),
                 paddingVertical: 0,
                 width: '100%',
 
@@ -60,7 +61,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 overflow: 'hidden',
                 marginTop: scaler(5),
                 padding: scaler(2),
-                ...Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle])),
+                ...StyleSheet.flatten(containerStyle)
             },
             accessory: {
                 width: Dimensions.get('window').width,
@@ -69,6 +70,10 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 alignItems: 'center',
                 backgroundColor: '#F8F8F8',
                 paddingHorizontal: scaler(8)
+            },
+            iconContainerStyle: {
+                position: 'absolute', end: scaler(15), justifyContent: 'center',
+                ...StyleSheet.flatten(iconContainerStyle)
             }
         })
 
@@ -113,7 +118,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 //     console.log(e.nativeEvent.contentSize)
                                 // }}
                                 style={[styles.textInputStyle]}
-                                placeholderTextColor={colors.colorGreyText}
+                                placeholderTextColor={colors.colorTextPlaceholder}
                                 // placeholder={!isFocused ? placeholder : ""}
                                 allowFontScaling={false}
                                 value={value}
@@ -146,7 +151,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 }}
                             />
                             {icon && iconPosition == 'right' ?
-                                <TouchableOpacity disabled={!onPressIcon} onPress={onPressIcon} activeOpacity={0.7} style={{ position: 'absolute', end: scaler(15), justifyContent: 'center' }} >
+                                <TouchableOpacity disabled={!onPressIcon} onPress={onPressIcon} activeOpacity={0.7} style={styles?.iconContainerStyle} >
                                     <Image style={{ height: iconSize, width: iconSize }} source={icon} />
                                 </TouchableOpacity>
                                 : null}
