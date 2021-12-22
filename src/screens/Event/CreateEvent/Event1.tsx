@@ -1,5 +1,6 @@
-import {getMyGroups} from 'app-store/actions';
-import {colors, Images} from 'assets';
+import { RootState } from 'app-store';
+import { getMyGroups } from 'app-store/actions';
+import { colors, Images } from 'assets';
 import {
   Button,
   CheckBox,
@@ -7,29 +8,28 @@ import {
   MyHeader,
   Stepper,
   Text,
-  TextInput,
+  TextInput
 } from 'custom-components';
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import { ILocation } from 'database';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Image,
   StyleSheet,
   TextInput as RNTextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch, useSelector} from 'react-redux';
-import  {ILocation} from 'database';
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
   NavigationService,
   ProfileImagePickerOptions,
-  scaler,
+  scaler
 } from 'utils';
-import { RootState } from 'app-store';
 
 type FormType = {
   eventName: string;
@@ -50,7 +50,7 @@ const Event1: FC<any> = props => {
   const [isDropdown, setDropdown] = useState(false);
 
   const { myGroups } = useSelector((state: RootState) => ({
-    myGroups:state?.group?.myGroups
+    myGroups: state?.group?.myGroups
   }))
 
   const dispatch = useDispatch();
@@ -59,12 +59,12 @@ const Event1: FC<any> = props => {
     getValues,
     setValue,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
   });
 
-  
+
 
   const calculateButtonDisability = useCallback(() => {
     if (
@@ -93,7 +93,7 @@ const Event1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
-  },[])
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -101,8 +101,8 @@ const Event1: FC<any> = props => {
       <ScrollView
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
-        contentContainerStyle={{alignItems: 'center'}}>
-      <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
+        contentContainerStyle={{ alignItems: 'center' }}>
+        <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View>
           <View style={styles.imageContainer}>
             <Image
@@ -113,7 +113,7 @@ const Event1: FC<any> = props => {
               source={
                 eventImage
                   ? eventImage?.path
-                    ? {uri: eventImage?.path}
+                    ? { uri: eventImage?.path }
                     : eventImage
                   : Images.ic_event_placeholder
               }
@@ -130,7 +130,7 @@ const Event1: FC<any> = props => {
             paddingVertical: scaler(15),
           }}>
           <TextInput
-            containerStyle={{flex: 1, marginEnd: scaler(4)}}
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
             placeholder={Language.event_name}
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
@@ -139,39 +139,39 @@ const Event1: FC<any> = props => {
             control={control}
             errors={errors}
           />
-          <View style={{flex: 1, width: '100%'}}>
+          <View style={{ flex: 1, width: '100%' }}>
             <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
               placeholder={Language.select_group}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'selectGroup'}
               icon={Images.ic_arrow_dropdown}
-                onPress={() => {
-                  setDropdown(!isDropdown);
-                }}
+              onPress={() => {
+                setDropdown(!isDropdown);
+              }}
               required={Language.group_purpose_required}
               control={control}
               errors={errors}
             />
-             <FixedDropdown
+            <FixedDropdown
               visible={isDropdown}
-              data={myGroups.map((_, i) => ({id: _?.id, data: _?.data, title: _?.name}))}
+              data={myGroups.map((_, i) => ({ id: _?._id, data: _?.data, title: _?.name }))}
               onSelect={data => {
                 setDropdown(false);
                 selectedGroupRef.current = data;
-                setValue('selectGroup', data?.title, {shouldValidate: true});
+                setValue('selectGroup', data?.title, { shouldValidate: true });
               }}
-            /> 
-            <TouchableOpacity style={styles.eventView} onPress={()=>setIsOnlineEvent(!isOnlineEvent)}>
+            />
+            <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>
               <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
-              <Text style={{marginLeft: scaler(5),fontSize:scaler(13),fontWeight:'400'}}>
+              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
                 {Language.online_event}
               </Text>
             </TouchableOpacity>
 
             <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
               placeholder={Language.select_location}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
@@ -183,12 +183,13 @@ const Event1: FC<any> = props => {
                   prevSelectedLocation: locationRef.current,
                   onSelectLocation: (location: ILocation) => {
                     locationRef.current = location;
+                    // console.log("LOCATION:", location)
                     setValue(
                       'location',
                       location?.address?.main_text +
-                        ', ' +
-                        location?.address?.secondary_text,
-                      {shouldValidate: true},
+                      ', ' +
+                      location?.address?.secondary_text,
+                      { shouldValidate: true },
                     );
                     locationInputRef?.current?.setNativeProps({
                       selection: {
@@ -209,7 +210,7 @@ const Event1: FC<any> = props => {
               name={'aboutEvent'}
               limit={400}
               multiline
-              style={{minHeight: scaler(80), textAlignVertical: 'top'}}
+              style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               control={control}
@@ -219,15 +220,15 @@ const Event1: FC<any> = props => {
 
           <Button
             disabled={calculateButtonDisability()}
-            containerStyle={{marginTop: scaler(20)}}
+            containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={
               handleSubmit(
-              (defaultValues) => NavigationService.navigate('Event2',
-              {
-                eventName: defaultValues?.eventName, myGroup: selectedGroupRef.current, isOnlineEvent: isOnlineEvent,
-                location: locationRef.current, aboutEvent: defaultValues?.aboutEvent,eventImage:eventImage
-              }))}
+                (defaultValues) => NavigationService.navigate('Event2',
+                  {
+                    eventName: defaultValues?.eventName, myGroup: selectedGroupRef.current, isOnlineEvent: isOnlineEvent,
+                    location: locationRef.current, aboutEvent: defaultValues?.aboutEvent, eventImage: eventImage
+                  }))}
           />
         </View>
       </ScrollView>

@@ -307,11 +307,12 @@ export const ProfileImagePickerOptions = {
 export const getAddressFromLocation = async (region: ILocation) => {
     try {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
-        console.log('ADDRESS:', JSON.stringify(json));
+        // console.log('ADDRESS JSON:', JSON.stringify(json));
 
         var addressComponent = json.results[0].address_components;
 
         const otherData = getOtherData(addressComponent);
+        // console.log('other Data', otherData);
 
         const address = getFormattedAddress(addressComponent) //json.results[0].formatted_address;
         console.log('ADDRESS:', JSON.stringify(address));
@@ -319,7 +320,7 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
     catch (e) {
         console.log(e)
-        _showErrorMessage("Location : " + e?.message)
+        _showErrorMessage("Location Error: " + e?.message)
         return { address: null, otherData: null }
     }
 }

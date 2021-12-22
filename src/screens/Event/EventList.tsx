@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
-import { RootState, store } from 'app-store';
-import { IPaginationState, joinEvent,muteUnmuteResource, reportResource} from 'app-store/actions';
+import { RootState } from 'app-store';
+import { IPaginationState, joinEvent, muteUnmuteResource, reportResource } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, Modal, Text } from 'custom-components';
@@ -111,14 +111,14 @@ const EventList: FC<any> = (props) => {
                 onPress={() => {
 
                 }}
-                // onPressImage={() => {
-                //     if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                //         dispatch(setGroupDetail(null))
-                //     }
-                //     setTimeout(() => {
-                //         NavigationService.navigate("GroupDetail", { id: item?._id })
-                //     }, 0);
-                // }}
+            // onPressImage={() => {
+            //     if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
+            //         dispatch(setGroupDetail(null))
+            //     }
+            //     setTimeout(() => {
+            //         NavigationService.navigate("GroupDetail", { id: item?._id })
+            //     }, 0);
+            // }}
             />
         )
     }, [])
@@ -192,7 +192,7 @@ const EventList: FC<any> = (props) => {
                     return <View style={{ flex: 1, }} >
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '35%' }} >
                             <Text style={styles.noGroup} >{Language.no_events_close}</Text>
-                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("Event1")} style={styles.youCanPress} >{Language.host_event} </Text>
+                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("Event1")} style={styles.youCanPress} >{Language.create_one} </Text>
                                 {Language.by_clicking_here}
                             </Text>
                             <Text onPress={() => NavigationService.navigate("SelectLocation")} style={styles.youCanPress} >{Language.change_the_location}</Text>

@@ -1,20 +1,20 @@
-import {colors, Images} from 'assets';
-import React, {FC, useCallback, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import { createEvent, uploadFile } from 'app-store/actions';
+import { colors, Images } from 'assets';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
+import Database, { useDatabase } from 'database';
+import React, { FC, useCallback, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {dateFormat, NavigationService, scaler, _showPopUpAlert} from 'utils';
-import Language from 'src/language/Language';
-import { Button, CheckBox, FixedDropdown, MyHeader,  Stepper, Text, TextInput } from 'custom-components';
-import Database, { useDatabase } from 'database';
-import { createEvent } from 'app-store/actions';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
+import Language from 'src/language/Language';
+import { dateFormat, NavigationService, scaler, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -26,29 +26,29 @@ type FormType = {
   currency: string;
 };
 
-const DropDownData = [{title:'USD',value:'usd'},{title:'EUR',value:'eur'},{title:'GBP',value:'gbp'},{title:'COP',value:'cop'}];
+const DropDownData = [{ title: 'USD', value: 'usd' }, { title: 'EUR', value: 'eur' }, { title: 'GBP', value: 'gbp' }, { title: 'COP', value: 'cop' }];
 
-type IEventDateTime =  {
-  selectedType:"eventDate"|"startTime"|"endTime",
-    eventDate: Date,
-    startTime: Date,
-    endTime: Date,
+type IEventDateTime = {
+  selectedType: "eventDate" | "startTime" | "endTime",
+  eventDate: Date,
+  startTime: Date,
+  endTime: Date,
 }
 
 const Event2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
+  const uploadedImage = useRef('');
   const [isDropdown, setDropdown] = useState(false);
   const dispatch = useDispatch();
   const eventDateTime = useRef<IEventDateTime>({
-    selectedType:'eventDate',
+    selectedType: 'eventDate',
     eventDate: new Date(),
     startTime: new Date(),
-    endTime:new Date()
+    endTime: new Date()
   });
   const [userData] = useDatabase("userData")
 
-  console.log('userData123', props?.route?.params);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
@@ -57,39 +57,63 @@ const Event2: FC<any> = props => {
     setValue,
     clearErrors,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<FormType>({
-    mode: 'onChange',defaultValues:{'currency':'USD'}
+    mode: 'onChange', defaultValues: { 'currency': 'USD' }
   });
 
-  const bodyData=props?.route?.parama
+  const bodyData = props?.route?.params
+
+  const onSubmit = useCallback(
+    () =>
+      handleSubmit(data => {
+        if (!uploadedImage.current && bodyData?.eventImage?.path) {
+          dispatch(
+            uploadFile({
+              image: bodyData?.eventImage,
+              onSuccess: url => {
+                console.log('URL is ', url);
+                uploadedImage.current = url;
+                callCreateEventApi(data);
+              },
+              prefixType: 'events',
+            }),
+          );
+        } else {
+          callCreateEventApi(data);
+        }
+      })(),
+    [bodyData?.eventImage],
+  );
+
+  console.log('userData123', bodyData);
 
   const callCreateEventApi = useCallback(data => {
-    const {latitude, longitude, address} =
+    const { latitude, longitude, address, otherData } =
       bodyData?.location ?? {};
     let payload = {
-      image:bodyData?.eventImage,
+      image: uploadedImage?.current,
       name: bodyData?.eventName,
       group_id: bodyData?.myGroup?.id,
-      is_online_event:bodyData?.isOnlineEvent ? '1' :'0',
+      is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
       short_description: bodyData?.aboutEvent,
-      address: data?.location,
-      city: address?.city,
-      state: address?.state,
-      country: address?.country,
+      address: address?.main_text + ', ' + address?.secondary_text,
+      city: otherData?.city,
+      state: otherData?.state,
+      country: otherData?.country,
       location: {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      capacity_type: isUnlimitedCapacity ? 'unlimited':"limited",
+      capacity_type: isUnlimitedCapacity ? 'unlimited' : "limited",
       capacity: data?.capacity,
-      is_free_event: isFreeEvent ? '1':"0",
+      is_free_event: isFreeEvent ? '1' : "0",
       event_fees: data?.ticketPrice,
       event_date: data?.eventDate,
       event_start_time: data?.startTime,
-      event_end_time:data?.endTime,
+      event_end_time: data?.endTime,
       details: data?.additionalInfo,
-      event_currency: data?.currency,
+      event_currency: data?.currency.toLowerCase(),
       payment_method: "paypal",
       payment_email: "mukesh@yopmail.com",
       event_refund_policy: "sf t g ty hyj yj yj "
@@ -108,19 +132,19 @@ const Event2: FC<any> = props => {
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
-        // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
-        // (!getValues('capacity')&&!isUnlimitedCapacity) ||
-        !getValues('currency') ||
-        !getValues('startTime') ||
-      (errors && (errors.eventDate || errors.ticketPrice || errors.currency  || errors.startTime || errors.capacity))
+      // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
+      // (!getValues('capacity')&&!isUnlimitedCapacity) ||
+      !getValues('currency') ||
+      !getValues('startTime') ||
+      (errors && (errors.eventDate || errors.ticketPrice || errors.currency || errors.startTime || errors.capacity))
     ) {
       return true;
-  }
+    }
     return false;
   }, [errors, isUnlimitedCapacity, isFreeEvent]);
 
-  const openDatePicker = useCallback((type:"eventDate"|"startTime"|"endTime") => {
-    eventDateTime.current.selectedType=type
+  const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {
+    eventDateTime.current.selectedType = type
     setDatePickerVisibility(true);
   }, []);
 
@@ -128,35 +152,35 @@ const Event2: FC<any> = props => {
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-      <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
-          <TouchableOpacity onPress={()=>setIsUnlimitedCapacity(!isUnlimitedCapacity)} style={{flexDirection:'row'}}>
+          <TouchableOpacity onPress={() => setIsUnlimitedCapacity(!isUnlimitedCapacity)} style={{ flexDirection: 'row' }}>
             <CheckBox
               checked={isUnlimitedCapacity}
               setChecked={(b) => {
                 if (b) {
-                clearErrors('capacity')
-                  setValue('capacity',"")
+                  clearErrors('capacity')
+                  setValue('capacity', "")
                 }
                 setIsUnlimitedCapacity(b)
               }}
             />
-            <Text style={{marginLeft: scaler(8), marginRight: scaler(18),fontSize:scaler(14)}}>
+            <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
               {Language.umlimited_capacity}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=> setIsFreeEvent(!isFreeEvent)} style={{flexDirection:'row'}}>
+          <TouchableOpacity onPress={() => setIsFreeEvent(!isFreeEvent)} style={{ flexDirection: 'row' }}>
             <CheckBox checked={isFreeEvent}
               setChecked={(b) => {
                 if (b) {
                   clearErrors('ticketPrice')
-                    setValue('ticketPrice',"")
-                  }
+                  setValue('ticketPrice', "")
+                }
                 setIsFreeEvent(b)
               }}
-             />
-              <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
-           </TouchableOpacity>
+            />
+            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
+          </TouchableOpacity>
         </View>
         <View
           style={{
@@ -165,13 +189,13 @@ const Event2: FC<any> = props => {
             paddingVertical: scaler(15),
           }}>
           <TextInput
-            containerStyle={{flex: 1, marginEnd: scaler(4)}}
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
             placeholder={Language.capacity}
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
             keyboardType={'number-pad'}
-            disabled={isUnlimitedCapacity?true:false}
+            disabled={isUnlimitedCapacity ? true : false}
             required={
               isUnlimitedCapacity ? undefined : Language.capacity_required
             }
@@ -179,44 +203,44 @@ const Event2: FC<any> = props => {
             errors={errors}
           />
 
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex:10}}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex: 10 }}>
             <View>
-            <TextInput
-            containerStyle={{marginEnd: scaler(4)}}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'currency'}
-            disabled={isFreeEvent ? true : false}
-            icon={Images.ic_arrow_dropdown}
-            onChangeText={(text) => {
-                  
-            }}
-            required={isFreeEvent ? undefined : Language.event_name_required}
-                  control={control}
-                  iconContainerStyle={{end:scaler(4)}}
-            onPress={()=>{setDropdown(_=>!_)}}
-            errors={errors}
-          />
-          <FixedDropdown
-              visible={isDropdown}
-              data={DropDownData.map((_, i) => ({id: i, data: _, title: _?.title}))}
-              onSelect={data => {
-                setDropdown(false);
-                setValue('currency', data?.title, {shouldValidate: true});
-              }}
+              <TextInput
+                containerStyle={{ marginEnd: scaler(4) }}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'currency'}
+                disabled={isFreeEvent ? true : false}
+                icon={Images.ic_arrow_dropdown}
+                onChangeText={(text) => {
+
+                }}
+                required={isFreeEvent ? undefined : Language.event_name_required}
+                control={control}
+                iconContainerStyle={{ end: scaler(4) }}
+                onPress={() => { setDropdown(_ => !_) }}
+                errors={errors}
               />
-              </View>
+              <FixedDropdown
+                visible={isDropdown}
+                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _?.title }))}
+                onSelect={data => {
+                  setDropdown(false);
+                  setValue('currency', data?.title, { shouldValidate: true });
+                }}
+              />
+            </View>
             <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
               placeholder={
                 Language.event_ticket_price + ' (' + Language.per_person + ')'
               }
-              style={{paddingLeft:scaler(20)}}
+              style={{ paddingLeft: scaler(20) }}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'ticketPrice'}
               keyboardType={'number-pad'}
-              disabled={isFreeEvent?true:false}
+              disabled={isFreeEvent ? true : false}
               iconSize={scaler(18)}
               icon={Images.ic_ticket}
               required={
@@ -226,77 +250,72 @@ const Event2: FC<any> = props => {
               errors={errors}
             />
           </View>
-            <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
-              placeholder={Language.select_date}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              style={{fontSize: scaler(13)}}
-              name={'eventDate'}
-              onPress={()=>(openDatePicker("eventDate"))}
-              required={Language.date_required}
-              icon={Images.ic_calender}
-              iconSize={scaler(20)}
-              control={control}
-              errors={errors}
-            />
+          <TextInput
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+            placeholder={Language.select_date}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            style={{ fontSize: scaler(13) }}
+            name={'eventDate'}
+            onPress={() => (openDatePicker("eventDate"))}
+            required={Language.date_required}
+            icon={Images.ic_calender}
+            iconSize={scaler(20)}
+            control={control}
+            errors={errors}
+          />
 
-            <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
-              placeholder={Language.select_start_time}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              name={'startTime'}
-              iconSize={scaler(18)}
-              required={Language.start_time_required}
-              onPress={()=>(openDatePicker("startTime"))}
-              icon={Images.ic_clock}
-              control={control}
-              errors={errors}
-            />
-            <TextInput
-              containerStyle={{flex: 1, marginEnd: scaler(4)}}
-              placeholder={Language.select_end_time+' ('+Language.optional+")"}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              name={'endTime'}
-              onPress={()=>(openDatePicker("endTime"))}
-              iconSize={scaler(18)}
-              icon={Images.ic_clock}
-              control={control}
-              errors={errors}
-            />
+          <TextInput
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+            placeholder={Language.select_start_time}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            name={'startTime'}
+            iconSize={scaler(18)}
+            required={Language.start_time_required}
+            onPress={() => (openDatePicker("startTime"))}
+            icon={Images.ic_clock}
+            control={control}
+            errors={errors}
+          />
+          <TextInput
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+            placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            name={'endTime'}
+            onPress={() => (openDatePicker("endTime"))}
+            iconSize={scaler(18)}
+            icon={Images.ic_clock}
+            control={control}
+            errors={errors}
+          />
 
-            <TextInput
-              placeholder={Language.write_additonal_information_about_event}
-              name={'additionalInfo'}
-              multiline
-              style={{minHeight: scaler(80), textAlignVertical: 'top'}}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              control={control}
-              errors={errors}
-            />
+          <TextInput
+            placeholder={Language.write_additonal_information_about_event}
+            name={'additionalInfo'}
+            multiline
+            style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            control={control}
+            errors={errors}
+          />
           <Button
             disabled={calculateButtonDisability()}
-            containerStyle={{marginTop: scaler(20)}}
+            containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={handleSubmit(() => {
               userData?.is_premium ? NavigationService.navigate('Event3') :
-              // isFreeEvent ?
-              _showPopUpAlert({
-                message: Language.join_now_to_access_payment_processing,
-                buttonText: Language.join_now,
-                cancelButtonText: Language.no_thanks_create_my_event,
-                onPressButton: handleSubmit( (defaultValues) => {
-                  callCreateEventApi(defaultValues)
-                }),
-                onPressCancel: () => {
-                  
-                }
-              }) 
-            //   :
-            //  undefined
+                // isFreeEvent ?
+                _showPopUpAlert({
+                  message: Language.join_now_to_access_payment_processing,
+                  buttonText: Language.join_now,
+                  cancelButtonText: Language.no_thanks_create_my_event,
+                  onPressCancel: () => { onSubmit() }
+                })
+              //   :
+              //  undefined
             })}
           />
         </View>
@@ -304,7 +323,7 @@ const Event2: FC<any> = props => {
           themeVariant={'light'}
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
-          mode={(eventDateTime.current?.selectedType=='eventDate') ? 'date' : "time"}
+          mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
           customConfirmButtonIOS={props => (
             <Text
               onPress={props.onPress}
@@ -341,14 +360,14 @@ const Event2: FC<any> = props => {
           )}
           date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
 
-        //  eventDateTime.current?.[startTime]
+          //  eventDateTime.current?.[startTime]
           //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
           onConfirm={(date: Date) => {
-            const {selectedType} =eventDateTime.current
+            const { selectedType } = eventDateTime.current
             eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
-            let hour = ((date?.getHours())%12||12) > 9 ?((date?.getHours())%12||12) : '0'+((date?.getHours())%12||12);
+            let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
             let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
             let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
             if (selectedType == 'eventDate') {
@@ -356,7 +375,7 @@ const Event2: FC<any> = props => {
                 shouldValidate: true,
               });
             } else {
-              setValue(selectedType,hour+':'+min+' '+isAMPM,{shouldValidate:true})
+              setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
             }
             setDatePickerVisibility(false);
           }}
@@ -388,6 +407,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: scaler(25),
     alignItems: 'center',
-    flex:1
+    flex: 1
   },
 });
