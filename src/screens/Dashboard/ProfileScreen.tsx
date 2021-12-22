@@ -300,7 +300,6 @@ const ProfileScreen: FC<any> = (props) => {
 
             </ScrollView>
             <DateTimePickerModal
-                themeVariant={'light'}
                 style={{ zIndex: 20 }}
                 isVisible={isDatePickerVisible}
                 mode="date"
