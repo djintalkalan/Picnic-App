@@ -116,8 +116,8 @@ const CreateEvent2: FC<any> = props => {
       details: data?.additionalInfo,
       event_currency: data?.currency.toLowerCase(),
       payment_method: "paypal",
-      payment_email: "mukesh@yopmail.com",
-      event_refund_policy: ""
+      payment_email: "test@picnic.com",
+      event_refund_policy: "Test Policy"
     };
     dispatch(
       createEvent({
