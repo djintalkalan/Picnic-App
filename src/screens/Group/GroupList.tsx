@@ -6,7 +6,7 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -83,10 +83,6 @@ const GroupList: FC<any> = (props) => {
         allGroups: state?.group?.allGroups,
         searchedGroups: state?.homeData?.searchedGroups
     }), isEqual)
-
-    useEffect(() => {
-        console.log("allGroups changed")
-    }, [allGroups])
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')

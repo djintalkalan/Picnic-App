@@ -56,7 +56,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let eventList = store.getState()?.group?.allGroups
+    let eventList = store.getState()?.event?.allEvents
     if (!eventList?.length)
         yield put(setLoadingAction(true));
     try {

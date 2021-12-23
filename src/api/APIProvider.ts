@@ -211,7 +211,7 @@ export const _getMutedResources = async (body: any, page: number) => {
 }
 
 export const _getAllGroups = async (body: any, page: number) => {
-    console.log("---------- _getMutedResources Api Call ---------------")
+    console.log("---------- _getAllGroups Api Call ---------------")
     return fetchApiData(config.API_URL + 'group/get-all-groups?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
 }
 
