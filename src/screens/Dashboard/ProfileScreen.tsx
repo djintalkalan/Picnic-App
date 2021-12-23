@@ -127,7 +127,7 @@ const ProfileScreen: FC<any> = (props) => {
             bio: data?.about,
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             image: imageFile,
-            address: data?.location,
+            address: address?.main_text + ", " + address?.secondary_text,
             city: otherData?.city,
             state: otherData?.state,
             country: otherData?.country,
@@ -257,7 +257,7 @@ const ProfileScreen: FC<any> = (props) => {
                                 prevSelectedLocation: locationRef.current,
                                 onSelectLocation: (location: ILocation) => {
                                     locationRef.current = location;
-                                    setValue("location", location?.address?.main_text + ", " + location?.address?.secondary_text, { shouldValidate: true })
+                                    setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
                                     locationInputRef?.current?.setNativeProps({
                                         selection: {
                                             start: 0,

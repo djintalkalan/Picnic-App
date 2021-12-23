@@ -93,7 +93,7 @@ const CreateGroup: FC<any> = (props) => {
       short_description: data?.about,
       details: data?.about,
       image: uploadedImage.current || undefined,
-      address: data?.location,
+      address: address?.main_text + ", " + address?.secondary_text,
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
@@ -203,7 +203,7 @@ const CreateGroup: FC<any> = (props) => {
                   prevSelectedLocation: locationRef.current,
                   onSelectLocation: (location: ILocation) => {
                     locationRef.current = location;
-                    setValue("location", location?.address?.main_text + ", " + location?.address?.secondary_text, { shouldValidate: true })
+                    setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
                     locationInputRef?.current?.setNativeProps({
                       selection: {
                         start: 0,

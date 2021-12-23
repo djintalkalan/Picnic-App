@@ -42,8 +42,16 @@ interface Geometry {
         southwest: Point;
     };
 }
+
+
 export interface IRecentSearches {
-    data: GooglePlaceData, details?: GooglePlaceDetail | null
+    data: GooglePlaceData,
+    details?: GooglePlaceDetail | null,
+    otherData: {
+        city?: string
+        state?: string
+        country?: string
+    } | null
 }
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |

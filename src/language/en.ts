@@ -185,5 +185,6 @@ export const en = {
   unlimited: 'Unlimited',
   pin: 'Pin',
   members: "Members",
+  confirm: "Confirm",
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

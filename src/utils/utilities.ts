@@ -372,6 +372,19 @@ export const getOtherData = (addressComponent: any) => {
     return { city, state, country }
 }
 
+export const getOtherDataFromAddress = (address: { main_text: string, secondary_text: string }) => {
+    let state = "", country = "";
+    const arr = address?.secondary_text.split(",")
+    arr.some((_, i) => {
+        if (i == arr.length - 1) {
+            country = _
+        } else {
+            state = state + (i > 0 ? ", " : "") + _
+        }
+    })
+    return { city: address?.main_text, state, country }
+}
+
 export const InitialPaginationState: IPaginationState = {
     currentPage: 0,
     totalPages: -1,

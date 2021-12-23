@@ -23,19 +23,20 @@ const DefaultDelta = {
 const SelectLocation: FC<any> = (props) => {
     const onSelectLocation = props?.route?.params?.onSelectLocation
     const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
-    console.log("prevSelectedLocation", prevSelectedLocation)
+    // console.log("prevSelectedLocation", prevSelectedLocation)
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
     const { askPermission } = useLocationService()
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
-    const [localLocation, setLocalLocation] = useState(onSelectLocation ? prevSelectedLocation : selectedLocation)
+    const [localLocation, setLocalLocation] = useState<ILocation>(onSelectLocation ? prevSelectedLocation : selectedLocation)
     useEffect(() => {
         askPermission && askPermission()
     }, [])
 
     useEffect(() => {
+        // console.log("localLocation", localLocation)
         setTimeout(() => {
             localLocation && mapRef?.current?.animateCamera({ center: localLocation }, { duration: 500 })
         }, 200)
@@ -145,7 +146,7 @@ const SelectLocation: FC<any> = (props) => {
                     </View>
 
                     <TouchableOpacity onPress={() => {
-                        console.log("currentLocation", currentLocation)
+                        // console.log("currentLocation", currentLocation)
                         if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
                             setLocalLocation(currentLocation)
                         } else {
@@ -160,7 +161,7 @@ const SelectLocation: FC<any> = (props) => {
 
             </View>
             {
-                localLocation?.address?.main_text ? <View style={{
+                localLocation?.otherData?.city ? <View style={{
                     width: '100%',
                     borderRadius: scaler(10),
                     backgroundColor: colors.colorWhite,
@@ -176,8 +177,8 @@ const SelectLocation: FC<any> = (props) => {
                     }} >
                         <Image style={{ height: scaler(35), width: scaler(35) }} source={Images.ic_location} />
                         <View style={{ marginLeft: scaler(10), flex: 1 }}>
-                            <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
-                            <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
+                            <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.otherData?.state}, {localLocation?.otherData?.country}</Text>
                         </View>
                     </View>
 

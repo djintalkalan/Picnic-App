@@ -108,8 +108,8 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
             if ((!selectedLocation || !selectedLocation?.address?.main_text))
                 Database.setSelectedLocation(currentLocation)
         } else {
-            console.log("currentLocation", currentLocation)
-            console.log("selectedLocation", selectedLocation)
+            // console.log("currentLocation", currentLocation)
+            // console.log("selectedLocation", selectedLocation)
             Database.setSelectedLocation(defaultLocation)
         }
         InteractionManager.runAfterInteractions(async () => {

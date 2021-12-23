@@ -150,6 +150,32 @@ const CreateEvent2: FC<any> = props => {
     setDatePickerVisibility(true);
   }, []);
 
+  const getMinDate = useCallback(() => {
+    const { startTime, endTime, eventDate, selectedType } = eventDateTime.current
+    switch (selectedType) {
+      case "eventDate":
+        return new Date();
+      case "startTime":
+        if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
+          return new Date()
+        } else {
+          return undefined
+        }
+      case "endTime":
+        if (startTime) {
+          return startTime
+        } else
+          if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
+            return new Date()
+          } else {
+            return undefined
+          }
+      default:
+        break;
+    }
+
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
@@ -324,6 +350,7 @@ const CreateEvent2: FC<any> = props => {
         <DateTimePickerModal
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
+          minimumDate={getMinDate()}
           mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
           customConfirmButtonIOS={props => (
             <Text
@@ -335,7 +362,7 @@ const CreateEvent2: FC<any> = props => {
                 textAlign: 'center',
                 padding: scaler(10),
               }}>
-              Confirm
+              {Language.confirm}
             </Text>
           )}
           customCancelButtonIOS={props => (
@@ -355,7 +382,7 @@ const CreateEvent2: FC<any> = props => {
                   textAlign: 'center',
                   padding: scaler(5),
                 }}>
-                Close
+                {Language.close}
               </Text>
             </View>
           )}
@@ -375,7 +402,10 @@ const CreateEvent2: FC<any> = props => {
               setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
                 shouldValidate: true,
               });
+              setValue('startTime', "");
+              setValue('endTime', "");
             } else {
+              setValue('endTime', "");
               setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
             }
             setDatePickerVisibility(false);

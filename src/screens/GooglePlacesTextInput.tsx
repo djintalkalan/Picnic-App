@@ -6,9 +6,10 @@ import React, { FC, useCallback, useRef, useState } from 'react'
 import { Dimensions, FlatList, Image, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Database, { IRecentSearches, useDatabase } from 'src/database/Database'
+import { useDispatch } from 'react-redux'
+import Database, { ILocation, IRecentSearches, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { NavigationService, scaler } from 'utils'
+import { getOtherDataFromAddress, NavigationService, scaler } from 'utils'
 
 
 interface IGooglePlacesTextInput {
@@ -23,6 +24,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
     // })
     // console.log("navigation", props.navigation.getState(), props)
     const placeInputRef = useRef<GooglePlacesAutocompleteRef>(null);
+    const dispatch = useDispatch()
 
     const [searchText, setSearchText] = useState("");
 
@@ -39,14 +41,25 @@ const GooglePlacesTextInput: FC<any> = (props) => {
         </View>
     }, [])
 
-    const _onPress = useCallback((data, details = null) => { // 'details' is provided when fetchDetails = true
-        Database.addInRecentSearches({ data, details })
+    const _onPress = useCallback(async (data, details = null, otherData = null) => { // 'details' is provided when fetchDetails = true
         if (details?.geometry?.location) {
-            const location = {
+            let location: ILocation = {
                 latitude: details?.geometry?.location?.lat,
                 longitude: details?.geometry?.location?.lng,
-                address: data?.structured_formatting
+                address: data?.structured_formatting,
             }
+            // console.log("location", location)
+            if (!otherData && location?.address) {
+                otherData = getOtherDataFromAddress(location?.address)
+                // console.log("otherData", otherData)
+                // dispatch(setLoadingAction(true))
+                // otherData = await (await getAddressFromLocation(location)).otherData
+                // dispatch(setLoadingAction(false))
+            }
+            location.otherData = otherData
+            // return
+            Database.addInRecentSearches({ data, details, otherData })
+
             if (props?.route?.params?.onSelectLocation) {
                 props?.route?.params?.onSelectLocation(location)
                 NavigationService.goBack()
@@ -85,14 +98,19 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                     enablePoweredByContainer={false}
                     enableHighAccuracyLocation={true}
                     nearbyPlacesAPI={'GoogleReverseGeocoding'}
+                    GooglePlacesDetailsQuery={{
+                        types: '(cities)',
+                    }}
+                    filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
                     query={{
                         key: config.GOOGLE_MAP_API_KEY,
                         language: 'en',
-                        types: 'geocode',
+                        types: '(cities)',
                     }}
                     onPress={_onPress}
                     renderRow={_renderRow}
                     isRowScrollable={false}
+                    debounce={500}
                     styles={{
                         listView: {
                             marginTop: scaler(20),
@@ -146,7 +164,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         data={recentSearches ?? []}
                         renderItem={({ item, index }) => {
                             return <TouchableHighlight
-                                onPress={() => _onPress(item?.data, item?.details)}
+                                onPress={() => _onPress(item?.data, item?.details, item?.otherData)}
                                 style={{ width: '100%', padding: scaler(15) }
                                 }
                                 //   onPress={() => _onPress(rowData)}
