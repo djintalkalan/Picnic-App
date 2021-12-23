@@ -294,3 +294,8 @@ export const _getAllEvents = async (body: any, page: number) => {
     console.log("---------- _getAllEvents Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/get-all-events?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
 }
+
+export const _getEventDetails = async (id: string) => {
+    console.log("---------- _getEventDetails Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/detail/' + id, null, "GET")
+}

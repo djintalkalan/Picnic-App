@@ -121,6 +121,7 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 onPressImage={() => {
+                    NavigationService.navigate("EventDetail", { id: item?._id })
                     // if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
                     //     dispatch(setGroupDetail(null))
                     // }
