@@ -11,7 +11,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, scaler } from 'utils'
+import { getImageUrl, scaler } from 'utils'
 
 const initialPaginationState: IPaginationState = {
     currentPage: 0,
@@ -45,21 +45,25 @@ const MutedResources: FC<any> = (props) => {
     const swipeListRef = useRef<SwipeListView<any>>()
 
 
-    const _renderItem = useCallback(({ item, index }, rowMap) => (
-        <ListItem
-            defaultIcon={Images.ic_group_placeholder}
-            title={item?.muted_groups?.name}
-            icon={item?.muted_groups?.image ? { uri: getImageUrl(item?.muted_groups?.image, { width: scaler(50), type: 'groups' }) } : undefined}
-            subtitle={getShortAddress(item?.muted_groups?.address, item?.muted_groups?.state)}
-            // isSelected={is_group_member}
-            onPress={() => {
+    const _renderItem = useCallback(({ item, index }, rowMap) => {
+        const { city, state, country } = item?.muted_groups || {}
 
-            }}
-            onPressImage={() => {
+        return (
+            <ListItem
+                defaultIcon={Images.ic_group_placeholder}
+                title={item?.muted_groups?.name}
+                icon={item?.muted_groups?.image ? { uri: getImageUrl(item?.muted_groups?.image, { width: scaler(50), type: 'groups' }) } : undefined}
+                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                // isSelected={is_group_member}
+                onPress={() => {
 
-            }}
-        />
-    ), [])
+                }}
+                onPressImage={() => {
+
+                }}
+            />
+        )
+    }, [])
 
 
 

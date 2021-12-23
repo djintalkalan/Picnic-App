@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, getShortAddress, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 
 const EventList: FC<any> = (props) => {
@@ -108,14 +108,14 @@ const EventList: FC<any> = (props) => {
     }, [])
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member } = item
+        const { is_event_member, city, state, country } = item
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
                 title={item?.name}
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'events' }) } : undefined}
-                subtitle={getShortAddress(item.address, item?.state)}
+                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView {...item} />}
                 onPress={() => {
 

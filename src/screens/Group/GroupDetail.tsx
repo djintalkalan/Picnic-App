@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -228,7 +228,7 @@ const GroupDetail: FC<any> = (props) => {
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
                             <Text style={styles.name} >{group?.name}</Text>
-                            <Text style={styles.address} >{getShortAddress(group?.address, group?.state)}</Text>
+                            <Text style={styles.address} >{group?.city + ", " + (group?.state ? (group?.state + ", ") : "") + group?.country}</Text>
                         </View>
                         <View style={styles.typeContainer} >
                             <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
@@ -379,6 +379,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         textTransform: 'capitalize',
         color: '#9A9A9A',
+        marginTop: scaler(6),
     },
     memberContainer: {
         padding: scaler(20),
