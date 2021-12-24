@@ -115,7 +115,7 @@ const CreateEvent2: FC<any> = props => {
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
       details: data?.additionalInfo,
       event_currency: data?.currency.toLowerCase(),
-      payment_method: "paypal",
+      payment_method: ["paypal", "cash"],
       payment_email: "test@picnic.com",
       event_refund_policy: "Test Policy"
     };
