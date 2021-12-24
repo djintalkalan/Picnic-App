@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getEventDetail, getMyGroups } from 'app-store/actions';
+import { createEvent, getEventDetail, getMyGroups, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import {
     Button,
@@ -8,7 +8,7 @@ import {
     MyHeader, Text,
     TextInput
 } from 'custom-components';
-import { ILocation, useDatabase } from 'database';
+import Database, { ILocation, useDatabase } from 'database';
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -114,7 +114,10 @@ const EditEvent: FC<any> = props => {
         if (
             !getValues('eventName') ||
             !getValues('location') ||
-            (errors && (errors.eventName || errors.location))
+            !getValues('eventDate') ||
+            !getValues('currency') ||
+            !getValues('startTime') ||
+            (errors && (errors.eventName || errors.location || errors.eventDate || errors.ticketPrice || errors.currency || errors.startTime || errors.capacity))
         )
             return true;
         return false;
@@ -170,6 +173,7 @@ const EditEvent: FC<any> = props => {
                 endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : new Date(),
                 selectedType: 'eventDate',
             }
+            selectedGroupRef.current = event?.event_group
             setIsOnlineEvent(event?.is_online_event ? true : false)
             setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
             setIsFreeEvent(event?.is_free_event ? true : false)
@@ -177,8 +181,8 @@ const EditEvent: FC<any> = props => {
             setValue('location', event?.address)
             setValue('selectGroup', event?.event_group?.name)
             setValue('aboutEvent', event?.short_description)
-            setValue('capacity', event?.capacity)
-            setValue('ticketPrice', event?.event_fees)
+            setValue('capacity', event?.capacity?.toString())
+            setValue('ticketPrice', event?.event_fees?.toString())
             setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
             setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
             setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
@@ -193,6 +197,75 @@ const EditEvent: FC<any> = props => {
             }
         }
     }, [event])
+
+    const onSubmit = useCallback(
+        (data) => {
+            if (!uploadedImage.current && eventImage?.path) {
+                dispatch(
+                    uploadFile({
+                        image: eventImage,
+                        onSuccess: url => {
+                            console.log('URL is ', url);
+                            uploadedImage.current = url;
+                            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent);
+                        },
+                        prefixType: 'events',
+                    }),
+                );
+            } else {
+                callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent);
+            }
+        },
+        [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent],
+    );
+
+    const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent) => {
+
+        const { latitude, longitude, address, otherData } =
+            locationRef.current ?? {};
+
+        const { startTime, endTime, eventDate } = eventDateTime.current
+        let payload = {
+
+            _id: props?.route?.params?.id,
+            image: uploadedImage?.current || undefined,
+            name: data?.eventName,
+            group_id: selectedGroupRef.current._id,
+            is_online_event: isOnlineEvent ? '1' : '0',
+            short_description: data?.aboutEvent,
+            address: address?.main_text + ', ' + address?.secondary_text,
+            city: otherData?.city,
+            state: otherData?.state,
+            country: otherData?.country,
+            location: {
+                type: 'Point',
+                coordinates: [longitude, latitude],
+            },
+            capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
+            capacity: data?.capacity ?? 0,
+            is_free_event: isFreeEvent ? '1' : '0',
+            event_fees: data?.ticketPrice ?? 0,
+            event_date: dateFormat(eventDate, "YYYY-MM-DD"),
+            event_start_time: dateFormat(startTime, "HH:mm:ss"),
+            event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
+            details: data?.additionalInfo,
+            event_currency: data?.currency.toLowerCase(),
+            payment_method: ['paypal'],
+            payment_email: "test@picnic.com",
+            event_refund_policy: "Test Policy"
+        };
+        dispatch(
+            createEvent({
+                data: payload,
+                onSuccess: () => {
+                    Database.setSelectedLocation(
+                        Database.getStoredValue('selectedLocation'),
+                    );
+                },
+            }),
+        );
+    }, []);
+
 
     const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {
         eventDateTime.current.selectedType = type
@@ -533,7 +606,7 @@ const EditEvent: FC<any> = props => {
                         disabled={calculateButtonDisability()}
                         containerStyle={{ marginTop: scaler(20) }}
                         title={Language.done}
-                    // onPress={onSubmit}
+                        onPress={() => handleSubmit((v) => onSubmit(v))()}
                     />
 
                     <DateTimePickerModal

@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getEventMembers, setAllEvents, setEventDetail, setLoadingAction, setMyGroups } from "app-store/actions";
+import { getEventMembers, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -31,11 +31,11 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createEvent, payload?.data);
+        let res = yield call(payload?.data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, payload?.data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
-                // yield put(updateGroupDetail(res?.data))
+                yield put(updateEventDetail(res?.data))
             }
             NavigationService.navigate('HomeEventTab')
             if (payload.onSuccess) payload.onSuccess(res?.data)
