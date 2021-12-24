@@ -15,7 +15,7 @@ import Language from 'src/language/Language';
 import { scaler } from 'utils';
 
 type FormType = {
-  id: string;
+  paypalId: string;
   policy: string;
 };
 
@@ -33,10 +33,10 @@ const CreateEvent3: FC<any> = props => {
   const calculateButtonDisability = useCallback(() => {
     if (
       (isPayByPaypal &&
-        (!getValues('id') ||
+        (!getValues('paypalId') ||
           !getValues('policy'))) ||
       (errors &&
-        (errors.id ||
+        (errors.paypalId ||
           errors.policy))
     ) {
       return true;
@@ -79,7 +79,7 @@ const CreateEvent3: FC<any> = props => {
               placeholder={Language.paypal_id}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
-              name={'id'}
+              name={'paypalId'}
               required={
                 Language.paypal_id_required
               }

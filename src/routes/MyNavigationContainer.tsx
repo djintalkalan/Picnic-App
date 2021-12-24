@@ -20,6 +20,7 @@ import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
+import EditEvent from 'screens/Event/EditEvent';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
@@ -66,6 +67,7 @@ const dashboardScreens = {
   CreateEvent1: CreateEvent1,
   CreateEvent2: CreateEvent2,
   CreateEvent3: CreateEvent3,
+  EditEvent: EditEvent,
 };
 
 const MyNavigationContainer = () => {

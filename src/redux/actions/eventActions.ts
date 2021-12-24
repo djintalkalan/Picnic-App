@@ -20,7 +20,6 @@ export const updateEvent = (payload: any) => ({
     payload
 })
 
-
 export const deleteEvent = (payload: any) => ({
     type: ActionTypes.DELETE_EVENT,
     payload
@@ -30,8 +29,6 @@ export const deleteEventSuccess = (payload: any) => ({
     type: ActionTypes.DELETE_EVENT_SUCCESS,
     payload
 })
-
-
 
 export const joinEvent = (payload: any) => ({
     type: ActionTypes.JOIN_EVENT,
@@ -52,6 +49,42 @@ export const setAllEvents = (payload: Array<any>) => ({
     type: ActionTypes.SET_ALL_EVENTS,
     payload
 })
+
+export const getEventDetail = (payload: any) => ({
+    type: ActionTypes.GET_EVENT_DETAIL,
+    payload
+})
+
+export const setEventDetail = (payload: any) => ({
+    type: ActionTypes.SET_EVENT_DETAIL,
+    payload
+})
+
+export const updateEventDetail = (payload: any) => ({
+    type: ActionTypes.UPDATE_EVENT_DETAIL,
+    payload
+})
+
+export const getEventMembers = (payload: any) => ({
+    type: ActionTypes.GET_EVENT_MEMBERS,
+    payload
+})
+
+export const setEventMembers = (payload: Array<any>) => ({
+    type: ActionTypes.SET_EVENT_MEMBERS,
+    payload
+})
+
+export const removeEventMember = (payload: any) => ({
+    type: ActionTypes.REMOVE_EVENT_MEMBER,
+    payload
+})
+
+export const removeEventMemberSuccess = (payload: any) => ({
+    type: ActionTypes.REMOVE_EVENT_MEMBER_SUCCESS,
+    payload
+})
+
 
 
 

@@ -2,21 +2,23 @@ import ActionTypes, { action } from "app-store/action-types";
 
 export interface IEventReducer {
     allEvents: Array<any>,
+    eventDetail: IEventDetail,
 }
 
-// export interface IGroupDetail {
-//     group: any,
-//     is_group_joined: any,
-//     groupMembers: Array<any>
-// }
-// const initialGroupDetailState = {
-//     event: null,
-//     is_group_joined: 0,
-//     EVENTMembers: []
-// }
+export interface IEventDetail {
+    event: any,
+    is_event_joined: any,
+    eventMembers: Array<any>
+}
+const initialEventDetailState = {
+    event: null,
+    is_event_joined: 0,
+    eventMembers: []
+}
 
 const initialEventState = {
     allEvents: [],
+    eventDetail: initialEventDetailState,
 }
 
 
@@ -24,8 +26,6 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
     switch (action.type) {
         case ActionTypes.SET_ALL_EVENTS:
             return { ...state, allEvents: action?.payload }
-        // case ActionTypes.SET_MY_EVENTS:
-        //         return { ...state, myEvents: action?.payload }
         case ActionTypes.DELETE_EVENT_SUCCESS:
             return { ...state, allEvents: state?.allEvents.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_EVENT_SUCCESS:
@@ -34,10 +34,10 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
             return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_member: false } : _)) }
         case ActionTypes.ADD_IN_EVENTS:
             return { ...state, allEvents: [...state.allEvents, ...action?.payload] }
-        // case ActionTypes.SET_GROUP_DETAIL:
-        //     return { ...state, groupDetail: action?.payload ? { ...state?.groupDetail, ...action?.payload } : initialGroupDetailState }
-        // case ActionTypes.UPDATE_GROUP_DETAIL:
-        //     return { ...state, groupDetail: { ...state?.groupDetail, group: { ...state?.groupDetail?.group, ...action?.payload } } }
+        case ActionTypes.SET_EVENT_DETAIL:
+            return { ...state, eventDetail: action?.payload ? { ...state?.eventDetail, ...action?.payload } : initialEventDetailState }
+        case ActionTypes.UPDATE_EVENT_DETAIL:
+            return { ...state, eventDetail: { ...state?.eventDetail, event: { ...state?.eventDetail?.event, ...action?.payload } } }
         // case ActionTypes.SET_GROUP_MEMBERS:
         //     return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: action?.payload } }
         // case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
