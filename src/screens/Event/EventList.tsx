@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getAllEvents, IPaginationState, muteUnmuteResource, reportResource } from 'app-store/actions';
+import { getAllEvents, IPaginationState } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 
 const EventList: FC<any> = (props) => {
@@ -27,7 +27,7 @@ const EventList: FC<any> = (props) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_mute_event,
                         onPressButton: () => {
-                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: _id } }))
+                            // dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: _id } }))
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_mute
@@ -51,7 +51,7 @@ const EventList: FC<any> = (props) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_report_event,
                         onPressButton: () => {
-                            dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
+                            // dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_report
@@ -60,7 +60,7 @@ const EventList: FC<any> = (props) => {
             })
             if (is_event_member) {
                 buttons.push({
-                    title: Language.leave_group, textStyle: { color: colors.colorRed }, onPress: () => {
+                    title: Language.leave_event, textStyle: { color: colors.colorRed }, onPress: () => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_event,
                             onPressButton: () => {
@@ -165,9 +165,9 @@ const EventList: FC<any> = (props) => {
             }}>
                 <TouchableOpacity onPress={() => {
                     swipeListRef?.current?.closeAllOpenRows()
-                    _showBottomMenu({
-                        buttons: getButtons(item)
-                    })
+                    // _showBottomMenu({
+                    //     buttons: getButtons(item)
+                    // })
 
                 }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: "#DFDFDF" }}>
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(24)} />
@@ -201,8 +201,8 @@ const EventList: FC<any> = (props) => {
                 ListEmptyComponent={() => {
                     return <View style={{ flex: 1, }} >
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '35%' }} >
-                            <Text style={styles.noGroup} >{Language.no_groups_close}</Text>
-                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("CreateGroup")} style={styles.youCanPress} >{Language.create_one} </Text>
+                            <Text style={styles.noGroup} >{Language.no_events_close}</Text>
+                            <Text style={styles.youCan} >{Language.you_can} <Text onPress={() => NavigationService.navigate("CreateEvent1")} style={styles.youCanPress} >{Language.create_one} </Text>
                                 {Language.by_clicking_here}
                             </Text>
                             <Text onPress={() => NavigationService.navigate("SelectLocation")} style={styles.youCanPress} >{Language.change_the_location}</Text>

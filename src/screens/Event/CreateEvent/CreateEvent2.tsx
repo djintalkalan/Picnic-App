@@ -65,24 +65,23 @@ const CreateEvent2: FC<any> = props => {
   const bodyData = props?.route?.params
 
   const onSubmit = useCallback(
-    () =>
-      handleSubmit(data => {
-        if (!uploadedImage.current && bodyData?.eventImage?.path) {
-          dispatch(
-            uploadFile({
-              image: bodyData?.eventImage,
-              onSuccess: url => {
-                console.log('URL is ', url);
-                uploadedImage.current = url;
-                callCreateEventApi(data);
-              },
-              prefixType: 'events',
-            }),
-          );
-        } else {
-          callCreateEventApi(data);
-        }
-      })(),
+    (data) => {
+      if (!uploadedImage.current && bodyData?.eventImage?.path) {
+        dispatch(
+          uploadFile({
+            image: bodyData?.eventImage,
+            onSuccess: url => {
+              console.log('URL is ', url);
+              uploadedImage.current = url;
+              callCreateEventApi(data);
+            },
+            prefixType: 'events',
+          }),
+        );
+      } else {
+        callCreateEventApi(data);
+      }
+    },
     [bodyData?.eventImage],
   );
 
@@ -117,8 +116,8 @@ const CreateEvent2: FC<any> = props => {
       details: data?.additionalInfo,
       event_currency: data?.currency.toLowerCase(),
       payment_method: "paypal",
-      payment_email: "mukesh@yopmail.com",
-      event_refund_policy: ""
+      payment_email: "test@picnic.com",
+      event_refund_policy: "Test Policy"
     };
     dispatch(
       createEvent({
@@ -130,7 +129,7 @@ const CreateEvent2: FC<any> = props => {
         },
       }),
     );
-  }, []);
+  }, [isFreeEvent, isUnlimitedCapacity]);
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
@@ -333,14 +332,14 @@ const CreateEvent2: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={() => handleSubmit(() => {
+            onPress={() => handleSubmit((data) => {
               userData?.is_premium ? NavigationService.navigate('CreateEvent3') :
                 // isFreeEvent ?
                 _showPopUpAlert({
                   message: Language.join_now_to_access_payment_processing,
                   buttonText: Language.join_now,
                   cancelButtonText: Language.no_thanks_create_my_event,
-                  onPressCancel: () => { onSubmit() }
+                  onPressCancel: () => onSubmit(data)
                 })
               //   :
               //  undefined
