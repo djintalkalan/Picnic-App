@@ -299,3 +299,13 @@ export const _getEventDetails = async (id: string) => {
     console.log("---------- _getEventDetails Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/detail/' + id, null, "GET")
 }
+
+export const _getEventDetail = async (body: string) => {
+    console.log("---------- _getEventDetail Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/detail/' + body, null, "GET")
+}
+
+export const _updateEvent = async (body: any) => {
+    console.log("---------- _updateEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/update', body, "POST")
+}

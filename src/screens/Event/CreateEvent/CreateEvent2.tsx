@@ -85,9 +85,10 @@ const CreateEvent2: FC<any> = props => {
     [bodyData?.eventImage],
   );
 
-  // console.log('userData123', bodyData);
 
   const callCreateEventApi = useCallback(data => {
+    console.log('userData123', isFreeEvent);
+
     const { latitude, longitude, address, otherData } =
       bodyData?.location ?? {};
 

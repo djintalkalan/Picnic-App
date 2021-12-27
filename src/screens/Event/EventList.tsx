@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 
 const EventList: FC<any> = (props) => {
@@ -21,6 +21,13 @@ const EventList: FC<any> = (props) => {
     const getButtons = useCallback((item: any) => {
         const { is_event_member, _id, is_event_admin } = item
         const buttons: Array<IBottomMenuButton> = []
+        if (is_event_admin) {
+            buttons.push({
+                title: Language.edit_event, onPress: () => {
+                    NavigationService.navigate('EditEvent', { id: _id })
+                }
+            })
+        }
         if (!is_event_admin) {
             buttons.push({
                 title: Language.mute_event, onPress: () => {
@@ -165,9 +172,9 @@ const EventList: FC<any> = (props) => {
             }}>
                 <TouchableOpacity onPress={() => {
                     swipeListRef?.current?.closeAllOpenRows()
-                    // _showBottomMenu({
-                    //     buttons: getButtons(item)
-                    // })
+                    _showBottomMenu({
+                        buttons: getButtons(item)
+                    })
 
                 }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: "#DFDFDF" }}>
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(24)} />

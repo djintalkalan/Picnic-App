@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setAllEvents, setLoadingAction, setMyGroups } from "app-store/actions";
+import { getEventMembers, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -31,11 +31,11 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createEvent, payload?.data);
+        let res = yield call(payload?.data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, payload?.data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
-                // yield put(updateGroupDetail(res?.data))
+                yield put(updateEventDetail(res?.data))
             }
             NavigationService.navigate('HomeEventTab')
             if (payload.onSuccess) payload.onSuccess(res?.data)
@@ -87,11 +87,36 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> {
+    // const state:RootState = 
+    let event = store.getState()?.event?.eventDetail?.event
+    if (!event)
+        yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._getEventDetail, payload);
+        if (res.status == 200) {
+            if (res?.data?.event?.is_admin)
+                yield put(getEventMembers(payload))
+            yield put(setEventDetail(res?.data))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
     yield takeEvery(ActionTypes.GET_MY_GROUPS, _getMyGroups);
     yield takeLatest(ActionTypes.CREATE_EVENT, _createEvent);
     yield takeLatest(ActionTypes.GET_ALL_EVENTS, _getAllEvents);
+    yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
 
 };

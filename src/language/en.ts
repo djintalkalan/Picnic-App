@@ -191,5 +191,6 @@ export const en = {
   pin: 'Pin',
   members: "Members",
   confirm: "Confirm",
+  edit_event: "Edit event",
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }
