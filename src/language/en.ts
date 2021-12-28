@@ -192,5 +192,11 @@ export const en = {
   members: "Members",
   confirm: "Confirm",
   edit_event: "Edit event",
+  tickets_available: "Tickets Available",
+  event_hosted_by: "Event hosted by",
+  about_event: "About event",
+  add_to_calender: "Add to Calendar",
+  start_chat: "Start chat",
+  mute: "Mute",
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }
