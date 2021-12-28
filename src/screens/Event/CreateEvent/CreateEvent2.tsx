@@ -73,21 +73,21 @@ const CreateEvent2: FC<any> = props => {
             onSuccess: url => {
               console.log('URL is ', url);
               uploadedImage.current = url;
-              callCreateEventApi(data);
+              callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
             },
             prefixType: 'events',
           }),
         );
       } else {
-        callCreateEventApi(data);
+        callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
       }
     },
-    [bodyData?.eventImage],
+    [bodyData?.eventImage, isFreeEvent, isUnlimitedCapacity],
   );
 
   // console.log('userData123', bodyData);
 
-  const callCreateEventApi = useCallback(data => {
+  const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity) => {
     const { latitude, longitude, address, otherData } =
       bodyData?.location ?? {};
 
@@ -129,7 +129,7 @@ const CreateEvent2: FC<any> = props => {
         },
       }),
     );
-  }, [isFreeEvent, isUnlimitedCapacity]);
+  }, []);
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||

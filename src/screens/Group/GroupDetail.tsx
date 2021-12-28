@@ -16,8 +16,6 @@ import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMen
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
-
-
 const GroupDetail: FC<any> = (props) => {
     const language = useLanguage()
     const userData = useDatabase('userData')
@@ -186,6 +184,14 @@ const GroupDetail: FC<any> = (props) => {
     const [isDefault, setDefault] = useState<boolean>(false)
 
     // if (group)
+    if (!group) {
+        return <View style={styles.container}>
+            <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                <Image source={Images.ic_group_placeholder} />
+            </View>
+            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+        </View>
+    }
     return (
         <SafeAreaView style={styles.container} edges={['bottom']} >
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
