@@ -118,7 +118,7 @@ const EventList: FC<any> = (props) => {
         const { is_event_member, city, state, country } = item
         return (
             <ListItem
-                defaultIcon={Images.ic_group_placeholder}
+                defaultIcon={Images.ic_event_placeholder}
                 title={item?.name}
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'events' }) } : undefined}
