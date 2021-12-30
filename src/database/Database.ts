@@ -56,10 +56,10 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches"
+    "recentSearches" | 'currencies'
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches"]
+    "recentSearches", "currencies"]
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
@@ -172,6 +172,7 @@ class Database {
                 return Database.phoneStorage.getMap(key) || defaultValue
 
             case 'recentSearches':
+            case 'currencies':
                 return Database.phoneStorage.getArray(key) || (defaultValue ?? [])
         }
     }
@@ -191,6 +192,7 @@ class Database {
                 return Database.phoneStorage.setMap(key, value ?? null)
 
             case 'recentSearches':
+            case 'currencies':
                 return Database.phoneStorage.setArray(key, value ?? [])
         }
     }

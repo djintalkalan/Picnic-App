@@ -10,6 +10,15 @@ export const setMyGroups = (payload: Array<any>) => ({
     payload
 })
 
+export const getAllCurrencies = () => ({
+    type: ActionTypes.GET_ALL_CURRENCIES,
+})
+
+export const setAllCurrencies = (payload: Array<any>) => ({
+    type: ActionTypes.SET_ALL_CURRENCIES,
+    payload
+})
+
 export const createEvent = (payload: any) => ({
     type: ActionTypes.CREATE_EVENT,
     payload

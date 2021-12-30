@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, NavigationService, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -107,7 +107,7 @@ const EventDetail: FC<any> = (props) => {
                                 <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
                             </View>
                             <View >
-                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? 'Free' : event?.event_currency?.toUpperCase() + event?.event_fees}</Text>
+                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? 'Free' : getSymbol(event?.event_currency) + event?.event_fees}</Text>
                                 <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
 
                             </View>
@@ -127,7 +127,7 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_events_tickets} />
-                            <Text style={styles.events} >{event?.capacity_type == 'limited' ? event?.capacity + ' ' + Language.tickets_available : 'Unlimited'}</Text>
+                            <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : 'Unlimited'}</Text>
                         </View>
                         {event?.details ?
                             <View style={{ marginVertical: scaler(22) }}>

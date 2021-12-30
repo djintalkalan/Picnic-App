@@ -187,7 +187,7 @@ const EditEvent: FC<any> = props => {
             setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
             setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
             setValue('additionalInfo', event?.details)
-            setValue('currency', event?.event_currency?.toUpperCase())
+            setValue('currency', event?.event_currency)
             setValue('paypalId', event?.payment_email)
             setValue('policy', event?.event_refund_policy)
             if (event?.image) {

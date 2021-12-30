@@ -198,5 +198,6 @@ export const en = {
   add_to_calender: "Add to Calendar",
   start_chat: "Start chat",
   mute: "Mute",
+  participants: 'Participants',
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

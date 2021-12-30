@@ -1,10 +1,11 @@
 import { RootState } from 'app-store'
+import { getAllCurrencies } from 'app-store/actions'
 import { searchAtHome, setSearchedData } from 'app-store/actions/homeaActions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _ from 'lodash'
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
@@ -39,6 +40,9 @@ const Home: FC = () => {
     address: { main_text: "Los Angeles, USA", secondary_text: "" }
   }
   const dispatch = useDispatch()
+  const { allCurrencies } = useSelector((state: RootState) => ({
+    allCurrencies: state?.event?.allCurrencies
+  }))
 
   const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
     eventLength: state?.event?.allEvents?.length,
@@ -50,6 +54,7 @@ const Home: FC = () => {
   const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
 
 
+  const [currencies] = useDatabase<Array<any>>('currencies', allCurrencies?.currencies);
   const [profileImage, setProfileImage] = useState()
   const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
 
@@ -60,6 +65,10 @@ const Home: FC = () => {
   const debounceClear = useCallback(_.debounce(() => {
     dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
   }, 1000), [])
+
+  useEffect(() => {
+    dispatch(getAllCurrencies())
+  }, [])
 
   return (
     <SafeAreaView style={styles.container} >
