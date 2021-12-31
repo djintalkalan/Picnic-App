@@ -46,13 +46,13 @@ const MutedResources: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => {
-        const { city, state, country } = item?.muted_groups || {}
+        const { name, image, city, state, country } = (type == 'group' ? item?.muted_groups : item?.muted_events) || {}
 
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
-                title={item?.muted_groups?.name}
-                icon={item?.muted_groups?.image ? { uri: getImageUrl(item?.muted_groups?.image, { width: scaler(50), type: 'groups' }) } : undefined}
+                title={name}
+                icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: (type + 's') }) } : undefined}
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 // isSelected={is_group_member}
                 onPress={() => {
@@ -79,7 +79,7 @@ const MutedResources: FC<any> = (props) => {
                 swipeListRef?.current?.closeAllOpenRows()
                 dispatch(muteUnmuteResource({
                     data: {
-                        resource_id: item?.resource_id,
+                        resource_id: item?.resource_id ?? item?.muted_event_id,
                         resource_type: item?.resource_type,
                         is_mute: '0'
                     },

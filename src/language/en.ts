@@ -136,7 +136,7 @@ export const en = {
   are_you_sure_mute_event: "Are you sure you want to mute event ?",
   yes_mute: "Yes, Mute",
   are_you_sure_leave_group: "Are you sure you want to leave group ?",
-  are_you_sure_leave_event: "Are you sure you want to cancel reservation ?",
+  are_you_sure_leave_event: "Are you sure you want to Cancel reservation ?",
   are_you_sure_cancel_event: "Are you sure you want to cancel event ?",
   yes_leave: "Yes, Leave",
   yes_cancel: "Yes, Cancel",
@@ -186,7 +186,7 @@ export const en = {
   mute_event: 'Mute event',
   event_details: 'Event Details',
   report_event: 'Report event',
-  leave_event: 'Cancel reservation',
+  cancel_reservation: 'Cancel reservation',
   unlimited: 'Unlimited',
   pin: 'Pin',
   members: "Members",
@@ -199,5 +199,8 @@ export const en = {
   start_chat: "Start chat",
   mute: "Mute",
   participants: 'Participants',
+  join_event: 'Join Event',
+  cancel_event: 'Cancel Event',
+  share_event: 'Share Event',
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

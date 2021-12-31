@@ -26,8 +26,6 @@ const initialEventState = {
 
 export const eventReducer = (state: IEventReducer = initialEventState, action: action): IEventReducer => {
     switch (action.type) {
-        case ActionTypes.SET_ALL_CURRENCIES:
-            return { ...state, allCurrencies: action?.payload }
         case ActionTypes.SET_ALL_EVENTS:
             return { ...state, allEvents: action?.payload }
         case ActionTypes.DELETE_EVENT_SUCCESS:

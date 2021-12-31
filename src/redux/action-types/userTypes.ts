@@ -92,6 +92,7 @@ const UserTypes = {
 
 
 
+
   SEARCH_AT_HOME: "SEARCH_AT_HOME",
   SET_SEARCHED_DATA: "SET_SEARCHED_DATA",
 

@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getEventMembers, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getEventMembers, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -33,7 +33,6 @@ function* _getAllCurrencies({ type, payload, }: action): Generator<any, any, any
     try {
         let res = yield call(ApiProvider._getAllCurrencies);
         if (res.status == 200) {
-            // yield put(setAllCurrencies(res.data))
             Database.setValue("currencies", res.data?.currencies)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -132,6 +131,26 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
     }
 }
 
+function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._deleteEvent, payload);
+        if (res.status == 200) {
+            _showSuccessMessage(res.message)
+            yield put(deleteEventSuccess(payload))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -140,5 +159,6 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.CREATE_EVENT, _createEvent);
     yield takeLatest(ActionTypes.GET_ALL_EVENTS, _getAllEvents);
     yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
+    yield takeLatest(ActionTypes.DELETE_EVENT, _deleteEvent);
 
 };

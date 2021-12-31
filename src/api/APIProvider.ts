@@ -314,3 +314,8 @@ export const _updateEvent = async (body: any) => {
     console.log("---------- _updateEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/update', body, "POST")
 }
+
+export const _deleteEvent = async (body: any) => {
+    console.log("---------- _deleteEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/cancel-event/' + body, null, "DELETE")
+}
