@@ -202,5 +202,6 @@ export const en = {
   join_event: 'Join Event',
   cancel_event: 'Cancel Event',
   share_event: 'Share Event',
+  pinned: 'Pinned',
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

@@ -319,3 +319,8 @@ export const _deleteEvent = async (body: any) => {
     console.log("---------- _deleteEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/cancel-event/' + body, null, "DELETE")
 }
+
+export const _pinUnpinEvent = async (body: any) => {
+    console.log("---------- _pinUnpinEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/pin-unpin', body, "PUT")
+}

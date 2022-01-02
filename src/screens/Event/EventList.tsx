@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, reportResource } from 'app-store/actions';
+import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -169,7 +169,7 @@ const EventList: FC<any> = (props) => {
     }, [])
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, is_pinned } = item
+        const { is_event_member, is_event_pinned_by_me } = item
         return (<View style={{ flex: 1, flexDirection: 'row', }} >
             <View style={{
                 alignItems: 'center',
@@ -180,15 +180,13 @@ const EventList: FC<any> = (props) => {
             }}>
                 <TouchableOpacity onPress={() => {
                     swipeListRef?.current?.closeAllOpenRows()
-                    if (!is_event_member) {
-                        // dispatch(joinGroup(item?._id))
-                    }
+                    dispatch(pinEvent({ resource_id: item?._id, is_pin: is_event_pinned_by_me ? 0 : 1 }))
                 }}
                     style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: colors.colorPrimary }}>
 
-                    <MaterialCommunityIcons color={colors.colorWhite} name={is_pinned ? 'pin' : 'pin-outline'} size={scaler(24)} />
+                    <MaterialCommunityIcons color={colors.colorWhite} name={is_event_pinned_by_me ? 'check' : 'pin-outline'} size={scaler(24)} />
 
-                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_pinned ? Language.pin : Language?.pin}</Text>
+                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_event_pinned_by_me ? Language.pinned : Language?.pin}</Text>
                 </TouchableOpacity>
             </View>
             <View style={{

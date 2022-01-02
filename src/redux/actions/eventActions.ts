@@ -34,6 +34,16 @@ export const deleteEventSuccess = (payload: any) => ({
     payload
 })
 
+export const pinEvent = (payload: any) => ({
+    type: ActionTypes.PIN_EVENT,
+    payload
+})
+
+export const pinEventSuccess = (payload: any) => ({
+    type: ActionTypes.PIN_EVENT_SUCCESS,
+    payload
+})
+
 export const joinEvent = (payload: any) => ({
     type: ActionTypes.JOIN_EVENT,
     payload
