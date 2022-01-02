@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -14,7 +14,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
         let res = yield call(ApiProvider._mutedBlockedReportedCount, payload);
         if (res.status == 200) {
             let data = {
-                events: res?.data?.muted?.messages || 0,
+                events: res?.data?.muted?.events || 0,
                 users: res?.data?.blocked?.users || 0,
                 groups: res?.data?.muted?.groups || 0,
                 posts: res?.data?.muted?.messages || 0,
@@ -96,7 +96,10 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
             _showSuccessMessage(res.message)
             // if (payload.onSuccess) payload.onSuccess(res?.data)
             if (payload?.data?.is_mute == "1")
-                yield put(setAllGroups(store?.getState()?.group?.allGroups.filter(_ => _._id != payload?.data?.resource_id)))
+                yield put(payload?.data?.resource_type == 'group' ?
+                    deleteGroupSuccess(payload?.data?.resource_id) :
+                    deleteEventSuccess(payload?.data?.resource_id)
+                )
             else {
                 yield put(removeMutedResource({ data: payload?.data?.resource_id, type: resource_type }))
             }

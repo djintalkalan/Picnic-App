@@ -3,6 +3,7 @@ import ActionTypes, { action } from "app-store/action-types";
 export interface IEventReducer {
     allEvents: Array<any>,
     eventDetail: IEventDetail,
+    allCurrencies: Array<any>,
 }
 
 export interface IEventDetail {
@@ -19,6 +20,7 @@ const initialEventDetailState = {
 const initialEventState = {
     allEvents: [],
     eventDetail: initialEventDetailState,
+    allCurrencies: [],
 }
 
 
@@ -30,6 +32,8 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
             return { ...state, allEvents: state?.allEvents.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_EVENT_SUCCESS:
             return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_member: true } : _)) }
+        case ActionTypes.PIN_EVENT_SUCCESS:
+            return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_pinned_by_me: !_.is_event_pinned_by_me } : _)) }
         case ActionTypes.LEAVE_EVENT_SUCCESS:
             return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_member: false } : _)) }
         case ActionTypes.ADD_IN_EVENTS:

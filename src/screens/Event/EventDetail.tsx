@@ -1,109 +1,38 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { _getEventDetails } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
+import { getEventDetail } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Card, Text, useStatusBar } from 'custom-components'
-import { MemberListItem } from 'custom-components/ListItem/ListItem'
+import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
-import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
-import { useDatabase } from 'src/database/Database'
-import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
+import Language from 'src/language/Language'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
 
 
 const EventDetail: FC<any> = (props) => {
-    const language = useLanguage()
-    const userData = useDatabase('userData')
-    const getBottomMenuButtons = useCallback((item) => {
-        console.log("Item", item)
-        return [
-            {
-                title: Language.block,
-                onPress: () => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_block_member,
-                        onPressButton: () => {
-                            dispatch(blockUnblockResource({
-                                data: { resource_id: item?.user_id, resource_type: 'user', is_blocked: '1' }
-                            }))
-                            _hidePopUpAlert()
-                        },
-                        buttonText: Language.yes_block
-                    })
 
-                }
-            },
-            {
-                title: Language.report,
-                onPress: () => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_report_member,
-                        onPressButton: () => {
-                            dispatch(reportResource({
-                                resource_type: 'user',
-                                resource_id: item?.user_id
-                            }))
-                            _hidePopUpAlert()
-                        },
-                        buttonText: Language.yes_report
-                    })
-
-                }
-            },
-            {
-                title: Language.remove,
-                onPress: () => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_remove_member,
-                        onPressButton: () => {
-                            dispatch(removeGroupMember({
-                                resource_id: item?.resource_id,
-                                user_id: item?.user_id
-                            }))
-                            _hidePopUpAlert()
-                        },
-                        buttonStyle: { backgroundColor: colors.colorRed },
-                        buttonText: Language.yes_remove
-                    })
-
-
-                },
-                textStyle: { color: colors.colorRed }
-            }
-        ]
-    }, [language])
-
-    const [isOpened, setOpened] = useState(false)
-    const [event, setEvent] = useState<any>(null)
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
-    const flatListHeightRef = useRef(0)
     const dispatch = useDispatch()
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
-    const { groupMembers, is_group_joined } = useSelector((state: RootState) => ({
-        groupMembers: state?.group?.groupDetail?.groupMembers,
-        is_group_joined: state?.group?.groupDetail?.is_group_joined
+    const { event, eventMembers, is_event_joined } = useSelector((state: RootState) => ({
+        event: state?.event?.eventDetail?.event,
+        eventMembers: state?.event?.eventDetail?.eventMembers,
+        is_event_joined: state?.event?.eventDetail?.is_event_joined
     }), isEqual)
-
 
 
     useLayoutEffect(() => {
         // console.log("payload", props)
         InteractionManager.runAfterInteractions(() => {
-            // dispatch(getGroupDetail(props?.route?.params?.id))
-            _getEventDetails(props?.route?.params?.id).then(res => {
-                if (res?.data) {
-                    setEvent(res?.data[0])
-                }
-            })
+            dispatch(getEventDetail(props?.route?.params?.id))
         })
     }, [])
 
@@ -114,188 +43,131 @@ const EventDetail: FC<any> = (props) => {
         }
     }, []))
 
-    const _renderGroupMembers = useCallback(({ item, index }) => {
-        return (
-            <MemberListItem
-                onLongPress={item?.is_admin ? undefined : () => {
-                    _showBottomMenu({
-                        buttons: getBottomMenuButtons(item)
-                    })
-                }}
-                containerStyle={{ paddingHorizontal: scaler(0) }}
-                title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : ""}
-                icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
-                defaultIcon={Images.ic_home_profile}
-            />
-        )
-    }, [])
 
-    const renderBottomActionButtons = useCallback(() => {
-        return <View style={{ paddingHorizontal: scaler(15), paddingBottom: scaler(20) }} >
-            <BottomButton
-                title={Language.delete_group}
-                icon={Images.ic_delete}
-                visibility={event?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_delete_group,
-                        onPressButton: () => {
-                            dispatch(deleteGroup(event?._id))
-                            _hidePopUpAlert()
-                        },
-                        buttonStyle: { backgroundColor: colors.colorRed },
-                        buttonText: Language.yes_delete
-                    })
-                }} />
-
-            <BottomButton
-                title={Language.leave_group}
-                icon={Images.ic_leave_group}
-                visibility={is_group_joined && !event?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_leave_group,
-                        onPressButton: () => {
-                            dispatch(leaveGroup(event?._id))
-                            _hidePopUpAlert()
-                        },
-                        buttonStyle: { backgroundColor: colors.colorRed },
-                        buttonText: Language.yes_leave
-                    })
-                }} />
-
-            <BottomButton
-                title={Language.join_now}
-                icon={Images.ic_leave_group}
-                visibility={!is_group_joined}
-                onPress={() => {
-                    dispatch(joinGroup(event?._id))
-                }} />
-
-            <BottomButton
-                title={Language.report_group}
-                icon={Images.ic_report_group}
-                visibility={!event?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_report_group,
-                        onPressButton: () => {
-                            dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                            _hidePopUpAlert()
-                        },
-                        buttonText: Language.yes_report
-                    })
-                }} />
-        </View>
-    }, [event])
+    // const _renderGroupMembers = useCallback(({ item, index }) => {
+    //     return (
+    //         <MemberListItem
+    //             onLongPress={item?.is_admin ? undefined : () => {
+    //                 _showBottomMenu({
+    //                     buttons: getBottomMenuButtons(item)
+    //                 })
+    //             }}
+    //             containerStyle={{ paddingHorizontal: scaler(0) }}
+    //             title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
+    //             customRightText={item?.is_admin ? Language?.admin : ""}
+    //             icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
+    //             defaultIcon={Images.ic_home_profile}
+    //         />
+    //     )
+    // }, [])
 
     const [isDefault, setDefault] = useState<boolean>(false)
 
-    // if (group)
-    return (
-        <SafeAreaView style={styles.container} edges={['bottom']} >
-            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+    if (event)
+        return (
+            <SafeAreaView style={styles.container} edges={['bottom']} >
+                <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
-                {isDefault || !event?.image ?
-                    <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                        <Image source={Images.ic_group_placeholder} />
+                    {isDefault || !event?.image ?
+                        <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                            <Image source={Images.ic_group_placeholder} />
+                        </View>
+                        : <Image onError={() => {
+                            setDefault(true)
+                        }} source={event?.image ? { uri: getImageUrl(event?.image, { width: width, type: 'events' }) } : Images.ic_group_placeholder}
+                            style={{ width: width, height: width, resizeMode: 'cover' }} />}
+                    <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+                    <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
+                        <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={Images.ic_back_group} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={Images.ic_more_group} />
+                        </TouchableOpacity>
                     </View>
-                    : <Image onError={() => {
-                        setDefault(true)
-                    }} source={event?.image ? { uri: getImageUrl(event?.image, { width: width, type: 'events' }) } : Images.ic_group_placeholder}
-                        style={{ width: width, height: width, resizeMode: 'cover' }} />}
-                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-                <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
-                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={Images.ic_back_group} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => event?.is_admin && setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={event?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
-                    </TouchableOpacity>
-                </View>
-                {isEditButtonOpened ?
-                    <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
-                        <Card cardElevation={2} style={styles.fabActionContainer} >
-                            <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                setEditButtonOpened(false)
-                            }} title={Language.edit} />
-                            <InnerButton title={Language.share} />
-                            <InnerButton title={Language.export_chat} />
-                            <InnerButton title={Language.import_chat}
-                                hideBorder
-                            />
-                        </Card>
+                    {isEditButtonOpened ?
+                        <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
+                            <Card cardElevation={2} style={styles.fabActionContainer} >
+                                {event?.is_admin ?
+                                    <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
+                                        setEditButtonOpened(false)
+                                        NavigationService.navigate('EditEvent', { id: event?._id })
+                                    }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} hideBorder /></> :
+                                    <><InnerButton title={Language.share} /><InnerButton title={Language.mute} /><InnerButton title={Language.report} hideBorder /></>
+                                }
+                            </Card>
 
-                    </View> : null
+                        </View> : null
 
+                    }
+                    <View style={styles.infoContainer} >
+                        <View style={styles.nameContainer}>
+                            <View style={{ flex: 1, marginEnd: scaler(12) }} >
+                                <Text style={styles.name} >{event?.name}</Text>
+                                <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
+                            </View>
+                            <View >
+                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? 'Free' : getSymbol(event?.event_currency) + event?.event_fees}</Text>
+                                <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
+
+                            </View>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                            <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
+                            <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_time} />
+                            <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                            <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_location} />
+                            <Text style={styles.events} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_events_tickets} />
+                            <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : 'Unlimited'}</Text>
+                        </View>
+                        {event?.details ?
+                            <View style={{ marginVertical: scaler(22) }}>
+                                <Text style={styles.about} >{event?.details} </Text>
+                            </View> : <View style={{ marginBottom: scaler(22) }} />
+                        }
+                        <View>
+                            <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
+                                <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }} style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
+                                <Text style={{ marginLeft: scaler(10) }}>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}</Text>
+                            </View>
+                        </View>
+                        {event?.short_description ?
+                            <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text><Text style={styles.about}>{event?.short_description}</Text></> : <View />
+                        }
+                        <View style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ flex: 1 }}>{Language.members}</Text>
+                            <Image style={{ height: scaler(14), resizeMode: 'contain' }} source={Images.ic_right} />
+                        </View>
+
+                    </View>
+                    <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
+
+                </ScrollView>
+                {stringToDate(event?.event_date, 'YYYY-MM-DD', '-') > new Date() ?
+                    event?.is_admin ?
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
+                            <View style={{ flex: 1 }}>
+                                <Button title={Language.add_to_calender} />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Button title={Language.start_chat} fontColor={'black'} backgroundColor={'white'} buttonStyle={{ borderColor: 'black', borderWidth: scaler(1) }} textStyle={{ fontWeight: '400' }} />
+                            </View>
+                        </View> : <View style={{ marginHorizontal: scaler(10) }}><Button title={Language.confirm} /></View>
+                    : <View />
                 }
-                <View style={styles.infoContainer} >
-                    <View style={styles.nameContainer}>
-                        <View style={{ flex: 1, marginEnd: scaler(12) }} >
-                            <Text style={styles.name} >{event?.name}</Text>
-                            <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
-                        </View>
-                        <View style={styles.typeContainer} >
-                            <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
-                            <Text style={styles.groupType}>{event?.category}</Text>
-                        </View>
-                    </View>
-                    <Text style={styles.about} >{event?.details}</Text>
-                </View>
-                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                {event?.is_admin ?
-                    <>
-                        <View style={styles.memberContainer} >
-                            <TouchableOpacity onPress={() => {
-                                NavigationService.navigate("Events", { id: props?.route?.params?.id })
-                            }} style={{ flexDirection: 'row', alignItems: 'center' }} >
-                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
-                                <Text style={styles.events} >{Language.events}</Text>
-                                <Image style={{ height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                            </TouchableOpacity>
-                            <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
-                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({groupMembers?.length})</Text></Text>
-                            {(isOpened ? groupMembers : groupMembers.slice(0, 5)).map((item, index) => {
-                                return <Fragment key={index} >
-                                    {index > 0 &&
-                                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                                    }
-                                    {_renderGroupMembers({ item, index })}
-                                </Fragment>
-                            })}
-                            {/* <FlatList
-                        scrollEnabled={false}
-                        // onLayout={(e) => {
-                        //     const height = e.nativeEvent.layout.height
-                        //     if (!isOpened) {
-                        //         flatListHeightRef.current = height
-                        //     }
-                        // }}
-                        // style={{ height: isOpened ? flatListHeightRef?.current : undefined }}
-                        data={isOpened ? groupMembers : groupMembers.slice(0, 5)}
-                        renderItem={_renderGroupMembers}
-                        ItemSeparatorComponent={() => (
-                            <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                        )}
-                    /> */}
-                            {(!isOpened && groupMembers?.length > 5) && <>
-                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                                <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
-                                    <Text style={styles.events} >{(groupMembers?.length - 5)} {Language.more}</Text>
-                                    <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                                </TouchableOpacity></>}
-                        </View>
-                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                        {renderBottomActionButtons()}
-                    </>
-
-                    : null}
-
-            </ScrollView>
-            {event?.is_admin ? null : renderBottomActionButtons()}
-        </SafeAreaView>
-    )
+                {/* {event?.is_admin ? null : renderBottomActionButtons()} */}
+            </SafeAreaView>
+        )
     return null
 }
 interface IBottomButton {
@@ -369,16 +241,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         textTransform: 'capitalize',
         paddingHorizontal: scaler(5),
-        color: colors.colorWhite,
-    },
-    typeContainer: {
-        marginTop: scaler(10),
-        flexDirection: 'row',
-        borderRadius: scaler(20),
-        alignItems: 'center',
-        padding: scaler(4),
-        alignSelf: 'baseline',
-        backgroundColor: colors.colorPrimary
+        // color: colors.colorWhite,
     },
     about: {
         fontSize: scaler(12),
@@ -400,11 +263,6 @@ const styles = StyleSheet.create({
     members: {
         fontSize: scaler(15),
         fontWeight: '500',
-        color: colors.colorBlack,
-    },
-    membersCount: {
-        fontSize: scaler(11),
-        fontWeight: '400',
         color: colors.colorBlack,
     },
     backButton: {

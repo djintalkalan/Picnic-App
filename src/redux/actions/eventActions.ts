@@ -10,6 +10,10 @@ export const setMyGroups = (payload: Array<any>) => ({
     payload
 })
 
+export const getAllCurrencies = () => ({
+    type: ActionTypes.GET_ALL_CURRENCIES,
+})
+
 export const createEvent = (payload: any) => ({
     type: ActionTypes.CREATE_EVENT,
     payload
@@ -27,6 +31,16 @@ export const deleteEvent = (payload: any) => ({
 
 export const deleteEventSuccess = (payload: any) => ({
     type: ActionTypes.DELETE_EVENT_SUCCESS,
+    payload
+})
+
+export const pinEvent = (payload: any) => ({
+    type: ActionTypes.PIN_EVENT,
+    payload
+})
+
+export const pinEventSuccess = (payload: any) => ({
+    type: ActionTypes.PIN_EVENT_SUCCESS,
     payload
 })
 

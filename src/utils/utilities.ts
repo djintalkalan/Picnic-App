@@ -4,9 +4,10 @@ import { IPaginationState } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
+import { decode } from 'html-entities';
 import { Keyboard, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
-import { ILocation } from 'src/database/Database';
+import Database, { ILocation } from 'src/database/Database';
 import { BottomMenuHolder } from './BottomMenuHolder';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
@@ -399,4 +400,15 @@ export const getShortAddress = (address: string, state: string, city?: string) =
     } catch (e) {
         return address
     }
+}
+
+export const getSymbol = (currency: string) => {
+    const currencies = Database.getStoredValue('currencies')
+    let symbol = '';
+    currencies?.map((_: any, i: number) => {
+        if (_?.value == currency) {
+            symbol = decode(_?.symbol);
+        }
+    })
+    return symbol;
 }

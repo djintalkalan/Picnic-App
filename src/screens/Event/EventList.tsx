@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getAllEvents, IPaginationState } from 'app-store/actions';
+import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -27,59 +27,87 @@ const EventList: FC<any> = (props) => {
                     NavigationService.navigate('EditEvent', { id: _id })
                 }
             })
+            buttons.push({
+                title: Language.share_event, onPress: () => {
+                    NavigationService.navigate('EditEvent', { id: _id })
+                }
+            })
         }
         if (!is_event_admin) {
+            if (!is_event_member) {
+                buttons.push({
+                    title: Language.join_event, textStyle: { color: colors.colorPrimary }, onPress: () => {
+                        NavigationService.navigate("EventDetail", { id: item?._id })
+                    }
+                })
+            }
             buttons.push({
                 title: Language.mute_event, onPress: () => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_mute_event,
                         onPressButton: () => {
-                            // dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: _id } }))
+                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: _id } }))
                             _hidePopUpAlert()
                         },
-                        buttonText: Language.yes_mute
+                        buttonText: Language.yes_mute,
+                        cancelButtonText: Language.cancel
                     })
                 }
             })
         }
+
+
         buttons?.push({
             title: Language.event_details, onPress: () => {
-                // if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                //     dispatch(setGroupDetail(null))
-                // }
-                // setTimeout(() => {
-                //     NavigationService.navigate("GroupDetail", { id: item?._id })
-                // }, 0);
+                NavigationService.navigate("EventDetail", { id: item?._id })
             }
         })
+        if (is_event_admin) {
+            buttons.push({
+                title: Language.cancel_event, textStyle: { color: colors.colorRed }, onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_cancel_event,
+                        onPressButton: () => {
+                            dispatch(deleteEvent(_id))
+                            _hidePopUpAlert()
+                        },
+                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonText: Language.yes_cancel,
+                        cancelButtonText: Language.cancel
+                    })
+                }
+            })
+        }
         if (!is_event_admin) {
             buttons.push({
                 title: Language.report_event, onPress: () => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_report_event,
                         onPressButton: () => {
-                            // dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
+                            dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
                             _hidePopUpAlert()
                         },
-                        buttonText: Language.yes_report
+                        buttonText: Language.yes_report,
+                        cancelButtonText: Language.cancel
                     })
                 }
             })
             if (is_event_member) {
                 buttons.push({
-                    title: Language.leave_event, textStyle: { color: colors.colorRed }, onPress: () => {
+                    title: Language.cancel_reservation, textStyle: { color: colors.colorRed }, onPress: () => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_event,
                             onPressButton: () => {
-                                // dispatch(leaveEvent(_id))
+                                // dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
                                 _hidePopUpAlert()
                             },
-                            buttonStyle: { backgroundColor: colors.colorRed },
-                            buttonText: Language.yes_cancel
+                            buttonText: Language.yes_report,
+                            cancelButtonText: Language.cancel
                         })
                     }
                 })
             }
+
         }
         return buttons
     }, [useLanguage()])
@@ -141,7 +169,7 @@ const EventList: FC<any> = (props) => {
     }, [])
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, is_pinned } = item
+        const { is_event_member, is_event_pinned_by_me } = item
         return (<View style={{ flex: 1, flexDirection: 'row', }} >
             <View style={{
                 alignItems: 'center',
@@ -152,15 +180,13 @@ const EventList: FC<any> = (props) => {
             }}>
                 <TouchableOpacity onPress={() => {
                     swipeListRef?.current?.closeAllOpenRows()
-                    if (!is_event_member) {
-                        // dispatch(joinGroup(item?._id))
-                    }
+                    dispatch(pinEvent({ resource_id: item?._id, is_pin: is_event_pinned_by_me ? 0 : 1 }))
                 }}
                     style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: colors.colorPrimary }}>
 
-                    <MaterialCommunityIcons color={colors.colorWhite} name={is_pinned ? 'pin' : 'pin-outline'} size={scaler(24)} />
+                    <MaterialCommunityIcons color={colors.colorWhite} name={is_event_pinned_by_me ? 'check' : 'pin-outline'} size={scaler(24)} />
 
-                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_pinned ? Language.pin : Language?.pin}</Text>
+                    <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{is_event_pinned_by_me ? Language.pinned : Language?.pin}</Text>
                 </TouchableOpacity>
             </View>
             <View style={{

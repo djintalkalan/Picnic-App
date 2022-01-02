@@ -285,6 +285,11 @@ export const _getMyGroups = async () => {
     return fetchApiData(config.API_URL + 'event/get-my-groups', null, "GET")
 }
 
+export const _getAllCurrencies = async () => {
+    console.log("---------- _getAllCurrencies Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/get-currencies', null, "GET")
+}
+
 export const _createEvent = async (body: any) => {
     console.log("---------- _createEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/create', body, "POST")
@@ -308,4 +313,14 @@ export const _getEventDetail = async (body: string) => {
 export const _updateEvent = async (body: any) => {
     console.log("---------- _updateEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/update', body, "POST")
+}
+
+export const _deleteEvent = async (body: any) => {
+    console.log("---------- _deleteEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/cancel-event/' + body, null, "DELETE")
+}
+
+export const _pinUnpinEvent = async (body: any) => {
+    console.log("---------- _pinUnpinEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/pin-unpin', body, "PUT")
 }

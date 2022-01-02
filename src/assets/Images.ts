@@ -58,5 +58,8 @@ export const Images = {
   ic_send: require("./images/ic_send.png"),
   ic_add_circle: require("./images/ic_add_circle.png"),
   ic_close: require("./images/ic_close.png"),
-  // ic_close: require("./images/ic_close.png"),
+  ic_event_time: require("./images/ic_event_time.png"),
+  ic_event_location: require("./images/ic_event_location.png"),
+  ic_events_tickets: require("./images/ic_events_tickets.png"),
+  // ic_event_time: require("./images/ic_event_time.png"),
 };
