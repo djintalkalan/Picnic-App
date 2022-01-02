@@ -1,5 +1,5 @@
-import { RootState } from 'app-store';
-import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource } from 'app-store/actions';
+import { RootState, store } from 'app-store';
+import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource, setEventDetail } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -37,7 +37,12 @@ const EventList: FC<any> = (props) => {
             if (!is_event_member) {
                 buttons.push({
                     title: Language.join_event, textStyle: { color: colors.colorPrimary }, onPress: () => {
-                        NavigationService.navigate("EventDetail", { id: item?._id })
+                        if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                            dispatch(setEventDetail(null))
+                        }
+                        setTimeout(() => {
+                            NavigationService.navigate("EventDetail", { id: item?._id })
+                        }, 0);
                     }
                 })
             }
@@ -59,7 +64,12 @@ const EventList: FC<any> = (props) => {
 
         buttons?.push({
             title: Language.event_details, onPress: () => {
-                NavigationService.navigate("EventDetail", { id: item?._id })
+                if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                    dispatch(setEventDetail(null))
+                }
+                setTimeout(() => {
+                    NavigationService.navigate("EventDetail", { id: item?._id })
+                }, 0);
             }
         })
         if (is_event_admin) {
@@ -156,7 +166,12 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 onPressImage={() => {
-                    NavigationService.navigate("EventDetail", { id: item?._id })
+                    if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                        dispatch(setEventDetail(null))
+                    }
+                    setTimeout(() => {
+                        NavigationService.navigate("EventDetail", { id: item?._id })
+                    }, 0);
                     // if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
                     //     dispatch(setGroupDetail(null))
                     // }
