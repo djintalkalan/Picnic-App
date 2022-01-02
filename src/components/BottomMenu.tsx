@@ -49,13 +49,13 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
     }
 
     buttons: Array<IBottomMenuButton> = []
-    cancelButtonText = "Cancel"
+    cancelButtonText = Language.close
     cancelTextStyle = {}
     cancelButtonContainerStyle = {}
     onPressCloseButton = () => { }
 
     showBottomMenu = ({ buttons, onPressCloseButton, cancelButtonText, cancelTextStyle, cancelButtonContainerStyle }: IBottomMenu) => {
-        this.cancelButtonText = cancelButtonText || Language.cancel
+        this.cancelButtonText = cancelButtonText || Language.close
         this.buttons = buttons || []
         this.cancelButtonContainerStyle = StyleSheet.flatten(cancelButtonContainerStyle)
         this.cancelTextStyle = StyleSheet.flatten(cancelTextStyle)

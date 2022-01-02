@@ -33,7 +33,7 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
                 title={item?.name}
                 subtitle={dateStringFormat(item?.event_date + " " + item?.event_start_time, "MMMM DD, YYYY, hh:mm A", "YYYY-MM-DD")}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
-                defaultIcon={Images.ic_group_icon}
+                defaultIcon={Images.ic_event_placeholder}
                 customView={<TicketView {...item} is_event_admin={true} />}
             >
 

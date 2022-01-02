@@ -4,7 +4,7 @@ import { IPaginationState } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
-import { Share } from 'react-native';
+import { Keyboard, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import { ILocation } from 'src/database/Database';
 import { BottomMenuHolder } from './BottomMenuHolder';
@@ -209,6 +209,7 @@ export const _showSuccessMessage = async (msg: string, showAlert = false) => {
 }
 
 export const _showPopUpAlert = (data: IAlertType) => {
+    Keyboard.dismiss()
     PopupAlertHolder.alert(data)
 }
 
@@ -217,6 +218,7 @@ export const _hidePopUpAlert = () => {
 }
 
 export const _showBottomMenu = (data: IBottomMenu) => {
+    Keyboard.dismiss()
     BottomMenuHolder.show(data)
 }
 

@@ -14,7 +14,7 @@ import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
 import BlockedMembers from 'screens/BlockedMembers';
-import GroupChat from 'screens/Chat/GroupChat';
+import GroupChatScreen from 'screens/Chat/GroupChatScreen';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
@@ -64,7 +64,7 @@ const dashboardScreens = {
   CreateGroup: CreateGroup,
   GroupDetail: GroupDetail,
   Events: Events,
-  GroupChat: GroupChat,
+  GroupChatScreen: GroupChatScreen,
   CreateEvent1: CreateEvent1,
   CreateEvent2: CreateEvent2,
   CreateEvent3: CreateEvent3,

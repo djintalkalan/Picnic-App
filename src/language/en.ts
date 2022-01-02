@@ -192,5 +192,11 @@ export const en = {
   members: "Members",
   confirm: "Confirm",
   edit_event: "Edit event",
-  // no_thanks_create_my_event:'No, Thanks Create my event'
+  chat: 'Chats',
+  upcoming: 'Upcoming',
+  type_a_message: 'Type a message',
+  reply: "Reply",
+  delete: "Delete",
+  replied_to: "Reply to"
+  // type_a_message :'Type a message ',
 }

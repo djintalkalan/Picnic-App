@@ -1,6 +1,7 @@
 import { all, fork } from 'redux-saga/effects';
 import watchAuth from "./authSaga";
 import watchEvents from './eventSaga';
+import watchGroupChat from './groupChatSaga';
 import watchGroups from './groupSaga';
 import watchHome from './homeSaga';
 import watchUploadSaga from './imageUploadSaga';
@@ -14,5 +15,6 @@ export function* rootSaga() {
     fork(watchUploadSaga),
     fork(watchHome),
     fork(watchEvents),
+    fork(watchGroupChat),
   ]);
 }

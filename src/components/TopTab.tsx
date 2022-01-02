@@ -19,12 +19,13 @@ export interface TopTabProps {
     swipeEnabled?: boolean
     activeTitleColor?: ColorValue
     disableTitleColor?: ColorValue
+    iconPosition?: 'left' | 'right'
     onChangeIndex?: (i: number) => void
 }
 
 export const TopTab = (props: TopTabProps) => {
     const Tab = createMaterialTopTabNavigator();
-    const { tabs, swipeEnabled = true, disableTitleColor = colors.colorGreyInactive, activeTitleColor = colors.colorBlackText } = props
+    const { tabs, iconPosition = 'left', swipeEnabled = true, disableTitleColor = colors.colorGreyInactive, activeTitleColor = colors.colorBlackText } = props
     // useScrollToTop(tabs[0].initialParams?.scrollRef);
     return (
         <Tab.Navigator backBehavior={'none'} keyboardDismissMode={'auto'}
@@ -32,7 +33,7 @@ export const TopTab = (props: TopTabProps) => {
             screenOptions={{ tabBarAllowFontScaling: false, swipeEnabled }} >
             {tabs && tabs.map((tab, index) => {
                 const { title, name, screen, initialParams, ...rest } = tab
-                return <Tab.Screen key={index} options={{ title, activeTitleColor, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={screen} />
+                return <Tab.Screen key={index} options={{ title, activeTitleColor, iconPosition, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={screen} />
             })}
         </Tab.Navigator>
     )
@@ -93,7 +94,7 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                         style={{ flex: 1 }}
                     >
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}  >
-                            {options?.icon ?
+                            {options?.icon && options?.iconPosition != "right" ?
                                 <Image style={{
                                     tintColor: isFocused ? colors.colorPrimary : colors.colorGreyInactive,
                                     height: scaler(25),
@@ -110,6 +111,14 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                                 }}
                             >{label}
                             </Text>
+                            {options?.icon && options?.iconPosition == "right" ?
+                                <Image style={{
+                                    tintColor: isFocused ? colors.colorPrimary : colors.colorGreyInactive,
+                                    height: scaler(25),
+                                    width: scaler(25),
+                                    resizeMode: 'contain',
+                                    marginLeft: scaler(7),
+                                }} source={options?.icon} /> : null}
                         </View>
                         <View style={{ width: '100%', height: 1, backgroundColor: isFocused ? colors.colorPrimary : '#DBDBDB' }} ></View>
 

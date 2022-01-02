@@ -75,11 +75,6 @@ export const getAllGroups = (payload: any) => ({
     payload
 })
 
-export const getGroupChat = (payload: any) => ({
-    type: ActionTypes.GET_GROUP_CHAT,
-    payload
-})
-
 export const addInGroup = (payload: Array<any>) => ({
     type: ActionTypes.ADD_IN_GROUPS,
     payload

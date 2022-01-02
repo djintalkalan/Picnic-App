@@ -1,5 +1,5 @@
 import { RootState, store } from 'app-store';
-import { getAllGroups, IPaginationState, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setGroupDetail } from 'app-store/actions';
+import { getAllGroups, IPaginationState, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setActiveGroup, setGroupDetail } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -119,7 +119,8 @@ const GroupList: FC<any> = (props) => {
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
                 onPress={() => {
-
+                    dispatch(setActiveGroup(item))
+                    NavigationService.navigate("GroupChatScreen", { group: item })
                 }}
                 onPressImage={() => {
                     if (store?.getState().group?.groupDetail?.group?._id != item?._id) {

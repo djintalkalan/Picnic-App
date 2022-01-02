@@ -32,7 +32,7 @@ interface MemberListItemProps {
     onLongPress?: (e?: GestureResponderEvent) => void
 }
 
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView }) => {
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView }) => {
     const [isError, setError] = useState(false)
     return (
         <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
@@ -46,8 +46,8 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
                     <Text style={styles.title} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
                 </View>
-                {customView ? React.isValidElement(customView) ?
-                    customView : <customView /> : null}
+                {CustomView ? React.isValidElement(CustomView) ?
+                    CustomView : <CustomView /> : null}
             </View>
         </TouchableHighlight>
     )

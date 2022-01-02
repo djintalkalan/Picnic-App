@@ -52,7 +52,7 @@ export const KeyboardProvider: FC<any> = ({ children }) => {
         }
     }, [])
 
-    console.log(accessoryView)
+    // console.log(accessoryView)
 
     return (
         <KeyboardContext.Provider value={{ openKeyboardAccessory, isKeyboard, dismissKeyboard, keyboardHeight: keyboardHeight.current }}  >

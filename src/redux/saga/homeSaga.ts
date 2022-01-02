@@ -1,7 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
 import ActionTypes, { action } from "app-store/action-types";
-import { setLoadingAction } from "app-store/actions";
-import { setSearchedData } from 'app-store/actions/homeaActions';
+import { setLoadingAction, setSearchedData } from "app-store/actions";
 import { defaultLocation } from "custom-components";
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from "src/database/Database";

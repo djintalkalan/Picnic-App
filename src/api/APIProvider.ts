@@ -215,9 +215,9 @@ export const _getAllGroups = async (body: any, page: number) => {
     return fetchApiData(config.API_URL + 'group/get-all-groups?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
 }
 
-export const _getGroupChat = async (body: any, page: number) => {
+export const _getGroupChat = async (body: any) => {
     console.log("---------- _getGroupChat Api Call ---------------")
-    return fetchApiData(config.API_URL + 'group/get-all-groups?load_more=0&page=' + page + '&id=' + body?.id + '&q=' + body?.q + '&limit=20', null, "GET")
+    return fetchApiData(config.API_URL + 'message/group-chat?load_more=0&page=' + (body?.message_id ? "" : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=20&message_id=' + (body?.message_id || ""), null, "GET")
 }
 
 export const _createGroup = async (body: any) => {

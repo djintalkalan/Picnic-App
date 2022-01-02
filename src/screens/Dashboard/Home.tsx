@@ -1,5 +1,5 @@
 import { RootState } from 'app-store'
-import { searchAtHome, setSearchedData } from 'app-store/actions/homeaActions'
+import { searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
 import TopTab, { TabProps } from 'custom-components/TopTab'

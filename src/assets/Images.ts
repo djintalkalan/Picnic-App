@@ -53,5 +53,10 @@ export const Images = {
   ic_empty_wallet: require("./images/ic_empty_wallet.png"),
   ic_ticket_2: require("./images/ic_ticket_2.png"),
   ic_crown: require("./images/ic_crown.png"),
-  // ic_crown: require("./images/ic_crown.png"),
+  ic_share: require("./images/ic_share.png"),
+  ic_chat_bubble: require("./images/ic_chat_bubble.png"),
+  ic_send: require("./images/ic_send.png"),
+  ic_add_circle: require("./images/ic_add_circle.png"),
+  ic_close: require("./images/ic_close.png"),
+  // ic_close: require("./images/ic_close.png"),
 };
