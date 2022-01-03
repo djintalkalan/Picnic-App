@@ -1,4 +1,4 @@
 export type RootParams = {
     Events: { id: string }
-    UpcomingPastEvents: { id: string, type: 'upcoming' | 'past' }
+    UpcomingPastEvents: { id: string, type: 'upcoming' | 'past', noLoader?: boolean }
 }

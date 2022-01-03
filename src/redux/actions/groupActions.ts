@@ -125,7 +125,7 @@ export const reportResource = (payload?: { resource_id: string, resource_type: I
     payload
 })
 
-export const getMyEvents = (payload: { groupId: string, type: 'upcoming' | 'past', text?: string }) => ({
+export const getMyEvents = (payload: { groupId: string, type: 'upcoming' | 'past', text?: string, noLoader?: boolean }) => ({
     type: ActionTypes.GET_MY_EVENTS,
     payload
 })

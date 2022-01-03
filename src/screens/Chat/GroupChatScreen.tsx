@@ -34,7 +34,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
             title: Language.upcoming,
             name: "Upcoming",
             screen: UpcomingPastEvents,
-            initialParams: { type: 'upcoming', id: _id },
+            initialParams: { type: 'upcoming', id: _id, noLoader: true },
             icon: Images.ic_calender
         }
     ], [_id])

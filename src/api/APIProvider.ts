@@ -324,3 +324,9 @@ export const _pinUnpinEvent = async (body: any) => {
     console.log("---------- _pinUnpinEvent Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/pin-unpin', body, "PUT")
 }
+
+export const _likeUnlikeMessage = async (body: any) => {
+    console.log("---------- _likeUnlikeMessage Api Call ---------------")
+    return fetchApiData(config.API_URL + 'message/like-unlike-message', body, "POST")
+}
+

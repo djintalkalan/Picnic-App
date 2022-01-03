@@ -53,6 +53,26 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             }
             addChatState.groups[groupId].chats.push(action?.payload?.chat)
             return addChatState
+
+        case ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS:
+            let likeState = { ...state }
+            if (!likeState.groups[groupId]) {
+                likeState.groups[groupId].chats = [],
+                    likeState.groups[groupId].detail = null
+            }
+            likeState.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
+                if (action?.payload?.message_id == _._id)
+                    return {
+                        ..._,
+                        is_message_liked_by_me: action?.payload?.is_like == '1' ? true : false,
+                        message_total_likes_count: _?.message_total_likes_count + (action?.payload?.is_like == '1' ? 1 : -1)
+                    }
+                else {
+                    return _
+                }
+            })
+            return likeState
+
         case ActionTypes.UPDATE_CHAT_IN_GROUP:
             const updateChatState = state
             if (!updateChatState.groups[groupId]) {

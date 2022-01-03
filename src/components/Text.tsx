@@ -1,6 +1,6 @@
 import { Fonts } from "assets/Fonts";
 import React, { FC, useMemo } from "react";
-import { Platform, StyleSheet, Text as RNText, TextProps as RNTextProps } from 'react-native';
+import { Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 
 interface TextProps extends RNTextProps {
     type?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic"
@@ -50,4 +50,46 @@ export const Text: FC<TextProps> = (props) => {
             {props.children}
         </RNText>
     )
+}
+
+export const InnerBoldText = ({ text: IText, style }: { text: string, style: StyleProp<TextStyle> }) => {
+    const { arr, text } = useMemo(() => {
+        const arr = IText.split(' ')
+        return {
+            arr,
+            text: arr.reduce(reducer, [])
+        }
+    }, [IText])
+
+    // console.log("text", text)
+
+    return (
+        <Text style={style} >
+            {text.map((text: string, index: number) => {
+                if (text.includes('**')) {
+                    // console.log("index", index)
+                    return (
+                        <Text style={[StyleSheet.flatten(style), { fontWeight: '500' }]}>
+                            {text.replaceAll('**', '')}{' '}
+                        </Text>
+                    );
+                }
+                return `${text} `;
+            })}
+        </Text>
+    );
+};
+
+const reducer = (acc: any, cur: any, index: number) => {
+    let previousVal = acc[acc.length - 1];
+    if (
+        previousVal &&
+        previousVal.startsWith('**') &&
+        !previousVal.endsWith('**')
+    ) {
+        acc[acc.length - 1] = previousVal + ' ' + cur;
+    } else {
+        acc.push(cur);
+    }
+    return acc;
 }

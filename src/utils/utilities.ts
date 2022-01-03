@@ -211,7 +211,9 @@ export const _showSuccessMessage = async (msg: string, showAlert = false) => {
 
 export const _showPopUpAlert = (data: IAlertType) => {
     Keyboard.dismiss()
-    PopupAlertHolder.alert(data)
+    setTimeout(() => {
+        PopupAlertHolder.alert(data)
+    }, 0);
 }
 
 export const _hidePopUpAlert = () => {
@@ -220,7 +222,9 @@ export const _hidePopUpAlert = () => {
 
 export const _showBottomMenu = (data: IBottomMenu) => {
     Keyboard.dismiss()
-    BottomMenuHolder.show(data)
+    setTimeout(() => {
+        BottomMenuHolder.show(data)
+    }, 0);
 }
 
 

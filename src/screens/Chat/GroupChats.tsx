@@ -4,7 +4,7 @@ import { useKeyboardService } from 'custom-components'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, InputAccessoryView, Platform, StyleSheet, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
-import { useDispatch, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { scaler } from 'utils'
 import ChatInput from './ChatInput'
 import ChatItem from './ChatItem'
@@ -21,7 +21,7 @@ export const GroupChats: FC<any> = (props) => {
     const { keyboardHeight, isKeyboard } = useKeyboardService();
 
     const isEqual = useCallback((l, r) => {
-        return l?.chats?.length == r?.chats?.length
+        return l?.chats?.length == r?.chats?.length || shallowEqual(l, r)
     }, [])
 
     useEffect(() => {
@@ -48,7 +48,7 @@ export const GroupChats: FC<any> = (props) => {
         chats: state?.groupChat?.groups?.[state?.groupChat?.activeGroup?._id]?.chats ?? [],
         groupDetail: state?.groupChat?.groups?.[state?.groupChat?.activeGroup?._id]?.detail,
         activeGroup: state?.groupChat?.activeGroup
-    }), isEqual)
+    }), shallowEqual)
 
     const dispatch = useDispatch()
 
@@ -72,7 +72,7 @@ export const GroupChats: FC<any> = (props) => {
                 {...item}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [])
+    }, [chats?.length])
 
     return (
         <View style={styles.container} >

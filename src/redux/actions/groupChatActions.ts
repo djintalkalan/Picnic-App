@@ -30,3 +30,14 @@ export const refreshChatInGroup = (payload: { groupId: string, chats: Array<any>
     payload
 })
 
+export const likeUnlikeMessage = (payload: { message_id: string, is_like: '1' | '0' }) => ({
+    type: ActionTypes.LIKE_UNLIKE_MESSAGE,
+    payload
+})
+
+export const likeUnlikeMessageSuccess = (payload: { groupId: string, message_id: string, is_like: '1' | '0' }) => ({
+    type: ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS,
+    payload
+})
+
+

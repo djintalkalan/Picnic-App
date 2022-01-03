@@ -17,7 +17,7 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
     const dispatch = useDispatch()
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {
-            dispatch(getMyEvents({ groupId: route?.params?.id, type: route?.params?.type }))
+            dispatch(getMyEvents({ groupId: route?.params?.id, type: route?.params?.type, noLoader: route?.params?.noLoader }))
         })
     }, [])
 

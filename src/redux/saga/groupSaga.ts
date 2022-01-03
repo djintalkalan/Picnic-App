@@ -359,7 +359,8 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
     try {
-        yield put(setLoadingAction(true));
+        if (!payload?.noLoader)
+            yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._getMyEvents, payload);
         if (res.status == 200) {
             if (payload?.type == 'upcoming') {
