@@ -81,7 +81,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
                             <Button
                                 containerStyle={styles.button}
                                 title={this.buttonText}
-                                paddingVertical={scaler(10)}
+                                paddingVertical={scaler(12)}
                                 buttonStyle={this.buttonStyle}
                                 radius={scaler(10)}
                                 onPress={this.onPressButton} /> : null}
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: colors.colorWhite,
-        padding: scaler(20),
+        padding: scaler(30),
         width: '100%',
         elevation: 3,
         alignItems: 'center',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         maxWidth: '80%'
     },
     button: {
-        width: '90%',
+        width: '70%',
         marginTop: scaler(20)
     },
     cancelText: {

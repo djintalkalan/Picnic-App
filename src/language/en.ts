@@ -184,7 +184,7 @@ export const en = {
   no_thanks_create_my_event: 'No, Thanks Create my event',
   no_events_close: "No events are close to you,",
   mute_event: 'Mute event',
-  event_details: 'Event Details',
+  event_details: 'Event details',
   report_event: 'Report event',
   cancel_reservation: 'Cancel reservation',
   unlimited: 'Unlimited',
@@ -206,8 +206,8 @@ export const en = {
   mute: "Mute",
   participants: 'Participants',
   join_event: 'Join Event',
-  cancel_event: 'Cancel Event',
-  share_event: 'Share Event',
+  cancel_event: 'Cancel event',
+  share_event: 'Share event',
   pinned: 'Pinned',
   // no_thanks_create_my_event:'No, Thanks Create my event'
 }

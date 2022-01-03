@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getEventDetail } from 'app-store/actions'
+import { deleteEvent, getEventDetail, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -99,8 +99,45 @@ const EventDetail: FC<any> = (props) => {
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     setEditButtonOpened(false)
                                     NavigationService.navigate('EditEvent', { id: event?._id })
-                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} hideBorder /></> :
-                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} /><InnerButton title={Language.report} hideBorder /></>
+                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_cancel_event,
+                                        onPressButton: () => {
+                                            dispatch(deleteEvent(event?._id))
+                                            _hidePopUpAlert()
+                                            setTimeout(() => {
+                                                NavigationService.navigate('HomeEventTab')
+                                            }, 200);
+                                        },
+                                        buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                        buttonText: Language.yes_cancel,
+                                    })
+                                }
+                                } hideBorder /></> :
+                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_mute_event,
+                                        onPressButton: () => {
+                                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
+                                            setTimeout(() => {
+                                                NavigationService.navigate('HomeEventTab')
+                                            }, 200);
+                                            _hidePopUpAlert()
+                                        },
+                                        buttonText: Language.yes_mute,
+                                        // cancelButtonText: Language.cancel
+                                    })
+                                }} /><InnerButton title={Language.report} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_report_event,
+                                        onPressButton: () => {
+                                            dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
+                                            _hidePopUpAlert()
+                                        },
+                                        buttonText: Language.yes_report,
+                                        // cancelButtonText: Language.cancel
+                                    })
+                                }} hideBorder /></>
                             }
                         </Card>
 
@@ -196,8 +233,8 @@ const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPre
     ) : null
 }
 
-const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: string, icon?: ImageSourcePropType, onPress?: (e?: GestureResponderEvent) => void }) => {
-    const { onPress, title, icon, visible = true } = props
+const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: string, icon?: ImageSourcePropType, textColor?: string, onPress?: (e?: GestureResponderEvent) => void }) => {
+    const { onPress, title, icon, visible = true, textColor } = props
     return visible ? (
         <TouchableOpacity onPress={onPress} style={{
             flexDirection: 'row', alignItems: 'center',
@@ -205,7 +242,7 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
             borderBottomColor: colors.colorGreyText,
             borderBottomWidth: props?.hideBorder ? 0 : 0.7,
         }} >
-            <Text style={{ flexGrow: 1, textAlign: 'left', fontWeight: '400', fontSize: scaler(12), color: colors.colorBlackText }} >{title}</Text>
+            <Text style={{ flexGrow: 1, textAlign: 'left', fontWeight: '400', fontSize: scaler(12), color: textColor ?? colors.colorBlackText }} >{title}</Text>
         </TouchableOpacity>
     ) : null
 }

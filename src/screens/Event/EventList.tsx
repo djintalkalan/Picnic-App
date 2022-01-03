@@ -24,7 +24,12 @@ const EventList: FC<any> = (props) => {
         if (is_event_admin) {
             buttons.push({
                 title: Language.edit_event, onPress: () => {
-                    NavigationService.navigate('EditEvent', { id: _id })
+                    if (store?.getState().event?.eventDetail?.event?._id != _id) {
+                        dispatch(setEventDetail(null))
+                    }
+                    setTimeout(() => {
+                        NavigationService.navigate('EditEvent', { id: _id })
+                    }, 0);
                 }
             })
             buttons.push({
@@ -37,11 +42,11 @@ const EventList: FC<any> = (props) => {
             if (!is_event_member) {
                 buttons.push({
                     title: Language.join_event, textStyle: { color: colors.colorPrimary }, onPress: () => {
-                        if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                        if (store?.getState().event?.eventDetail?.event?._id != _id) {
                             dispatch(setEventDetail(null))
                         }
                         setTimeout(() => {
-                            NavigationService.navigate("EventDetail", { id: item?._id })
+                            NavigationService.navigate("EventDetail", { id: _id })
                         }, 0);
                     }
                 })
@@ -55,7 +60,7 @@ const EventList: FC<any> = (props) => {
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_mute,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
@@ -64,11 +69,11 @@ const EventList: FC<any> = (props) => {
 
         buttons?.push({
             title: Language.event_details, onPress: () => {
-                if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                if (store?.getState().event?.eventDetail?.event?._id != _id) {
                     dispatch(setEventDetail(null))
                 }
                 setTimeout(() => {
-                    NavigationService.navigate("EventDetail", { id: item?._id })
+                    NavigationService.navigate("EventDetail", { id: _id })
                 }, 0);
             }
         })
@@ -81,9 +86,9 @@ const EventList: FC<any> = (props) => {
                             dispatch(deleteEvent(_id))
                             _hidePopUpAlert()
                         },
-                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonStyle: { backgroundColor: colors.colorErrorRed },
                         buttonText: Language.yes_cancel,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
@@ -98,13 +103,13 @@ const EventList: FC<any> = (props) => {
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_report,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
             if (is_event_member) {
                 buttons.push({
-                    title: Language.cancel_reservation, textStyle: { color: colors.colorRed }, onPress: () => {
+                    title: Language.cancel_reservation, textStyle: { color: colors.colorErrorRed }, onPress: () => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_event,
                             onPressButton: () => {
@@ -112,7 +117,7 @@ const EventList: FC<any> = (props) => {
                                 _hidePopUpAlert()
                             },
                             buttonText: Language.yes_report,
-                            cancelButtonText: Language.cancel
+                            // cancelButtonText: Language.cancel
                         })
                     }
                 })

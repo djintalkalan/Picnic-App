@@ -13,6 +13,7 @@ export const colors = {
     transparent: "transparent",
     colorGreyInactive: "#797979",
     colorGreyMore: "#A5A5A5",
-    colorTextPlaceholder:'#9A9A9A'
+    colorTextPlaceholder: '#9A9A9A',
+    colorErrorRed: '#C93F34',
 
 }
