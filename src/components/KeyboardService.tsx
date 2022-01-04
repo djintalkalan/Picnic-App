@@ -1,5 +1,5 @@
 import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Keyboard, Platform } from 'react-native'
+import { EmitterSubscription, Keyboard, Platform } from 'react-native'
 
 type KeyboardValues = {
     isKeyboard: boolean
@@ -32,10 +32,28 @@ export const KeyboardProvider: FC<any> = ({ children }) => {
         setToggle(_ => !_)
     }, [])
 
+    useEffect(() => {
+        let willChange: EmitterSubscription;
+        if (Platform.OS == 'ios') {
+            willChange = Keyboard.addListener("keyboardDidShow", (e) => {
+
+                if (isKeyboard) {
+                    setTimeout(() => {
+                        keyboardHeight.current = e.endCoordinates.height
+                        setToggle(_ => !_)
+                    }, 200);
+                }
+
+            })
+        }
+        return () => {
+            willChange?.remove()
+        }
+    }, [isKeyboard])
+
 
     useEffect(() => {
         const willShow = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardWillShow' : "keyboardDidShow", (e) => {
-            keyboardHeight.current = e.endCoordinates.height
             setKeyboard(true)
         })
         const willHide = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {

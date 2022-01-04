@@ -1,4 +1,3 @@
-import { likeUnlikeMessage } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { InnerBoldText } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -8,6 +7,7 @@ import React, { memo, useCallback } from 'react'
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
+import { EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getImageUrl, scaler, _showBottomMenu } from 'utils'
 
@@ -24,15 +24,18 @@ interface IChatItem {
     message_liked_by_last_five: []
     message_total_likes_count: number
     message_liked_by_user_name: []
+    message_recently_liked_user_ids: Array<any>
     group?: any
 }
 
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, is_message_liked_by_me, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
-    const { display_name, first_name, last_name, image: userImage, _id: userId } = user
-    const [userData] = useDatabase("userData");
+    const { message, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const { display_name, first_name, last_name, image: userImage, _id: userId } = user ?? {}
+    const [userData] = useDatabase<any>("userData");
+    const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
+
     const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
     // console.log("userData", userData);
 
@@ -87,21 +90,22 @@ const ChatItem = (props: IChatItem) => {
             <ImageLoader
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
-                source={{ uri: getImageUrl(message, { width: width, type: 'users' }) }}
+                source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             <TouchableOpacity onPress={() => {
-                dispatch(likeUnlikeMessage({
+                SocketService?.emit(EMIT_LIKE_UNLIKE, {
                     message_id: _id,
                     is_like: is_message_liked_by_me ? "0" : '1'
-                }))
+                })
             }} style={{ flexDirection: 'row', alignItems: 'center' }} >
 
                 <Image source={Images.ic_smiley} style={{
+                    resizeMode: 'contain',
                     height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
                     tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                 }} />
                 <Text style={styles.likeBy} >
-                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"} <Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? "You " : ""}</Text> {remainingNames?.[0] ? ", " + remainingNames?.[0] : ""} {remainingNames?.length > 1 ? " and " + (message_total_likes_count - 1) + " others" : ""}
+                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{remainingNames?.length > 1 ? " and " + (message_total_likes_count - 1) + " others" : ""}
                 </Text>
             </TouchableOpacity>
         </View>

@@ -12,7 +12,7 @@ interface header {
     "Content-Type": string;
     Authorization?: string,
     "X-Platform-Type": string;
-    accept_language?: LanguageType
+    "Accept-Language"?: LanguageType
 }
 
 async function callApi(urlString: string, header: header, body: any, methodType: Method, isMultipart: boolean | undefined) {
@@ -89,7 +89,7 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
             "Content-Type": (isMultipart) ? "multipart/form-data" : "application/json",
             'X-Platform-Type': 'app',
             'Authorization': authToken ? ("Bearer " + authToken) : undefined,
-            'accept_language': selectedLanguage
+            'Accept-Language': selectedLanguage
         }
         return callApi(urlString, header, body, methodType, isMultipart)
     } catch (error: any) {

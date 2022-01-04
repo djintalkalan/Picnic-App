@@ -135,7 +135,7 @@ class Database {
     }
 
     public setMultipleValues = (data: DataBaseType) => {
-        Object.keys(data).forEach((key) => {
+        Object.keys(data)?.forEach((key) => {
             switch (key) {
                 case 'authToken':
                 case 'firebaseToken':

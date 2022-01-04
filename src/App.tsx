@@ -22,6 +22,7 @@ import MyNavigationContainer from './routes/MyNavigationContainer';
 const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
 const App: FC = () => {
     useEffect(() => {
+
         Database.setMultipleValues({
             // selectedLocation: null,
             // currentLocation: null,

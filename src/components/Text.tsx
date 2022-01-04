@@ -69,7 +69,7 @@ export const InnerBoldText = ({ text: IText, style }: { text: string, style: Sty
                 if (text.includes('**')) {
                     // console.log("index", index)
                     return (
-                        <Text style={[StyleSheet.flatten(style), { fontWeight: '500' }]}>
+                        <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: '500' }]}>
                             {text.replaceAll('**', '')}{' '}
                         </Text>
                     );

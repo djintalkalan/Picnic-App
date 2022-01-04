@@ -1,48 +1,78 @@
 import { RootState } from 'app-store'
-import { getGroupChat } from 'app-store/actions'
+import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { useKeyboardService } from 'custom-components'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, InputAccessoryView, Platform, StyleSheet, TextInput, View } from 'react-native'
+import { Dimensions, Platform, StyleSheet, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { scaler } from 'utils'
+import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
+import { scaler, _showErrorMessage } from 'utils'
 import ChatInput from './ChatInput'
 import ChatItem from './ChatItem'
 
 export const GroupChats: FC<any> = (props) => {
 
     const flatListRef = useRef<FlatList>(null);
-    const inputRefAccess = useRef<TextInput>(null);
     const inputRef = useRef<TextInput>(null);
 
-    const [textMessage, setTextMessage] = useState("");
-    const [repliedMessage, setRepliedMessage] = useState(null);
+    const textMessageRef = useRef("")
+    const [repliedMessage, setRepliedMessage] = useState<any>(null);
 
     const { keyboardHeight, isKeyboard } = useKeyboardService();
 
-    const isEqual = useCallback((l, r) => {
-        return l?.chats?.length == r?.chats?.length || shallowEqual(l, r)
-    }, [])
-
     useEffect(() => {
         if (repliedMessage) {
-            console.log("Deepak");
-
-            !(inputRef.current?.isFocused() || inputRefAccess.current?.isFocused()) && inputRef.current?.focus()
+            inputRef.current?.focus()
         }
     }, [repliedMessage])
 
-    useEffect(() => {
-        if (isKeyboard)
-            setTimeout(() => {
-                inputRefAccess.current?.focus()
-            }, 200)
-    }, [isKeyboard])
 
     const _onPressSend = useCallback(() => {
+        if (textMessageRef?.current) {
+            SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+                resource_id: activeGroup?._id,
+                parent_id: repliedMessage?._id,
+                resource_type: "group",
+                message_type: "text",
+                message: textMessageRef?.current?.trim()
+            })
+            inputRef.current?.clear()
+            if (repliedMessage) {
+                setRepliedMessage(null)
+            }
+        } else {
+            _showErrorMessage("Please enter message")
+        }
+    }, [repliedMessage])
 
-    }, [textMessage])
+    const _onChooseImage = useCallback((image) => {
+        dispatch(uploadFile({
+            prefixType: 'messages',
+            image, onSuccess: (url) => {
+                dispatch(setLoadingAction(false))
+                if (url) {
+                    SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+                        resource_id: activeGroup?._id,
+                        parent_id: repliedMessage?._id,
+                        resource_type: "group",
+                        message_type: "image",
+                        message: url
+                    })
+                    inputRef.current?.clear()
+                    if (repliedMessage) {
+                        setRepliedMessage(null)
+                    }
+                } else {
+                    _showErrorMessage("Please enter message")
+                }
+            }
+        }))
 
+    }, [repliedMessage])
+
+    const _updateTextMessage = useCallback((text: string) => {
+        textMessageRef.current = text
+    }, [])
 
     const { chats, groupDetail, activeGroup } = useSelector((state: RootState) => ({
         chats: state?.groupChat?.groups?.[state?.groupChat?.activeGroup?._id]?.chats ?? [],
@@ -80,6 +110,7 @@ export const GroupChats: FC<any> = (props) => {
                 <FlatList
                     keyboardShouldPersistTaps={'handled'}
                     data={chats}
+                    keyExtractor={_ => _._id}
                     bounces={false}
                     ref={flatListRef}
                     inverted
@@ -89,35 +120,17 @@ export const GroupChats: FC<any> = (props) => {
                     renderItem={_renderChatItem}
                 />
             </View>
-            <View style={{ flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-                {Platform.OS == 'ios' &&
-                    <InputAccessoryView style={{ alignItems: 'flex-end' }} nativeID={'done'}   >
-                        <View style={{ width: '100%' }} >
-                            <ChatInput
-                                ref={inputRefAccess}
-                                repliedMessage={repliedMessage}
-                                value={textMessage}
-                                onChangeText={setTextMessage}
-                                setRepliedMessage={setRepliedMessage}
-                                onPressSend={_onPressSend}
-                            />
+            <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
-                            {/* <View style={styles.accessory}>
-                                <Button
-                                    onPress={() => Keyboard.dismiss()}
-                                    title="Done"
-                                />
-                            </View> */}
-                        </View>
-                    </InputAccessoryView>}
-                {true ? <ChatInput
-                    value={textMessage}
+                <ChatInput
+                    // value={textMessage}
                     ref={inputRef}
                     repliedMessage={repliedMessage}
                     setRepliedMessage={setRepliedMessage}
-                    onChangeText={setTextMessage}
+                    onChooseImage={_onChooseImage}
+                    onChangeText={_updateTextMessage}
                     onPressSend={_onPressSend}
-                /> : null}
+                />
             </View>
         </View >
     )

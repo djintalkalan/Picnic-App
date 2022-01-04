@@ -46,14 +46,13 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             refreshChatState.groups[groupId].chats = action?.payload?.chats
             return refreshChatState
         case ActionTypes.ADD_CHAT_IN_GROUP:
-            const addChatState = state
+            const addChatState = { ...state }
             if (!addChatState.groups[groupId]) {
                 addChatState.groups[groupId].chats = [],
                     addChatState.groups[groupId].detail = null
             }
             addChatState.groups[groupId].chats.push(action?.payload?.chat)
             return addChatState
-
         case ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS:
             let likeState = { ...state }
             if (!likeState.groups[groupId]) {
@@ -74,12 +73,18 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             return likeState
 
         case ActionTypes.UPDATE_CHAT_IN_GROUP:
-            const updateChatState = state
+            const updateChatState = { ...state }
             if (!updateChatState.groups[groupId]) {
                 updateChatState.groups[groupId].chats = [],
                     updateChatState.groups[groupId].detail = null
             }
-            updateChatState.groups[groupId].chats = unionBy([action?.payload?.chat], updateChatState.groups[groupId]?.chats, "_id")
+            updateChatState.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
+                if (action?.payload?.chat?._id == _._id)
+                    return { ..._, ...action?.payload?.chat }
+                else {
+                    return _
+                }
+            })
             return updateChatState
         default:
             return state

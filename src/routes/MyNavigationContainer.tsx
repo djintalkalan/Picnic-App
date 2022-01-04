@@ -31,6 +31,7 @@ import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
 import UpdatePassword from 'screens/UpdatePassword';
+import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
 // import { useLanguage } from 'src/language/Language';
 import { navigationRef } from 'utils';
@@ -74,6 +75,7 @@ const dashboardScreens = {
 
 const MyNavigationContainer = () => {
   const dispatch = useDispatch();
+
   const [isLogin] = useDatabase<boolean>('isLogin', false);
   // const language = useLanguage();
   // console.log("language", language)
@@ -92,6 +94,15 @@ const MyNavigationContainer = () => {
       tokenListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (isLogin) {
+      SocketService.init(dispatch);
+    }
+    return () => {
+      SocketService.closeSocket();
+    }
+  }, [])
 
   const stopLoader = useCallback(() => {
     dispatch(setLoadingAction(false));

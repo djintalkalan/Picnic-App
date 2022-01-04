@@ -7,7 +7,7 @@ import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
 interface ChatInputProps {
-    value: string,
+    value?: string,
     onChangeText: any
     onPressSend: () => void
     repliedMessage: any,

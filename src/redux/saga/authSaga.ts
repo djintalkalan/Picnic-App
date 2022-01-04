@@ -193,7 +193,7 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
     try {
         Database.setMultipleValues({
             isLogin: false,
-            userData: false,
+            userData: null,
             authToken: '',
         })
     }
