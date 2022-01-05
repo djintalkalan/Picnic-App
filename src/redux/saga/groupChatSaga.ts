@@ -11,7 +11,7 @@ function* _getGroupChat({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getGroupChat, payload);
         if (res.status == 200) {
-            yield put(setChatInGroup({ groupId: payload?.id, chats: res?.data?.data }))
+            yield put(setChatInGroup({ groupId: payload?.id, chats: res?.data?.data, message_id: payload?.message_id }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

@@ -4,6 +4,7 @@ import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { EMIT_JOIN_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
@@ -56,6 +57,10 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
                 yield put(updateEventDetail(res?.data))
+            } else {
+                SocketService?.emit(EMIT_JOIN_ROOM, {
+                    resource_id: res?.data
+                })
             }
             NavigationService.navigate('HomeEventTab')
             if (payload.onSuccess) payload.onSuccess(res?.data)

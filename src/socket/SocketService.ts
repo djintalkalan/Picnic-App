@@ -35,7 +35,6 @@ class Service {
                 });
                 this.initListeners();
                 this.socket.connect()
-                this.emit(EMIT_JOIN)
             }
         }
     }
@@ -77,6 +76,7 @@ class Service {
 
     private onConnect = () => {
         console.log("Socket Connect")
+        this.emit(EMIT_JOIN)
     }
 
     private onDisconnect = (event: any) => {

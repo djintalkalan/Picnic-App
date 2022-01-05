@@ -3,6 +3,7 @@ import { addMutedResource, deleteEventSuccess, deleteGroupSuccess, getGroupDetai
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
 import { navigationRef, NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
@@ -174,6 +175,10 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
                 yield put(updateGroupDetail(res?.data))
+            } else {
+                SocketService?.emit(EMIT_JOIN_ROOM, {
+                    resource_id: res?.data
+                })
             }
             NavigationService.goBack()
             if (payload.onSuccess) payload.onSuccess(res?.data)
@@ -295,6 +300,9 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._joinGroup, payload);
         if (res.status == 200) {
             yield put(joinGroupSuccess(payload))
+            SocketService?.emit(EMIT_JOIN_ROOM, {
+                resource_id: payload
+            })
             if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
                 yield put(getGroupDetail(payload))
             }
@@ -341,6 +349,9 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._leaveGroup, payload);
         if (res.status == 200) {
             yield put(leaveGroupSuccess(payload))
+            SocketService?.emit(EMIT_LEAVE_ROOM, {
+                resource_id: payload
+            })
             if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
                 NavigationService.goBack()
             }

@@ -10,6 +10,9 @@ import { scaler, _showErrorMessage } from 'utils'
 import ChatInput from './ChatInput'
 import ChatItem from './ChatItem'
 
+let loadMore = false
+
+
 export const GroupChats: FC<any> = (props) => {
 
     const flatListRef = useRef<FlatList>(null);
@@ -67,7 +70,6 @@ export const GroupChats: FC<any> = (props) => {
                 }
             }
         }))
-
     }, [repliedMessage])
 
     const _updateTextMessage = useCallback((text: string) => {
@@ -93,6 +95,10 @@ export const GroupChats: FC<any> = (props) => {
         dispatch(getGroupChat({
             id: activeGroup?._id,
         }))
+        setTimeout(() => {
+            loadMore = true
+        }, 200);
+        return () => { loadMore = false }
     }, [])
 
     const _renderChatItem = useCallback(({ item, index }) => {
@@ -115,7 +121,14 @@ export const GroupChats: FC<any> = (props) => {
                     ref={flatListRef}
                     inverted
                     onEndReached={() => {
-                        console.log("End");
+                        console.log("End", chats[chats.length - 1]?._id);
+                        if (loadMore) {
+                            dispatch(getGroupChat({
+                                id: activeGroup?._id,
+                                message_id: chats[chats.length - 1]?._id
+                            }))
+                        }
+
                     }}
                     renderItem={_renderChatItem}
                 />

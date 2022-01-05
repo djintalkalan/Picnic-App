@@ -35,7 +35,11 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                     detail: null
                 }
             }
-            newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
+            if (action?.payload?.message_id) {
+                newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
+                    .sort((a, b) => { return (new Date(b?.created_at)).getTime() - new Date(a?.created_at).getTime() });
+            } else
+                newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
             return newState
         case ActionTypes.REFRESH_CHAT_IN_GROUP:
             const refreshChatState = state

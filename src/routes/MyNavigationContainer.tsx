@@ -102,7 +102,7 @@ const MyNavigationContainer = () => {
     return () => {
       SocketService.closeSocket();
     }
-  }, [])
+  }, [isLogin])
 
   const stopLoader = useCallback(() => {
     dispatch(setLoadingAction(false));
