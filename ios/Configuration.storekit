@@ -1,0 +1,49 @@
+{
+  "identifier" : "0E06A4E1",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "AD3A82E2",
+      "localizations" : [
+
+      ],
+      "name" : "Members",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "83B6D8A9",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "ct_member",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "CoreTxt Member",
+          "subscriptionGroupID" : "AD3A82E2",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}

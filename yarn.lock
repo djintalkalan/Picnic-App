@@ -6350,10 +6350,10 @@ react-native-gorgeous-header@^0.1.0:
   resolved "https://registry.yarnpkg.com/react-native-gorgeous-header/-/react-native-gorgeous-header-0.1.0.tgz#6d6dbcd859f123c31bb5036885be0ac5dbefb353"
   integrity sha512-lJh+ZpY7lxQnJ45mZRKYjV4wxL3qKtUdXuE4PAq93YDaPpNT2GWyOHVhs/WZqM25vjTcH47/9MfIh/GCuxhjkw==
 
-react-native-iap@^8.0.0-rc.4:
-  version "8.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-8.0.0-rc.4.tgz#cbc08a56c547ea18464f4abc37bc311fc3da720d"
-  integrity sha512-PNPpQtYz9PkHJul/NWev2mYDAi0MaLZK4R/DH4cXfFUdQZqL3jy26Lb3pC9E16G/TulhVVA3YXAAdcvsyLL1Jg==
+react-native-iap@^7.5.4:
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-7.5.4.tgz#7063f79484a98038a6e92544b6af646fcef7fd5f"
+  integrity sha512-Yx7z+wm1dSQkd4IOffyaouD5Y0TUk01GefrM9DZyaidCsQV+SLLCPZhAP+gDibjUtw7vMNugVEZOOq7O7Yse4A==
   dependencies:
     dooboolab-welcome "1.3.2"
 

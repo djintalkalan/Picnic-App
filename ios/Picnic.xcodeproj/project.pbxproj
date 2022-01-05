@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1443904527859AC1001D23C3 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 1443904427859AC1001D23C3 /* Configuration.storekit */; };
 		14A09BCF26E72CDA00C5D92E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */; };
 		14E10D282762219A007E955F /* Linker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E10D272762219A007E955F /* Linker.swift */; };
 		179FE19C278443F2008C8417 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179FE19B278443F2008C8417 /* StoreKit.framework */; };
@@ -60,6 +61,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Picnic/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Picnic/main.m; sourceTree = "<group>"; };
 		1412104426E5F5D000F96F90 /* rnuc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rnuc.xcconfig; sourceTree = "<group>"; };
+		1443904427859AC1001D23C3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Picnic/BootSplash.storyboard; sourceTree = "<group>"; };
 		14E10D242760CB71007E955F /* Picnic-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Picnic-Bridging-Header.h"; sourceTree = "<group>"; };
 		14E10D272762219A007E955F /* Linker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Linker.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 		13B07FAE1A68108700A75B9A /* Picnic */ = {
 			isa = PBXGroup;
 			children = (
+				1443904427859AC1001D23C3 /* Configuration.storekit */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -327,6 +330,7 @@
 				3004DC0EFDC84CD588F1A7F5 /* Poppins-BoldItalic.ttf in Resources */,
 				9577491BE2F84682850F4C01 /* Poppins-ExtraBold.ttf in Resources */,
 				E22B63B1EDC2412AB8829505 /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				1443904527859AC1001D23C3 /* Configuration.storekit in Resources */,
 				905579EC6973426FBB9CA865 /* Poppins-ExtraLight.ttf in Resources */,
 				2DEDCD618CBA48B386CBEC3F /* Poppins-ExtraLightItalic.ttf in Resources */,
 				EA1B3738512F4C03AB3BED8E /* Poppins-Italic.ttf in Resources */,
@@ -669,7 +673,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 i386";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -735,7 +739,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 i386";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

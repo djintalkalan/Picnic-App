@@ -416,7 +416,7 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNIap (8.0.0-rc.4):
+  - RNIap (7.5.4):
     - React-Core
   - RNImageCropPicker (0.37.2):
     - React-Core
@@ -755,7 +755,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNIap: f24e3931bb8e499b4b8c204539dcc91a0a7347a8
+  RNIap: 94254ff481476392a4a3ab4a4e03485f25a0698b
   RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
   RNLocalize: 74b82db20cc3895ccc25af992c644879bcec2815
   RNPermissions: 4b54095940aea8c03fa3e6c92d4ac3647b31ed4e
@@ -768,4 +768,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c0c0358640f07b045d0a3fe2f0b33a56f87ada47
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
