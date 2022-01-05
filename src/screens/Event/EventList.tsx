@@ -171,18 +171,14 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 onPressImage={() => {
-                    if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
-                        dispatch(setEventDetail(null))
-                    }
-                    setTimeout(() => {
-                        NavigationService.navigate("EventDetail", { id: item?._id })
-                    }, 0);
-                    // if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                    //     dispatch(setGroupDetail(null))
+                    // if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                    //     dispatch(setEventDetail(null))
                     // }
                     // setTimeout(() => {
-                    //     NavigationService.navigate("GroupDetail", { id: item?._id })
+                    //     NavigationService.navigate("EventDetail", { id: item?._id })
                     // }, 0);
+                    NavigationService.navigate("Subscription")
+
                 }}
             />
         )

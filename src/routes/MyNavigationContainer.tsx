@@ -30,6 +30,7 @@ import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
+import Subscription from 'screens/Subscription/Subscription';
 import UpdatePassword from 'screens/UpdatePassword';
 import { useDatabase } from 'src/database/Database';
 // import { useLanguage } from 'src/language/Language';
@@ -70,6 +71,7 @@ const dashboardScreens = {
   CreateEvent3: CreateEvent3,
   EventDetail: EventDetail,
   EditEvent: EditEvent,
+  Subscription: Subscription,
 };
 
 const MyNavigationContainer = () => {
