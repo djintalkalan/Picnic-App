@@ -143,6 +143,7 @@ export const en = {
   are_you_sure_report_group: "Are you sure you want to report group ?",
   are_you_sure_report_event: "Are you sure you want to report event ?",
   are_you_sure_report_member: "Are you sure you want to report member ?",
+  are_you_sure_report_message: "Are you sure you want to report message ?",
   yes_report: "Yes, Report",
   are_you_sure_block_member: "Are you sure you want to block member ?",
   yes_block: "Yes, Block",

@@ -38,12 +38,12 @@ export const getGroupDetail = (payload: any) => ({
     payload
 })
 
-export const setGroupDetail = (payload: any) => ({
+export const setGroupDetail = (payload: { groupId: string, data: any }) => ({
     type: ActionTypes.SET_GROUP_DETAIL,
     payload
 })
 
-export const updateGroupDetail = (payload: any) => ({
+export const updateGroupDetail = (payload: { groupId: string, data: any }) => ({
     type: ActionTypes.UPDATE_GROUP_DETAIL,
     payload
 })
@@ -53,7 +53,7 @@ export const getGroupMembers = (payload: any) => ({
     payload
 })
 
-export const setGroupMembers = (payload: Array<any>) => ({
+export const setGroupMembers = (payload: { groupId: string, data: Array<any> }) => ({
     type: ActionTypes.SET_GROUP_MEMBERS,
     payload
 })
@@ -63,12 +63,10 @@ export const removeGroupMember = (payload: any) => ({
     payload
 })
 
-export const removeGroupMemberSuccess = (payload: any) => ({
+export const removeGroupMemberSuccess = (payload: { groupId: string, data: any }) => ({
     type: ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS,
     payload
 })
-
-
 
 export const getAllGroups = (payload: any) => ({
     type: ActionTypes.GET_ALL_GROUPS,
@@ -130,7 +128,7 @@ export const getMyEvents = (payload: { groupId: string, type: 'upcoming' | 'past
     payload
 })
 
-export const setUpcomingEvents = (payload: Array<any>) => ({
+export const setUpcomingEvents = (payload: { groupId: string, data: Array<any> }) => ({
     type: ActionTypes.SET_UPCOMING_EVENTS,
     payload
 })

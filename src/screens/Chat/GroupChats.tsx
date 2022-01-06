@@ -76,20 +76,22 @@ export const GroupChats: FC<any> = (props) => {
         textMessageRef.current = text
     }, [])
 
-    const { chats, groupDetail, activeGroup } = useSelector((state: RootState) => ({
-        chats: state?.groupChat?.groups?.[state?.groupChat?.activeGroup?._id]?.chats ?? [],
-        groupDetail: state?.groupChat?.groups?.[state?.groupChat?.activeGroup?._id]?.detail,
-        activeGroup: state?.groupChat?.activeGroup
+    const { chats, groupDetail, is_group_joined, activeGroup } = useSelector((state: RootState) => ({
+        chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
+        groupDetail: state?.groupDetails?.[state?.activeGroup?._id]?.group,
+        activeGroup: state?.activeGroup,
+        is_group_joined: state?.groupDetails?.[props?.route?.params?.id]?.is_group_joined,
     }), shallowEqual)
+
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        setTimeout(() => {
-            console.log("chats", chats);
-            // flatListRef?.current?.scrollToEnd()
-        }, 200);
-    }, [chats])
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         // console.log("chats", chats);
+    //         // flatListRef?.current?.scrollToEnd()
+    //     }, 200);
+    // }, [chats])
 
     useEffect(() => {
         dispatch(getGroupChat({
@@ -106,9 +108,10 @@ export const GroupChats: FC<any> = (props) => {
         return (
             <ChatItem
                 {...item}
+                isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [chats?.length])
+    }, [groupDetail])
 
     return (
         <View style={styles.container} >
@@ -133,7 +136,7 @@ export const GroupChats: FC<any> = (props) => {
                     renderItem={_renderChatItem}
                 />
             </View>
-            <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+            {is_group_joined ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                 <ChatInput
                     // value={textMessage}
@@ -144,7 +147,7 @@ export const GroupChats: FC<any> = (props) => {
                     onChangeText={_updateTextMessage}
                     onPressSend={_onPressSend}
                 />
-            </View>
+            </View> : null}
         </View >
     )
 }

@@ -1,3 +1,4 @@
+import { reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { InnerBoldText } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -9,10 +10,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler, _showBottomMenu } from 'utils'
+import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 
 interface IChatItem {
     _id: string
+    isAdmin: any,
     message: string
     is_system_message?: 1 | 0
     user?: any,
@@ -31,7 +33,7 @@ interface IChatItem {
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const { message, isAdmin, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
     const { display_name, first_name, last_name, image: userImage, _id: userId } = user ?? {}
     const [userData] = useDatabase<any>("userData");
     const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
@@ -46,18 +48,28 @@ const ChatItem = (props: IChatItem) => {
             title: Language.reply,
             onPress: () => setRepliedMessage({ _id, user, message }),
         }]
-        if (myMessage) {
+        if (myMessage || isAdmin) {
             buttons.push({
                 title: Language.delete,
                 onPress: () => { },
             })
-        } else {
+        }
+        if (!myMessage) {
             buttons = [...buttons, {
                 title: Language.block,
                 onPress: () => { },
             }, {
                 title: Language.report,
-                onPress: () => { },
+                onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_report_member,
+                        onPressButton: () => {
+                            dispatch(reportResource({ resource_id: _id, resource_type: 'user' }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_report
+                    })
+                },
             }]
         }
         buttons.push({
@@ -122,7 +134,7 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                     </View>
                     : null}
-                <Text style={styles.myMessage} >{message}</Text>
+                <Text style={styles.myMessage} >{message?.trim()}</Text>
             </TouchableOpacity>
         </View>
     }
@@ -139,7 +151,7 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                     </View>
                     : null}
-                <Text style={styles.message} >{message}</Text>
+                <Text style={styles.message} >{message?.trim()}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -167,7 +179,8 @@ const styles = StyleSheet.create({
     myMessage: {
         color: colors.colorBlackText,
         fontSize: scaler(14),
-        fontWeight: '400'
+        fontWeight: '400',
+        textAlign: 'right'
     },
     container: {
         paddingHorizontal: scaler(15),

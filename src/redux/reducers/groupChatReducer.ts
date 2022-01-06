@@ -3,7 +3,6 @@ import { unionBy } from "lodash";
 
 export interface IGroupChatReducer {
     groups: IGroups
-    activeGroup: any
 }
 
 interface IGroups {
@@ -12,56 +11,51 @@ interface IGroups {
 
 interface IGroupChat {
     chats: Array<any>
-    detail: any
 }
 
 const initialGroupChatState: IGroupChatReducer = {
     groups: {
 
-    },
-    activeGroup: null
+    }
 }
 
 export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatState, action: action): IGroupChatReducer => {
     const { groupId } = action?.payload ?? {}
     switch (action.type) {
-        case ActionTypes.SET_ACTIVE_GROUP:
-            return { ...state, activeGroup: action?.payload }
         case ActionTypes.SET_CHAT_IN_GROUP:
             const newState = { ...state }
             if (!newState?.groups?.[groupId]) {
                 newState.groups[groupId] = {
                     chats: [],
-                    detail: null
                 }
             }
             if (action?.payload?.message_id) {
-                newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
-                    .sort((a, b) => { return (new Date(b?.created_at)).getTime() - new Date(a?.created_at).getTime() });
+
+                // newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
+                //     .sort((a, b) => { return (new Date(b?.created_at)).getTime() - new Date(a?.created_at).getTime() });
+                newState.groups[groupId].chats = unionBy(newState.groups[groupId]?.chats, action?.payload?.chats, "_id")
+
             } else
                 newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
             return newState
         case ActionTypes.REFRESH_CHAT_IN_GROUP:
             const refreshChatState = state
             if (!refreshChatState.groups[groupId]) {
-                refreshChatState.groups[groupId].chats = [],
-                    refreshChatState.groups[groupId].detail = null
+                refreshChatState.groups[groupId].chats = []
             }
             refreshChatState.groups[groupId].chats = action?.payload?.chats
             return refreshChatState
         case ActionTypes.ADD_CHAT_IN_GROUP:
             const addChatState = { ...state }
             if (!addChatState.groups[groupId]) {
-                addChatState.groups[groupId].chats = [],
-                    addChatState.groups[groupId].detail = null
+                addChatState.groups[groupId].chats = []
             }
             addChatState.groups[groupId].chats.push(action?.payload?.chat)
             return addChatState
         case ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS:
             let likeState = { ...state }
             if (!likeState.groups[groupId]) {
-                likeState.groups[groupId].chats = [],
-                    likeState.groups[groupId].detail = null
+                likeState.groups[groupId].chats = []
             }
             likeState.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
                 if (action?.payload?.message_id == _._id)
@@ -79,8 +73,7 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
         case ActionTypes.UPDATE_CHAT_IN_GROUP:
             const updateChatState = { ...state }
             if (!updateChatState.groups[groupId]) {
-                updateChatState.groups[groupId].chats = [],
-                    updateChatState.groups[groupId].detail = null
+                updateChatState.groups[groupId].chats = []
             }
             updateChatState.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
                 if (action?.payload?.chat?._id == _._id)

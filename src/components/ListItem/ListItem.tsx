@@ -1,7 +1,8 @@
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
 import { Text } from 'custom-components'
-import React, { FC, ReactElement, useMemo, useState } from 'react'
+import ImageLoader from 'custom-components/ImageLoader'
+import React, { FC, ReactElement, useMemo } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, View, ViewStyle } from 'react-native'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
@@ -33,14 +34,14 @@ interface MemberListItemProps {
 }
 
 export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView }) => {
-    const [isError, setError] = useState(false)
     return (
         <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
             <View style={styles.container} >
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
-                    <Image onError={() => {
-                        setError(true)
-                    }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
+                    <ImageLoader
+                        placeholderSource={defaultIcon}
+                        source={icon ?? defaultIcon}
+                        style={styles.iconStyle} />
                 </TouchableHighlight>
                 <View style={styles.textContainer} >
                     <Text style={styles.title} >{title}</Text>
@@ -54,17 +55,17 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon
 }
 
 export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
-    const [isError, setError] = useState(false)
     return (
         <TouchableHighlight onLongPress={onLongPress} onPress={onPressImage} underlayColor={colors.colorWhite} >
             <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
-                    <Image onError={() => {
-                        setError(true)
-                    }} source={(isError || !icon) ? defaultIcon : icon} style={[styles.iconStyle, {
-                        height: scaler(40),
-                        width: scaler(40),
-                    }]} />
+                    <ImageLoader
+                        placeholderSource={defaultIcon}
+                        source={icon ?? defaultIcon}
+                        style={[styles.iconStyle, {
+                            height: scaler(40),
+                            width: scaler(40),
+                        }]} />
                 </TouchableHighlight>
                 <View style={[styles.textContainer, { justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }]} >
                     <Text style={styles.memberListTitle} >{title}</Text>

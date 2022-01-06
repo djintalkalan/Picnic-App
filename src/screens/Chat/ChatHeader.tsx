@@ -1,6 +1,7 @@
 import { colors, Images } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
-import React, { FC, ReactElement, useMemo, useState } from 'react'
+import ImageLoader from 'custom-components/ImageLoader'
+import React, { FC, ReactElement, useMemo } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { NavigationService, scaler } from 'utils'
 interface IChatHeader {
@@ -14,7 +15,6 @@ interface IChatHeader {
 }
 export const ChatHeader: FC<IChatHeader> = (props) => {
 
-    const [isError, setError] = useState(false)
 
 
 
@@ -46,9 +46,9 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
             </TouchableOpacity>
 
             <TouchableHighlight style={{ alignSelf: 'center', paddingHorizontal: scaler(3) }} onPress={onPress} underlayColor={colors.colorWhite} >
-                <Image onError={() => {
-                    setError(true)
-                }} source={(isError || !icon) ? defaultIcon : icon} style={styles.iconStyle} />
+                <ImageLoader
+                    placeholderSource={defaultIcon}
+                    source={icon ?? defaultIcon} style={styles.iconStyle} />
             </TouchableHighlight>
             <TouchableOpacity onPress={onPress} style={{ paddingLeft: scaler(5), flexShrink: 1, }} >
                 <Text style={styles.title} >{title}</Text>

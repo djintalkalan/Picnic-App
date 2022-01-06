@@ -1,10 +1,11 @@
 import { config } from "api";
-import { setChatInGroup, updateChatInGroup } from "app-store/actions";
+import { deleteGroupSuccess, setChatInGroup, updateChatInGroup } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
 import { LanguageType } from "src/language/Language";
-import { EMIT_JOIN, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE } from "./Events";
+import { NavigationService } from "utils";
+import { EMIT_JOIN, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_RECONNECT } from "./SocketEvents";
 
 class Service {
     static instance?: Service;
@@ -56,14 +57,19 @@ class Service {
         this.socket?.on(ON_CONNECTION, this.onConnection)
         this.socket?.on(ON_CONNECT, this.onConnect)
         this.socket?.on(ON_DISCONNECT, this.onDisconnect)
+        this.socket?.on(ON_RECONNECT, this.onConnect)
+
         this.socket?.on(ON_JOIN, this.onJoin)
         this.socket?.on(ON_JOIN_ROOM, this.onJoinRoom)
         this.socket?.on(ON_LEAVE_ROOM, this.onLeaveRoom)
+
         this.socket?.on(ON_LIKE_UNLIKE, this.onLikeUnlike)
+
         this.socket?.on(ON_GROUP_MESSAGE, this.onGroupMessage)
         this.socket?.on(ON_GROUP_MESSAGES, this.onGroupMessages)
         this.socket?.on(ON_GROUP_MESSAGE_DELETE, this.onGroupMessageDelete)
-        // this.socket?.on(ON_GROUP_MESSAGE_TYPING, this.onGroupMessageTyping)
+        this.socket?.on(ON_GROUP_DELETE, this.onGroupDelete)
+
         this.socket?.on(ON_EVENT_MESSAGE, this.onEventMessage)
         this.socket?.on(ON_EVENT_MESSAGES, this.onEventMessages)
         this.socket?.on(ON_EVENT_MESSAGE_DELETE, this.onEventMessageDelete)
@@ -134,11 +140,23 @@ class Service {
                     chats: event?.data
                 }))
         }
-
     }
 
-    private onGroupMessageTyping = (event: any) => {
+    private onGroupDelete = (event: any) => {
+        console.log("onGroupDelete", event)
+        if (event?.data) {
+            console.log("SCREEN", NavigationService?.getCurrentScreen());
 
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
+                params?.id == event?.data?.resource_id
+            ) {
+                console.log("onGroupDelete", event)
+                NavigationService.navigate("Home")
+            }
+            this.dispatch &&
+                this.dispatch(deleteGroupSuccess(event?.data?.resource_id))
+        }
     }
 
     private onEventMessageDelete = (event: any) => {

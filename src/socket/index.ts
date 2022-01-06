@@ -1,2 +1,3 @@
-export * from './Events';
+export * from './SocketEvents';
 export * from './SocketService';
+

@@ -42,10 +42,6 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
             return { ...state, eventDetail: action?.payload ? { ...state?.eventDetail, ...action?.payload } : initialEventDetailState }
         case ActionTypes.UPDATE_EVENT_DETAIL:
             return { ...state, eventDetail: { ...state?.eventDetail, event: { ...state?.eventDetail?.event, ...action?.payload } } }
-        // case ActionTypes.SET_GROUP_MEMBERS:
-        //     return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: action?.payload } }
-        // case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
-        //     return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: state?.groupDetail?.groupMembers?.filter(_ => _.user_id != action?.payload) } }
         default:
             return state
     }

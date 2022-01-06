@@ -1,6 +1,6 @@
 
 import * as Reducers from 'app-store/reducers';
-import { IEventReducer, IGroupChatReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPrivacyData, IPrivacyState } from 'app-store/reducers';
+import { IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPrivacyData, IPrivacyState } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
@@ -14,6 +14,8 @@ export interface RootState {
     notificationSettings: INotificationSettings
     privacyData: IPrivacyData
     group: IGroupReducer
+    groupDetails: IGroupDetailReducer,
+    activeGroup: any,
     homeData: IHomeReducer
     event: IEventReducer
     groupChat: IGroupChatReducer
@@ -30,6 +32,8 @@ const persistConfig = {
     whitelist: [
         "group",
         "event",
+        "groupDetails",
+        "homeData",
         // "groupChat",
     ],
     blacklist: [],
@@ -44,16 +48,14 @@ const rootReducer = combineReducers({
     privacyState: Reducers.privacyStateReducer,
     privacyData: Reducers.privacyDataReducer,
     group: Reducers.groupReducer,
+    groupDetails: Reducers.groupDetailReducer,
+    activeGroup: Reducers.activeGroupReducer,
     homeData: Reducers.homeReducer,
     event: Reducers.eventReducer,
     groupChat: Reducers?.groupChatReducer,
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);
-
-interface MyStore extends Store {
-    getState(): RootState
-}
 
 const store: Store<RootState> = createStore<RootState, any, any, any>(
     persistedReducer,/* preloadedState, */

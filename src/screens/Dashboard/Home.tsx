@@ -2,6 +2,7 @@ import { RootState } from 'app-store'
 import { getAllCurrencies, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
+import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _ from 'lodash'
 import React, { FC, useCallback, useEffect, useState } from 'react'
@@ -52,7 +53,6 @@ const Home: FC = () => {
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
   const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
 
-  const [profileImage, setProfileImage] = useState()
   const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
 
   const debounceSearch = useCallback(_.debounce((text) => {
@@ -83,10 +83,10 @@ const Home: FC = () => {
         <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
           NavigationService.navigate("ProfileScreen")
         }} >
-          <Image style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
-            onError={(err) => setProfileImage(Images.ic_home_profile)} source={
-              profileImage ?? userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
-                Images.ic_home_profile
+          <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
+            placeholderSource={Images.ic_home_profile}
+            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
+              Images.ic_home_profile
             }
           />
         </TouchableOpacity>

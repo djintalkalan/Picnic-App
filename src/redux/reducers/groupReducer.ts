@@ -2,8 +2,11 @@ import ActionTypes, { action } from "app-store/action-types";
 
 export interface IGroupReducer {
     allGroups: Array<any>,
-    groupDetail: IGroupDetail,
     myGroups: Array<any>,
+}
+
+export interface IGroupDetailReducer {
+    [key: string]: IGroupDetail
 }
 
 export interface IGroupDetail {
@@ -12,7 +15,7 @@ export interface IGroupDetail {
     groupMembers: Array<any>
     upcomingEvents: Array<any>
 }
-const initialGroupDetailState = {
+const initialGroupDetailState: IGroupDetail = {
     group: null,
     is_group_joined: 0,
     groupMembers: [],
@@ -21,7 +24,6 @@ const initialGroupDetailState = {
 
 const initialGroupState = {
     allGroups: [],
-    groupDetail: initialGroupDetailState,
     myGroups: [],
 }
 
@@ -40,19 +42,49 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
             return { ...state, allGroups: state.allGroups.map(_ => (_._id == action?.payload ? { ..._, is_group_member: false } : _)) }
         case ActionTypes.ADD_IN_GROUPS:
             return { ...state, allGroups: [...state.allGroups, ...action?.payload] }
-        case ActionTypes.SET_GROUP_DETAIL:
-            return { ...state, groupDetail: action?.payload ? { ...state?.groupDetail, ...action?.payload } : initialGroupDetailState }
-        case ActionTypes.UPDATE_GROUP_DETAIL:
-            return { ...state, groupDetail: { ...state?.groupDetail, group: { ...state?.groupDetail?.group, ...action?.payload } } }
-        case ActionTypes.SET_GROUP_MEMBERS:
-            return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: action?.payload } }
-        case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
-            return { ...state, groupDetail: { ...state?.groupDetail, groupMembers: state?.groupDetail?.groupMembers?.filter(_ => _.user_id != action?.payload) } }
-        case ActionTypes.SET_UPCOMING_EVENTS:
-            return { ...state, groupDetail: { ...state?.groupDetail, upcomingEvents: action?.payload } }
         default:
             return state
     }
 }
 
+export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: action): IGroupDetailReducer => {
+    switch (action.type) {
+        case ActionTypes.SET_GROUP_DETAIL:
+            if (!state?.[action?.payload?.groupId]) {
+                state[action?.payload?.groupId] = initialGroupDetailState
+            }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], ...action?.payload?.data } }
+        case ActionTypes.UPDATE_GROUP_DETAIL:
+            if (!state?.[action?.payload?.groupId]) {
+                state[action?.payload?.groupId] = initialGroupDetailState
+            }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], group: { ...state?.groupDetail?.group, ...action?.payload?.data } } }
+        case ActionTypes.SET_GROUP_MEMBERS:
+            if (!state?.[action?.payload?.groupId]) {
+                state[action?.payload?.groupId] = initialGroupDetailState
+            }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], groupMembers: action?.payload?.data } }
+        case ActionTypes.REMOVE_GROUP_MEMBER_SUCCESS:
+            if (!state?.[action?.payload?.groupId]) {
+                state[action?.payload?.groupId] = initialGroupDetailState
+            }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], groupMembers: state?.[action?.payload?.groupId]?.groupMembers?.filter(_ => _.user_id != action?.payload?.data) } }
+        case ActionTypes.SET_UPCOMING_EVENTS:
+            if (!state?.[action?.payload?.groupId]) {
+                state[action?.payload?.groupId] = initialGroupDetailState
+            }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], upcomingEvents: action?.payload?.data } }
+        default:
+            return state
+    }
+}
+
+export const activeGroupReducer = (state: any = null, action: action): any => {
+    switch (action.type) {
+        case ActionTypes.SET_ACTIVE_GROUP:
+            return action?.payload
+        default:
+            return state
+    }
+}
 

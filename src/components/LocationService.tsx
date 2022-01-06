@@ -8,9 +8,23 @@ import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
 
 export const defaultLocation: ILocation = {
-    latitude: 34.055101,
-    longitude: -118.244797,
-    address: { main_text: "Los Angeles, USA", secondary_text: "" }
+    // latitude: 34.055101,//30.6984528
+    // longitude: -118.244797, // 76.62734
+    // address: { main_text: "Los Angeles, USA", secondary_text: "" }
+    // otherData: {
+    //     city: "Los Angeles",
+    //     state: "",
+    //     country: "USA"
+    // }
+
+    latitude: 30.714832,
+    longitude: 76.704759,
+    address: { main_text: "Mohali, Punjab", secondary_text: "" },
+    otherData: {
+        city: "Mohali",
+        state: "Punjab",
+        country: "India"
+    }
 }
 
 interface LocationServiceValues {
@@ -24,8 +38,8 @@ const LocationContext = createContext<LocationServiceValues>({
     currentLocation: undefined,
     askPermission: (async () => { })
 })
-navigator.geolocation = Geolocation
 
+navigator.geolocation = Geolocation
 
 export const LocationServiceProvider: FC<any> = ({ children }) => {
 

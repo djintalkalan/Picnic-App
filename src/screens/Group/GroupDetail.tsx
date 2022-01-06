@@ -3,6 +3,7 @@ import { RootState } from 'app-store'
 import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
+import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
@@ -10,7 +11,6 @@ import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Interact
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
-import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
@@ -18,7 +18,6 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 
 const GroupDetail: FC<any> = (props) => {
     const language = useLanguage()
-    const userData = useDatabase('userData')
     const getBottomMenuButtons = useCallback((item) => {
         console.log("Item", item)
         return [
@@ -85,9 +84,9 @@ const GroupDetail: FC<any> = (props) => {
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
     const { group, groupMembers, is_group_joined } = useSelector((state: RootState) => ({
-        group: state?.group?.groupDetail?.group,
-        groupMembers: state?.group?.groupDetail?.groupMembers,
-        is_group_joined: state?.group?.groupDetail?.is_group_joined
+        group: state?.groupDetails?.[props?.route?.params?.id]?.group,
+        groupMembers: state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [],
+        is_group_joined: state?.groupDetails?.[props?.route?.params?.id]?.is_group_joined
     }), isEqual)
 
 
@@ -196,14 +195,13 @@ const GroupDetail: FC<any> = (props) => {
         <SafeAreaView style={styles.container} edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
-                {isDefault || !group?.image ?
-                    <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                        <Image source={Images.ic_group_placeholder} />
-                    </View>
-                    : <Image onError={() => {
-                        setDefault(true)
-                    }} source={group?.image ? { uri: getImageUrl(group?.image, { width: width, type: 'groups' }) } : Images.ic_group_placeholder}
-                        style={{ width: width, height: width, resizeMode: 'cover' }} />}
+                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                    <ImageLoader
+                        style={{ width: width, height: width, resizeMode: 'cover' }}
+                        placeholderSource={Images.ic_group_placeholder}
+                        placeholderStyle={{}}
+                        source={{ uri: getImageUrl(group?.image, { width: width, type: 'groups' }) }} />
+                </View>
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
                 <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >

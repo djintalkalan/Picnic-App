@@ -1,4 +1,4 @@
-import {NavigationContainerRef, StackActions} from '@react-navigation/native';
+import { NavigationContainerRef, Route, StackActions } from '@react-navigation/native';
 import * as React from 'react';
 
 export const navigationRef: React.MutableRefObject<NavigationContainerRef | null> =
@@ -17,6 +17,10 @@ const push = (name: string, params: any = {}) => {
   // }
   navigationRef?.current?.dispatch(StackActions.push(name, params));
 };
+
+const getCurrentScreen = (): Route<string> | undefined => {
+  return navigationRef?.current?.getCurrentRoute();
+}
 
 const replace = (name: string, params: any = {}) => {
   const rootState = navigationRef?.current?.getRootState();
@@ -46,4 +50,4 @@ const goBack = () => {
     console.log(e);
   }
 };
-export const NavigationService = {navigate, goBack, push, replace, logout};
+export const NavigationService = { getCurrentScreen, navigate, goBack, push, replace, logout };

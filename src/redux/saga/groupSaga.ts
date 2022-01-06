@@ -3,7 +3,7 @@ import { addMutedResource, deleteEventSuccess, deleteGroupSuccess, getGroupDetai
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
+import { EMIT_GROUP_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
 import { navigationRef, NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
@@ -174,7 +174,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
-                yield put(updateGroupDetail(res?.data))
+                yield put(updateGroupDetail({ groupId: payload?.data?._id, data: res?.data }))
             } else {
                 SocketService?.emit(EMIT_JOIN_ROOM, {
                     resource_id: res?.data
@@ -231,7 +231,7 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let group = store.getState()?.group?.groupDetail?.group
+    let group = store.getState()?.groupDetails?.[payload]?.group
     if (!group)
         yield put(setLoadingAction(true));
     try {
@@ -239,7 +239,7 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
         if (res.status == 200) {
             if (res?.data?.group?.is_admin)
                 yield put(getGroupMembers(payload))
-            yield put(setGroupDetail(res?.data))
+            yield put(setGroupDetail({ groupId: payload, data: res?.data }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -257,8 +257,7 @@ function* _getGroupMembers({ type, payload, }: action): Generator<any, any, any>
     try {
         let res = yield call(ApiProvider._getGroupMembers, payload);
         if (res.status == 200) {
-            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
-            yield put(setGroupMembers(res?.data))
+            yield put(setGroupMembers({ groupId: payload, data: res?.data }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -277,8 +276,7 @@ function* _removeGroupMember({ type, payload, }: action): Generator<any, any, an
     try {
         let res = yield call(ApiProvider._removeGroupMember, payload);
         if (res.status == 200) {
-            // yield put(setGroupMembers([...res?.data, ...res?.data, ...res?.data, ...res?.data]))
-            yield put(removeGroupMemberSuccess(payload?.user_id))
+            yield put(removeGroupMemberSuccess({ groupId: payload?.resource_id, data: payload?.user_id }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -303,7 +301,8 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
             SocketService?.emit(EMIT_JOIN_ROOM, {
                 resource_id: payload
             })
-            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+            const name = NavigationService?.getCurrentScreen()?.name
+            if (name != "HomeGroupTab" && name != "Home") {
                 yield put(getGroupDetail(payload))
             }
         } else if (res.status == 400) {
@@ -327,7 +326,10 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
             if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
                 NavigationService.goBack()
             }
-            yield put(deleteGroupSuccess(payload))
+            // yield put(deleteGroupSuccess(payload))
+            SocketService.emit(EMIT_GROUP_DELETE, {
+                resource_id: payload
+            })
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -352,8 +354,11 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
             SocketService?.emit(EMIT_LEAVE_ROOM, {
                 resource_id: payload
             })
-            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+            const name = NavigationService?.getCurrentScreen()?.name
+            if (name != "HomeGroupTab" && name != "Home") {
+                yield put(getGroupDetail(payload))
                 NavigationService.goBack()
+
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -375,7 +380,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._getMyEvents, payload);
         if (res.status == 200) {
             if (payload?.type == 'upcoming') {
-                yield put(setUpcomingEvents(res?.data?.data))
+                yield put(setUpcomingEvents({ groupId: payload?.grogroupId, data: res?.data?.data }))
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

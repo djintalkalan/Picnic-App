@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, ImageSourcePropType, ImageStyle, StyleSheet, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface IImageLoader {
     isShowActivity?: boolean,
-    style?: ImageStyle | ViewStyle,
+    style?: StyleProp<ImageStyle | ViewStyle>,
     source: ImageSourcePropType,
     resizeMode?: ImageResizeMode
     borderRadius?: number
@@ -15,7 +15,7 @@ interface IImageLoader {
     customImagePlaceholderDefaultStyle?: any
 }
 const ImageLoader = (props: IImageLoader) => {
-    const { isShowActivity = true, style, source, resizeMode, borderRadius, backgroundColor, children,
+    const { isShowActivity = true, source, resizeMode, borderRadius, backgroundColor, children,
         loadingStyle, placeholderSource, placeholderStyle,
         customImagePlaceholderDefaultStyle } = props
     const [isLoaded, setLoaded] = useState(false)
@@ -23,7 +23,7 @@ const ImageLoader = (props: IImageLoader) => {
 
     const onLoadEnd = () => setLoaded(true)
     const onError = () => setError(true)
-
+    const style = StyleSheet.flatten(props?.style)
     const styles = useMemo(() => StyleSheet.create({
         backgroundImage: {
             position: 'relative',

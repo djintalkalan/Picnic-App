@@ -1,6 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
 import { likeUnlikeMessageSuccess, setChatInGroup, setLoadingAction } from "app-store/actions";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, takeLeading } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { _showErrorMessage } from "utils";
 import { store } from '..';
@@ -48,7 +48,7 @@ function* _likeUnlikeMessage({ type, payload, }: action): Generator<any, any, an
 
 // Watcher: watch auth request
 export default function* watchGroupChat() {
-    yield takeLatest(ActionTypes.GET_GROUP_CHAT, _getGroupChat);
+    yield takeLeading(ActionTypes.GET_GROUP_CHAT, _getGroupChat);
     yield takeLatest(ActionTypes.LIKE_UNLIKE_MESSAGE, _likeUnlikeMessage);
 
 };
