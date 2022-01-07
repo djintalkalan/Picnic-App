@@ -1,5 +1,5 @@
-import { RootState, store } from 'app-store';
-import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource, setEventDetail } from 'app-store/actions';
+import { RootState } from 'app-store';
+import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource, setActiveEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -37,9 +37,7 @@ const EventList: FC<any> = (props) => {
             if (!is_event_member) {
                 buttons.push({
                     title: Language.join_event, textStyle: { color: colors.colorPrimary }, onPress: () => {
-                        if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
-                            dispatch(setEventDetail(null))
-                        }
+                        dispatch(setActiveEvent(item))
                         setTimeout(() => {
                             NavigationService.navigate("EventDetail", { id: item?._id })
                         }, 0);
@@ -64,9 +62,7 @@ const EventList: FC<any> = (props) => {
 
         buttons?.push({
             title: Language.event_details, onPress: () => {
-                if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
-                    dispatch(setEventDetail(null))
-                }
+                dispatch(setActiveEvent(item))
                 setTimeout(() => {
                     NavigationService.navigate("EventDetail", { id: item?._id })
                 }, 0);
@@ -166,9 +162,7 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 onPressImage={() => {
-                    if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
-                        dispatch(setEventDetail(null))
-                    }
+                    dispatch(setActiveEvent(item))
                     setTimeout(() => {
                         NavigationService.navigate("EventDetail", { id: item?._id })
                     }, 0);

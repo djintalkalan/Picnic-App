@@ -114,7 +114,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let event = store.getState()?.event?.eventDetail?.event
+    let event = store.getState()?.eventDetails?.[payload]?.event
     if (!event)
         yield put(setLoadingAction(true));
     try {
@@ -122,7 +122,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         if (res.status == 200) {
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))
-            yield put(setEventDetail(res?.data))
+            yield put(setEventDetail({ eventId: payload, data: res?.data }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

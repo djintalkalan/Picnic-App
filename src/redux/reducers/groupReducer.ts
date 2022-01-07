@@ -58,7 +58,7 @@ export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: acti
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState
             }
-            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], group: { ...state?.groupDetail?.group, ...action?.payload?.data } } }
+            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], group: { ...state?.[action?.payload?.groupId]?.group, ...action?.payload?.data } } }
         case ActionTypes.SET_GROUP_MEMBERS:
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState

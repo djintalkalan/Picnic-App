@@ -69,7 +69,7 @@ export const getEventDetail = (payload: any) => ({
     payload
 })
 
-export const setEventDetail = (payload: any) => ({
+export const setEventDetail = (payload: { eventId: string, data: any }) => ({
     type: ActionTypes.SET_EVENT_DETAIL,
     payload
 })
@@ -99,7 +99,10 @@ export const removeEventMemberSuccess = (payload: any) => ({
     payload
 })
 
-
+export const setActiveEvent = (payload: any) => ({
+    type: ActionTypes.SET_ACTIVE_EVENT,
+    payload
+})
 
 
 
