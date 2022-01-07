@@ -14,7 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _showPopUpAlert } from 'utils';
+import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -337,6 +337,10 @@ const CreateEvent2: FC<any> = props => {
                 _showPopUpAlert({
                   message: Language.join_now_to_access_payment_processing,
                   buttonText: Language.join_now,
+                  onPressButton: () => {
+                    NavigationService.navigate("Subscription");
+                    _hidePopUpAlert()
+                  },
                   cancelButtonText: Language.no_thanks_create_my_event,
                   onPressCancel: () => onSubmit(data)
                 })

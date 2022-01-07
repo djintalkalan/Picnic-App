@@ -209,5 +209,10 @@ export const en = {
   cancel_event: 'Cancel event',
   share_event: 'Share event',
   pinned: 'Pinned',
-  // no_thanks_create_my_event:'No, Thanks Create my event'
+  join_us: 'Join us',
+  here: 'here',
+  members_can_host_events: 'Members can host events',
+  get_access_to_premium_features: 'Get access to premium features',
+  and_other_exclusive_offers: 'And other exclusive offers.',
+  // members_can_host_events:'Members can host events',
 }

@@ -171,13 +171,12 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 onPressImage={() => {
-                    // if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
-                    //     dispatch(setEventDetail(null))
-                    // }
-                    // setTimeout(() => {
-                    //     NavigationService.navigate("EventDetail", { id: item?._id })
-                    // }, 0);
-                    NavigationService.navigate("Subscription")
+                    if (store?.getState().event?.eventDetail?.event?._id != item?._id) {
+                        dispatch(setEventDetail(null))
+                    }
+                    setTimeout(() => {
+                        NavigationService.navigate("EventDetail", { id: item?._id })
+                    }, 0);
 
                 }}
             />
