@@ -214,5 +214,13 @@ export const en = {
   members_can_host_events: 'Members can host events',
   get_access_to_premium_features: 'Get access to premium features',
   and_other_exclusive_offers: 'And other exclusive offers.',
+  confirm_reservation: 'Confirm reservation',
+  refreshment: 'Refreshment',
+  how_many_seats: 'How many seats',
+  available_seats: 'Available seats',
+  read_refund_policy: 'Read refund policy',
+  number_of_seats_is_required: 'Number of seats is required',
+  pay: 'Pay',
+  // refreshment:'Refreshment',
   // members_can_host_events:'Members can host events',
 }

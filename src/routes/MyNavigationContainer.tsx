@@ -17,6 +17,7 @@ import BlockedMembers from 'screens/BlockedMembers';
 import GroupChatScreen from 'screens/Chat/GroupChatScreen';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import BookEvent from 'screens/Event/BookEvent';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
@@ -72,6 +73,7 @@ const dashboardScreens = {
   EventDetail: EventDetail,
   EditEvent: EditEvent,
   Subscription: Subscription,
+  BookEvent: BookEvent,
 };
 
 const MyNavigationContainer = () => {

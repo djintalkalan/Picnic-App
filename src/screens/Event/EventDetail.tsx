@@ -171,7 +171,7 @@ const EventDetail: FC<any> = (props) => {
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_events_tickets} />
-                        <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : 'Unlimited'}</Text>
+                        <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : Language.unlimited}</Text>
                     </View>
                     {event?.details ?
                         <View style={{ marginVertical: scaler(22) }}>
@@ -204,9 +204,28 @@ const EventDetail: FC<any> = (props) => {
                             <Button title={Language.add_to_calender} />
                         </View>
                         <View style={{ flex: 1 }}>
-                            <Button title={Language.start_chat} fontColor={'black'} backgroundColor={'white'} buttonStyle={{ borderColor: 'black', borderWidth: scaler(1) }} textStyle={{ fontWeight: '400' }} />
+                            <Button title={Language.start_chat}
+                                fontColor={'black'}
+                                backgroundColor={'white'}
+                                buttonStyle={{
+                                    borderColor: 'black',
+                                    borderWidth: scaler(1)
+                                }}
+                                textStyle={{ fontWeight: '400' }} />
                         </View>
-                    </View> : <View style={{ marginHorizontal: scaler(10) }}><Button title={Language.confirm} /></View>
+                    </View> :
+                    <View style={{ marginHorizontal: scaler(10) }}>
+                        <Button title={Language.confirm}
+                            onPress={() => NavigationService.navigate('BookEvent',
+                                {
+                                    name: event?.name,
+                                    price: event?.event_fees,
+                                    currency: event?.event_currency,
+                                    capacity: event?.capacity,
+                                    soldTickets: event?.total_sold_tickets,
+                                    capacityType: event?.capacity_type
+                                })} />
+                    </View>
                 : <View />
             }
             {/* {event?.is_admin ? null : renderBottomActionButtons()} */}
