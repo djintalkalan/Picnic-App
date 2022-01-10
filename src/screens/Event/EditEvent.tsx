@@ -83,10 +83,8 @@ const EditEvent: FC<any> = props => {
         endTime: new Date()
     });
     const [userData] = useDatabase("userData")
-    const { event, eventMembers, is_event_joined } = useSelector((state: RootState) => ({
-        event: state?.event?.eventDetail?.event,
-        eventMembers: state?.event?.eventDetail?.eventMembers,
-        is_event_joined: state?.event?.eventDetail?.is_event_joined
+    const { event } = useSelector((state: RootState) => ({
+        event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
 

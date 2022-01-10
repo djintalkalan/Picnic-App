@@ -150,7 +150,6 @@ const CreateEvent1: FC<any> = props => {
               onPress={() => {
                 setDropdown(!isDropdown);
               }}
-              required={Language.group_purpose_required}
               control={control}
               errors={errors}
             />

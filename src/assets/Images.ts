@@ -63,5 +63,8 @@ export const Images = {
   ic_events_tickets: require("./images/ic_events_tickets.png"),
   ic_image_placeholder: require("./images/ic_image_placeholder.png"),
   ic_smiley: require("./images/ic_smiley.png"),
+  ic_close_subscription: require("./images/ic_close_subscription.png"),
+  ic_list_dot: require("./images/ic_list_dot.png"),
+  ic_oval_shape: require("./images/ic_oval_shape.png"),
   // ic_smiley: require("./images/ic_smiley.png"),
 };

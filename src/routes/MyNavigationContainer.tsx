@@ -18,6 +18,7 @@ import BlockedMembers from 'screens/BlockedMembers';
 import GroupChatScreen from 'screens/Chat/GroupChatScreen';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
+import BookEvent from 'screens/Event/BookEvent';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
@@ -31,6 +32,7 @@ import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
+import Subscription from 'screens/Subscription/Subscription';
 import UpdatePassword from 'screens/UpdatePassword';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
@@ -72,6 +74,8 @@ const dashboardScreens = {
   CreateEvent3: CreateEvent3,
   EventDetail: EventDetail,
   EditEvent: EditEvent,
+  Subscription: Subscription,
+  BookEvent: BookEvent,
 };
 
 const MyNavigationContainer = () => {

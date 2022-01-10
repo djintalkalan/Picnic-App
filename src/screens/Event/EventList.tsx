@@ -24,7 +24,10 @@ const EventList: FC<any> = (props) => {
         if (is_event_admin) {
             buttons.push({
                 title: Language.edit_event, onPress: () => {
-                    NavigationService.navigate('EditEvent', { id: _id })
+                    dispatch(setActiveEvent(item))
+                    setTimeout(() => {
+                        NavigationService.navigate('EditEvent', { id: _id })
+                    }, 0);
                 }
             })
             buttons.push({
@@ -39,7 +42,7 @@ const EventList: FC<any> = (props) => {
                     title: Language.join_event, textStyle: { color: colors.colorPrimary }, onPress: () => {
                         dispatch(setActiveEvent(item))
                         setTimeout(() => {
-                            NavigationService.navigate("EventDetail", { id: item?._id })
+                            NavigationService.navigate("EventDetail", { id: _id })
                         }, 0);
                     }
                 })
@@ -53,7 +56,7 @@ const EventList: FC<any> = (props) => {
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_mute,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
@@ -64,7 +67,7 @@ const EventList: FC<any> = (props) => {
             title: Language.event_details, onPress: () => {
                 dispatch(setActiveEvent(item))
                 setTimeout(() => {
-                    NavigationService.navigate("EventDetail", { id: item?._id })
+                    NavigationService.navigate("EventDetail", { id: _id })
                 }, 0);
             }
         })
@@ -77,9 +80,9 @@ const EventList: FC<any> = (props) => {
                             dispatch(deleteEvent(_id))
                             _hidePopUpAlert()
                         },
-                        buttonStyle: { backgroundColor: colors.colorRed },
+                        buttonStyle: { backgroundColor: colors.colorErrorRed },
                         buttonText: Language.yes_cancel,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
@@ -94,13 +97,13 @@ const EventList: FC<any> = (props) => {
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_report,
-                        cancelButtonText: Language.cancel
+                        // cancelButtonText: Language.cancel
                     })
                 }
             })
             if (is_event_member) {
                 buttons.push({
-                    title: Language.cancel_reservation, textStyle: { color: colors.colorRed }, onPress: () => {
+                    title: Language.cancel_reservation, textStyle: { color: colors.colorErrorRed }, onPress: () => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_event,
                             onPressButton: () => {
@@ -108,7 +111,7 @@ const EventList: FC<any> = (props) => {
                                 _hidePopUpAlert()
                             },
                             buttonText: Language.yes_report,
-                            cancelButtonText: Language.cancel
+                            // cancelButtonText: Language.cancel
                         })
                     }
                 })
@@ -166,12 +169,7 @@ const EventList: FC<any> = (props) => {
                     setTimeout(() => {
                         NavigationService.navigate("EventDetail", { id: item?._id })
                     }, 0);
-                    // if (store?.getState().group?.groupDetail?.group?._id != item?._id) {
-                    //     dispatch(setGroupDetail(null))
-                    // }
-                    // setTimeout(() => {
-                    //     NavigationService.navigate("GroupDetail", { id: item?._id })
-                    // }, 0);
+
                 }}
             />
         )

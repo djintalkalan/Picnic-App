@@ -11,8 +11,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1443904527859AC1001D23C3 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 1443904427859AC1001D23C3 /* Configuration.storekit */; };
 		14A09BCF26E72CDA00C5D92E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */; };
 		14E10D282762219A007E955F /* Linker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E10D272762219A007E955F /* Linker.swift */; };
+		179FE19C278443F2008C8417 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179FE19B278443F2008C8417 /* StoreKit.framework */; };
 		2CA27FA9A3D44FDDA45EC86B /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C0ED68CED334130B3939752 /* Poppins-MediumItalic.ttf */; };
 		2DEDCD618CBA48B386CBEC3F /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 620386D599B1490AB3F087A8 /* Poppins-ExtraLightItalic.ttf */; };
 		3004DC0EFDC84CD588F1A7F5 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C9B02876A8B04D079AED1CDB /* Poppins-BoldItalic.ttf */; };
@@ -59,9 +61,11 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Picnic/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Picnic/main.m; sourceTree = "<group>"; };
 		1412104426E5F5D000F96F90 /* rnuc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rnuc.xcconfig; sourceTree = "<group>"; };
+		1443904427859AC1001D23C3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Picnic/BootSplash.storyboard; sourceTree = "<group>"; };
 		14E10D242760CB71007E955F /* Picnic-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Picnic-Bridging-Header.h"; sourceTree = "<group>"; };
 		14E10D272762219A007E955F /* Linker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Linker.swift; sourceTree = "<group>"; };
+		179FE19B278443F2008C8417 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		1A89BD4C621A6A34E8FBDEC1 /* libPods-Picnic-PicnicTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Picnic-PicnicTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ABF22805E204CFDB37D3899 /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		5DDFEED55C114316850EE947 /* Poppins-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Light.ttf"; path = "../src/assets/fonts/Poppins-Light.ttf"; sourceTree = "<group>"; };
@@ -102,6 +106,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77A53B3151B66BAC4C34A415 /* libPods-Picnic.a in Frameworks */,
+				179FE19C278443F2008C8417 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +133,7 @@
 		13B07FAE1A68108700A75B9A /* Picnic */ = {
 			isa = PBXGroup;
 			children = (
+				1443904427859AC1001D23C3 /* Configuration.storekit */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -142,6 +148,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				179FE19B278443F2008C8417 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				F9D8BBBD19D639D13ADB8331 /* libPods-Picnic.a */,
 				1A89BD4C621A6A34E8FBDEC1 /* libPods-Picnic-PicnicTests.a */,
@@ -323,6 +330,7 @@
 				3004DC0EFDC84CD588F1A7F5 /* Poppins-BoldItalic.ttf in Resources */,
 				9577491BE2F84682850F4C01 /* Poppins-ExtraBold.ttf in Resources */,
 				E22B63B1EDC2412AB8829505 /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				1443904527859AC1001D23C3 /* Configuration.storekit in Resources */,
 				905579EC6973426FBB9CA865 /* Poppins-ExtraLight.ttf in Resources */,
 				2DEDCD618CBA48B386CBEC3F /* Poppins-ExtraLightItalic.ttf in Resources */,
 				EA1B3738512F4C03AB3BED8E /* Poppins-Italic.ttf in Resources */,

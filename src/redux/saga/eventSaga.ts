@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getEventMembers, pinEventSuccess, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getEventMembers, joinEventSuccess, pinEventSuccess, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -178,6 +178,28 @@ function* _pinUnpinEvent({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._joinEvent, payload);
+        if (res.status == 200) {
+            yield put(joinEventSuccess(payload))
+            // if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+            //     yield put(getGroupDetail(payload))
+            // }
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -188,5 +210,6 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.DELETE_EVENT, _deleteEvent);
     yield takeLatest(ActionTypes.PIN_EVENT, _pinUnpinEvent);
+    yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
 
 };

@@ -131,5 +131,10 @@ const styles = StyleSheet.create({
     marginTop: scaler(25),
     marginHorizontal: scaler(15),
   },
-  payView: { flexDirection: 'row', marginVertical: scaler(16), alignItems: 'center', marginHorizontal: scaler(5) }
+  payView: {
+    flexDirection: 'row',
+    marginVertical: scaler(16),
+    alignItems: 'center',
+    marginHorizontal: scaler(5)
+  }
 });

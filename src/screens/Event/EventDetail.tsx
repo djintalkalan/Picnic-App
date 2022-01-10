@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getEventDetail } from 'app-store/actions'
+import { deleteEvent, getEventDetail, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -97,8 +97,45 @@ const EventDetail: FC<any> = (props) => {
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     setEditButtonOpened(false)
                                     NavigationService.navigate('EditEvent', { id: event?._id })
-                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} hideBorder /></> :
-                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} /><InnerButton title={Language.report} hideBorder /></>
+                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_cancel_event,
+                                        onPressButton: () => {
+                                            dispatch(deleteEvent(event?._id))
+                                            _hidePopUpAlert()
+                                            setTimeout(() => {
+                                                NavigationService.navigate('HomeEventTab')
+                                            }, 200);
+                                        },
+                                        buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                        buttonText: Language.yes_cancel,
+                                    })
+                                }
+                                } hideBorder /></> :
+                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_mute_event,
+                                        onPressButton: () => {
+                                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
+                                            setTimeout(() => {
+                                                NavigationService.navigate('HomeEventTab')
+                                            }, 200);
+                                            _hidePopUpAlert()
+                                        },
+                                        buttonText: Language.yes_mute,
+                                        // cancelButtonText: Language.cancel
+                                    })
+                                }} /><InnerButton title={Language.report} onPress={() => {
+                                    _showPopUpAlert({
+                                        message: Language.are_you_sure_report_event,
+                                        onPressButton: () => {
+                                            dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
+                                            _hidePopUpAlert()
+                                        },
+                                        buttonText: Language.yes_report,
+                                        // cancelButtonText: Language.cancel
+                                    })
+                                }} hideBorder /></>
                             }
                         </Card>
 
@@ -112,27 +149,42 @@ const EventDetail: FC<any> = (props) => {
                             <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
                         </View>
                         <View >
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? 'Free' : getSymbol(event?.event_currency) + event?.event_fees}</Text>
+                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}</Text>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
 
                         </View>
                     </View>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
-                        <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_group_events} />
+                        <Text style={styles.events} >
+                            {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_time} />
-                        <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_event_time} />
+                        <Text style={styles.events} >
+                            {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_location} />
-                        <Text style={styles.events} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_event_location} />
+                        <Text style={styles.events} >
+                            {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_events_tickets} />
-                        <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : 'Unlimited'}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_events_tickets} />
+                        <Text style={styles.events} >
+                            {event?.is_admin ?
+                                event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited'
+                                    ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
+                                    : Language.unlimited_entry}
+                        </Text>
                     </View>
                     {event?.details ?
                         <View style={{ marginVertical: scaler(22) }}>
@@ -142,12 +194,16 @@ const EventDetail: FC<any> = (props) => {
                     <View>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }} style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10) }}>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}</Text>
+                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }}
+                                style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
+                            <Text style={{ marginLeft: scaler(10) }}>
+                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                            </Text>
                         </View>
                     </View>
                     {event?.short_description ?
-                        <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text><Text style={styles.about}>{event?.short_description}</Text></> : <View />
+                        <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text>
+                            <Text style={styles.about}>{event?.short_description}</Text></> : <View />
                     }
                     <View style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ flex: 1 }}>{Language.members}</Text>
@@ -165,9 +221,29 @@ const EventDetail: FC<any> = (props) => {
                             <Button title={Language.add_to_calender} />
                         </View>
                         <View style={{ flex: 1 }}>
-                            <Button title={Language.start_chat} fontColor={'black'} backgroundColor={'white'} buttonStyle={{ borderColor: 'black', borderWidth: scaler(1) }} textStyle={{ fontWeight: '400' }} />
+                            <Button title={Language.start_chat}
+                                fontColor={'black'}
+                                backgroundColor={'white'}
+                                buttonStyle={{
+                                    borderColor: 'black',
+                                    borderWidth: scaler(1)
+                                }}
+                                textStyle={{ fontWeight: '400' }} />
                         </View>
-                    </View> : <View style={{ marginHorizontal: scaler(10) }}><Button title={Language.confirm} /></View>
+                    </View> :
+                    <View style={{ marginHorizontal: scaler(10) }}>
+                        <Button title={Language.confirm}
+                            onPress={() => NavigationService.navigate('BookEvent',
+                                {
+                                    name: event?.name,
+                                    price: event?.event_fees,
+                                    currency: event?.event_currency,
+                                    capacity: event?.capacity,
+                                    soldTickets: event?.total_sold_tickets,
+                                    capacityType: event?.capacity_type,
+                                    isFree: event?.is_free_event,
+                                })} />
+                    </View>
                 : <View />
             }
             {/* {event?.is_admin ? null : renderBottomActionButtons()} */}
@@ -194,8 +270,8 @@ const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPre
     ) : null
 }
 
-const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: string, icon?: ImageSourcePropType, onPress?: (e?: GestureResponderEvent) => void }) => {
-    const { onPress, title, icon, visible = true } = props
+const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: string, icon?: ImageSourcePropType, textColor?: string, onPress?: (e?: GestureResponderEvent) => void }) => {
+    const { onPress, title, icon, visible = true, textColor } = props
     return visible ? (
         <TouchableOpacity onPress={onPress} style={{
             flexDirection: 'row', alignItems: 'center',
@@ -203,7 +279,7 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
             borderBottomColor: colors.colorGreyText,
             borderBottomWidth: props?.hideBorder ? 0 : 0.7,
         }} >
-            <Text style={{ flexGrow: 1, textAlign: 'left', fontWeight: '400', fontSize: scaler(12), color: colors.colorBlackText }} >{title}</Text>
+            <Text style={{ flexGrow: 1, textAlign: 'left', fontWeight: '400', fontSize: scaler(12), color: textColor ?? colors.colorBlackText }} >{title}</Text>
         </TouchableOpacity>
     ) : null
 }
