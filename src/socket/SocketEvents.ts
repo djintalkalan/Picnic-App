@@ -9,6 +9,7 @@ export const EMIT_GROUP_REPLY = 'groupMessageReply';
 export const EMIT_GROUP_MESSAGE_DELETE = 'groupMessageDelete';
 export const EMIT_GROUP_MESSAGE_TYPING = "groupMessageTyping";
 export const EMIT_GROUP_DELETE = "groupDelete";
+export const EMIT_GROUP_MEMBER_DELETE = "groupMemberDelete";
 
 //Events Events
 export const EMIT_SEND_EVENT_MESSAGE = 'sendEventMessage';
@@ -40,6 +41,7 @@ export const ON_GROUP_MESSAGE = "onGroupMessage";//When New Message Is Created A
 export const ON_GROUP_MESSAGES = "onGroupMessages";//When Enter In A Group Chat Hence Get All Group Message
 export const ON_GROUP_MESSAGE_TYPING = "onGroupMessageTyping";
 export const ON_GROUP_DELETE = "onGroupDelete";
+export const ON_GROUP_MEMBER_DELETE = "onGroupMemberDelete";
 
 //Events Events
 export const ON_EVENT_MESSAGE_DELETE = 'onEventMessageDelete';

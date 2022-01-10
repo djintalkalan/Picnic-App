@@ -143,7 +143,8 @@ export const en = {
   are_you_sure_report_group: "Are you sure you want to report group ?",
   are_you_sure_report_event: "Are you sure you want to report event ?",
   are_you_sure_report_member: "Are you sure you want to report member ?",
-  are_you_sure_report_message: "Are you sure you want to report message ?",
+  are_you_sure_delete_message: "  Are you sure you want to delete the post ?",
+
   yes_report: "Yes, Report",
   are_you_sure_block_member: "Are you sure you want to block member ?",
   yes_block: "Yes, Block",
@@ -151,6 +152,9 @@ export const en = {
   yes_delete: "Yes, Delete",
   are_you_sure_remove_member: "Are you sure you want to remove member ?",
   yes_remove: "Yes, Remove",
+  yes_delete_post: "Yes, Delete post",
+
+  report_has_been_sent: "Report has been sent!!",
   close: "Close",
   host_an_event: 'Host an event',
   event_name: 'Event name',

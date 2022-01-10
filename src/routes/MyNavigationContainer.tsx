@@ -1,3 +1,4 @@
+import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setLoadingAction, tokenExpired } from 'app-store/actions';
@@ -75,6 +76,8 @@ const dashboardScreens = {
 
 const MyNavigationContainer = () => {
   const dispatch = useDispatch();
+
+  const { isConnected, isInternetReachable } = useNetInfo()
 
   const [isLogin] = useDatabase<boolean>('isLogin', false);
   // const language = useLanguage();

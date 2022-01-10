@@ -14,22 +14,18 @@ import { ChatHeader } from './ChatHeader'
 import { GroupChats } from './GroupChats'
 
 
-
-
-
 const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) => {
 
-    const { group, is_group_joined, activeGroup } = useSelector((state: RootState) => {
+    const { group, activeGroup } = useSelector((state: RootState) => {
         return {
             group: state?.groupDetails?.[props?.route?.params?.id]?.group,
-            is_group_joined: state?.groupDetails?.[props?.route?.params?.id]?.is_group_joined,
             activeGroup: state?.activeGroup
         }
     }, shallowEqual)
 
     const { name, city, image, state, country, _id } = group ?? activeGroup
     useEffect(() => {
-        if (!group || activeGroup?.is_group_member != is_group_joined) {
+        if (!group || activeGroup?.is_group_member != group?.is_group_member) {
             dispatch(getGroupDetail(activeGroup?._id))
         }
     }, [])
@@ -69,12 +65,12 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                 defaultIcon={Images.ic_group_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onPress={() => {
-                        if (!is_group_joined) dispatch(joinGroup(_id))
+                        if (!group?.is_group_member) dispatch(joinGroup(_id))
                         else {
 
                         }
                     }} style={{ paddingHorizontal: scaler(5) }} >
-                        {is_group_joined ?
+                        {group?.is_group_member ?
                             <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                             :
                             <Text style={styles.joinText} >{Language.join}</Text>
@@ -87,7 +83,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                 }
             />
             {/* <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} > */}
-            <TopTab iconPosition='right' tabs={tabs} />
+            <TopTab swipeEnabled={false} iconPosition='right' tabs={tabs} />
 
             {/* </View> */}
 

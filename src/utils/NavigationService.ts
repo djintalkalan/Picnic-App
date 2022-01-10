@@ -18,7 +18,7 @@ const push = (name: string, params: any = {}) => {
   navigationRef?.current?.dispatch(StackActions.push(name, params));
 };
 
-const getCurrentScreen = (): Route<string> | undefined => {
+const getCurrentScreen = (): Route<string> | any => {
   return navigationRef?.current?.getCurrentRoute();
 }
 

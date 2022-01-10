@@ -1,8 +1,10 @@
 import { RootState } from 'app-store'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
+import { colors } from 'assets'
 import { useKeyboardService } from 'custom-components'
+import { useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Platform, StyleSheet, TextInput, View } from 'react-native'
+import { Dimensions, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
@@ -17,6 +19,8 @@ export const GroupChats: FC<any> = (props) => {
 
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
+    const [socketConnected] = useDatabase<boolean>('socketConnected');
+
 
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
@@ -28,6 +32,10 @@ export const GroupChats: FC<any> = (props) => {
             inputRef.current?.focus()
         }
     }, [repliedMessage])
+
+    useEffect(() => {
+        console.log("socketConnected", socketConnected);
+    }, [socketConnected])
 
 
     const _onPressSend = useCallback(() => {
@@ -76,12 +84,14 @@ export const GroupChats: FC<any> = (props) => {
         textMessageRef.current = text
     }, [])
 
-    const { chats, groupDetail, is_group_joined, activeGroup } = useSelector((state: RootState) => ({
-        chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
+    const { groupDetail, activeGroup } = useSelector((state: RootState) => ({
         groupDetail: state?.groupDetails?.[state?.activeGroup?._id]?.group,
         activeGroup: state?.activeGroup,
-        is_group_joined: state?.groupDetails?.[props?.route?.params?.id]?.is_group_joined,
     }), shallowEqual)
+
+    const { chats } = useSelector((state: RootState) => ({
+        chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
+    }))
 
 
     const dispatch = useDispatch()
@@ -111,14 +121,15 @@ export const GroupChats: FC<any> = (props) => {
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [groupDetail])
+    }, [groupDetail?.is_admin])
 
     return (
         <View style={styles.container} >
-            <View style={{ flexShrink: 1 }} >
+            <View pointerEvents={(groupDetail?.is_group_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
                 <FlatList
                     keyboardShouldPersistTaps={'handled'}
                     data={chats}
+                    extraData={chats?.length}
                     keyExtractor={_ => _._id}
                     bounces={false}
                     ref={flatListRef}
@@ -136,18 +147,23 @@ export const GroupChats: FC<any> = (props) => {
                     renderItem={_renderChatItem}
                 />
             </View>
-            {is_group_joined ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+            {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                 <ChatInput
                     // value={textMessage}
                     ref={inputRef}
+                    disableButton={!socketConnected}
                     repliedMessage={repliedMessage}
                     setRepliedMessage={setRepliedMessage}
                     onChooseImage={_onChooseImage}
                     onChangeText={_updateTextMessage}
                     onPressSend={_onPressSend}
                 />
+                {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
+                    <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not working, trying to reconnect you</Text>
+                </View> : null}
             </View> : null}
+
         </View >
     )
 }

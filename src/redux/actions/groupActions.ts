@@ -10,7 +10,6 @@ export const updateGroup = (payload: any) => ({
     payload
 })
 
-
 export const deleteGroup = (payload: any) => ({
     type: ActionTypes.DELETE_GROUP,
     payload
@@ -113,7 +112,7 @@ export const blockUnblockResource = (payload: { data: { resource_id: string, res
     payload
 })
 
-export const muteUnmuteResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_mute: "1" | "0" }, onSuccess?: (res: any) => void }) => ({
+export const muteUnmuteResource = (payload: { data: { resource_id: string, resource_type: IResourceType, is_mute: "1" | "0", groupId?: any }, onSuccess?: (res: any) => void }) => ({
     type: ActionTypes.MUTE_UNMUTE_RESOURCE,
     payload
 })

@@ -27,7 +27,7 @@ function* _getGroupChat({ type, payload, }: action): Generator<any, any, any> {
 
 function* _likeUnlikeMessage({ type, payload, }: action): Generator<any, any, any> {
     // yield put(setLoadingAction(true));
-    const activeGroup = store.getState().groupChat?.activeGroup
+    const activeGroup = store.getState().activeGroup
     try {
         let res = yield call(ApiProvider._likeUnlikeMessage, payload);
         if (res.status == 200) {

@@ -25,6 +25,19 @@ export const updateChatInGroup = (payload: { groupId: string, chat: any }) => ({
     payload
 })
 
+
+
+export const updateChatInGroupSuccess = (payload: { groupId: string, resourceId: any, message: any }) => ({
+    type: ActionTypes.UPDATE_CHAT_IN_GROUP_SUCCESS,
+    payload
+})
+
+
+export const deleteChatInGroupSuccess = (payload: { groupId: string, resourceId: any }) => ({
+    type: ActionTypes.DELETE_CHAT_IN_GROUP_SUCCESS,
+    payload
+})
+
 export const refreshChatInGroup = (payload: { groupId: string, chats: Array<any> }) => ({
     type: ActionTypes.REFRESH_CHAT_IN_GROUP,
     payload

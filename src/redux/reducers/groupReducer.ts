@@ -11,13 +11,11 @@ export interface IGroupDetailReducer {
 
 export interface IGroupDetail {
     group: any,
-    is_group_joined: any,
     groupMembers: Array<any>
     upcomingEvents: Array<any>
 }
 const initialGroupDetailState: IGroupDetail = {
     group: null,
-    is_group_joined: 0,
     groupMembers: [],
     upcomingEvents: []
 }
@@ -42,6 +40,17 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
             return { ...state, allGroups: state.allGroups.map(_ => (_._id == action?.payload ? { ..._, is_group_member: false } : _)) }
         case ActionTypes.ADD_IN_GROUPS:
             return { ...state, allGroups: [...state.allGroups, ...action?.payload] }
+        case ActionTypes.SET_GROUP_DETAIL:
+            const i = state?.allGroups.findIndex(_ => _?._id == action?.payload?.groupId)
+            if (i > -1) {
+                const newState = { ...state }
+                newState.allGroups[i] = {
+                    ...newState?.allGroups,
+                    ...action?.payload?.data?.group
+                }
+                return newState
+            }
+            return state;
         default:
             return state
     }
@@ -49,6 +58,16 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
 
 export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: action): IGroupDetailReducer => {
     switch (action.type) {
+        case ActionTypes.JOIN_GROUP_SUCCESS:
+            if (state?.[action?.payload]) {
+                return { ...state, [action.payload]: { ...state[action?.payload], group: { ...state[action?.payload].group, is_group_member: true } } }
+            }
+            return state
+        case ActionTypes.LEAVE_GROUP_SUCCESS:
+            if (state?.[action?.payload]) {
+                return { ...state, [action.payload]: { ...state[action?.payload], group: { ...state[action?.payload].group, is_group_member: false } } }
+            }
+            return state
         case ActionTypes.SET_GROUP_DETAIL:
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState
@@ -68,7 +87,9 @@ export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: acti
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState
             }
-            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], groupMembers: state?.[action?.payload?.groupId]?.groupMembers?.filter(_ => _.user_id != action?.payload?.data) } }
+            if (state[action?.payload?.groupId]?.groupMembers?.length)
+                return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], groupMembers: state?.[action?.payload?.groupId]?.groupMembers?.filter(_ => _.user_id != action?.payload?.data) } }
+            return state
         case ActionTypes.SET_UPCOMING_EVENTS:
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState

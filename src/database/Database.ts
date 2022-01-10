@@ -56,13 +56,14 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches" | 'currencies'
+    "recentSearches" | 'currencies' | 'socketConnected'
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches", "currencies"]
+    "recentSearches", "currencies", 'socketConnected']
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
+    socketConnected?: boolean
     firebaseToken?: string
     authToken?: string
     selectedLanguage?: LanguageType
@@ -105,6 +106,10 @@ class Database {
         Database.phoneStorage.setBool('isLogin', isLogin ?? false)
     }
 
+    public setSocketConnected = (c?: boolean) => {
+        Database.phoneStorage.setBool('socketConnected', c ?? false)
+    }
+
     public setUserData = (userData?: any) => {
         Database.phoneStorage.setMap('userData', userData ?? null)
     }
@@ -143,6 +148,7 @@ class Database {
                     return Database.phoneStorage.setString(key, data[key] ?? "")
 
                 case 'isLogin':
+                case 'socketConnected':
                     return Database.phoneStorage.setBool(key, data[key] ?? false)
 
                 case 'userData':
@@ -164,6 +170,7 @@ class Database {
                 return Database.phoneStorage.getString(key) || defaultValue
 
             case 'isLogin':
+            case 'socketConnected':
                 return Database.phoneStorage.getBool(key) || defaultValue
 
             case 'userData':
@@ -184,6 +191,7 @@ class Database {
                 return Database.phoneStorage.setString(key, value ?? "")
 
             case 'isLogin':
+            case 'socketConnected':
                 return Database.phoneStorage.setBool(key, value ?? false)
 
             case 'userData':

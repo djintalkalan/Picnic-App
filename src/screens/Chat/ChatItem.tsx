@@ -1,14 +1,14 @@
-import { reportResource } from 'app-store/actions'
+import { blockUnblockResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { InnerBoldText } from 'custom-components'
+import { InnerBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { useDatabase } from 'database'
 import React, { memo, useCallback } from 'react'
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
-import { EMIT_LIKE_UNLIKE, SocketService } from 'socket'
+import { EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 
@@ -28,18 +28,20 @@ interface IChatItem {
     message_liked_by_user_name: []
     message_recently_liked_user_ids: Array<any>
     group?: any
+    message_deleted_by_user: any
 }
+
+const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, isAdmin, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
-    const { display_name, first_name, last_name, image: userImage, _id: userId } = user ?? {}
+    const { message, isAdmin, message_deleted_by_user, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const { display_name, image: userImage, _id: userId } = user ?? {}
     const [userData] = useDatabase<any>("userData");
     const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
 
     const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
-    // console.log("userData", userData);
 
     const myMessage = userId == userData?._id
 
@@ -51,13 +53,40 @@ const ChatItem = (props: IChatItem) => {
         if (myMessage || isAdmin) {
             buttons.push({
                 title: Language.delete,
-                onPress: () => { },
+                onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_delete_message,
+                        onPressButton: () => {
+                            SocketService.emit(EMIT_GROUP_MESSAGE_DELETE, {
+                                resource_id: group?._id,
+                                message_id: _id
+                            })
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_delete
+                    })
+
+                }
             })
         }
         if (!myMessage) {
             buttons = [...buttons, {
                 title: Language.block,
-                onPress: () => { },
+                onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_block_member,
+                        onPressButton: () => {
+                            dispatch(blockUnblockResource({
+                                data: { resource_id: userId, resource_type: 'user', is_blocked: '1' },
+                                onSuccess: () => {
+
+                                }
+                            }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_block
+                    })
+                },
             }, {
                 title: Language.report,
                 onPress: () => {
@@ -74,7 +103,32 @@ const ChatItem = (props: IChatItem) => {
         }
         buttons.push({
             title: Language.remove,
-            onPress: () => { },
+            onPress: () => {
+                _showPopUpAlert({
+                    message: Language.are_you_sure_remove_member,
+                    onPressButton: () => {
+                        SocketService.emit(EMIT_GROUP_MEMBER_DELETE, {
+                            resource_id: group?._id,
+                            user_id: userId
+                        })
+                        _hidePopUpAlert()
+                    },
+                    buttonStyle: { backgroundColor: colors.colorRed },
+                    buttonText: Language.yes_remove
+                })
+
+                // dispatch(muteUnmuteResource({
+                //     data: {
+                //         groupId: group?._id,
+                //         resource_id: _id,
+                //         resource_type: 'message',
+                //         is_mute: '1'
+                //     },
+                //     onSuccess: () => {
+
+                //     }
+                // }))
+            },
             textStyle: { color: colors.colorRed }
         })
         _showBottomMenu({ buttons: buttons })
@@ -84,7 +138,7 @@ const ChatItem = (props: IChatItem) => {
 
 
     if (is_system_message) {
-        return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**") + '”'} />
+        return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (message_deleted_by_user?.display_name ?? "") + "**") + '”'} />
     }
 
     if (message_type == 'image') {
@@ -130,7 +184,7 @@ const ChatItem = (props: IChatItem) => {
                     <View style={{ marginBottom: scaler(5) }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
                         <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.messageContainer, { maxWidth: undefined, width: '100%' }]} >
-                            <Text style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message}</Text>
+                            <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                         </TouchableOpacity>
                     </View>
                     : null}
@@ -144,10 +198,10 @@ const ChatItem = (props: IChatItem) => {
             <Text style={styles.userName} >{display_name}</Text>
             <TouchableOpacity activeOpacity={1} onLongPress={_openChatActionMenu} style={styles.messageContainer} >
                 {parent_message ?
-                    <View style={{ marginBottom: scaler(5) }} >
+                    <View style={{ marginBottom: scaler(5), width: '100%' }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
                         <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, { maxWidth: undefined, width: '100%' }]} >
-                            <Text style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message}</Text>
+                            <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                         </TouchableOpacity>
                     </View>
                     : null}

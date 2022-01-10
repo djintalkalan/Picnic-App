@@ -83,6 +83,32 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                 }
             })
             return updateChatState
+
+        case ActionTypes.DELETE_CHAT_IN_GROUP_SUCCESS:
+            if (state.groups[groupId]) {
+                console.log("DELETE_CHAT_IN_GROUP_SUCCESS", action?.payload);
+                const i = state.groups?.[groupId]?.chats?.findIndex(_ => _?._id == action?.payload?.resourceId)
+                if (i > -1) {
+                    const newState = { ...state }
+                    newState.groups?.[groupId]?.chats.splice(i, 1)
+                    console.log("newState", newState);
+                    return newState
+                }
+            }
+            return state
+
+        case ActionTypes.UPDATE_CHAT_IN_GROUP_SUCCESS:
+            if (state.groups[groupId]) {
+                console.log("UPDATE_CHAT_IN_GROUP_SUCCESS", action?.payload);
+                const i = state.groups?.[groupId]?.chats?.findIndex(_ => _?._id == action?.payload?.resourceId)
+                if (i > -1) {
+                    const newState = { ...state }
+                    newState.groups[groupId].chats[i] = action?.payload?.message
+                    console.log("newState", newState);
+                    return newState
+                }
+            }
+            return state
         default:
             return state
     }

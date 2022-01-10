@@ -76,7 +76,7 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
         case ActionTypes.SET_MUTED_RESOURCE:
             return { ...state, [updateKey]: data }
         case ActionTypes.REMOVE_MUTED_RESOURCE:
-            console.log("updateKey", updateKey, { ...state, [updateKey]: state?.[updateKey]?.filter(_ => (_?.resource_id ?? _?.muted_event_id) != data) })
+            // console.log("updateKey", updateKey, { ...state, [updateKey]: state?.[updateKey]?.filter(_ => (_?.resource_id ?? _?.muted_event_id) != data) })
             return { ...state, [updateKey]: state?.[updateKey]?.filter(_ => (_?.resource_id ?? _?.muted_event_id) != data) }
         case ActionTypes.ADD_MUTED_RESOURCE:
             return { ...state, [updateKey]: [...state?.[updateKey], ...data] }

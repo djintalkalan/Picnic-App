@@ -11,12 +11,13 @@ interface ChatInputProps {
     onChangeText: any
     onPressSend: () => void
     repliedMessage: any,
+    disableButton: boolean,
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
     onChooseImage?: (image: ImageOrVideo) => void
 }
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
-    const { repliedMessage, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
+    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
@@ -52,7 +53,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24) }} />
                 </TouchableOpacity>
             </View> : null}
-            <View style={styles.inputContainer} >
+            <View pointerEvents={disableButton ? 'none' : undefined} style={styles.inputContainer} >
                 <View style={styles.iContainer} >
                     <TextInput
                         ref={ref}
@@ -69,10 +70,10 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', position: 'absolute', end: scaler(20), top: scaler(5) }} >
                     <TouchableOpacity onPress={onPressSend} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
-                        <Image source={Images.ic_send} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
+                        <Image source={Images.ic_send} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={pickImage} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
-                        <Image source={Images.ic_add_circle} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
+                        <Image source={Images.ic_add_circle} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
                     </TouchableOpacity>
                 </View>
             </View>

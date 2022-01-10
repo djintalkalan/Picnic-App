@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, removeGroupMember, reportResource } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -11,6 +11,7 @@ import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Interact
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
+import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
@@ -60,10 +61,15 @@ const GroupDetail: FC<any> = (props) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_remove_member,
                         onPressButton: () => {
-                            dispatch(removeGroupMember({
+                            // dispatch(removeGroupMember({
+                            //     resource_id: item?.resource_id,
+                            //     user_id: item?.user_id
+                            // }))
+                            SocketService.emit(EMIT_GROUP_MEMBER_DELETE, {
                                 resource_id: item?.resource_id,
                                 user_id: item?.user_id
-                            }))
+                            })
+                            _hidePopUpAlert()
                             _hidePopUpAlert()
                         },
                         buttonStyle: { backgroundColor: colors.colorRed },
@@ -83,10 +89,9 @@ const GroupDetail: FC<any> = (props) => {
     const dispatch = useDispatch()
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
-    const { group, groupMembers, is_group_joined } = useSelector((state: RootState) => ({
+    const { group, groupMembers, } = useSelector((state: RootState) => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
         groupMembers: state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [],
-        is_group_joined: state?.groupDetails?.[props?.route?.params?.id]?.is_group_joined
     }), isEqual)
 
 
@@ -142,7 +147,7 @@ const GroupDetail: FC<any> = (props) => {
             <BottomButton
                 title={Language.leave_group}
                 icon={Images.ic_leave_group}
-                visibility={is_group_joined && !group?.is_admin}
+                visibility={group?.is_group_member && !group?.is_admin}
                 onPress={() => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_leave_group,
@@ -158,7 +163,7 @@ const GroupDetail: FC<any> = (props) => {
             <BottomButton
                 title={Language.join_now}
                 icon={Images.ic_leave_group}
-                visibility={!is_group_joined}
+                visibility={!group?.is_group_member}
                 onPress={() => {
                     dispatch(joinGroup(group?._id))
                 }} />

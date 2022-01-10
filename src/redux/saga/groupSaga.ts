@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -89,18 +89,28 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
 }
 
 function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, any> {
-    const { resource_type }: { resource_type: IResourceType } = payload?.data
+    const { groupId, ...rest } = payload?.data
+    const { resource_type }: { resource_type: IResourceType } = rest
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._muteUnmuteResource, payload?.data);
+        let res = yield call(ApiProvider._muteUnmuteResource, rest);
         if (res.status == 200) {
             _showSuccessMessage(res.message)
             // if (payload.onSuccess) payload.onSuccess(res?.data)
             if (payload?.data?.is_mute == "1")
-                yield put(payload?.data?.resource_type == 'group' ?
-                    deleteGroupSuccess(payload?.data?.resource_id) :
-                    deleteEventSuccess(payload?.data?.resource_id)
-                )
+                switch (payload?.data?.resource_type) {
+                    case 'message':
+                        yield put(deleteChatInGroupSuccess({
+                            groupId: groupId,
+                            resourceId: payload?.data?.resource_id
+                        }))
+                        break;
+                    case 'group':
+                        deleteGroupSuccess(payload?.data?.resource_id)
+                    default:
+                        deleteEventSuccess(payload?.data?.resource_id)
+                        break;
+                }
             else {
                 yield put(removeMutedResource({ data: payload?.data?.resource_id, type: resource_type }))
             }
@@ -237,6 +247,8 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getGroupDetail, payload);
         if (res.status == 200) {
+            res.data.group.is_group_member = res.data?.is_group_joined ? true : false
+            res.data.group.is_group_admin = res.data?.group?.is_admin ? true : false
             if (res?.data?.group?.is_admin)
                 yield put(getGroupMembers(payload))
             yield put(setGroupDetail({ groupId: payload, data: res?.data }))
@@ -358,7 +370,6 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
             if (name != "HomeGroupTab" && name != "Home") {
                 yield put(getGroupDetail(payload))
                 NavigationService.goBack()
-
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
