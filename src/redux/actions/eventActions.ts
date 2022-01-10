@@ -49,8 +49,18 @@ export const joinEvent = (payload: any) => ({
     payload
 })
 
+export const joinEventSuccess = (payload: any) => ({
+    type: ActionTypes.JOIN_EVENT_SUCCESS,
+    payload
+})
+
 export const leaveEvent = (payload: any) => ({
     type: ActionTypes.LEAVE_EVENT,
+    payload
+})
+
+export const leaveEventSuccess = (payload: any) => ({
+    type: ActionTypes.LEAVE_EVENT_SUCCESS,
     payload
 })
 

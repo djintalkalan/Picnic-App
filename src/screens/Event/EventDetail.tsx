@@ -151,27 +151,42 @@ const EventDetail: FC<any> = (props) => {
                             <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
                         </View>
                         <View >
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? 'Free' : getSymbol(event?.event_currency) + event?.event_fees}</Text>
+                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}</Text>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
 
                         </View>
                     </View>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_group_events} />
-                        <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_group_events} />
+                        <Text style={styles.events} >
+                            {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_time} />
-                        <Text style={styles.events} >{dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_event_time} />
+                        <Text style={styles.events} >
+                            {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_event_location} />
-                        <Text style={styles.events} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_event_location} />
+                        <Text style={styles.events} >
+                            {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                        </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }} source={Images.ic_events_tickets} />
-                        <Text style={styles.events} >{event?.is_admin ? event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited' ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available : Language.unlimited}</Text>
+                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                            source={Images.ic_events_tickets} />
+                        <Text style={styles.events} >
+                            {event?.is_admin ?
+                                event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited'
+                                    ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
+                                    : Language.unlimited_entry}
+                        </Text>
                     </View>
                     {event?.details ?
                         <View style={{ marginVertical: scaler(22) }}>
@@ -181,12 +196,16 @@ const EventDetail: FC<any> = (props) => {
                     <View>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }} style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10) }}>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}</Text>
+                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }}
+                                style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
+                            <Text style={{ marginLeft: scaler(10) }}>
+                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                            </Text>
                         </View>
                     </View>
                     {event?.short_description ?
-                        <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text><Text style={styles.about}>{event?.short_description}</Text></> : <View />
+                        <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text>
+                            <Text style={styles.about}>{event?.short_description}</Text></> : <View />
                     }
                     <View style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ flex: 1 }}>{Language.members}</Text>
@@ -223,7 +242,8 @@ const EventDetail: FC<any> = (props) => {
                                     currency: event?.event_currency,
                                     capacity: event?.capacity,
                                     soldTickets: event?.total_sold_tickets,
-                                    capacityType: event?.capacity_type
+                                    capacityType: event?.capacity_type,
+                                    isFree: event?.is_free_event,
                                 })} />
                     </View>
                 : <View />

@@ -330,3 +330,8 @@ export const _likeUnlikeMessage = async (body: any) => {
     return fetchApiData(config.API_URL + 'message/like-unlike-message', body, "POST")
 }
 
+export const _joinEvent = async (body: string) => {
+    console.log("---------- _joinEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'payment/confirm-reservation', body, "POST")
+}
+
