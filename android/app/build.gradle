@@ -141,6 +141,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode ANDROID_VERSION_CODE
         versionName ANDROID_VERSION_NAME
+        missingDimensionStrategy ('store', 'play')
+        multiDexEnabled true
     }
     splits {
         abi {

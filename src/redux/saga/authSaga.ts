@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { setAllEvents, setAllGroups, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
@@ -196,6 +196,12 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
             userData: null,
             authToken: '',
         })
+
+        yield put(setAllGroups([]))
+        yield put(setAllEvents([]))
+
+
+
     }
     catch (error) {
         console.log("Catch Error", error);
