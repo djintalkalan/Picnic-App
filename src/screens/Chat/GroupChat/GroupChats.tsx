@@ -118,6 +118,7 @@ export const GroupChats: FC<any> = (props) => {
         return (
             <ChatItem
                 {...item}
+                isGroupType={true}
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
