@@ -89,6 +89,9 @@ apply from: "../../node_modules/react-native-ultimate-config/android/rnuc.gradle
 def outputFileName = project.config.get("OUTPUT_NAME")
 def ANDROID_VERSION_CODE = project.config.get("ANDROID_VERSION_CODE").toInteger()
 def ANDROID_VERSION_NAME = project.config.get("ANDROID_VERSION_NAME")
+def KEYSTORE_NAME = project.config.get("KEYSTORE_NAME")
+def KEYSTORE_PASSWORD = project.config.get("KEYSTORE_PASSWORD")
+def ALIAS_NAME = project.config.get("ALIAS_NAME")
 def PACKAGE_NAME = project.config.get("PACKAGE_NAME")
 def APP_TYPE = project.config.get("APP_TYPE")
 def outputPathName = "${project.rootDir.absolutePath}/output"
@@ -159,6 +162,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file(KEYSTORE_NAME)
+            storePassword KEYSTORE_PASSWORD
+            keyAlias ALIAS_NAME
+            keyPassword KEYSTORE_PASSWORD
+        }
     }
     buildTypes {
         debug {
@@ -167,7 +176,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

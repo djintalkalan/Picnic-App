@@ -48,6 +48,7 @@ const CreateEvent2: FC<any> = props => {
     endTime: new Date()
   });
   const [userData] = useDatabase("userData")
+  console.log('userData', userData)
 
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -332,8 +333,8 @@ const CreateEvent2: FC<any> = props => {
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={() => handleSubmit((data) => {
-              userData?.is_premium ? NavigationService.navigate('CreateEvent3') :
-                // isFreeEvent ?
+
+              !userData?.is_premium ?
                 _showPopUpAlert({
                   message: Language.join_now_to_access_payment_processing,
                   buttonText: Language.join_now,
@@ -342,8 +343,12 @@ const CreateEvent2: FC<any> = props => {
                     _hidePopUpAlert()
                   },
                   cancelButtonText: Language.no_thanks_create_my_event,
-                  onPressCancel: () => onSubmit(data)
-                })
+                  onPressCancel: () => { isFreeEvent ? onSubmit(data) : NavigationService.goBack() }
+                }) :
+                isFreeEvent ?
+                  onSubmit(data)
+                  :
+                  NavigationService.navigate('CreateEvent3')
               //   :
               //  undefined
             })()}
@@ -391,7 +396,7 @@ const CreateEvent2: FC<any> = props => {
           date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
 
           //  eventDateTime.current?.[startTime]
-          //   maximumDate={sub(new Date(), {
+          //   //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
           onConfirm={(date: Date) => {

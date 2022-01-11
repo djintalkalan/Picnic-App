@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { Images } from 'assets/Images';
 import { Button, Text, useStatusBar } from 'custom-components';
+import Database, { useDatabase } from 'database/Database';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
@@ -22,6 +23,8 @@ const Subscription: FC = () => {
     const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
     const [products, setProducts] = useState<Array<InAppPurchases.Product>>([])
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
+    const [userData] = useDatabase("userData")
+
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -134,8 +137,8 @@ const Subscription: FC = () => {
                     <Image source={Images.ic_close_subscription} style={styles.cancelView} />
                 </TouchableOpacity>
                 <Text style={styles.joinText} >{Language.join_us}</Text>
-                {/* <View style={{ width: scaler(150), height: scaler(150), borderRadius: scaler(120), borderWidth: scaler(3), alignSelf: 'center', transform: [{ scaleX: 2 }] }}> */}
-                <ImageBackground source={Images.ic_oval_shape} style={{ height: scaler(130), width: scaler(250), alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} resizeMode='contain'>
+                <ImageBackground source={Images.ic_oval_shape}
+                    style={styles.ovalStyle} resizeMode='contain'>
                     <Text style={[styles.joinText, { fontStyle: 'italic' }]} >{Language.here}</Text>
                     {/* </View> */}
                 </ImageBackground>
@@ -162,11 +165,14 @@ const Subscription: FC = () => {
             <View style={{ margin: scaler(20) }}>
                 <Button title='Join now for $18 a year' onPress={() => {
                     // Linking.openURL('https://apps.apple.com/account/subscriptions')
-                    requestPurchase(productIds[0])
+                    // requestPurchase(productIds[0])
+                    Database.setValue('userData', { ...userData, is_premium: 1 })
                 }} />
                 <Text onPress={() => {
                     requestPurchase(productIds[1])
-                }} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
+                }} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>
+                    or try membership at $1.99 a month
+                </Text>
             </View>
         </SafeAreaView>
     );
@@ -205,6 +211,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         alignSelf: 'center',
         color: 'rgba(2, 54, 60, 1)'
+    },
+    ovalStyle: {
+        height: scaler(130),
+        width: scaler(250),
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
 
