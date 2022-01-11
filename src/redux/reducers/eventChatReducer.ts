@@ -52,24 +52,6 @@ export const eventChatReducer = (state: IEventChatReducer = initialEventChatStat
             }
             addChatState.events[eventId].chats.push(action?.payload?.chat)
             return addChatState
-        case ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS_EVENT:
-            let likeState = { ...state }
-            if (!likeState.events[eventId]) {
-                likeState.events[eventId].chats = []
-            }
-            likeState.events[eventId].chats = (state.events?.[eventId]?.chats ?? []).map((_) => {
-                if (action?.payload?.message_id == _._id)
-                    return {
-                        ..._,
-                        is_message_liked_by_me: action?.payload?.is_like == '1' ? true : false,
-                        message_total_likes_count: _?.message_total_likes_count + (action?.payload?.is_like == '1' ? 1 : -1)
-                    }
-                else {
-                    return _
-                }
-            })
-            return likeState
-
         case ActionTypes.UPDATE_CHAT_IN_EVENT:
             const updateChatState = { ...state }
             if (!updateChatState.events[eventId]) {

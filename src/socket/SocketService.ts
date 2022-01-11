@@ -1,5 +1,5 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
@@ -108,10 +108,15 @@ class Service {
 
     private onLikeUnlike = (e: any) => {
         console.log("on Like Unlike", e)
-        if (e?.data) {
-            this.dispatch &&
+        if (this.dispatch && e?.data && Array.isArray(e?.data) && e?.data?.length) {
+            if (e?.data?.[0]?.group)
                 this.dispatch(updateChatInGroup({
                     groupId: e?.data?.[0]?.resource_id,
+                    chat: e?.data?.[0]
+                }))
+            else
+                this.dispatch(updateChatInEvent({
+                    eventId: e?.data?.[0]?.resource_id,
                     chat: e?.data?.[0]
                 }))
         }

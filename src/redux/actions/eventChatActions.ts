@@ -38,14 +38,4 @@ export const refreshChatInEvent = (payload: { eventId: string, chats: Array<any>
     payload
 })
 
-export const likeUnlikeMessageEvent = (payload: { message_id: string, is_like: '1' | '0' }) => ({
-    type: ActionTypes.LIKE_UNLIKE_MESSAGE_EVENT,
-    payload
-})
-
-export const likeUnlikeMessageSuccessEvent = (payload: { eventId: string, message_id: string, is_like: '1' | '0' }) => ({
-    type: ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS_EVENT,
-    payload
-})
-
 
