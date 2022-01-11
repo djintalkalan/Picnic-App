@@ -17,6 +17,7 @@ export const EMIT_EVENT_CHAT = 'getEventChat';
 export const EMIT_EVENT_REPLY = 'eventMessageReply';
 export const EMIT_EVENT_MESSAGE_DELETE = 'eventMessageDelete';
 export const EMIT_EVENT_MESSAGE_TYPING = "eventMessageTyping";
+export const EMIT_EVENT_MEMBER_DELETE = "eventMemberDelete";
 
 //Common Events
 export const EMIT_DISCONNECT = 'disconnect';
@@ -48,6 +49,8 @@ export const ON_EVENT_MESSAGE_DELETE = 'onEventMessageDelete';
 export const ON_EVENT_MESSAGE = "onEventMessage";//When New Message Is Created And Client Will Receive Posted Message 
 export const ON_EVENT_MESSAGES = "onEventMessages";//When Enter In A Event Chat Hence Get All Event Message
 export const ON_EVENT_MESSAGE_TYPING = "onEventMessageTyping";
+export const ON_EVENT_DELETE = "onEventDelete";
+export const ON_EVENT_MEMBER_DELETE = "onEventMemberDelete";
 
 //Common Events
 export const ON_CONNECTION = 'onConnection';

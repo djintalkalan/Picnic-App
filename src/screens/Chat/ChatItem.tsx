@@ -4,11 +4,11 @@ import { InnerBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { useDatabase } from 'database'
-import React, { memo, useCallback } from 'react'
+import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
-import { EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
+import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 
@@ -28,6 +28,8 @@ interface IChatItem {
     message_liked_by_user_name: []
     message_recently_liked_user_ids: Array<any>
     group?: any
+    event?: any
+    isGroupType: boolean
     message_deleted_by_user: any
 }
 
@@ -36,7 +38,8 @@ const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, isAdmin, message_deleted_by_user, group, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, image: userImage, _id: userId } = user ?? {}
     const [userData] = useDatabase<any>("userData");
     const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
@@ -57,7 +60,7 @@ const ChatItem = (props: IChatItem) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_delete_message,
                         onPressButton: () => {
-                            SocketService.emit(EMIT_GROUP_MESSAGE_DELETE, {
+                            SocketService.emit(isGroupType ? EMIT_GROUP_MESSAGE_DELETE : EMIT_EVENT_MESSAGE_DELETE, {
                                 resource_id: group?._id,
                                 message_id: _id
                             })
@@ -107,7 +110,7 @@ const ChatItem = (props: IChatItem) => {
                 _showPopUpAlert({
                     message: Language.are_you_sure_remove_member,
                     onPressButton: () => {
-                        SocketService.emit(EMIT_GROUP_MEMBER_DELETE, {
+                        SocketService.emit(isGroupType ? EMIT_GROUP_MEMBER_DELETE : EMIT_EVENT_MEMBER_DELETE, {
                             resource_id: group?._id,
                             user_id: userId
                         })

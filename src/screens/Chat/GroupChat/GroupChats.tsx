@@ -9,8 +9,8 @@ import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-s
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
 import { scaler, _showErrorMessage } from 'utils'
-import ChatInput from './ChatInput'
-import ChatItem from './ChatItem'
+import ChatInput from '../ChatInput'
+import ChatItem from '../ChatItem'
 
 let loadMore = false
 

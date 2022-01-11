@@ -10,22 +10,22 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
 import Language from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler } from 'utils'
-import { ChatHeader } from './ChatHeader'
+import { ChatHeader } from '../ChatHeader'
 import { GroupChats } from './GroupChats'
 
 
 const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) => {
 
-    const { group, activeGroup } = useSelector((state: RootState) => {
+    const { groupDetail, activeGroup } = useSelector((state: RootState) => {
         return {
-            group: state?.groupDetails?.[props?.route?.params?.id]?.group,
+            groupDetail: state?.groupDetails?.[props?.route?.params?.id]?.group,
             activeGroup: state?.activeGroup
         }
     }, shallowEqual)
 
-    const { name, city, image, state, country, _id } = group ?? activeGroup
+    const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
     useEffect(() => {
-        if (!group || activeGroup?.is_group_member != group?.is_group_member) {
+        if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
             dispatch(getGroupDetail(activeGroup?._id))
         }
     }, [])
@@ -65,12 +65,12 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                 defaultIcon={Images.ic_group_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onPress={() => {
-                        if (!group?.is_group_member) dispatch(joinGroup(_id))
+                        if (!groupDetail?.is_group_member) dispatch(joinGroup(_id))
                         else {
 
                         }
                     }} style={{ paddingHorizontal: scaler(5) }} >
-                        {group?.is_group_member ?
+                        {groupDetail?.is_group_member ?
                             <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                             :
                             <Text style={styles.joinText} >{Language.join}</Text>

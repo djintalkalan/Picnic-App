@@ -1,7 +1,6 @@
 import { config } from "api";
-import { deleteChatInGroupSuccess, deleteGroupSuccess, leaveGroupSuccess, removeGroupMemberSuccess, setChatInGroup, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
 import Database from "database";
-import { debounce } from "lodash";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
 import { LanguageType } from "src/language/Language";
@@ -20,7 +19,7 @@ class Service {
         return this.instance;
     }
 
-    init = (dispatch?: Dispatch<any>, emitData?: { event: string, data: any }) => {
+    init = (dispatch?: Dispatch<any>, emitData?: { e: string, data: any }) => {
         this.dispatch = dispatch
         const isLogin = Database.getStoredValue('isLogin')
         if (!this.socket) {
@@ -60,16 +59,6 @@ class Service {
     emit = (event: string, data?: any) => {
         console.log("Event Emit", event);
         console.log("Event Payload", data);
-
-        // if (!this.socket?.connected) {
-        //     console.log("Connecting Socket Again for Emitting");
-
-        //     // this.socket?.connect()
-        // } else {
-        //     console.log("Socket is Connected");
-
-        // }
-
         this.socket?.emit(event, {
             event,
             payload: data
@@ -97,12 +86,226 @@ class Service {
         this.socket?.on(ON_EVENT_MESSAGE, this.onEventMessage)
         this.socket?.on(ON_EVENT_MESSAGES, this.onEventMessages)
         this.socket?.on(ON_EVENT_MESSAGE_DELETE, this.onEventMessageDelete)
+        this.socket?.on(ON_GROUP_DELETE, this.onEventDelete)
+        this.socket?.on(ON_GROUP_MEMBER_DELETE, this.onEventMemberDelete)
         this.listenErrors();
         // this.socket?.on(ON_EVENT_MESSAGE_TYPING, this.onEventMessageTyping)
     }
 
-    private onConnection = (event: any) => {
-        console.log("Connection Successful", event)
+
+
+    private onJoin = (e: any) => {
+
+    }
+
+    private onJoinRoom = (e: any) => {
+
+    }
+
+    private onLeaveRoom = (e: any) => {
+
+    }
+
+    private onLikeUnlike = (e: any) => {
+        console.log("on Like Unlike", e)
+        if (e?.data) {
+            this.dispatch &&
+                this.dispatch(updateChatInGroup({
+                    groupId: e?.data?.[0]?.resource_id,
+                    chat: e?.data?.[0]
+                }))
+        }
+    }
+
+    /************************************************   GROUPS   *********************************************/
+
+    private onGroupMessageDelete = (e: any) => {
+        console.log("Group Message Delete", e)
+        if (this.dispatch && e?.data) {
+            if (e?.data?.message) {
+                this.dispatch(updateChatInGroupSuccess({
+                    groupId: e?.data?.resource_id,
+                    resourceId: e?.data?.message_id,
+                    message: e?.data?.message?.[0]
+                }))
+            } else {
+                this.dispatch(deleteChatInGroupSuccess({
+                    groupId: e?.data?.resource_id,
+                    resourceId: e?.data?.message_id,
+                }))
+            }
+        }
+
+    }
+
+    private onGroupMessage = (e: any) => {
+        console.log("Group Message received", e)
+        if (e?.data) {
+            this.dispatch &&
+                this.dispatch(setChatInGroup({
+                    groupId: e?.data?.[0]?.resource_id,
+                    chats: e?.data
+                }))
+        }
+
+    }
+
+    private onGroupMessages = (e: any) => {
+        console.log("Group Messages received", e)
+        console.log(e?.data)
+        if (e?.data) {
+            this.dispatch &&
+                this.dispatch(setChatInGroup({
+                    groupId: e?.data?.[0]?.resource_id,
+                    chats: e?.data
+                }))
+        }
+    }
+
+    private onGroupDelete = (e: any) => {
+        console.log("onGroupDelete", e)
+        if (e?.data) {
+            console.log("SCREEN", NavigationService?.getCurrentScreen());
+
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
+                params?.id == e?.data?.resource_id
+            ) {
+                NavigationService.navigate("Home")
+            }
+            this.dispatch &&
+                this.dispatch(deleteGroupSuccess(e?.data?.resource_id))
+        }
+    }
+
+    private onGroupMemberDelete = (e: any) => {
+        console.log("onGroupMemberDelete", e)
+        if (this.dispatch && e?.data) {
+            const id = Database.getStoredValue('userData')?._id
+            if (id == e?.data?.user_id) {
+                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
+                    params?.id == e?.data?.resource_id
+                ) {
+                    NavigationService.navigate("Home")
+                }
+                this.dispatch(leaveGroupSuccess(e?.data?.resource_id))
+                this.dispatch(removeGroupMemberSuccess({ groupId: e?.data?.resource_id, data: e?.data?.user_id }))
+
+            }
+            this.dispatch(setChatInGroup({
+                groupId: e?.data?.resource_id,
+                chats: e?.data?.message
+            }))
+
+            this.dispatch(setChatInGroup({
+                groupId: e?.data?.resource_id,
+                chats: e?.data?.message
+            }))
+        }
+    }
+
+
+    /************************************************   EVENTS   *********************************************/
+
+    private onEventMessageDelete = (e: any) => {
+        console.log("Event Message Delete", e)
+        if (this.dispatch && e?.data) {
+            if (e?.data?.message) {
+                this.dispatch(updateChatInEventSuccess({
+                    eventId: e?.data?.resource_id,
+                    resourceId: e?.data?.message_id,
+                    message: e?.data?.message?.[0]
+                }))
+            } else {
+                this.dispatch(deleteChatInEventSuccess({
+                    eventId: e?.data?.resource_id,
+                    resourceId: e?.data?.message_id,
+                }))
+            }
+        }
+
+    }
+
+    private onEventMessage = (e: any) => {
+        console.log("Event Message received", e)
+        if (e?.data) {
+            this.dispatch &&
+                this.dispatch(setChatInEvent({
+                    eventId: e?.data?.[0]?.resource_id,
+                    chats: e?.data
+                }))
+        }
+
+    }
+
+    private onEventMessages = (e: any) => {
+        console.log("Event Messages received", e)
+        console.log(e?.data)
+        if (e?.data) {
+            this.dispatch &&
+                this.dispatch(setChatInEvent({
+                    eventId: e?.data?.[0]?.resource_id,
+                    chats: e?.data
+                }))
+        }
+    }
+
+    private onEventDelete = (e: any) => {
+        console.log("onEventDelete", e)
+        if (e?.data) {
+            console.log("SCREEN", NavigationService?.getCurrentScreen());
+
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if ((name == "EventDetail" || name == "EventChats") &&
+                params?.id == e?.data?.resource_id
+            ) {
+                NavigationService.navigate("Home")
+            }
+            this.dispatch &&
+                this.dispatch(deleteEventSuccess(e?.data?.resource_id))
+        }
+    }
+
+    private onEventMemberDelete = (e: any) => {
+        console.log("onEventMemberDelete", e)
+        if (this.dispatch && e?.data) {
+            const id = Database.getStoredValue('userData')?._id
+            if (id == e?.data?.user_id) {
+                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "EventDetail" || name == "EventChats") &&
+                    params?.id == e?.data?.resource_id
+                ) {
+                    NavigationService.navigate("Home")
+                }
+                this.dispatch(leaveEventSuccess(e?.data?.resource_id))
+                this.dispatch(removeEventMemberSuccess({ eventId: e?.data?.resource_id, data: e?.data?.user_id }))
+
+            }
+            this.dispatch(setChatInEvent({
+                eventId: e?.data?.resource_id,
+                chats: e?.data?.message
+            }))
+
+            this.dispatch(setChatInEvent({
+                eventId: e?.data?.resource_id,
+                chats: e?.data?.message
+            }))
+        }
+    }
+
+    private onEventMessageTyping = (e: any) => {
+
+    }
+
+
+
+    /////  connection and error
+
+    private onConnection = (e: any) => {
+        console.log("Connection Successful", e)
         this.emit(EMIT_JOIN)
         Database.setSocketConnected(true);
     }
@@ -144,158 +347,9 @@ class Service {
         }
     }
 
-    private onJoin = (event: any) => {
-
-    }
-
-    private onJoinRoom = (event: any) => {
-
-    }
-
-    private onLeaveRoom = (event: any) => {
-
-    }
-
-    private onLikeUnlike = (event: any) => {
-        console.log("on Like Unlike", event)
-        if (event?.data) {
-            this.dispatch &&
-                this.dispatch(updateChatInGroup({
-                    groupId: event?.data?.[0]?.resource_id,
-                    chat: event?.data?.[0]
-                }))
-        }
-    }
-
-    private onGroupMessageDelete = (event: any) => {
-        console.log("Group Message Delete", event)
-        if (this.dispatch && event?.data) {
-            if (event?.data?.message) {
-                this.dispatch(updateChatInGroupSuccess({
-                    groupId: event?.data?.resource_id,
-                    resourceId: event?.data?.message_id,
-                    message: event?.data?.message?.[0]
-                }))
-            } else {
-                this.dispatch(deleteChatInGroupSuccess({
-                    groupId: event?.data?.resource_id,
-                    resourceId: event?.data?.message_id,
-                }))
-            }
-        }
-
-    }
-
-    private onGroupMessage = (event: any) => {
-        console.log("Group Message received", event)
-        if (event?.data) {
-            this.dispatch &&
-                this.dispatch(setChatInGroup({
-                    groupId: event?.data?.[0]?.resource_id,
-                    chats: event?.data
-                }))
-        }
-
-    }
-
-    private onGroupMessages = (event: any) => {
-        console.log("Group Messages received", event)
-        console.log(event?.data)
-        if (event?.data) {
-            this.dispatch &&
-                this.dispatch(setChatInGroup({
-                    groupId: event?.data?.[0]?.resource_id,
-                    chats: event?.data
-                }))
-        }
-    }
-
-    private onGroupDelete = (event: any) => {
-        console.log("onGroupDelete", event)
-        if (event?.data) {
-            console.log("SCREEN", NavigationService?.getCurrentScreen());
-
-            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-            if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
-                params?.id == event?.data?.resource_id
-            ) {
-                NavigationService.navigate("Home")
-            }
-            this.dispatch &&
-                this.dispatch(deleteGroupSuccess(event?.data?.resource_id))
-        }
-    }
-
-    private onGroupMemberDelete = (event: any) => {
-        console.log("onGroupMemberDelete", event)
-        if (this.dispatch && event?.data) {
-            const id = Database.getStoredValue('userData')?._id
-            if (id == event?.data?.user_id) {
-                console.log("SCREEN", NavigationService?.getCurrentScreen());
-                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-                if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
-                    params?.id == event?.data?.resource_id
-                ) {
-                    NavigationService.navigate("Home")
-                }
-                this.dispatch(leaveGroupSuccess(event?.data?.resource_id))
-                this.dispatch(removeGroupMemberSuccess({ groupId: event?.data?.resource_id, data: event?.data?.user_id }))
-
-            }
-            this.dispatch(setChatInGroup({
-                groupId: event?.data?.resource_id,
-                chats: event?.data?.message
-            }))
-
-            this.dispatch(setChatInGroup({
-                groupId: event?.data?.resource_id,
-                chats: event?.data?.message
-            }))
-
-
-            // const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-            // if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
-            //     params?.id == event?.data?.resource_id
-            // ) {
-            //     console.log("onGroupDelete", event)
-            //     NavigationService.navigate("Home")
-            // }
-            // this.dispatch &&
-            //     this.dispatch(deleteGroupSuccess(event?.data?.resource_id))
-        }
-    }
-
-    private onEventMessageDelete = (event: any) => {
-
-    }
-
-    private onEventMessage = (event: any) => {
-
-    }
-
-    private onEventMessages = (event: any) => {
-
-    }
-
-    private onEventMessageTyping = (event: any) => {
-
-    }
-
-    private reset = () => {
-        return debounce(() => {
-            this.socket?.disconnect()
-            setTimeout(() => {
-                this.init(this.dispatch)
-            }, 5000);
-        }, 5000)
-    }
-
     private listenErrors = () => {
         this.socket?.on("connect_error", (err: Error) => {
             console.log("connect_error", err); // prints the message associated with the error
-            // this.socket?.disconnect()
-            // this.reset();
-
         });
 
         this.socket?.on('reconnecting', function () {
@@ -311,6 +365,9 @@ class Service {
         this.socket?.on('error', function (e) {
             console.log("error error", e);
         });
+
+
+
     }
 }
 

@@ -335,3 +335,8 @@ export const _joinEvent = async (body: string) => {
     return fetchApiData(config.API_URL + 'payment/confirm-reservation', body, "POST")
 }
 
+export const _getEventChat = async (body: any) => {
+    console.log("---------- _getGroupChat Api Call ---------------")
+    return fetchApiData(config.API_URL + 'message/event-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=20&message_id=' + (body?.message_id || ""), null, "GET")
+}
+

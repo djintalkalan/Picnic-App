@@ -1,5 +1,6 @@
 export * from './authActions';
 export * from './eventActions';
+export * from './eventChatActions';
 export * from './groupActions';
 export * from './groupChatActions';
 export * from './homeActions';

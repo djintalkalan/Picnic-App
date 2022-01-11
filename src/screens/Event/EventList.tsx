@@ -162,7 +162,10 @@ const EventList: FC<any> = (props) => {
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView {...item} />}
                 onPress={() => {
-
+                    dispatch(setActiveEvent(item))
+                    setTimeout(() => {
+                        NavigationService.navigate("EventChats", { id: item?._id })
+                    }, 0);
                 }}
                 onPressImage={() => {
                     dispatch(setActiveEvent(item))

@@ -1,3 +1,4 @@
+export * from './eventChatReducer';
 export * from './eventReducer';
 export * from './groupChatReducer';
 export * from './groupReducer';
