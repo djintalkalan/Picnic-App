@@ -9,8 +9,8 @@ import Language from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
 
 const productIds = [
-    'm_payment',
-    'y_payment'
+    'y_payment',
+    'm_payment'
 ];
 
 const subscriptionIds = [
@@ -167,6 +167,7 @@ const Subscription: FC = () => {
                 <Text onPress={() => {
                     requestPurchase(productIds[1])
                 }} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
+
             </View>
         </SafeAreaView>
     );
