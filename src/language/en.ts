@@ -233,5 +233,8 @@ export const en = {
   free: 'Free',
   confirm_paymet_method: 'Confirm payment method',
   book_ticket: 'Book Ticket',
-  // members_can_host_events:'Members can host events',
+  are_you_sure_cancel_reservation: 'Are you sure you want to cancel your reservation',
+  // book_ticket: 'Book Ticket',
+  // book_ticket: 'Book Ticket',
+  // book_ticket: 'Book Ticket',
 }

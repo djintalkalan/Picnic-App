@@ -335,3 +335,22 @@ export const _joinEvent = async (body: string) => {
     return fetchApiData(config.API_URL + 'payment/confirm-reservation', body, "POST")
 }
 
+export const _leaveEvent = async (body: any) => {
+    console.log("---------- _leaveEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'payment/cancel-reservation/' + body, null, "PUT")
+}
+
+export const _authoriseMembership = async (body: any) => {
+    console.log("---------- _authoriseMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/authrise', body, "POST")
+}
+
+export const _captureMembership = async (body: any) => {
+    console.log("---------- _captureMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/capture', body, "POST")
+}
+
+export const _getActiveMembership = async (body: any) => {
+    console.log("---------- _getActiveMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/get-active-membership', null, "GET")
+}

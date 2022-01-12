@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, muteUnmuteResource, reportResource } from 'app-store/actions'
+import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
@@ -135,7 +135,19 @@ const EventDetail: FC<any> = (props) => {
                                         buttonText: Language.yes_report,
                                         // cancelButtonText: Language.cancel
                                     })
-                                }} hideBorder /></>
+                                }} hideBorder={event?.is_event_member ? false : true} />
+                                    {event?.is_event_member ? <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_cancel_reservation + '?',
+                                            onPressButton: () => {
+                                                dispatch(leaveEvent(event?._id))
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_cancel,
+                                            // cancelButtonText: Language.cancel
+                                        })
+                                    }} hideBorder /> : undefined}
+                                </>
                             }
                         </Card>
 
@@ -215,7 +227,7 @@ const EventDetail: FC<any> = (props) => {
 
             </ScrollView>
             {stringToDate(event?.event_date, 'YYYY-MM-DD', '-') > new Date() ?
-                event?.is_admin ?
+                event?.is_admin || event?.is_event_member ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                         <View style={{ flex: 1 }}>
                             <Button title={Language.add_to_calender} />
@@ -235,6 +247,7 @@ const EventDetail: FC<any> = (props) => {
                         <Button title={Language.confirm}
                             onPress={() => NavigationService.navigate('BookEvent',
                                 {
+                                    id: event?._id,
                                     name: event?.name,
                                     price: event?.event_fees,
                                     currency: event?.event_currency,
@@ -242,6 +255,7 @@ const EventDetail: FC<any> = (props) => {
                                     soldTickets: event?.total_sold_tickets,
                                     capacityType: event?.capacity_type,
                                     isFree: event?.is_free_event,
+                                    paymentMethod: event?.payment_method,
                                 })} />
                     </View>
                 : <View />

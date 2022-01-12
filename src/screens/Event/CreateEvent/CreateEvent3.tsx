@@ -1,5 +1,7 @@
+import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, MyHeader, Stepper, Text, TextInput } from 'custom-components';
+import Database from 'database/Database';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -11,8 +13,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { scaler } from 'utils';
+import { dateFormat, scaler } from 'utils';
 
 type FormType = {
   paypalId: string;
@@ -22,13 +25,84 @@ type FormType = {
 const CreateEvent3: FC<any> = props => {
   const [isPayByCash, setIsPayByCash] = useState(false)
   const [isPayByPaypal, setIsPayByPaypal] = useState(false)
+  const dispatch = useDispatch()
   const {
     control,
+    handleSubmit,
     getValues,
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
   });
+  const eventDetail = props?.route?.params;
+
+  console.log('data is', props?.route?.params)
+
+  const onSubmit = useCallback(
+    (data) => {
+      if (!eventDetail?.image && eventDetail?.screen1Data?.eventImage?.path) {
+        dispatch(
+          uploadFile({
+            image: eventDetail?.screen1Data?.eventImage,
+            onSuccess: url => {
+              console.log('URL is ', url);
+              eventDetail.image = url;
+              callCreateEventApi(data, isPayByPaypal, isPayByCash);
+            },
+            prefixType: 'events',
+          }),
+        );
+      } else {
+        callCreateEventApi(data, isPayByPaypal, isPayByCash);
+      }
+    },
+    [props, isPayByPaypal, isPayByCash],
+  );
+
+
+  const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
+    const { latitude, longitude, address, otherData } =
+      eventDetail?.screen1Data?.location ?? {};
+
+    const { startTime, endTime, eventDate } = eventDetail?.eventDateTime
+    let payload = {
+      image: eventDetail?.image,
+      name: eventDetail?.screen1Data?.eventName,
+      group_id: eventDetail?.screen1Data?.myGroup?.id,
+      is_online_event: eventDetail?.screen1Data?.isOnlineEvent ? '1' : '0',
+      short_description: eventDetail?.screen1Data?.aboutEvent,
+      address: address?.main_text + ', ' + address?.secondary_text,
+      city: otherData?.city,
+      state: otherData?.state,
+      country: otherData?.country,
+      location: {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      },
+      capacity_type: eventDetail?.capacity ? 'unlimited' : 'limited',
+      capacity: eventDetail?.screen2Data?.capacity,
+      is_free_event: '0',
+      event_fees: eventDetail?.screen2Data?.ticketPrice,
+      event_date: dateFormat(eventDate, "YYYY-MM-DD"),
+      event_start_time: dateFormat(startTime, "HH:mm:ss"),
+      event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
+      details: eventDetail?.screen2Data?.additionalInfo,
+      event_currency: eventDetail?.screen2Data?.currency.toLowerCase(),
+      payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
+      payment_email: data?.paypalId,
+      event_refund_policy: data?.policy
+    };
+    dispatch(
+      createEvent({
+        data: payload,
+        onSuccess: () => {
+          Database.setSelectedLocation(
+            Database.getStoredValue('selectedLocation'),
+          );
+        },
+      }),
+    );
+  }, []);
 
   const calculateButtonDisability = useCallback(() => {
     if (
@@ -105,7 +179,7 @@ const CreateEvent3: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-          // onPress={onSubmit}
+            onPress={handleSubmit((data) => onSubmit(data))}
           />
         </View>
       </ScrollView>

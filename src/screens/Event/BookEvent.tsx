@@ -1,10 +1,12 @@
+import { joinEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, KeyboardTopView, MyHeader, TextInput } from 'custom-components';
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { getSymbol, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
@@ -12,16 +14,34 @@ type FormType = {
     noOfSeats: string;
 }
 const BookEvent: FC = (props: any) => {
-    const [isPayByCash, setIsPayByCash] = useState(false)
-    const [isPayByPaypal, setIsPayByPaypal] = useState(false)
+    const [isPayByPaypal, setIsPayByPaypal] = useState()
     const [noOfTickets, setNoOfTickets] = useState()
     const eventDetail = props?.route?.params;
     const {
-        getValues,
+        handleSubmit,
         formState: { errors },
     } = useForm<FormType>({
         mode: 'onChange',
     });
+    const dispatch = useDispatch();
+
+    console.log(eventDetail)
+
+    const confirmReservation = useCallback((data) => {
+        console.log('data  is', data)
+        let payload = {
+            resource_id: eventDetail?.id,
+            no_of_tickets: noOfTickets,
+            transaction_id: "",
+            amount: eventDetail?.price ?? '',
+            currency: eventDetail?.currency ?? "",
+            payment_method: eventDetail?.isFree ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal
+            paid_via_email: "", //send when payment_method is paypal
+            paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
+        }
+        dispatch(joinEvent(payload))
+    }, [eventDetail, noOfTickets, isPayByPaypal])
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -61,27 +81,26 @@ const BookEvent: FC = (props: any) => {
                 <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
                     {(eventDetail?.capacityType == 'limited' ? Language.available_seats + ' ' +
                         noOfTickets ?
-                        (eventDetail?.capacity - eventDetail?.soldTickets) - parseInt(noOfTickets) :
+                        Language.available_seats + ' ' + ((eventDetail?.capacity - eventDetail?.soldTickets) - parseInt(noOfTickets || 0)) :
                         (eventDetail?.capacity - eventDetail?.soldTickets) :
                         undefined)}
                 </Text>
                 {!eventDetail?.isFree ?
-                    <><View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /><View>
+                    <>
+                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {Language.select_payment_options}
                         </Text>
-                        <TouchableOpacity style={styles.payView} onPress={() => { setIsPayByPaypal(false); setIsPayByCash(!isPayByCash); }}>
-                            <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
-                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_cash}</Text>
-                            <MaterialIcons name={isPayByCash ? 'radio-button-on' : 'radio-button-off'} size={scaler(20)} color={colors.colorPrimary} />
-                        </TouchableOpacity>
-                        <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-                        <TouchableOpacity style={styles.payView} onPress={() => { setIsPayByCash(false); setIsPayByPaypal(!isPayByPaypal); }}>
-                            <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
-                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
-                            <MaterialIcons name={isPayByPaypal ? 'radio-button-on' : 'radio-button-off'} size={scaler(20)} color={colors.colorPrimary} />
-                        </TouchableOpacity>
-                    </View></> : undefined}
+                        {eventDetail?.paymentMethod.map((_, i) => {
+                            return <><PaymentMethod
+                                type={_}
+                                isPayByPaypal={isPayByPaypal}
+                                setIsPayByPaypal={setIsPayByPaypal} />
+                                {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}</>
+                        })}
+                    </>
+                    : null}
+
             </View>
             <KeyboardTopView>
 
@@ -94,19 +113,16 @@ const BookEvent: FC = (props: any) => {
                     {noOfTickets ?
                         <Button title={eventDetail?.isFree ? Language.book_ticket
                             : Language.pay + ' ' + getSymbol(eventDetail?.currency) + (parseInt(noOfTickets) * eventDetail?.price)}
-                            onPress={!eventDetail?.isFree ? () => {
+                            onPress={eventDetail?.isFree ? handleSubmit((data) => confirmReservation(data)) : () => {
                                 _showPopUpAlert({
                                     title: Language.confirm_paymet_method,
-                                    message: isPayByCash ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
+                                    message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                                         : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
-                                    onPressButton: () => {
-                                        // dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: _id } }))
-                                        _hidePopUpAlert()
-                                    },
+                                    onPressButton: handleSubmit((data) => { confirmReservation(data), _hidePopUpAlert() }),
                                     buttonText: Language.pay + ' ' + getSymbol(eventDetail?.currency) + (parseInt(noOfTickets) * eventDetail?.price),
                                     buttonStyle: { width: '100%' }
                                 })
-                            } : () => { }} />
+                            }} />
                         : undefined
                     }
                 </View>
@@ -141,5 +157,19 @@ const styles = StyleSheet.create({
         marginHorizontal: scaler(5)
     }
 })
+
+const PaymentMethod = (props: { type: string, isPayByPaypal?: boolean, setIsPayByPaypal: any }) => {
+    return (
+        <TouchableOpacity style={styles.payView} onPress={() => { props?.setIsPayByPaypal(props?.type != 'cash') }}>
+            <Image source={props?.type == 'cash' ? Images.ic_empty_wallet : Images.ic_paypal}
+                style={{ height: scaler(16), width: scaler(19) }} />
+            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>
+                {props?.type == 'cash' ? Language.pay_by_cash : Language?.pay_by_paypal}</Text>
+            <MaterialIcons name={(props?.type == 'cash' && props?.isPayByPaypal == false) ||
+                (props?.type != 'cash' && props?.isPayByPaypal) ? 'radio-button-on' : 'radio-button-off'}
+                size={scaler(20)} color={colors.colorPrimary} />
+        </TouchableOpacity>
+    )
+}
 
 export default BookEvent;
