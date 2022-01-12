@@ -2,7 +2,6 @@
  * @format
  */
 
-import messaging from '@react-native-firebase/messaging';
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import 'react-native-gesture-handler';
@@ -22,13 +21,6 @@ if (__DEV__ && config.REACTOTRON_STATUS == 'true') {
 } else {
     console.log('Running without Reactotron');
 }
-
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-
-    // if (Database.getStoredValue('isLogin')) {
-    console.log("Background notifications", remoteMessage);
-    // ToastAndroid.show("Background notifications", ToastAndroid.LONG)
-});
 
 const HeadlessCheck = ({ isHeadless }) => {
 

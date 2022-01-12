@@ -24,6 +24,7 @@
     "postinstall": "node scripts/mmkv-fix.js && yarn env-s && npx pod-install"
   },
   "dependencies": {
+    "@notifee/react-native": "^4.0.1",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/datetimepicker": "^3.5.2",

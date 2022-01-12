@@ -1,8 +1,9 @@
 
-import messaging from '@react-native-firebase/messaging';
-import { useDatabase } from 'database/Database';
-import { useCallback, useEffect, useRef } from 'react';
 // import PushNotification from "react-native-push-notification";
+import notifee, { AndroidImportance } from "@notifee/react-native";
+import messaging from '@react-native-firebase/messaging';
+import Database, { useDatabase } from 'database/Database';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { NavigationService, WaitTill } from 'utils';
 
@@ -11,6 +12,14 @@ const CHANNEL_NAME = "high-priority"
 // PushNotification.configure({onNotification:})
 // PushNotification.createChannel({ channelName: CHANNEL_NAME, playSound: true, vibrate: true, channelId: CHANNEL_NAME }, (b) => {
 // })
+
+notifee.createChannel({
+    id: CHANNEL_NAME,
+    name: CHANNEL_NAME,
+    lights: false,
+    vibration: true,
+    importance: AndroidImportance.HIGH,
+})
 
 const FirebaseNotification = () => {
     const isFirstTime = useRef(true)
@@ -40,18 +49,7 @@ const FirebaseNotification = () => {
 
 
     const createNotificationListeners = useCallback(() => {
-        return messaging().onMessage(async (remoteMessage) => {
-            console.log("onMessage ", isLogin, " ", remoteMessage)
-            if (isLogin) {
-                showNotification(remoteMessage)
-            }
-        });
-        // const removeInitialNotificationSub = messaging().getInitialNotification().then((v) => {
-        //     console.log(v)
-        //     setTimeout(() => {
-        //         navigateToPages(v)
-        //     }, 2000)
-        // })
+        return messaging().onMessage(onMessageReceived);
     }, [isLogin])
 
     useEffect(() => {
@@ -153,54 +151,31 @@ const getCircularReplacer = () => {
     };
 };
 
-// const bgMessage = async (message: any) => {
-//     // handle your message
-//     console.log('NOTI_onBackgroundMessage:');
-//     console.log(JSON.stringify(message));
-//     // console.log(JSON.stringify(store.getState()));
-//     AsyncStorage.getItem("persist:root", (err, v) => {
-//         if (v) {
-//             try {
-//                 let isLogin = JSON.parse(v).isLoginReducer
-//                 if (isLogin == true || isLogin == 'true') {
-//                     showNotification(message)
-//                 }
-//             }
-//             catch (e) {
-//                 console.log(e)
-//             }
-//         }
-//     })
 
-//     return Promise.resolve();
-// }
 
-const showNotification = (remoteMessage: any) => {
-    if (remoteMessage?.data && remoteMessage?.notification) {
-        let messageData = remoteMessage?.data
-        if (typeof messageData != 'string') {
-            const { title, body }: any = messageData
-            console.log(remoteMessage)
-
-            // PushNotification.localNotification({
-            //     channelId: CHANNEL_NAME,
-            //     title: title.trim() || "Dcc PetConnect",
-            //     ignoreInForeground: false,
-            //     visibility: 'public',
-            //     usesChronometer: true,
-            //     importance: 'max',
-            //     message: body ?? "A New message arrived",
-            //     playSound: true,
-            //     userInfo: remoteMessage?.data,
-            //     priority: 'high',
-            //     invokeApp: true,
-            // })
-
-        }
-        console.log(messageData)
+export const onMessageReceived = async (message: any) => {
+    console.log("message", message)
+    const isLogin = Database.getStoredValue("isLogin");
+    if (isLogin) {
+        showNotification(message)
     }
 }
 
+const showNotification = (message: any) => {
+    const { title, body } = message?.data ?? {};
+    notifee.displayNotification({
+        title, body, data: message?.data,
+        android: {
+            channelId: CHANNEL_NAME,
+        },
+        ios: {
+            sound: 'default',
+        }
+
+    });
+}
+
+messaging().setBackgroundMessageHandler(onMessageReceived);
 
 
 export default FirebaseNotification
