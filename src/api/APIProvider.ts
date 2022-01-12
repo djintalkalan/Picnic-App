@@ -340,3 +340,22 @@ export const _getEventChat = async (body: any) => {
     return fetchApiData(config.API_URL + 'message/event-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=20&message_id=' + (body?.message_id || ""), null, "GET")
 }
 
+export const _leaveEvent = async (body: any) => {
+    console.log("---------- _leaveEvent Api Call ---------------")
+    return fetchApiData(config.API_URL + 'payment/cancel-reservation/' + body, null, "PUT")
+}
+
+export const _authorizeMembership = async (body: any) => {
+    console.log("---------- _authorizeMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/authrise', body, "POST")
+}
+
+export const _captureMembership = async (body: any) => {
+    console.log("---------- _captureMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/capture', body, "POST")
+}
+
+export const _getActiveMembership = async () => {
+    console.log("---------- _getActiveMembership Api Call ---------------")
+    return fetchApiData(config.API_URL + 'membership/get-active-membership', null, "GET")
+}

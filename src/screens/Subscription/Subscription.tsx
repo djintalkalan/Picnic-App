@@ -1,12 +1,17 @@
 import { useFocusEffect } from '@react-navigation/native';
+import { _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
+import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text, useStatusBar } from 'custom-components';
+import Database, { useDatabase } from 'database/Database';
+import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
 import { requestPurchase } from 'react-native-iap';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { NavigationService, scaler } from 'utils';
+import { dateFormat, NavigationService, scaler, stringToDate, _showSuccessMessage } from 'utils';
 
 const productIds = [
     'y_payment',
@@ -19,9 +24,14 @@ const subscriptionIds = [
 
 
 const Subscription: FC = () => {
+
+    const dispatch = useDispatch();
+
     const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
     const [products, setProducts] = useState<Array<InAppPurchases.Product>>([])
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
+    const [userData] = useDatabase("userData")
+
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -81,7 +91,32 @@ const Subscription: FC = () => {
         if (receipt) {
             try {
                 const consumeItem = Platform.OS === "ios";
-                await InAppPurchases.finishTransaction(purchase, consumeItem);
+                dispatch(setLoadingAction(true))
+                _authorizeMembership({
+                    transaction_id: purchase?.transactionId,
+                    transaction_receipt: purchase?.transactionReceipt,
+                    type: purchase?.productId == 'm_payment' ? "monthly" : "yearly",
+                    expire_at: dateFormat(add(new Date(), purchase?.productId == 'm_payment' ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
+                    payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
+                    // transaction_date:purchase?.transactionDate,
+                    device: Platform.OS
+                }).then(async (res) => {
+                    if (res?.status == 200 && res?.data) {
+                        await InAppPurchases.finishTransaction(purchase, consumeItem);
+                        _captureMembership({
+                            _id: res?.data?._id
+                        }).then((res) => {
+                            if (res?.status == 200) {
+                                continueToMemberShip(res?.message)
+                            }
+                        })
+                        dispatch(setLoadingAction(false))
+                    }
+                }).catch(e => {
+                    console.log(e)
+                    dispatch(setLoadingAction(false))
+                })
+
             } catch (ackErr) {
                 console.log('ackErr IN-APP >>>>', ackErr);
             }
@@ -127,6 +162,32 @@ const Subscription: FC = () => {
 
     // console.log('product', products)
 
+    const callPurchase = useCallback((i) => {
+        dispatch(setLoadingAction(true))
+        _getActiveMembership().then(res => {
+            dispatch(setLoadingAction(false))
+            if (res?.status == 200) {
+                const expireAt = stringToDate(res?.data?.expire_at, "YYYY-MM-DD");
+                // if (expireAt >= new Date()) {
+                if (expireAt < new Date()) {
+                    requestPurchase(productIds[i], false)
+                } else continueToMemberShip("Your are already a member")
+
+            }
+        }).catch(e => {
+            console.log(e);
+            dispatch(setLoadingAction(false))
+        })
+    }, [])
+
+    const continueToMemberShip = useCallback((message: string) => {
+        _showSuccessMessage(message)
+        Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+        /// rest thing
+
+
+    }, [])
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ flex: 1, marginHorizontal: scaler(16), marginVertical: scaler(20) }} >
@@ -134,8 +195,8 @@ const Subscription: FC = () => {
                     <Image source={Images.ic_close_subscription} style={styles.cancelView} />
                 </TouchableOpacity>
                 <Text style={styles.joinText} >{Language.join_us}</Text>
-                {/* <View style={{ width: scaler(150), height: scaler(150), borderRadius: scaler(120), borderWidth: scaler(3), alignSelf: 'center', transform: [{ scaleX: 2 }] }}> */}
-                <ImageBackground source={Images.ic_oval_shape} style={{ height: scaler(130), width: scaler(250), alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} resizeMode='contain'>
+                <ImageBackground source={Images.ic_oval_shape}
+                    style={styles.ovalStyle} resizeMode='contain'>
                     <Text style={[styles.joinText, { fontStyle: 'italic' }]} >{Language.here}</Text>
                     {/* </View> */}
                 </ImageBackground>
@@ -160,13 +221,8 @@ const Subscription: FC = () => {
                 </View>
             })} */}
             <View style={{ margin: scaler(20) }}>
-                <Button title='Join now for $18 a year' onPress={() => {
-                    // Linking.openURL('https://apps.apple.com/account/subscriptions')
-                    requestPurchase(productIds[0])
-                }} />
-                <Text onPress={() => {
-                    requestPurchase(productIds[1])
-                }} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
+                <Button title='Join now for $18 a year' onPress={() => callPurchase(0)} />
+                <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
 
             </View>
         </SafeAreaView>
@@ -206,6 +262,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         alignSelf: 'center',
         color: 'rgba(2, 54, 60, 1)'
+    },
+    ovalStyle: {
+        height: scaler(130),
+        width: scaler(250),
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
 

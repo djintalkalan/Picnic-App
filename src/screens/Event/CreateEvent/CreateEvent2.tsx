@@ -48,6 +48,7 @@ const CreateEvent2: FC<any> = props => {
     endTime: new Date()
   });
   const [userData] = useDatabase("userData")
+  console.log('userData', userData)
 
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -114,9 +115,9 @@ const CreateEvent2: FC<any> = props => {
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
       details: data?.additionalInfo,
       event_currency: data?.currency.toLowerCase(),
-      payment_method: ["paypal", "cash"],
-      payment_email: "test@picnic.com",
-      event_refund_policy: "Test Policy"
+      payment_method: [],
+      payment_email: "",
+      event_refund_policy: ""
     };
     dispatch(
       createEvent({
@@ -332,8 +333,8 @@ const CreateEvent2: FC<any> = props => {
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={() => handleSubmit((data) => {
-              userData?.is_premium ? NavigationService.navigate('CreateEvent3') :
-                // isFreeEvent ?
+
+              !userData?.is_premium ?
                 _showPopUpAlert({
                   message: Language.join_now_to_access_payment_processing,
                   buttonText: Language.join_now,
@@ -342,8 +343,19 @@ const CreateEvent2: FC<any> = props => {
                     _hidePopUpAlert()
                   },
                   cancelButtonText: Language.no_thanks_create_my_event,
-                  onPressCancel: () => onSubmit(data)
-                })
+                  onPressCancel: () => { isFreeEvent ? onSubmit(data) : NavigationService.goBack() }
+                }) :
+                isFreeEvent ?
+                  onSubmit(data)
+                  :
+                  NavigationService.navigate('CreateEvent3',
+                    {
+                      screen1Data: bodyData,
+                      screen2Data: data,
+                      eventDateTime: eventDateTime.current,
+                      image: uploadedImage?.current,
+                      capacity: isUnlimitedCapacity
+                    })
               //   :
               //  undefined
             })()}
@@ -391,7 +403,7 @@ const CreateEvent2: FC<any> = props => {
           date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
 
           //  eventDateTime.current?.[startTime]
-          //   maximumDate={sub(new Date(), {
+          //   //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
           onConfirm={(date: Date) => {
