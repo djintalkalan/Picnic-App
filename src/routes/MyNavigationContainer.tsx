@@ -37,6 +37,7 @@ import Subscription from 'screens/Subscription/Subscription';
 import UpdatePassword from 'screens/UpdatePassword';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
+import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { navigationRef } from 'utils';
 
@@ -81,6 +82,7 @@ const dashboardScreens = {
 };
 
 const MyNavigationContainer = () => {
+  FirebaseNotification();
   const dispatch = useDispatch();
 
   const { isConnected, isInternetReachable } = useNetInfo()
