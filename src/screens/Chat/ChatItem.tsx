@@ -174,7 +174,7 @@ const ChatItem = (props: IChatItem) => {
                     tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                 }} />
                 <Text style={styles.likeBy} >
-                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{remainingNames?.length > 1 ? " and " + (message_total_likes_count - 1) + " others" : ""}
+                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{remainingNames?.length > 1 ? " and " + (message_total_likes_count - (is_message_liked_by_me ? 2 : 1)) + " others" : ""}
                 </Text>
             </TouchableOpacity>
         </View>

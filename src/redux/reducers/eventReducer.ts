@@ -38,6 +38,21 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
             return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_member: false } : _)) }
         case ActionTypes.ADD_IN_EVENTS:
             return { ...state, allEvents: [...state.allEvents, ...action?.payload] }
+
+        case ActionTypes.SET_EVENT_DETAIL:
+            const i = state?.allEvents.findIndex(_ => _?._id == action?.payload?.eventId)
+            if (i > -1) {
+                const newState = { ...state }
+                newState.allEvents[i] = {
+                    ...newState?.allEvents,
+                    // ...action?.payload?.data?.event,
+                    // is_event_pinned_by_me:action?.payload?.data?.event?.is_event_pinned_by_me,
+                    // is_ticket_purchased_by_me:action?.payload?.data?.event?.is_ticket_purchased_by_me,
+                    is_event_admin: action?.payload?.data?.event?.is_event_admin,
+                }
+                return newState
+            }
+            return state;
         default:
             return state
     }
@@ -45,6 +60,24 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
 
 export const eventDetailReducer = (state: IEventDetailReducer = {}, action: action): IEventDetailReducer => {
     switch (action.type) {
+
+        case ActionTypes.JOIN_EVENT_SUCCESS:
+            if (state?.[action?.payload]) {
+                return { ...state, [action.payload]: { ...state[action?.payload], event: { ...state[action?.payload].event, is_event_member: true } } }
+            }
+            return state
+        case ActionTypes.LEAVE_EVENT_SUCCESS:
+            if (state?.[action?.payload]) {
+                return { ...state, [action.payload]: { ...state[action?.payload], event: { ...state[action?.payload].event, is_event_member: false } } }
+            }
+            return state
+
+        case ActionTypes.PIN_EVENT_SUCCESS:
+            if (state?.[action?.payload]) {
+                return { ...state, [action.payload]: { ...state[action?.payload], event: { ...state[action?.payload].event, is_event_pinned_by_me: !state[action?.payload].event?.is_event_pinned_by_me } } }
+            }
+            return state
+
         case ActionTypes.SET_EVENT_DETAIL:
             if (!state?.[action?.payload?.eventId]) {
                 state[action?.payload?.eventId] = initialEventDetailState

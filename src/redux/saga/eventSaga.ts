@@ -120,6 +120,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
         if (res.status == 200) {
+            res.data.event.is_event_admin = res.data?.event?.is_admin ? true : false
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))
             yield put(setEventDetail({ eventId: payload, data: res?.data }))
