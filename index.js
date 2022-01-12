@@ -3,7 +3,8 @@
  */
 
 import messaging from '@react-native-firebase/messaging';
-import { AppRegistry, ToastAndroid } from 'react-native';
+import React from 'react';
+import { AppRegistry } from 'react-native';
 import 'react-native-gesture-handler';
 import Reactotron from 'reactotron-react-native';
 import { config } from 'src/api/config';
@@ -26,7 +27,17 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 
     // if (Database.getStoredValue('isLogin')) {
     console.log("Background notifications", remoteMessage);
-    ToastAndroid.show("Background notifications", ToastAndroid.LONG)
+    // ToastAndroid.show("Background notifications", ToastAndroid.LONG)
 });
 
-AppRegistry.registerComponent(appName, () => App);
+const HeadlessCheck = ({ isHeadless }) => {
+
+    if (isHeadless) {
+        // App has been launched in the background by iOS, ignore
+        return null;
+    }
+
+    return <App />;
+}
+
+AppRegistry.registerComponent(appName, () => HeadlessCheck);
