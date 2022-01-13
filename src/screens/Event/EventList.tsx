@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { deleteEvent, getAllEvents, IPaginationState, muteUnmuteResource, pinEvent, reportResource, setActiveEvent } from 'app-store/actions';
+import { deleteEvent, getAllEvents, IPaginationState, leaveEvent, muteUnmuteResource, pinEvent, reportResource, setActiveEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -105,12 +105,13 @@ const EventList: FC<any> = (props) => {
                 buttons.push({
                     title: Language.cancel_reservation, textStyle: { color: colors.colorErrorRed }, onPress: () => {
                         _showPopUpAlert({
-                            message: Language.are_you_sure_leave_event,
+                            message: Language.are_you_sure_cancel_reservation + '?',
+                            buttonStyle: { backgroundColor: colors.colorErrorRed },
                             onPressButton: () => {
-                                // dispatch(reportResource({ resource_id: _id, resource_type: 'event' }))
+                                dispatch(leaveEvent(_id))
                                 _hidePopUpAlert()
                             },
-                            buttonText: Language.yes_report,
+                            buttonText: Language.yes_cancel,
                             // cancelButtonText: Language.cancel
                         })
                     }

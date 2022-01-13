@@ -113,6 +113,7 @@ const EventDetail: FC<any> = (props) => {
                                         buttonStyle: { backgroundColor: colors.colorErrorRed },
                                         buttonText: Language.yes_cancel,
                                     })
+                                    setEditButtonOpened(false)
                                 }
                                 } hideBorder /></> :
                                 <><InnerButton title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
@@ -128,6 +129,7 @@ const EventDetail: FC<any> = (props) => {
                                         buttonText: Language.yes_mute,
                                         // cancelButtonText: Language.cancel
                                     })
+                                    setEditButtonOpened(false)
                                 }} /><InnerButton title={Language.report} onPress={() => {
                                     _showPopUpAlert({
                                         message: Language.are_you_sure_report_event,
@@ -138,10 +140,13 @@ const EventDetail: FC<any> = (props) => {
                                         buttonText: Language.yes_report,
                                         // cancelButtonText: Language.cancel
                                     })
+                                    setEditButtonOpened(false)
                                 }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ? <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
+
                                             message: Language.are_you_sure_cancel_reservation + '?',
+                                            customView: () => <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>,
                                             onPressButton: () => {
                                                 dispatch(leaveEvent(event?._id))
                                                 _hidePopUpAlert()
@@ -149,6 +154,7 @@ const EventDetail: FC<any> = (props) => {
                                             buttonText: Language.yes_cancel,
                                             // cancelButtonText: Language.cancel
                                         })
+                                        setEditButtonOpened(false)
                                     }} hideBorder /> : undefined}
                                 </>
                             }
