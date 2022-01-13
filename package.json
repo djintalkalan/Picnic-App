@@ -24,7 +24,8 @@
     "tcp": "adb reverse tcp:9090 tcp:9090",
     "resetIos": "yarn env-s && cd ios && pod deintegrate && rm -rf Podfile.lock && rm -rf Pods && pod install && cd .. && yarn run ios",
     "resetAndroid": "yarn env-s && cd android && ./gradlew clean && cd .. && yarn run android",
-    "postinstall": "node scripts/mmkv-fix.js && yarn env-s && npx pod-install"
+    "fix-sdk":"(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
+    "postinstall": "yarn env-s && npx pod-install"
   },
   "dependencies": {
     "@notifee/react-native": "^4.0.1",
@@ -51,7 +52,6 @@
     "react-native-aws3": "^0.0.9",
     "react-native-bootsplash": "^3.2.5",
     "react-native-cardview": "^2.0.5",
-    "react-native-device-info": "^8.4.8",
     "react-native-geocoding": "^0.5.0",
     "react-native-geolocation-service": "^5.3.0-beta.3",
     "react-native-gesture-handler": "^1.10.3",
@@ -67,7 +67,7 @@
     "react-native-localize": "^2.1.5",
     "react-native-maps": "^0.29.4",
     "react-native-material-ripple": "^0.9.1",
-    "react-native-mmkv-storage": "0.6.6",
+    "react-native-mmkv-storage": "0.6.8",
     "react-native-modal-datetime-picker": "^13.0.0",
     "react-native-pager-view": "^5.4.9",
     "react-native-permissions": "^3.1.0",
@@ -77,7 +77,7 @@
     "react-native-size-matters": "^0.4.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
-    "react-native-ultimate-config": "^3.3.4",
+    "react-native-ultimate-config": "^3.4.2",
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.4",
     "redux-persist": "^6.0.0",

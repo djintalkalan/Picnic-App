@@ -42,6 +42,7 @@
         <activity
             android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
             android:launchMode="singleTask"
+            android:exported="true"
             android:theme="@style/BootTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

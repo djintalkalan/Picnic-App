@@ -6570,11 +6570,6 @@ react-native-codegen@^0.0.7:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-device-info@^8.4.8:
-  version "8.4.8"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-8.4.8.tgz#fc92ae423e47db6cfbf30c30012e09cee63727fa"
-  integrity sha512-92676ZWHZHsPM/EW1ulgb2MuVfjYfMWRTWMbLcrCsipkcMaZ9Traz5mpsnCS7KZpsOksnvUinzDIjsct2XGc6Q==
-
 react-native-dropdownalert@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/react-native-dropdownalert/-/react-native-dropdownalert-4.3.0.tgz#56b612d63576387fa1a507b4158d92e7b7638af3"
@@ -6702,10 +6697,10 @@ react-native-material-ripple@^0.9.1:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-mmkv-storage@0.6.6:
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.6.6.tgz#bd2cabecdcfa751dff7c3b517bce77a2e9a45355"
-  integrity sha512-SV7tm3K5nD9x0KZf6ayj8G+xx1LmqKnwcvhXrg66awopEf8Y7JAy9kH4G4ngJzBWfXVyYo5E93RPv9MlQdCfxQ==
+react-native-mmkv-storage@0.6.8:
+  version "0.6.8"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.6.8.tgz#1860882b58af907ed422d1c27588fe6c45c40655"
+  integrity sha512-l26DVejvL3jN/1pHC8mTQxatoUc1qAEwOmhG2s+PNjRqudgUpRJwFEWbdMj6tmJ54hvP3bbRW3e1+jpryFzMcQ==
 
 react-native-modal-datetime-picker@^13.0.0:
   version "13.0.0"
@@ -6762,7 +6757,7 @@ react-native-tab-view@^3.1.1:
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz#1f8d7a835ab4f5b1b1407ec8dddc1053b53fa3c6"
   integrity sha512-M5pRN6utQfytKWoKlKVzg5NbkYu308qNoW1khGTtEOTs1k14p2dHJ/BWOJoJYHKbPVUyZldbG9MFT7gUl4YHnw==
 
-react-native-ultimate-config@^3.3.4:
+react-native-ultimate-config@^3.4.2:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-3.4.2.tgz#9494f6462e23cf350a886ec74a86610e6adae6ba"
   integrity sha512-c7VFhiHqg7OqYqRhijXcahgEJ+2kBlGkXsm85+Zx9IqsVKQ4iJSyy6DuQTeeXh0jcFFlIhHKjfL5Q3cA7vPTNA==
