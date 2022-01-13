@@ -157,7 +157,7 @@ export const onMessageReceived = async (message: any) => {
     console.log("message", message)
     const isLogin = Database.getStoredValue("isLogin");
     if (isLogin) {
-        showNotification(message)
+        // showNotification(message)
     }
 }
 

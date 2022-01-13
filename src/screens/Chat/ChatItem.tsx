@@ -104,7 +104,7 @@ const ChatItem = (props: IChatItem) => {
                 },
             }]
         }
-        buttons.push({
+        if (isAdmin && !myMessage) (buttons.push({
             title: Language.remove,
             onPress: () => {
                 _showPopUpAlert({
@@ -133,7 +133,7 @@ const ChatItem = (props: IChatItem) => {
                 // }))
             },
             textStyle: { color: colors.colorRed }
-        })
+        }))
         _showBottomMenu({ buttons: buttons })
     }, [])
 

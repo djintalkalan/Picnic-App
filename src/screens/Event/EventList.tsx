@@ -164,8 +164,14 @@ const EventList: FC<any> = (props) => {
                 onPress={() => {
                     dispatch(setActiveEvent(item))
                     setTimeout(() => {
-                        NavigationService.navigate("EventChats", { id: item?._id })
+                        if (item?.is_event_admin) {
+                            NavigationService.navigate("EventChats", { id: item?._id })
+                        } else {
+                            NavigationService.navigate("EventDetail", { id: item?._id })
+                        }
                     }, 0);
+
+
                 }}
                 onPressImage={() => {
                     dispatch(setActiveEvent(item))
