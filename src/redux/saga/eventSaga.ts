@@ -185,6 +185,9 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._joinEvent, payload);
         if (res.status == 200) {
             _showSuccessMessage(res?.message)
+            SocketService.emit(EMIT_JOIN_ROOM, {
+                resource_id: payload?.resource_id
+            })
             yield put(joinEventSuccess(payload?.resource_id))
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
