@@ -1,6 +1,6 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidImportance } from "@notifee/react-native";
+import notifee, { AndroidCategory, AndroidDefaults, AndroidImportance } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import Database, { useDatabase } from 'database/Database';
 import { useCallback, useEffect, useRef } from 'react';
@@ -157,22 +157,48 @@ export const onMessageReceived = async (message: any) => {
     console.log("message", message)
     const isLogin = Database.getStoredValue("isLogin");
     if (isLogin) {
-        // showNotification(message)
+        showNotification(message)
     }
 }
 
 const showNotification = (message: any) => {
-    const { title, body } = message?.data ?? {};
-    notifee.displayNotification({
-        title, body, data: message?.data,
-        android: {
-            channelId: CHANNEL_NAME,
-        },
-        ios: {
-            sound: 'default',
+    let { title, body, message: data } = message?.data ?? {};
+    if (data) {
+        if (typeof data == 'string') {
+            data = JSON.parse(data)
         }
+        console.log("data is ", data);
 
-    });
+        if (data?.group || data?.event) {
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if ((data?.group && (name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat")) ||
+                (data?.event && name == "EventChats")
+                && params?.id == data?.resource_id
+            ) {
+
+            } else {
+                notifee.displayNotification({
+                    subtitle: (data?.group || data?.event)?.name,
+                    body: data?.message,
+                    title: data?.user?.display_name,
+                    data: { title, body, message: JSON.stringify(data) },
+                    android: {
+                        channelId: CHANNEL_NAME,
+                        sound: 'default',
+                        category: AndroidCategory.ALARM,
+                        defaults: [AndroidDefaults.ALL]
+
+                    },
+                    ios: {
+                        sound: 'default',
+                    }
+
+                });
+            }
+        }
+    }
+
+
 }
 
 messaging().setBackgroundMessageHandler(onMessageReceived);
