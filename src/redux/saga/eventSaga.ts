@@ -184,7 +184,8 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._joinEvent, payload);
         if (res.status == 200) {
-            yield put(joinEventSuccess(payload))
+            _showSuccessMessage(res?.message)
+            yield put(joinEventSuccess(payload?.resource_id))
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

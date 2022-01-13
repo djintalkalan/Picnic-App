@@ -125,7 +125,6 @@ const EditEvent: FC<any> = props => {
         setTimeout(() => {
             ImagePicker.openPicker(ProfileImagePickerOptions)
                 .then(image => {
-                    console.log(image);
                     uploadedImage.current = '';
                     setEventImage(image);
                 })
@@ -151,7 +150,6 @@ const EditEvent: FC<any> = props => {
 
     useEffect(() => {
         if (event) {
-            console.log('event is', event)
             locationRef.current = {
                 latitude: event?.location?.coordinates[1],
                 longitude: event?.location?.coordinates[0],
@@ -203,7 +201,6 @@ const EditEvent: FC<any> = props => {
                     uploadFile({
                         image: eventImage,
                         onSuccess: url => {
-                            console.log('URL is ', url);
                             uploadedImage.current = url;
                             callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent);
                         },

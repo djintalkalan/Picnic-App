@@ -25,10 +25,8 @@ const BookEvent: FC = (props: any) => {
     });
     const dispatch = useDispatch();
 
-    console.log(eventDetail)
 
     const confirmReservation = useCallback((data) => {
-        console.log('data  is', data)
         let payload = {
             resource_id: eventDetail?.id,
             no_of_tickets: noOfTickets,

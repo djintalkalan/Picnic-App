@@ -44,10 +44,10 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
             if (i > -1) {
                 const newState = { ...state }
                 newState.allEvents[i] = {
-                    ...newState?.allEvents,
+                    ...newState?.allEvents[i],
                     // ...action?.payload?.data?.event,
-                    // is_event_pinned_by_me:action?.payload?.data?.event?.is_event_pinned_by_me,
-                    // is_ticket_purchased_by_me:action?.payload?.data?.event?.is_ticket_purchased_by_me,
+                    is_event_pinned_by_me: action?.payload?.data?.event?.is_event_pinned_by_me,
+                    is_ticket_purchased_by_me: action?.payload?.data?.event?.is_ticket_purchased_by_me,
                     is_event_admin: action?.payload?.data?.event?.is_event_admin,
                 }
                 return newState
@@ -63,7 +63,9 @@ export const eventDetailReducer = (state: IEventDetailReducer = {}, action: acti
 
         case ActionTypes.JOIN_EVENT_SUCCESS:
             if (state?.[action?.payload]) {
-                return { ...state, [action.payload]: { ...state[action?.payload], event: { ...state[action?.payload].event, is_event_member: true } } }
+                const newSt = { ...state, [action.payload]: { ...state[action?.payload], event: { ...state[action?.payload].event, is_event_member: true } } }
+
+                return newSt
             }
             return state
         case ActionTypes.LEAVE_EVENT_SUCCESS:

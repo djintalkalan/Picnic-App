@@ -23,7 +23,7 @@ const subscriptionIds = [
 ];
 
 
-const Subscription: FC = () => {
+const Subscription: FC = (props: any) => {
 
     const dispatch = useDispatch();
 
@@ -167,9 +167,10 @@ const Subscription: FC = () => {
         _getActiveMembership().then(res => {
             dispatch(setLoadingAction(false))
             if (res?.status == 200) {
+
                 const expireAt = stringToDate(res?.data?.expire_at, "YYYY-MM-DD");
                 // if (expireAt >= new Date()) {
-                if (expireAt < new Date()) {
+                if (expireAt < new Date() || !res.data) {
                     requestPurchase(productIds[i], false)
                 } else continueToMemberShip("Your are already a member")
 
@@ -183,6 +184,9 @@ const Subscription: FC = () => {
     const continueToMemberShip = useCallback((message: string) => {
         _showSuccessMessage(message)
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+        props?.route?.params?.data?.isFreeEvent ?
+            props?.route?.params?.onSubscription(props?.route?.params?.data) :
+            NavigationService.replace('CreateEvent3', { data: props?.route?.params?.data })
         /// rest thing
 
 
