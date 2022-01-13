@@ -164,7 +164,7 @@ const EventList: FC<any> = (props) => {
                 onPress={() => {
                     dispatch(setActiveEvent(item))
                     setTimeout(() => {
-                        if (item?.is_event_admin) {
+                        if (item?.is_event_member) {
                             NavigationService.navigate("EventChats", { id: item?._id })
                         } else {
                             NavigationService.navigate("EventDetail", { id: item?._id })
