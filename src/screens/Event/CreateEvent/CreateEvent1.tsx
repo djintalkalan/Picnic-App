@@ -80,7 +80,6 @@ const CreateEvent1: FC<any> = props => {
     setTimeout(() => {
       ImagePicker.openPicker(ProfileImagePickerOptions)
         .then(image => {
-          console.log(image);
           uploadedImage.current = '';
           setEventImage(image);
         })

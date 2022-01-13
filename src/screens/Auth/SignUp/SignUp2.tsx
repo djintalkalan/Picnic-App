@@ -30,7 +30,6 @@ const SignUp2: FC<any> = (props) => {
     })
 
     const onSubmit = useCallback(() => handleSubmit(data => {
-        console.log(data)
         const { firstName, lastName } = data
         NavigationService.navigate("SignUp3", {
             first_name: firstName,

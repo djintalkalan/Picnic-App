@@ -27,6 +27,8 @@ const EventDetail: FC<any> = (props) => {
     }), isEqual)
 
 
+
+
     useLayoutEffect(() => {
         // console.log("payload", props)
         InteractionManager.runAfterInteractions(() => {
@@ -40,6 +42,7 @@ const EventDetail: FC<any> = (props) => {
             popStatusBarStyle()
         }
     }, []))
+
 
 
     // const _renderGroupMembers = useCallback(({ item, index }) => {
@@ -206,7 +209,7 @@ const EventDetail: FC<any> = (props) => {
                     <View>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) }}
+                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
                             <Text style={{ marginLeft: scaler(10) }}>
                                 {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
@@ -224,9 +227,8 @@ const EventDetail: FC<any> = (props) => {
 
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
-
             </ScrollView>
-            {stringToDate(event?.event_date, 'YYYY-MM-DD', '-') > new Date() ?
+            {stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() ?
                 event?.is_admin || event?.is_event_member ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                         <View style={{ flex: 1 }}>

@@ -34,18 +34,16 @@ const CreateEvent3: FC<any> = props => {
   } = useForm<FormType>({
     mode: 'onChange',
   });
-  const eventDetail = props?.route?.params;
+  const eventDetail = props?.route?.params?.data;
 
-  console.log('data is', props?.route?.params)
 
   const onSubmit = useCallback(
     (data) => {
-      if (!eventDetail?.image && eventDetail?.screen1Data?.eventImage?.path) {
+      if (!eventDetail?.image && eventDetail?.eventImage?.path) {
         dispatch(
           uploadFile({
-            image: eventDetail?.screen1Data?.eventImage,
+            image: eventDetail?.eventImage,
             onSuccess: url => {
-              console.log('URL is ', url);
               eventDetail.image = url;
               callCreateEventApi(data, isPayByPaypal, isPayByCash);
             },
@@ -62,15 +60,15 @@ const CreateEvent3: FC<any> = props => {
 
   const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
     const { latitude, longitude, address, otherData } =
-      eventDetail?.screen1Data?.location ?? {};
+      eventDetail?.location ?? {};
 
     const { startTime, endTime, eventDate } = eventDetail?.eventDateTime
     let payload = {
       image: eventDetail?.image,
-      name: eventDetail?.screen1Data?.eventName,
-      group_id: eventDetail?.screen1Data?.myGroup?.id,
-      is_online_event: eventDetail?.screen1Data?.isOnlineEvent ? '1' : '0',
-      short_description: eventDetail?.screen1Data?.aboutEvent,
+      name: eventDetail?.eventName,
+      group_id: eventDetail?.myGroup?.id,
+      is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
+      short_description: eventDetail?.aboutEvent,
       address: address?.main_text + ', ' + address?.secondary_text,
       city: otherData?.city,
       state: otherData?.state,
@@ -79,15 +77,15 @@ const CreateEvent3: FC<any> = props => {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      capacity_type: eventDetail?.capacity ? 'unlimited' : 'limited',
-      capacity: eventDetail?.screen2Data?.capacity,
+      capacity_type: eventDetail?.isUnlimitedCapacity ? 'unlimited' : 'limited',
+      capacity: eventDetail?.capacity,
       is_free_event: '0',
-      event_fees: eventDetail?.screen2Data?.ticketPrice,
+      event_fees: eventDetail?.ticketPrice,
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_start_time: dateFormat(startTime, "HH:mm:ss"),
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-      details: eventDetail?.screen2Data?.additionalInfo,
-      event_currency: eventDetail?.screen2Data?.currency.toLowerCase(),
+      details: eventDetail?.additionalInfo,
+      event_currency: eventDetail?.currency.toLowerCase(),
       payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
       payment_email: data?.paypalId,
       event_refund_policy: data?.policy
@@ -105,19 +103,14 @@ const CreateEvent3: FC<any> = props => {
   }, []);
 
   const calculateButtonDisability = useCallback(() => {
-    if (
-      (isPayByPaypal &&
-        (!getValues('paypalId') ||
-          !getValues('policy'))) ||
-      (errors &&
-        (errors.paypalId ||
-          errors.policy))
+    if ((!isPayByPaypal && !isPayByCash) ||
+      (isPayByPaypal && !getValues('paypalId'))
     ) {
       return true;
     }
 
     return false;
-  }, [errors]);
+  }, [isPayByPaypal, isPayByCash]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -168,6 +161,7 @@ const CreateEvent3: FC<any> = props => {
               multiline
               style={{ minHeight: scaler(200), textAlignVertical: 'top' }}
               limit={1000}
+              required={Language.refund_policy_required}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               control={control}

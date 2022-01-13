@@ -14,7 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -48,7 +48,6 @@ const CreateEvent2: FC<any> = props => {
     endTime: new Date()
   });
   const [userData] = useDatabase("userData")
-  console.log('userData', userData)
 
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -72,7 +71,6 @@ const CreateEvent2: FC<any> = props => {
           uploadFile({
             image: bodyData?.eventImage,
             onSuccess: url => {
-              console.log('URL is ', url);
               uploadedImage.current = url;
               callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
             },
@@ -336,25 +334,34 @@ const CreateEvent2: FC<any> = props => {
 
               !userData?.is_premium ?
                 _showPopUpAlert({
-                  message: Language.join_now_to_access_payment_processing,
+                  message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
                   buttonText: Language.join_now,
                   onPressButton: () => {
-                    NavigationService.navigate("Subscription");
+                    NavigationService.navigate("Subscription", {
+                      onSubscription: onSubmit, data: {
+                        ...data, ...bodyData,
+                        eventDateTime: eventDateTime.current,
+                        image: uploadedImage?.current,
+                        isUnlimitedCapacity: isUnlimitedCapacity,
+                        isFreeEvent: isFreeEvent
+                      }
+                    });
                     _hidePopUpAlert()
                   },
                   cancelButtonText: Language.no_thanks_create_my_event,
-                  onPressCancel: () => { isFreeEvent ? onSubmit(data) : NavigationService.goBack() }
+                  onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
                 }) :
                 isFreeEvent ?
                   onSubmit(data)
                   :
                   NavigationService.navigate('CreateEvent3',
                     {
-                      screen1Data: bodyData,
-                      screen2Data: data,
-                      eventDateTime: eventDateTime.current,
-                      image: uploadedImage?.current,
-                      capacity: isUnlimitedCapacity
+                      data: {
+                        ...data, ...bodyData,
+                        eventDateTime: eventDateTime.current,
+                        image: uploadedImage?.current,
+                        isUnlimitedCapacity: isUnlimitedCapacity
+                      }
                     })
               //   :
               //  undefined
