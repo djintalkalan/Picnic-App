@@ -1,13 +1,15 @@
 import { colors } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
-import { GestureResponderEvent, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { GestureResponderEvent, Image, ImageURISource, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { NavigationService, scaler } from 'utils'
 interface MyHeaderProps {
     onPress?: (e?: GestureResponderEvent) => void
     title: string
     backEnabled?: boolean
+    rightIcon?: ImageURISource,
+    onPressRight?: (e?: GestureResponderEvent) => void
 }
 
 export const MyHeader: FC<MyHeaderProps> = (props) => {
@@ -25,7 +27,7 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
         [isKeyboard, props?.onPress],
     )
 
-    const { backEnabled = true, title } = props
+    const { backEnabled = true, title, onPressRight, rightIcon } = props
 
 
 
@@ -37,6 +39,12 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
                     <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
                 </TouchableOpacity>}
             <Text style={styles.title} >{title}</Text>
+            {rightIcon &&
+                <TouchableOpacity onPress={onPressRight} style={[styles.button, {
+                    left: undefined, right: 0
+                }]} >
+                    <Image source={rightIcon} style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} />
+                </TouchableOpacity>}
         </View>
 
     )
