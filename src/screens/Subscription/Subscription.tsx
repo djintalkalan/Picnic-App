@@ -181,15 +181,19 @@ const Subscription: FC = (props: any) => {
         })
     }, [])
 
+
     const continueToMemberShip = useCallback((message: string) => {
         _showSuccessMessage(message)
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
-        props?.route?.params?.data?.isFreeEvent ?
-            props?.route?.params?.onSubscription(props?.route?.params?.data) :
-            NavigationService.replace('CreateEvent3', { data: props?.route?.params?.data })
-        /// rest thing
-
-
+        if (props?.route?.params?.from == 'editEvent') {
+            NavigationService.goBack();
+            props?.route?.params?.onSuccess();
+        }
+        else {
+            props?.route?.params?.data?.isFreeEvent ?
+                props?.route?.params?.onSubscription(props?.route?.params?.data) :
+                NavigationService.replace('CreateEvent3', { data: props?.route?.params?.data })
+        }
     }, [])
 
     return (

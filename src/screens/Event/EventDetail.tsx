@@ -242,6 +242,7 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                         <View style={{ flex: 1 }}>
                             <Button title={Language.start_chat}
+                                onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
                                 fontColor={'black'}
                                 backgroundColor={'white'}
                                 buttonStyle={{
