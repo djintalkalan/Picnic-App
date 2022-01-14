@@ -1,33 +1,33 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidDefaults, AndroidImportance } from "@notifee/react-native";
+import notifee, { AndroidDefaults, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
+import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
-import { useCallback, useEffect, useRef } from 'react';
+import { Dispatch, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { NavigationService, WaitTill } from 'utils';
 
 const CHANNEL_NAME = "high-priority"
 
-// PushNotification.configure({onNotification:})
-// PushNotification.createChannel({ channelName: CHANNEL_NAME, playSound: true, vibrate: true, channelId: CHANNEL_NAME }, (b) => {
-// })
-
 notifee.createChannel({
     id: CHANNEL_NAME,
     name: CHANNEL_NAME,
-    lights: false,
+    lights: true,
     vibration: true,
     sound: 'default',
     importance: AndroidImportance.HIGH,
 })
 
+let isFirstTime = true
+
+let dispatch: Dispatch<any>
+
 const FirebaseNotification = () => {
-    const isFirstTime = useRef(true)
     const [isLogin] = useDatabase<boolean>("isLogin");
     const [firebaseToken, setFirebaseToken] = useDatabase<string>('firebaseToken');
 
-    const dispatch = useDispatch()
+    dispatch = useDispatch()
 
     const checkPermission = useCallback(async () => {
         const authStatus = await messaging().requestPermission();
@@ -56,58 +56,66 @@ const FirebaseNotification = () => {
     useEffect(() => {
         checkPermission();
         const removeSubscription = createNotificationListeners()
+        const foregroundSubs = notifee.onForegroundEvent(({ type, detail }) => {
+            switch (type) {
+                case EventType.PRESS:
+                    detail?.notification && onNotificationOpened(detail?.notification)
+                    break;
+            }
+        });
+
+
         // PushNotification.configure({ onNotification: onNotificationOpened })
         setTimeout(() => {
-            isFirstTime.current = false
+            isFirstTime = false
         }, 1500);
         return () => {
             // if (removeSubscription) {
             removeSubscription()
+            foregroundSubs()
             // }
             // PushNotification.unregister()
         }
+        return
     }, [isLogin])
 
-    const onNotificationOpened = useCallback((notification) => {
-        console.log("PushNotification OPen Received:", notification, "isLogin : ", isLogin);
-        if (!isLogin) return
-        navigateToPages(notification)
-    }, [isLogin])
-
-    const navigateToPages = async (notification: any) => {
-        console.log(isFirstTime.current)
-        if (isFirstTime.current) {
-            await WaitTill(1500)
-        }
-        //    
-    }
 
 }
 
-const getCircularReplacer = () => {
-    const seen = new WeakSet();
-    return (key: any, value: any) => {
-        if (typeof value === 'object' && value !== null) {
-            if (seen.has(value)) {
-                return;
-            }
-            seen.add(value);
+export const onNotificationOpened = (notification: Notification) => {
+    navigateToPages(notification)
+}
+
+const navigateToPages = async (notification: any) => {
+    if (isFirstTime) {
+        await WaitTill(1500)
+    }
+    let { message: data } = notification?.data ?? {};
+    if (data) {
+        if (typeof data == 'string') {
+            data = JSON.parse(data)
         }
-        return value;
-    };
-};
+        console.log("data is ", data);
 
+        if (data?.group || data?.event) {
+            dispatch && dispatch((data?.group ? setActiveGroup : setActiveEvent)(data?.group ?? data?.event))
+            NavigationService.closeAndPush(data?.group ? "GroupChatScreen" : "EventChats", { id: data?.resource_id })
+        }
+    }
+}
 
-
-export const onMessageReceived = async (message: any) => {
-    console.log("message", message)
+export const onMessageReceived = async (message: any, isBackground: boolean = false) => {
+    if (isBackground)
+        console.log("Background Firebase Message ", message)
+    else
+        console.log("Firebase Message ", message)
     const isLogin = Database.getStoredValue("isLogin");
     if (isLogin) {
-        showNotification(message)
+        showNotification(message, isBackground)
     }
 }
 
-const showNotification = (message: any) => {
+const showNotification = (message: any, isBackground: boolean) => {
     let { title, body, message: data } = message?.data ?? {};
     if (data) {
         if (typeof data == 'string') {
@@ -117,9 +125,10 @@ const showNotification = (message: any) => {
 
         if (data?.group || data?.event) {
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-            if ((data?.group && (name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat")) ||
+            if (!isBackground && (params?.id == data?.resource_id &&
+                (data?.group && (name == "GroupChatScreen" || name == "Chats")) ||
                 (data?.event && name == "EventChats")
-                && params?.id == data?.resource_id
+            )
             ) {
 
             } else {
@@ -137,7 +146,6 @@ const showNotification = (message: any) => {
                     ios: {
                         sound: 'default',
                     }
-
                 });
             }
         }
@@ -145,8 +153,6 @@ const showNotification = (message: any) => {
 
 
 }
-
-messaging().setBackgroundMessageHandler(onMessageReceived);
 
 
 export default FirebaseNotification

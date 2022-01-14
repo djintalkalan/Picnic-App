@@ -142,7 +142,7 @@ const EventChats: FC<any> = (props) => {
                         NavigationService.navigate("EventDetail", { id: _id })
                     }, 0);
                 }}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >

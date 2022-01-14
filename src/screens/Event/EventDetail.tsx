@@ -74,7 +74,7 @@ const EventDetail: FC<any> = (props) => {
     }
     return (
         <SafeAreaView style={styles.container} edges={['bottom']} >
-            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+            <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
                 {isDefault || !event?.image ?
                     <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>

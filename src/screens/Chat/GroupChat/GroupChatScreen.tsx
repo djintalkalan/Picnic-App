@@ -60,7 +60,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                         NavigationService.navigate("GroupDetail", { id: _id })
                     }, 0);
                 }}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'groups' }) } : undefined}
                 defaultIcon={Images.ic_group_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >

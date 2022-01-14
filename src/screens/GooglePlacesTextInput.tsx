@@ -72,15 +72,6 @@ const GooglePlacesTextInput: FC<any> = (props) => {
     }, [])
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }} >
-            {/* <GooglePlacesAutocomplete
-                styles={[{}]}
-                query={{
-                    key: config.GOOGLE_MAP_API_KEY,
-                    language: 'en', // language of the results
-                }}
-                onPress={(data, details) => console.log(data, details)}
-                placeholder={'Search Location'}
-            /> */}
             <TouchableOpacity style={{ flex: 1, paddingTop: scaler(10) }} disabled >
 
                 <GooglePlacesAutocomplete

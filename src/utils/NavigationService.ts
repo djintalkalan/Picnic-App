@@ -18,6 +18,17 @@ const push = (name: string, params: any = {}) => {
   navigationRef?.current?.dispatch(StackActions.push(name, params));
 };
 
+const closeAndPush = (name: string, params: any = {}) => {
+  // console.log("navigationRef?.current??", params, navigationRef?.current?.getCurrentRoute())
+  const currentName = navigationRef?.current?.getCurrentRoute()?.name
+
+  if (((currentName == "GroupChatScreen" || currentName == 'EventChats' || currentName == "Chats" || currentName == 'UpcomingEventsChat') && (name == "GroupChatScreen" || name == "EventChats"))
+  ) {
+    goBack()
+  }
+  navigationRef?.current?.dispatch(StackActions.push(name, params));
+};
+
 const getCurrentScreen = (): Route<string, any> | undefined => {
   return navigationRef?.current?.getCurrentRoute();
 }
@@ -39,6 +50,8 @@ const replace = (name: string, params: any = {}) => {
   navigationRef?.current?.dispatch(StackActions.replace(name, params));
 };
 
+
+
 const logout = (name: string, params: any = {}) => {
   navigationRef?.current?.dispatch(StackActions.popToTop());
   replace(name);
@@ -50,4 +63,4 @@ const goBack = () => {
     console.log(e);
   }
 };
-export const NavigationService = { getCurrentScreen, navigate, goBack, push, replace, logout };
+export const NavigationService = { getCurrentScreen, navigate, goBack, push, replace, logout, closeAndPush };

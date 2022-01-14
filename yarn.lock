@@ -6646,6 +6646,11 @@ react-native-internet-connection-alert@^0.1.6:
     react-native-dropdownalert "^4.3.0"
     react-native-gorgeous-header "^0.1.0"
 
+react-native-invoke-app@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-invoke-app/-/react-native-invoke-app-1.0.6.tgz#5ea2fe6e498cee2214d04afbd8d0005a8681ca36"
+  integrity sha512-+kpgr+trccd1R+ZxTnIOpGWVsr/W+JXUKiNibgwwx+KbdTxMgQCt47/mb2Z6/nMCVgTBXP5MSCpDGJ6II1byrw==
+
 react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
