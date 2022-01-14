@@ -1,6 +1,6 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidCategory, AndroidDefaults, AndroidImportance } from "@notifee/react-native";
+import notifee, { AndroidDefaults, AndroidImportance } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import Database, { useDatabase } from 'database/Database';
 import { useCallback, useEffect, useRef } from 'react';
@@ -18,6 +18,7 @@ notifee.createChannel({
     name: CHANNEL_NAME,
     lights: false,
     vibration: true,
+    sound: 'default',
     importance: AndroidImportance.HIGH,
 })
 
@@ -78,62 +79,7 @@ const FirebaseNotification = () => {
         if (isFirstTime.current) {
             await WaitTill(1500)
         }
-        const event_type = notification?.data?.eventType
-        const event_id = notification?.data?.eventId
-        if (event_type && event_id) {
-            switch (event_type?.toLowerCase()) {
-                case "appointment":
-                case "appointment_cancel":
-                case "appointment_reschedule":
-                case "appointment_reminder":
-                    NavigationService.push('BookingComplete', { appId: event_id, type: 'notification' })
-                    break;
-                case "treatment_instruction":
-                    NavigationService.push("InstructionDetail", { id: event_id, type: 'notification' })
-                    break;
-                case "questionnaire":
-                    NavigationService.push("PreAppointmentQuestionnaire", { id: event_id, type: 'notification' })
-                    break;
-                case 'appointment_questionnarie':
-                    NavigationService.push("NewAppointmentQuestionnaire", { id: event_id, type: 'notification' })
-                    break;
-                case "anti_ectoparasite":
-                case "deworming":
-                    if (notification?.data?.body.includes("click here to book")) {
-                        NavigationService.navigate("AppointmentsTab", {
-                            screen: 'AddAppointment',
-                            initial: false,
-                        })
-                        break;
-                    }
-                    NavigationService.push('DewormingRecord', { id: event_id, type: 'notification' })
-                    break;
-                case "invoice":
-                    NavigationService.push('InvoiceDetails', { invoiceID: event_id, type: 'notification' })
-                    break;
-                case "vaccination":
-                    if (notification?.data?.body.includes("click here to book")) {
-                        NavigationService.navigate("AppointmentsTab", {
-                            screen: 'AddAppointment',
-                            initial: false,
-                        })
-                        break;
-                    }
-                    NavigationService.push('VaccinationRecord', { id: event_id, type: 'notification' })
-                    break;
-                case "feedback":
-                    NavigationService.push("Feedback", { id: event_id, type: 'notification' })
-                    break;
-                case "visit":
-                    NavigationService.push("TreatmentRecord", { pet_visit_id: event_id, type: 'notification' })
-                    break;
-                case "article":
-                    NavigationService.push("Article", { id: event_id, type: 'notification' })
-                    break;
-                default:
-                    break;
-            }
-        }
+        //    
     }
 
 }
@@ -185,9 +131,8 @@ const showNotification = (message: any) => {
                     android: {
                         channelId: CHANNEL_NAME,
                         sound: 'default',
-                        category: AndroidCategory.ALARM,
+                        // category: AndroidCategory.ALARM,
                         defaults: [AndroidDefaults.ALL]
-
                     },
                     ios: {
                         sound: 'default',
