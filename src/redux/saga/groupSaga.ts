@@ -106,9 +106,9 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
                         }))
                         break;
                     case 'group':
-                        deleteGroupSuccess(payload?.data?.resource_id)
+                        yield put(deleteGroupSuccess(payload?.data?.resource_id))
                     default:
-                        deleteEventSuccess(payload?.data?.resource_id)
+                        yield put(deleteEventSuccess(payload?.data?.resource_id))
                         break;
                 }
             else {
