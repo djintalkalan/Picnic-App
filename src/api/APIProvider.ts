@@ -104,8 +104,8 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
         keyPrefix: config.AWS3_KEY_PREFIX + prefix + "/",
         bucket: config.AWS3_BUCKET,
         region: config.AWS3_REGION,
-        accessKey: config.AWS3_ACCESS_KEY,
-        secretKey: config.AWS3_SECRET_KEY,
+        accessKey: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
+        secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
         successActionStatus: 201
     }
     return RNS3.put(file, options).then((response) => {

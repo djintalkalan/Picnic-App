@@ -50,11 +50,7 @@ const CreateNewPassword: FC<any> = (props) => {
         <SafeAreaView style={styles.container} >
             <MyHeader title={Language.change_password} />
 
-
-
-
             <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
-
 
                 <TextInput
                     ref={passwordRef}
