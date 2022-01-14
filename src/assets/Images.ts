@@ -66,5 +66,6 @@ export const Images = {
   ic_close_subscription: require("./images/ic_close_subscription.png"),
   ic_list_dot: require("./images/ic_list_dot.png"),
   ic_oval_shape: require("./images/ic_oval_shape.png"),
-  // ic_smiley: require("./images/ic_smiley.png"),
+  ic_cancelled: require("./images/ic_cancelled.png"),
+  // ic_cancelled: require("./images/ic_cancelled.png"),
 };

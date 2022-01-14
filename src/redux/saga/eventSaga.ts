@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, setAllEvents, setEventDetail, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -189,6 +189,7 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
                 resource_id: payload?.resource_id
             })
             yield put(joinEventSuccess(payload?.resource_id))
+            yield put(getEventDetail(payload?.resource_id))
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -209,6 +210,7 @@ function* _leaveEvent({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._leaveEvent, payload);
         if (res.status == 200) {
             yield put(leaveEventSuccess(payload))
+            yield put(getEventDetail(payload))
             SocketService?.emit(EMIT_LEAVE_ROOM, {
                 resource_id: payload
             })

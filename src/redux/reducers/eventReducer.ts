@@ -46,6 +46,7 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
                 newState.allEvents[i] = {
                     ...newState?.allEvents[i],
                     // ...action?.payload?.data?.event,
+                    total_sold_tickets: action?.payload?.data?.event?.total_sold_tickets,
                     is_event_pinned_by_me: action?.payload?.data?.event?.is_event_pinned_by_me,
                     is_ticket_purchased_by_me: action?.payload?.data?.event?.is_ticket_purchased_by_me,
                     is_event_admin: action?.payload?.data?.event?.is_event_admin,

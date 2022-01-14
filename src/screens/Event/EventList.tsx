@@ -5,7 +5,6 @@ import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem';
-import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -126,7 +125,7 @@ const EventList: FC<any> = (props) => {
         isLoading: state.isLoading,
         allEvents: state?.event?.allEvents,
         searchedEvents: state?.homeData?.searchedEvents
-    }), isEqual)
+    }))
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')
@@ -151,6 +150,9 @@ const EventList: FC<any> = (props) => {
     const onSuccess = useCallback(({ pagination }) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
+
+    console.log(allEvents);
+
 
     const _renderItem = useCallback(({ item }, rowMap) => {
         const { is_event_member, city, state, country } = item

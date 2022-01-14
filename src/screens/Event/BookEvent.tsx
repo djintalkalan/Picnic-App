@@ -2,7 +2,7 @@ import { joinEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, KeyboardTopView, MyHeader, TextInput } from 'custom-components';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, Fragment, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -90,11 +90,13 @@ const BookEvent: FC = (props: any) => {
                             {Language.select_payment_options}
                         </Text>
                         {eventDetail?.paymentMethod.map((_, i) => {
-                            return <><PaymentMethod
-                                type={_}
-                                isPayByPaypal={isPayByPaypal}
-                                setIsPayByPaypal={setIsPayByPaypal} />
-                                {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}</>
+                            return <Fragment key={i}>
+                                <PaymentMethod
+                                    type={_}
+                                    isPayByPaypal={isPayByPaypal}
+                                    setIsPayByPaypal={setIsPayByPaypal} />
+                                {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
+                            </Fragment>
                         })}
                     </>
                     : null}
@@ -113,7 +115,7 @@ const BookEvent: FC = (props: any) => {
                             : Language.pay + ' ' + getSymbol(eventDetail?.currency) + (parseInt(noOfTickets) * eventDetail?.price)}
                             onPress={eventDetail?.isFree ? handleSubmit((data) => confirmReservation(data)) : () => {
                                 _showPopUpAlert({
-                                    title: Language.confirm_paymet_method,
+                                    title: Language.confirm_payment_method,
                                     message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                                         : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
                                     onPressButton: handleSubmit((data) => { confirmReservation(data), _hidePopUpAlert() }),

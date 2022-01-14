@@ -4,17 +4,16 @@ import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportReso
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
-
-
 
 const EventDetail: FC<any> = (props) => {
 
@@ -26,11 +25,21 @@ const EventDetail: FC<any> = (props) => {
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
-
-
+    const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
+        if (event?.my_tickets) {
+            const index = event?.my_tickets?.findIndex(_ => _.status == 1) || -1
+            return {
+                isCancelledByMember: (!event?.my_tickets?.length || index > -1) ? false : true,
+                activeTicket: index > -1 ? event?.my_tickets[index] : null
+            }
+        }
+        return {
+            isCancelledByMember: false,
+            activeTicket: null
+        }
+    }, [event?.my_tickets])
 
     useLayoutEffect(() => {
-        // console.log("payload", props)
         InteractionManager.runAfterInteractions(() => {
             dispatch(getEventDetail(props?.route?.params?.id))
         })
@@ -176,19 +185,34 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                     </View>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                            source={Images.ic_group_events} />
-                        <Text style={styles.events} >
-                            {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
-                        </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                            source={Images.ic_event_time} />
-                        <Text style={styles.events} >
-                            {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
-                        </Text>
+                    <View style={{ flexDirection: 'row', width: '100%' }} >
+                        <View style={{ flex: 1 }} >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                    source={Images.ic_group_events} />
+                                <Text style={styles.events} >
+                                    {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
+                                </Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                    source={Images.ic_event_time} />
+                                <Text style={styles.events} >
+                                    {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                </Text>
+                            </View>
+                        </View>
+                        {activeTicket || isCancelledByMember ?
+                            isCancelledByMember ?
+                                <Image style={{ resizeMode: 'contain', height: scaler(100), width: scaler(100) }} source={Images.ic_cancelled} />
+                                :
+                                <View>
+                                    <QRCode
+                                        value={activeTicket?.ticket_id}
+                                        logoSize={scaler(40)}
+                                    />
+                                    <Text style={styles.ticketId} >{activeTicket?.ticket_id}</Text>
+                                </View> : null}
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
@@ -253,7 +277,7 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                     </View> :
                     <View style={{ marginHorizontal: scaler(10) }}>
-                        <Button title={Language.confirm}
+                        <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                             onPress={() => NavigationService.navigate('BookEvent',
                                 {
                                     id: event?._id,
@@ -382,5 +406,11 @@ const styles = StyleSheet.create({
         paddingVertical: scaler(4),
         backgroundColor: colors.colorWhite,
         alignItems: 'flex-start',
+    },
+    ticketId: {
+        fontSize: scaler(15),
+        fontWeight: '500',
+        color: colors.colorBlackText,
+        textAlign: 'center'
     }
 })
