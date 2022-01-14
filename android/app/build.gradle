@@ -146,6 +146,8 @@ android {
         versionName ANDROID_VERSION_NAME
         missingDimensionStrategy ('store', 'play')
         multiDexEnabled true
+        missingDimensionStrategy 'react-native-camera', 'general'
+}
     }
     splits {
         abi {

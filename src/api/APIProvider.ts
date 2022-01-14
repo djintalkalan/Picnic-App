@@ -359,3 +359,8 @@ export const _getActiveMembership = async () => {
     console.log("---------- _getActiveMembership Api Call ---------------")
     return fetchApiData(config.API_URL + 'membership/get-active-membership', null, "GET")
 }
+
+export const _getEventMembers = async (body: string) => {
+    console.log("---------- _getEventMembers Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/members?id=' + body, null, "GET")
+}

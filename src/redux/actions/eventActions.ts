@@ -94,7 +94,7 @@ export const getEventMembers = (payload: any) => ({
     payload
 })
 
-export const setEventMembers = (payload: Array<any>) => ({
+export const setEventMembers = (payload: { eventId: string, data: any }) => ({
     type: ActionTypes.SET_EVENT_MEMBERS,
     payload
 })

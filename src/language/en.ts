@@ -237,7 +237,8 @@ export const en = {
   are_you_sure_cancel_your_reservation: 'Are you sure you want to cancel your reservation',
   join_now_the_picnic_premium: 'Join now the Picnic Premium?',
   refund_policy_required: 'Refund policy is required',
-  // book_ticket: 'Book Ticket',
+  not_checked_in: 'Not checked in ',
+  checked_in: 'Checked in ',
   // book_ticket: 'Book Ticket',
   // book_ticket: 'Book Ticket',
 }
