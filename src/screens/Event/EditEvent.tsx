@@ -34,7 +34,9 @@ import {
     NavigationService,
     ProfileImagePickerOptions,
     scaler,
-    stringToDate
+    stringToDate,
+    _hidePopUpAlert,
+    _showPopUpAlert
 } from 'utils';
 
 type FormType = {
@@ -70,8 +72,7 @@ const EditEvent: FC<any> = props => {
     const locationInputRef = useRef<RNTextInput>(null);
     const selectedGroupRef = useRef<any>(null);
     const [isOnlineEvent, setIsOnlineEvent] = useState(false);
-    const [isPayByCash, setIsPayByCash] = useState(false)
-    const [isPayByPaypal, setIsPayByPaypal] = useState(false)
+    const [paymentMethods, setPaymentMethods] = useState<Array<any>>([]);
     const [isGroupDropdown, setGroupDropdown] = useState(false);
     const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
     const [isFreeEvent, setIsFreeEvent] = useState(false);
@@ -170,6 +171,7 @@ const EditEvent: FC<any> = props => {
                 selectedType: 'eventDate',
             }
             selectedGroupRef.current = event?.event_group
+            setPaymentMethods(event?.payment_method ?? []);
             setIsOnlineEvent(event?.is_online_event ? true : false)
             setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
             setIsFreeEvent(event?.is_free_event ? true : false)
@@ -183,7 +185,7 @@ const EditEvent: FC<any> = props => {
             setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
             setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
             setValue('additionalInfo', event?.details)
-            setValue('currency', event?.event_currency)
+            setValue('currency', event?.event_currency?.toUpperCase())
             setValue('paypalId', event?.payment_email)
             setValue('policy', event?.event_refund_policy)
             if (event?.image) {
@@ -202,19 +204,19 @@ const EditEvent: FC<any> = props => {
                         image: eventImage,
                         onSuccess: url => {
                             uploadedImage.current = url;
-                            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent);
+                            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
                         },
                         prefixType: 'events',
                     }),
                 );
             } else {
-                callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent);
+                callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
             }
         },
-        [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent],
+        [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods],
     );
 
-    const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent) => {
+    const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods) => {
 
         const { latitude, longitude, address, otherData } =
             locationRef.current ?? {};
@@ -245,9 +247,9 @@ const EditEvent: FC<any> = props => {
             event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
             details: data?.additionalInfo,
             event_currency: data?.currency.toLowerCase(),
-            payment_method: ['paypal'],
-            payment_email: "test@picnic.com",
-            event_refund_policy: "Test Policy"
+            payment_method: paymentMethods,
+            payment_email: data?.paypalId,
+            event_refund_policy: data?.policy
         };
         dispatch(
             createEvent({
@@ -292,6 +294,27 @@ const EditEvent: FC<any> = props => {
         }
 
     }, [])
+
+    const onSubscriptionSuccess = useCallback(() => {
+        setIsFreeEvent(false)
+    }, [])
+
+    const openSubscriptionPopup = useCallback(() => {
+        _showPopUpAlert({
+            message: Language.join_now_to_access_payment_processing,
+            buttonText: Language.join_now,
+            onPressButton: () => {
+                NavigationService.navigate("Subscription", {
+                    from: 'editEvent',
+                    onSuccess: onSubscriptionSuccess
+                });
+                _hidePopUpAlert()
+            },
+            cancelButtonText: Language.close,
+        })
+    }, [])
+
+    console.log('payment methods', paymentMethods)
 
     return (
         <SafeAreaView style={styles.container}>
@@ -424,14 +447,19 @@ const EditEvent: FC<any> = props => {
                                 {Language.unlimited_capacity}
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setIsFreeEvent(!isFreeEvent)} style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity onPress={() => userData?.is_premium ? setIsFreeEvent(!isFreeEvent) : openSubscriptionPopup()} style={{ flexDirection: 'row' }}>
                             <CheckBox checked={isFreeEvent}
                                 setChecked={(b) => {
-                                    if (b) {
-                                        clearErrors('ticketPrice')
-                                        setValue('ticketPrice', "")
+                                    if (userData?.is_premium) {
+                                        if (b) {
+                                            clearErrors('ticketPrice')
+                                            setValue('ticketPrice', "")
+                                        }
+                                        setIsFreeEvent(b)
                                     }
-                                    setIsFreeEvent(b)
+                                    else {
+                                        openSubscriptionPopup()
+                                    }
                                 }}
                             />
                             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
@@ -550,29 +578,29 @@ const EditEvent: FC<any> = props => {
                         control={control}
                         errors={errors}
                     />
-                    {userData?.is_premium ?
+                    {userData?.is_premium && !isFreeEvent ?
 
                         <><View style={{ marginTop: scaler(15) }}>
                             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                                 {Language.select_payment_options}
                             </Text>
-                            <TouchableOpacity style={styles.payView} onPress={() => setIsPayByCash(!isPayByCash)}>
+                            <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('cash') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'cash')) : setPaymentMethods([...paymentMethods, 'cash'])}>
                                 <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
                                 <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_cash}</Text>
-                                <MaterialIcons name={isPayByCash ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                                <MaterialIcons name={paymentMethods?.includes('cash') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                             </TouchableOpacity>
                             <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-                            <TouchableOpacity style={styles.payView} onPress={() => setIsPayByPaypal(!isPayByPaypal)}>
+                            <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('paypal') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'paypal')) : setPaymentMethods([...paymentMethods, 'paypal'])}>
                                 <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
                                 <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
-                                <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                                <MaterialIcons name={paymentMethods?.includes('paypal') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                             </TouchableOpacity>
                         </View><View
                             style={{
                                 width: '100%',
                                 paddingVertical: scaler(10),
                             }}>
-                                {isPayByPaypal ?
+                                {paymentMethods?.includes('paypal') ?
                                     <TextInput
                                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                         placeholder={Language.paypal_id}
