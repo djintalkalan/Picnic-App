@@ -167,10 +167,10 @@ const Subscription: FC = (props: any) => {
         _getActiveMembership().then(res => {
             dispatch(setLoadingAction(false))
             if (res?.status == 200) {
-
-                const expireAt = stringToDate(res?.data?.expire_at, "YYYY-MM-DD");
+                const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+                const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
                 // if (expireAt >= new Date()) {
-                if (expireAt < new Date() || !res.data) {
+                if (expireAt < thisDate || !res.data || !res?.data?.is_premium) {
                     requestPurchase(productIds[i], false)
                 } else continueToMemberShip("Your are already a member")
 

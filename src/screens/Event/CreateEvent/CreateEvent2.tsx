@@ -1,8 +1,9 @@
+import { _getActiveMembership } from 'api';
 import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
 import Database, { useDatabase } from 'database';
-import React, { FC, useCallback, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   StyleSheet,
@@ -14,7 +15,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -49,7 +50,6 @@ const CreateEvent2: FC<any> = props => {
   });
   const [userData] = useDatabase("userData")
 
-
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
     control,
@@ -63,6 +63,24 @@ const CreateEvent2: FC<any> = props => {
   });
 
   const bodyData = props?.route?.params
+
+  useEffect(() => {
+    _getActiveMembership().then(res => {
+      if (res?.status == 200) {
+        const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+        const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+        let is_premium = 1
+        if (expireAt < thisDate || !res.data || !res?.data?.is_premium) {
+          is_premium = 0
+        }
+        if (userData?.is_premium != is_premium) {
+          Database.setUserData({ ...userData, is_premium })
+        }
+      }
+    }).catch(e => {
+      console.log(e);
+    })
+  }, [])
 
   const onSubmit = useCallback(
     (data) => {
@@ -172,8 +190,6 @@ const CreateEvent2: FC<any> = props => {
     }
 
   }, [])
-
-  console.log('userData', userData)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -333,7 +349,6 @@ const CreateEvent2: FC<any> = props => {
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={() => handleSubmit((data) => {
-
               !userData?.is_premium ?
                 _showPopUpAlert({
                   message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
