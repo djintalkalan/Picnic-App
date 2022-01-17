@@ -1,7 +1,7 @@
 import { joinEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
-import { Button, KeyboardTopView, MyHeader, TextInput } from 'custom-components';
+import { Button, KeyboardHideView, MyHeader, TextInput } from 'custom-components';
 import React, { FC, Fragment, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -87,7 +87,7 @@ const BookEvent: FC = (props: any) => {
                     <>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                            {Language.select_payment_options}
+                            {eventDetail?.paymentMethod?.length > 1 ? Language.select_payment_options : Language.payment_methods}
                         </Text>
                         {eventDetail?.paymentMethod.map((_, i) => {
                             return <Fragment key={i}>
@@ -102,10 +102,9 @@ const BookEvent: FC = (props: any) => {
                     : null}
 
             </View>
-            <KeyboardTopView>
-
+            <KeyboardHideView>
                 <View style={{ marginBottom: scaler(10), marginHorizontal: scaler(15) }}>
-                    {!eventDetail?.isFree ?
+                    {!eventDetail?.isFree && eventDetail?.event_refund_policy ?
                         <Text style={{ fontSize: scaler(15), fontWeight: '400', color: colors.colorPrimary, alignSelf: 'center', marginBottom: scaler(15) }}>
                             {Language.read_refund_policy}
                         </Text> : undefined
@@ -126,7 +125,7 @@ const BookEvent: FC = (props: any) => {
                         : undefined
                     }
                 </View>
-            </KeyboardTopView>
+            </KeyboardHideView>
         </SafeAreaView>
     )
 }

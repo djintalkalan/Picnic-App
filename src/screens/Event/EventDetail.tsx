@@ -294,6 +294,7 @@ const EventDetail: FC<any> = (props) => {
                                     capacityType: event?.capacity_type,
                                     isFree: event?.is_free_event,
                                     paymentMethod: event?.payment_method,
+                                    event_refund_policy: event?.event_refund_policy,
                                 })} />
                     </View>
                 : <View />
