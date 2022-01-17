@@ -1,15 +1,19 @@
+import { getEventMembers } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { MyHeader } from 'custom-components';
 import TopTab from 'custom-components/TopTab';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import EventmemberList from './CreateEvent/EventMemberList';
+import EventmemberList from './EventMemberList';
 
 
 
 const EventMembers: FC<any> = (props) => {
+
+    const dispatch = useDispatch()
 
     const tabs = useMemo(() => {
         return [{
@@ -21,11 +25,14 @@ const EventMembers: FC<any> = (props) => {
         {
             title: Language.checked_in,
             name: "CheckedIn",
-            // screen: (() => <View />),
             screen: EventmemberList,
             initialParams: { isCheckedIn: true, id: props?.route?.params?.id }
 
         }];
+    }, [])
+
+    useEffect(() => {
+        dispatch(getEventMembers(props?.route?.params?.id));
     }, [])
 
     return (

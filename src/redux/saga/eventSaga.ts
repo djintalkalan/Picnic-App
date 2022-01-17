@@ -229,7 +229,10 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
     try {
         let res = yield call(ApiProvider._getEventMembers, payload);
         if (res.status == 200) {
-            yield put(setEventMembers({ eventId: payload, data: res?.data }))
+            yield put(setEventMembers({
+                eventId: payload,
+                data: { eventMembersCheckedIn: res?.data?.checked_in?.data, eventMembersNotCheckedIn: res?.data?.not_checked_in?.data }
+            }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
