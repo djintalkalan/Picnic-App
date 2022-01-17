@@ -286,14 +286,6 @@ const EventDetail: FC<any> = (props) => {
                             onPress={() => NavigationService.navigate('BookEvent',
                                 {
                                     id: event?._id,
-                                    name: event?.name,
-                                    price: event?.event_fees,
-                                    currency: event?.event_currency,
-                                    capacity: event?.capacity,
-                                    soldTickets: event?.total_sold_tickets,
-                                    capacityType: event?.capacity_type,
-                                    isFree: event?.is_free_event,
-                                    paymentMethod: event?.payment_method,
                                 })} />
                     </View>
                 : <View />

@@ -232,6 +232,7 @@ export const en = {
   paypal: 'PAYPAL',
   free: 'Free',
   confirm_payment_method: 'Confirm payment method',
+  payment_methods: 'Payment methods',
   book_ticket: 'Book Ticket',
   are_you_sure_cancel_reservation: 'Are you sure you want to cancel reservation',
   are_you_sure_cancel_your_reservation: 'Are you sure you want to cancel your reservation',
