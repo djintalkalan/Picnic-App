@@ -238,6 +238,6 @@ export const en = {
   join_now_the_picnic_premium: 'Join now the Picnic Premium?',
   refund_policy_required: 'Refund policy is required',
   want_to_book_again: 'Want to book again ?',
-  // book_ticket: 'Book Ticket',
-  // book_ticket: 'Book Ticket',
+  not_checked_in: 'Not checked in ',
+  checked_in: 'Checked in ',
 }

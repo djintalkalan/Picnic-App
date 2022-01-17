@@ -173,6 +173,8 @@ const CreateEvent2: FC<any> = props => {
 
   }, [])
 
+  console.log('userData', userData)
+
   return (
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />

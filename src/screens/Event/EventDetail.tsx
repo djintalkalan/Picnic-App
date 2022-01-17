@@ -252,11 +252,14 @@ const EventDetail: FC<any> = (props) => {
                         <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text>
                             <Text style={styles.about}>{event?.short_description}</Text></> : <View />
                     }
-                    <View style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ flex: 1 }}>{Language.members}</Text>
-                        <Image style={{ height: scaler(14), resizeMode: 'contain' }} source={Images.ic_right} />
-                    </View>
-
+                    {event?.is_admin ?
+                        <TouchableOpacity style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}
+                            onPress={() => NavigationService.navigate('EventMembers', { id: event?._id })}>
+                            <Text style={{ flex: 1 }}>{Language.members}</Text>
+                            <Text style={styles.address} >{event?.total_event_members_count}</Text>
+                            <Image style={{ height: scaler(14), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
+                        </TouchableOpacity>
+                        : undefined}
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
             </ScrollView>
