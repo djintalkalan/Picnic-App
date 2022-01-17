@@ -145,6 +145,7 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'image') {
+        const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                 <ImageLoader
@@ -161,22 +162,23 @@ const ChatItem = (props: IChatItem) => {
                 borderRadius={scaler(15)}
                 source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
-            <TouchableOpacity onPress={() => {
-                SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                    message_id: _id,
-                    is_like: is_message_liked_by_me ? "0" : '1'
-                })
-            }} style={{ flexDirection: 'row', alignItems: 'center' }} >
-
-                <Image source={Images.ic_smiley} style={{
-                    resizeMode: 'contain',
-                    height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
-                    tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
-                }} />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                <TouchableOpacity onPress={() => {
+                    SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                        message_id: _id,
+                        is_like: is_message_liked_by_me ? "0" : '1'
+                    })
+                }} >
+                    <Image source={Images.ic_smiley} style={{
+                        resizeMode: 'contain',
+                        height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
+                        tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                    }} />
+                </TouchableOpacity>
                 <Text style={styles.likeBy} >
-                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{remainingNames?.length > 1 ? " and " + (message_total_likes_count - (is_message_liked_by_me ? 2 : 1)) + " others" : ""}
+                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                 </Text>
-            </TouchableOpacity>
+            </View>
         </View>
     }
 

@@ -203,7 +203,7 @@ const Subscription: FC = (props: any) => {
                     <Image source={Images.ic_close_subscription} style={styles.cancelView} />
                 </TouchableOpacity>
                 <Text style={styles.joinText} >{Language.join_us}</Text>
-                <ImageBackground source={Images.ic_oval_shape}
+                <ImageBackground imageStyle={{ resizeMode: 'contain' }} source={Images.ic_oval_shape}
                     style={styles.ovalStyle} resizeMode='contain'>
                     <Text style={[styles.joinText, { fontStyle: 'italic' }]} >{Language.here}</Text>
                     {/* </View> */}
@@ -229,7 +229,7 @@ const Subscription: FC = (props: any) => {
                 </View>
             })} */}
             <View style={{ margin: scaler(20) }}>
-                <Button title='Join now for $18 a year' onPress={() => callPurchase(0)} />
+                <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
                 <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
 
             </View>
@@ -276,7 +276,8 @@ const styles = StyleSheet.create({
         width: scaler(250),
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        resizeMode: 'contain'
     }
 })
 
