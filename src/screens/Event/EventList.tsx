@@ -151,7 +151,7 @@ const EventList: FC<any> = (props) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
-    console.log(allEvents);
+    // console.log(allEvents);
 
 
     const _renderItem = useCallback(({ item }, rowMap) => {

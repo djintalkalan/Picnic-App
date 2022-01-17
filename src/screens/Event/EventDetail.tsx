@@ -201,26 +201,28 @@ const EventDetail: FC<any> = (props) => {
                                     {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
                                 </Text>
                             </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                    source={Images.ic_event_location} />
+                                <Text style={styles.events} >
+                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                </Text>
+                            </View>
                         </View>
                         {activeTicket || isCancelledByMember ?
                             isCancelledByMember ?
                                 <Image style={{ resizeMode: 'contain', height: scaler(100), width: scaler(100) }} source={Images.ic_cancelled} />
                                 :
-                                <View>
+                                <View style={{ padding: scaler(10) }} >
                                     <QRCode
                                         value={activeTicket?.ticket_id}
-                                        logoSize={scaler(40)}
+                                        size={scaler(80)}
+                                    // logoSize={scaler(40)}
                                     />
                                     <Text style={styles.ticketId} >{activeTicket?.ticket_id}</Text>
                                 </View> : null}
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                            source={Images.ic_event_location} />
-                        <Text style={styles.events} >
-                            {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
-                        </Text>
-                    </View>
+
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                             source={Images.ic_events_tickets} />

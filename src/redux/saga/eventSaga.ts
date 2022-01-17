@@ -3,6 +3,7 @@ import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, 
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
+import { isEmpty } from 'lodash';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
@@ -119,7 +120,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
-        if (res.status == 200) {
+        if (res.status == 200 && !isEmpty(res.data.event)) {
             res.data.event.is_event_admin = res.data?.event?.is_admin ? true : false
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))
@@ -128,6 +129,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
+            NavigationService.goBack()
         }
         yield put(setLoadingAction(false));
     }
