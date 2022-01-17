@@ -364,3 +364,8 @@ export const _getEventMembers = async (body: string) => {
     console.log("---------- _getEventMembers Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/members?id=' + body, null, "GET")
 }
+
+export const _removeEventMember = async (body: any) => {
+    console.log("---------- _removeEventMember Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/delete-event-member', body, "DELETE")
+}

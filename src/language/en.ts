@@ -241,4 +241,13 @@ export const en = {
   want_to_book_again: 'Want to book again ?',
   not_checked_in: 'Not checked in ',
   checked_in: 'Checked in ',
+  block_from_chat: 'Block from chat',
+  remove_from_event: 'Remove from Event',
+  report_member: 'Report member',
+  are_you_sure_you_want_to_remove_member_from_event: 'Are you sure you want to remove member from the event',
+  // report_has_been_sent:'Report has been sent!!',
+  // block_from_chat:'Block from chat',
+  // block_from_chat:'Block from chat',
+  // block_from_chat:'Block from chat',
+  // block_from_chat:'Block from chat',
 }
