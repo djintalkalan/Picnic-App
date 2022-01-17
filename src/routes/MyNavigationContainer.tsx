@@ -32,6 +32,7 @@ import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
 import MutedGroupsEvents from 'screens/MutedGroupsEvents';
 import PrivacyScreen from 'screens/PrivacyScreen';
+import Scanner from 'screens/Scanner/Scanner';
 import SelectLocation from 'screens/SelectLocation';
 import Settings from 'screens/Settings';
 import Subscription from 'screens/Subscription/Subscription';
@@ -81,6 +82,7 @@ const dashboardScreens = {
   Subscription: Subscription,
   BookEvent: BookEvent,
   EventMembers: EventMembers,
+  Scanner: Scanner
 };
 
 const MyNavigationContainer = () => {

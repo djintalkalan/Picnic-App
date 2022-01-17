@@ -200,6 +200,15 @@ export const _showErrorMessage = async (msg: string, showAlert = false) => {
     }
 }
 
+export const _showWarningMessage = async (msg: string, showAlert = false) => {
+    if (!msg || !msg.trim()) return
+    if (!showAlert) {
+        DropDownHolder.alert('warn', "Warning", msg)
+    } else {
+        alert(msg);
+    }
+}
+
 export const _showSuccessMessage = async (msg: string, showAlert = false) => {
     if (!msg || !msg.trim()) return
     if (!showAlert) {

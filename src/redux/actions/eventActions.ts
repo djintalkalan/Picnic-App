@@ -114,6 +114,11 @@ export const setActiveEvent = (payload: any) => ({
     payload
 })
 
+export const verifyQrCode = (payload: any) => ({
+    type: ActionTypes.VERIFY_QR_CODE,
+    payload
+})
+
 
 
 

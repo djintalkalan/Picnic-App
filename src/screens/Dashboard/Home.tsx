@@ -82,6 +82,7 @@ const Home: FC = () => {
         </TouchableOpacity>
         <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
           NavigationService.navigate("ProfileScreen")
+          // NavigationService.navigate("Scanner")
         }} >
           <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
             placeholderSource={Images.ic_home_profile}

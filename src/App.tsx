@@ -74,6 +74,7 @@ const DropdownAlertWithStatusBar = () => {
                     break;
 
                 case "info":
+                case "warn":
                     IconComponent = <Ionicons color={colors.colorWhite} size={scaler(22)} name={'information'} />
                     iconBackgroundColor = "#cd853f"
                     break;

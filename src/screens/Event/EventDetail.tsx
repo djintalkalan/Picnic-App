@@ -215,7 +215,7 @@ const EventDetail: FC<any> = (props) => {
                                 :
                                 <View style={{ padding: scaler(10) }} >
                                     <QRCode
-                                        value={activeTicket?.ticket_id}
+                                        value={"picnic-groups" + activeTicket?.ticket_id}
                                         size={scaler(80)}
                                     // logoSize={scaler(40)}
                                     />
