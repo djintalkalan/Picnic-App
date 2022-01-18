@@ -1,6 +1,6 @@
 
 import * as Reducers from 'app-store/reducers';
-import { IEventChatReducer, IEventDetailReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPrivacyData, IPrivacyState } from 'app-store/reducers';
+import { IEventChatReducer, IEventDetailReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPrivacyData, IPrivacyState, IUserEventsGroups } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
@@ -22,6 +22,7 @@ export interface RootState {
     event: IEventReducer
     groupChat: IGroupChatReducer
     eventChat: IEventChatReducer
+    userGroupsEvents: IUserEventsGroups
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -60,6 +61,7 @@ const rootReducer = combineReducers({
     event: Reducers.eventReducer,
     groupChat: Reducers?.groupChatReducer,
     eventChat: Reducers?.eventChatReducer,
+    userGroupsEvents: Reducers?.userEventGroupReducer,
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);

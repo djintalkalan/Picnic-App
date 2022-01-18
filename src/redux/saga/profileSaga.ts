@@ -1,6 +1,7 @@
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction } from "app-store/actions";
-import { setNotificationSettings } from 'app-store/actions/profileActions';
+import { setNotificationSettings, setUserGroups, setUserPastEvents, setUserUpcomingEvents } from 'app-store/actions/profileActions';
+import { store } from 'app-store/store';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
@@ -119,11 +120,85 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
 }
+
+function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> {
+    let groups = store.getState()?.userGroupsEvents?.groups;
+    if (!groups?.length)
+        yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._getMyAllGroups, null, payload?.page);
+        if (res.status == 200) {
+            if (payload.onSuccess) payload.onSuccess({
+                pagination: {
+                    currentPage: res?.data?.pagination?.currentPage,
+                    totalPages: res?.data?.pagination?.totalPages,
+                    perPage: res?.data?.pagination?.limit
+                },
+                data: res?.data?.data
+            })
+            if (res?.data?.pagination?.currentPage == 1) groups = []
+            yield put(setUserGroups(res?.data?.data))
+
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any, any> {
+    console.log('type in profile saga', payload?.event_filter_type)
+    let events = store.getState()?.userGroupsEvents?.[payload?.event_filter_type];
+    if (!events?.length)
+        yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._getUpcomingPastEvents, payload, payload?.body?.page);
+        if (res.status == 200) {
+            if (payload?.body?.onSuccess) payload?.body?.onSuccess({
+                pagination: {
+                    currentPage: res?.data?.pagination?.currentPage,
+                    totalPages: res?.data?.pagination?.totalPages,
+                    perPage: res?.data?.pagination?.limit
+                },
+                data: res?.data?.data
+            })
+            if (res?.data?.pagination?.currentPage == 1) events = []
+            console.log('payload?.event_filter_type', payload?.event_filter_type);
+            if (payload?.event_filter_type == 'upcoming') {
+                yield put(setUserUpcomingEvents(res?.data?.data))
+            }
+            else {
+                yield put(setUserPastEvents(res?.data?.data))
+            }
+
+
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
 // Watcher: watch auth request
 export default function* watchProfile() {
     yield takeLatest(ActionTypes.GET_PROFILE, getProfile);
     yield takeLatest(ActionTypes.UPDATE_NOTIFICATION_SETTINGS, updateNotificationSetting);
     yield takeLatest(ActionTypes.UPDATE_PROFILE, updateProfile);
     yield takeLatest(ActionTypes.UPDATE_PASSWORD, updatePassword);
+    yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
+    yield takeLatest(ActionTypes.GET_USER_UPCOMING_EVENTS, _getUpcomingPastEvents);
+    yield takeLatest(ActionTypes.GET_USER_PAST_EVENTS, _getUpcomingPastEvents);
+    // yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
 
 };

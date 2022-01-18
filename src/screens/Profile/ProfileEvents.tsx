@@ -1,5 +1,5 @@
 import { RootState } from 'app-store'
-import { IPaginationState, setActiveEvent } from 'app-store/actions'
+import { getUserPastEvents, getUserUpcomingevents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader } from 'custom-components'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
@@ -17,13 +17,13 @@ const ProfileEvents: FC<any> = (props) => {
             name: "ProfileUpcomingEvents",
             screen: ProfileEventsList,
             title: Language.upcoming,
-            initialParams: 'upcoming'
+            initialParams: { type: 'upcoming' }
         },
         {
             name: "ProfilePastEvents",
             screen: ProfileEventsList,
             title: Language.history,
-            initialParams: 'past'
+            initialParams: { type: 'past' }
         },
     ], [useLanguage()])
     return (
@@ -39,11 +39,12 @@ const ProfileEvents: FC<any> = (props) => {
 
 const ProfileEventsList: FC<any> = (props) => {
 
-    const { isLoading, allEvents, searchedEvents } = useSelector<RootState, any>((state) => ({
+    const { isLoading, userEvents } = useSelector<RootState, any>((state) => ({
         isLoading: state.isLoading,
-        allEvents: state?.event?.allEvents,
-        searchedEvents: state?.homeData?.searchedEvents
+        userEvents: state?.userGroupsEvents?.[props?.route?.params?.type],
     }))
+
+    console.log('allEvents', userEvents)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const dispatch = useDispatch()
@@ -60,7 +61,11 @@ const ProfileEventsList: FC<any> = (props) => {
             return
         }
         let page = (paginationState?.current?.currentPage) + 1
-        // dispatch(getAllEvents({ page, onSuccess: onSuccess }))
+        {
+            props?.route?.params?.type == 'past' ?
+                dispatch(getUserPastEvents({ event_filter_type: props?.route?.params?.type, body: { page, onSuccess: onSuccess } }))
+                : dispatch(getUserUpcomingevents({ event_filter_type: props?.route?.params?.type, body: { page, onSuccess: onSuccess } }))
+        }
     }, [])
 
     const onSuccess = useCallback(({ pagination }) => {
@@ -69,31 +74,31 @@ const ProfileEventsList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }) => {
-        const { is_event_member, city, state, country } = item
+        const { is_event_member, city, state, country } = item?.event
         return (
             <ListItem
                 defaultIcon={Images.ic_event_placeholder}
-                title={item?.name}
+                title={item?.event?.name}
                 // highlight={}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'events' }) } : undefined}
+                icon={item?.event?.image ? { uri: getImageUrl(item?.event?.image, { width: scaler(50), type: 'events' }) } : undefined}
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
-                customView={<TicketView {...item} />}
+                customView={<TicketView {...item?.event} />}
                 onPress={() => {
-                    dispatch(setActiveEvent(item))
+                    dispatch(setActiveEvent(item?.event))
                     setTimeout(() => {
-                        if (item?.is_event_member) {
-                            NavigationService.navigate("EventChats", { id: item?._id })
+                        if (item?.event?.is_event_member) {
+                            NavigationService.navigate("EventChats", { id: item?.event?._id })
                         } else {
-                            NavigationService.navigate("EventDetail", { id: item?._id })
+                            NavigationService.navigate("EventDetail", { id: item?.event?._id })
                         }
                     }, 0);
 
 
                 }}
                 onPressImage={() => {
-                    dispatch(setActiveEvent(item))
+                    dispatch(setActiveEvent(item?.event))
                     setTimeout(() => {
-                        NavigationService.navigate("EventDetail", { id: item?._id })
+                        NavigationService.navigate("EventDetail", { id: item?.event?._id })
                     }, 0);
 
                 }}
@@ -111,7 +116,7 @@ const ProfileEventsList: FC<any> = (props) => {
                 //         fetchEventList()
                 //     }}
                 // />}
-                data={[]}
+                data={userEvents}
                 // contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 ItemSeparatorComponent={ListItemSeparator}

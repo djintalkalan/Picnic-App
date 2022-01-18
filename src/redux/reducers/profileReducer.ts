@@ -4,6 +4,7 @@ import { IResourceType } from "app-store/actions";
 export interface INotificationSettings { message: number, group_message: number, event_creation: number, event_of_interests: number, is_notification_enabled: number }
 export interface IPrivacyState { events: number, users: number, groups: number, posts: number }
 export interface IPrivacyData { blockedUsers: Array<any>, mutedGroups: Array<any>, mutedEvents: Array<any>, mutedPosts: Array<any> }
+export interface IUserEventsGroups { upcoming: Array<any>, past: Array<any>, groups: Array<any> }
 
 const initialNotificationSettings: INotificationSettings = {
     message: 0,
@@ -18,6 +19,12 @@ const initialPrivacyState: IPrivacyState = {
     users: 0,
     groups: 0,
     posts: 0
+}
+
+const initialUserEventsGroupsState: IUserEventsGroups = {
+    upcoming: [],
+    past: [],
+    groups: [],
 }
 
 const initialPrivacyData: IPrivacyData = {
@@ -80,6 +87,19 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
             return { ...state, [updateKey]: state?.[updateKey]?.filter(_ => (_?.resource_id ?? _?.muted_event_id) != data) }
         case ActionTypes.ADD_MUTED_RESOURCE:
             return { ...state, [updateKey]: [...state?.[updateKey], ...data] }
+        default:
+            return state
+    }
+}
+
+export const userEventGroupReducer = (state: IUserEventsGroups = initialUserEventsGroupsState, action: action): IUserEventsGroups => {
+    switch (action.type) {
+        case ActionTypes.SET_USER_GROUPS:
+            return { ...state, groups: action?.payload }
+        case ActionTypes.SET_USER_UPCOMING_EVENTS:
+            return { ...state, upcoming: action?.payload }
+        case ActionTypes.SET_USER_PAST_EVENTS:
+            return { ...state, past: action?.payload }
         default:
             return state
     }

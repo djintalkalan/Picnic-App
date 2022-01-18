@@ -52,3 +52,44 @@ export const removeFromBlockedMember = (payload: string) => ({
     type: ActionTypes.REMOVE_BLOCKED_MEMBER,
     payload
 })
+
+// export const getUserEvents = (payload: { event_filter_type: string, body: any }) => ({
+//     type: ActionTypes.GET_USER_EVENTS,
+//     payload
+// })
+
+// export const setUserEvents = (payload:
+//     { type: string, data: Array<any> }) => ({
+//         type: ActionTypes.SET_USER_EVENTS,
+//         payload
+//     })
+
+export const getUserGroups = (payload: any) => ({
+    type: ActionTypes.GET_USER_GROUPS,
+    payload
+})
+
+export const setUserGroups = (payload: Array<any>) => ({
+    type: ActionTypes.SET_USER_GROUPS,
+    payload
+})
+
+export const getUserUpcomingevents = (payload: { event_filter_type: string, body: any }) => ({
+    type: ActionTypes.GET_USER_UPCOMING_EVENTS,
+    payload
+})
+
+export const setUserUpcomingEvents = (payload: Array<any>) => ({
+    type: ActionTypes.SET_USER_UPCOMING_EVENTS,
+    payload
+})
+
+export const getUserPastEvents = (payload: { event_filter_type: string, body: any }) => ({
+    type: ActionTypes.GET_USER_PAST_EVENTS,
+    payload
+})
+
+export const setUserPastEvents = (payload: Array<any>) => ({
+    type: ActionTypes.SET_USER_PAST_EVENTS,
+    payload
+})

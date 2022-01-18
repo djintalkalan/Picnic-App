@@ -57,6 +57,7 @@ const Settings: FC<any> = (props) => {
                         }}
                         image={Images.ic_calender_2}
                         title={Language.events}
+                        arrowRight={true}
                     />
 
                     <SettingButton
@@ -66,6 +67,7 @@ const Settings: FC<any> = (props) => {
                         }}
                         image={Images.ic_group_2}
                         title={Language.groups}
+                        arrowRight={true}
                     />
 
 
@@ -74,7 +76,8 @@ const Settings: FC<any> = (props) => {
                             NavigationService.navigate("UpdatePassword")
                         }}
                         image={Images.ic_key}
-                        title={Language.change_password} />
+                        title={Language.change_password}
+                        arrowRight={true} />
 
 
                     <SettingButton
@@ -83,7 +86,27 @@ const Settings: FC<any> = (props) => {
                         }}
                         image={Images.ic_lock}
                         title={Language.review}
+                        arrowRight={true}
                     />
+
+
+                    <SettingButton
+                        onPress={() => {
+                            NavigationService.navigate("PrivacyScreen")
+                        }}
+                        image={Images.ic_share}
+                        title={Language.share_picnic}
+                    />
+
+                    {!userData?.is_premium ?
+                        <SettingButton
+                            onPress={() => {
+                                NavigationService.navigate("PrivacyScreen")
+                            }}
+                            image={Images.ic_smiley}
+                            title={Language.join_now}
+                        /> : undefined
+                    }
 
                     <SettingButton
                         onPress={() => {
@@ -153,13 +176,14 @@ const Settings: FC<any> = (props) => {
     )
 }
 
-const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, onPress: () => void, title: string, image: ImageSourcePropType }) => {
+const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, arrowRight?: boolean, onPress: () => void, title: string, image: ImageSourcePropType }) => {
     return (
         <>
             <TouchableOpacity onPress={props?.onPress}
                 style={[styles.buttonContainer, { ...StyleSheet.flatten(containerStyle) }]} >
                 <Image style={{ height: scaler(22), width: scaler(22) }} source={props?.image} />
                 <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{props?.title}</Text>
+                {props?.arrowRight ? <Image style={{ height: scaler(15), width: scaler(7) }} source={Images.ic_right} /> : undefined}
 
             </TouchableOpacity>
             {divider ? <View style={styles.divider} /> : null}
