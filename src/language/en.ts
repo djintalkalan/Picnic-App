@@ -245,7 +245,7 @@ export const en = {
   remove_from_event: 'Remove from Event',
   report_member: 'Report member',
   are_you_sure_you_want_to_remove_member_from_event: 'Are you sure you want to remove member from the event',
-  // report_has_been_sent:'Report has been sent!!',
+  history: 'History',
   // block_from_chat:'Block from chat',
   // block_from_chat:'Block from chat',
   // block_from_chat:'Block from chat',

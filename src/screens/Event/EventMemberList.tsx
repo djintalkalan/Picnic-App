@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
-export const EventmemberList: FC<any> = (props) => {
+export const EventMemberList: FC<any> = (props) => {
     const dispatch = useDispatch();
     const { members } = useSelector((state: RootState) => ({
         members: state?.eventDetails?.[props?.route?.params?.id]?.[props?.route?.params?.isCheckedIn ? 'eventMembersCheckedIn' : 'eventMembersNotCheckedIn'],
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EventmemberList;
+export default EventMemberList;

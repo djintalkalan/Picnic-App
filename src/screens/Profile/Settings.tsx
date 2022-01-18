@@ -52,10 +52,20 @@ const Settings: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
+                            NavigationService.navigate("ProfileEvents")
 
                         }}
                         image={Images.ic_calender_2}
                         title={Language.events}
+                    />
+
+                    <SettingButton
+                        onPress={() => {
+                            NavigationService.navigate("ProfileGroups")
+
+                        }}
+                        image={Images.ic_group_2}
+                        title={Language.groups}
                     />
 
 

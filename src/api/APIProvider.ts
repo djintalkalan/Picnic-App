@@ -369,3 +369,18 @@ export const _removeEventMember = async (body: any) => {
     console.log("---------- _removeEventMember Api Call ---------------")
     return fetchApiData(config.API_URL + 'event/delete-event-member', body, "DELETE")
 }
+
+export const _scanTicket = async (body: any) => {
+    console.log("---------- scan ticket Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/scan-ticket', body, "POST")
+}
+
+export const _getUpcomingPastEvents = async (body: any, page: number) => {
+    console.log("---------- _getUpcomingPastEvents Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/get-my-upcoming-past-events?page=' + page + '&event_filter_type=' + body?.event_filter_type + '&q=' + (body?.q ?? "") + '&limit=20', null, "GET")
+}
+
+export const _getMyAllGroups = async (body: any, page: number) => {
+    console.log("---------- _getMyAllGroups Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/get-my-groups?page=' + page + '&q=' + (body?.q ?? "") + '&limit=20', null, "GET")
+}

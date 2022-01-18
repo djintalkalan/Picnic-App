@@ -18,20 +18,25 @@ const Scanner: FC<any> = (props) => {
     const onRead = useCallback((e) => {
         console.log("Event", JSON.stringify(e.data));
         scannerRef.current?.disable()
+        setQrScanning(false)
         if (e.data && e.data?.startsWith("picnic-groups")) {
-            setTimeout(() => {
-                scannerRef.current?.enable()
-            }, 1000);
+            // setTimeout(() => {
+            //     scannerRef.current?.enable()
+            // }, 1000);
             const code = e.data?.replace("picnic-groups", "")
             dispatch(verifyQrCode({
                 data: {
-                    code,
+                    resource_id: props?.route?.params?.id,
+                    ticket_id: code
                 },
                 onSuccess: (b: boolean) => {
                     if (b) {
-                        NavigationService.goBack()
+                        NavigationService.navigate("CheckedIn")
                     } else {
-                        scannerRef.current?.enable()
+                        setTimeout(() => {
+                            scannerRef.current?.enable()
+                            setQrScanning(true)
+                        }, 2500);
                     }
                 }
             }))
@@ -39,6 +44,7 @@ const Scanner: FC<any> = (props) => {
             _showWarningMessage("Invalid QR Code")
             setTimeout(() => {
                 scannerRef.current?.enable()
+                setQrScanning(true)
             }, 3000);
         }
     }, [])
@@ -46,10 +52,14 @@ const Scanner: FC<any> = (props) => {
 
 
     const [isQrScanning, setQrScanning] = useState(false)
+    const [isCameraShow, setCameraShow] = useState(false)
 
     useEffect(() => {
         InteractionManager.runAfterInteractions(async () => {
             setQrScanning(true)
+            setTimeout(() => {
+                setCameraShow(true)
+            }, 200);
         })
     }, [])
 
@@ -62,7 +72,7 @@ const Scanner: FC<any> = (props) => {
 
     return (
         <SafeAreaView style={styles.container} >
-            {isQrScanning &&
+            {isCameraShow &&
                 <QRCodeScanner
                     ref={scannerRef}
                     onRead={onRead}

@@ -14,7 +14,6 @@ import SignUp1 from 'screens/Auth/SignUp/SignUp1';
 import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
-import BlockedMembers from 'screens/BlockedMembers';
 import EventChats from 'screens/Chat/EventChat/EventChats';
 import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
 import Home from 'screens/Dashboard/Home';
@@ -30,18 +29,22 @@ import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
-import MutedGroupsEvents from 'screens/MutedGroupsEvents';
-import PrivacyScreen from 'screens/PrivacyScreen';
+import BlockedMembers from 'screens/Profile/BlockedMembers';
+import MutedGroupsEvents from 'screens/Profile/MutedGroupsEvents';
+import PrivacyScreen from 'screens/Profile/PrivacyScreen';
+import ProfileEvents from 'screens/Profile/ProfileEvents';
+import ProfileGroups from 'screens/Profile/ProfileGroups';
+import Settings from 'screens/Profile/Settings';
+import UpdatePassword from 'screens/Profile/UpdatePassword';
 import Scanner from 'screens/Scanner/Scanner';
 import SelectLocation from 'screens/SelectLocation';
-import Settings from 'screens/Settings';
 import Subscription from 'screens/Subscription/Subscription';
-import UpdatePassword from 'screens/UpdatePassword';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { navigationRef } from 'utils';
+
 
 export let TOKEN_EXPIRED = false;
 
@@ -82,7 +85,9 @@ const dashboardScreens = {
   Subscription: Subscription,
   BookEvent: BookEvent,
   EventMembers: EventMembers,
-  Scanner: Scanner
+  Scanner: Scanner,
+  ProfileEvents: ProfileEvents,
+  ProfileGroups: ProfileGroups,
 };
 
 const MyNavigationContainer = () => {

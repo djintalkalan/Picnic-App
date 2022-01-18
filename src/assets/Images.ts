@@ -69,5 +69,6 @@ export const Images = {
   ic_cancelled: require("./images/ic_cancelled.png"),
   ic_scan: require("./images/ic_scan.png"),
   ic_scanner_corner: require("./images/ic_scanner_corner.png"),
-  // ic_scanner_corner: require("./images/ic_scanner_corner.png"),
+  ic_group_2: require("./images/ic_group_2.png"),
+  // ic_group_2: require("./images/ic_group_2.png"),
 };

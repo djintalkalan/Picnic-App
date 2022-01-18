@@ -30,6 +30,32 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
 }
 
 
+function* _verifyQrCode({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    const { onSuccess } = payload
+    try {
+        let res = yield call(ApiProvider._scanTicket, payload?.data);
+        if (res.status == 200) {
+            yield put(getEventMembers(payload?.data?.resource_id));
+            _showSuccessMessage(res.message);
+            onSuccess(true)
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+            onSuccess(false)
+
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+            onSuccess(false)
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+        onSuccess(false)
+    }
+}
+
 function* _getAllCurrencies({ type, payload, }: action): Generator<any, any, any> {
     // yield put(setLoadingAction(true));
     try {
@@ -284,5 +310,6 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.LEAVE_EVENT, _leaveEvent);
     yield takeLatest(ActionTypes.GET_EVENT_MEMBERS, _getEventMembers);
     yield takeLatest(ActionTypes.REMOVE_EVENT_MEMBER, _removeEventMember);
+    yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
 
 };

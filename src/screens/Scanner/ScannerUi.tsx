@@ -1,5 +1,5 @@
 import { colors, Images } from 'assets'
-import React, { useEffect } from 'react'
+import React, { memo, useLayoutEffect } from 'react'
 import { Animated, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -12,26 +12,28 @@ const ScannerUi = (props: { isQrScanning: boolean, setQrScanning: any }) => {
     const animated = new Animated.Value(0);
     const duration = 1500;
 
-    useEffect(() => {
-        const animation = Animated.loop(
-            Animated.sequence([
-                Animated.timing(animated, {
-                    toValue: (width / 1.5) - scaler(13),
-                    duration: duration,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(animated, {
-                    toValue: 0,
-                    duration: duration,
-                    useNativeDriver: true,
-                }),
-            ]),
-        )
+    useLayoutEffect(() => {
+        console.log("Scanning", props?.isQrScanning)
+
+        let animation: Animated.CompositeAnimation = null
         if (props?.isQrScanning) {
-            console.log("Scanning")
-            animation.start()
+            animation = Animated.loop(
+                Animated.sequence([
+                    Animated.timing(animated, {
+                        toValue: (width / 1.5) - scaler(13),
+                        duration: duration,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(animated, {
+                        toValue: 0,
+                        duration: duration,
+                        useNativeDriver: true,
+                    }),
+                ]),
+            );
+            animation && animation?.start()
         }
-        return () => animation?.stop()
+        return () => animation && animation?.stop()
     }, [props?.isQrScanning]);
 
 
@@ -72,7 +74,7 @@ const ScannerUi = (props: { isQrScanning: boolean, setQrScanning: any }) => {
     )
 }
 
-export default (ScannerUi)
+export default memo(ScannerUi)
 
 const styles = StyleSheet.create({
     container: {
