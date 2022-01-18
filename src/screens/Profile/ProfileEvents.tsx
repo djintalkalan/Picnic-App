@@ -15,13 +15,13 @@ const ProfileEvents: FC<any> = (props) => {
     const tabs = useMemo<Array<TabProps>>(() => [
         {
             name: "ProfileUpcomingEvents",
-            screen: () => (<View />),
+            screen: ProfileEventsList,
             title: Language.upcoming,
             initialParams: 'upcoming'
         },
         {
             name: "ProfilePastEvents",
-            screen: () => (<View />),
+            screen: ProfileEventsList,
             title: Language.history,
             initialParams: 'past'
         },
@@ -36,7 +36,6 @@ const ProfileEvents: FC<any> = (props) => {
     )
 }
 
-export default ProfileEvents
 
 const ProfileEventsList: FC<any> = (props) => {
 
@@ -135,7 +134,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorWhite
     }
 })
-function dispatch(arg0: any) {
-    throw new Error('Function not implemented.')
-}
+
+export default ProfileEvents
 
