@@ -391,7 +391,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._getMyEvents, payload);
         if (res.status == 200) {
             if (payload?.type == 'upcoming') {
-                yield put(setUpcomingEvents({ groupId: payload?.grogroupId, data: res?.data?.data }))
+                yield put(setUpcomingEvents({ groupId: payload?.groupId, data: res?.data?.data }))
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

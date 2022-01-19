@@ -10,7 +10,7 @@ import { InteractionManager, StyleSheet, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootParams } from 'src/routes/Routes'
-import { dateStringFormat, getImageUrl, scaler } from 'utils'
+import { dateStringFormat, getImageUrl, NavigationService, scaler } from 'utils'
 
 
 const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>> = ({ route, navigation }) => {
@@ -27,11 +27,16 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
         }
     }, isEqual)
 
+    console.log('events are', events);
+
+
     const _renderItem = useCallback(({ item, index }) => {
+
         return (
             <ListItem
                 title={item?.name}
                 subtitle={dateStringFormat(item?.event_date + " " + item?.event_start_time, "MMMM DD, YYYY, hh:mm A", "YYYY-MM-DD")}
+                onPressImage={() => NavigationService.navigate('EventDetail', { id: item?._id })}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 customView={<TicketView {...item} is_event_admin={true} />}

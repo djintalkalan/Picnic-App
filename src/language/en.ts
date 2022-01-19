@@ -208,7 +208,7 @@ export const en = {
   event_hosted_by: "Event hosted by",
   about_event: "About event",
   add_to_calender: "Add to Calendar",
-  start_chat: "Start chat",
+  start_chat: "Join chat",
   mute: "Mute",
   participants: 'Participants',
   join_event: 'Join event',

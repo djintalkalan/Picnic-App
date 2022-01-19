@@ -19,6 +19,7 @@ type FormType = {
 const BookEvent: FC = (props: any) => {
     const [isPayByPaypal, setIsPayByPaypal] = useState()
     const [noOfTickets, setNoOfTickets] = useState()
+    const [payMethodSelected, setPayMethodSelected] = useState(false);
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
@@ -45,7 +46,7 @@ const BookEvent: FC = (props: any) => {
         dispatch(joinEvent(payload))
     }, [event, noOfTickets, isPayByPaypal])
 
-
+    console.log('event group', event?.event_group)
     return (
         <SafeAreaView style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
@@ -54,7 +55,7 @@ const BookEvent: FC = (props: any) => {
                 <View style={styles.nameContainer}>
                     <View style={{ flex: 1, marginEnd: scaler(12) }} >
                         <Text style={styles.name} >{event?.name}</Text>
-                        <Text style={styles.address} >{Language.refreshment}</Text>
+                        <Text style={styles.address} >{event?.event_group?.name}</Text>
                     </View>
                     <View >
                         {event?.is_free_event ?
@@ -73,6 +74,7 @@ const BookEvent: FC = (props: any) => {
                         name={'noOfSeats'}
                         required={Language.number_of_seats_is_required}
                         keyboardType='number-pad'
+                        multiline
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         // control={control}
@@ -99,6 +101,7 @@ const BookEvent: FC = (props: any) => {
                                 <PaymentMethod
                                     type={_}
                                     isPayByPaypal={isPayByPaypal}
+                                    setPayMethodSelected={setPayMethodSelected}
                                     setIsPayByPaypal={setIsPayByPaypal} />
                                 {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                             </Fragment>
@@ -115,8 +118,9 @@ const BookEvent: FC = (props: any) => {
                         </Text> : undefined
                     }
                     {noOfTickets ?
-                        <Button title={event?.is_free_event ? Language.book_ticket
-                            : Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees)}
+                        <Button
+                            title={event?.is_free_event ? Language.book_ticket
+                                : Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees)}
                             onPress={event?.is_free_event ? handleSubmit((data) => confirmReservation(data)) : () => {
                                 _showPopUpAlert({
                                     title: Language.confirm_payment_method,
@@ -126,7 +130,9 @@ const BookEvent: FC = (props: any) => {
                                     buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees),
                                     buttonStyle: { width: '100%' }
                                 })
-                            }} />
+                            }}
+                            disabled={!payMethodSelected}
+                        />
                         : undefined
                     }
                 </View>
@@ -162,9 +168,9 @@ const styles = StyleSheet.create({
     }
 })
 
-const PaymentMethod = (props: { type: string, isPayByPaypal?: boolean, setIsPayByPaypal: any }) => {
+const PaymentMethod = (props: { type: string, isPayByPaypal?: boolean, setIsPayByPaypal: any, setPayMethodSelected: any }) => {
     return (
-        <TouchableOpacity style={styles.payView} onPress={() => { props?.setIsPayByPaypal(props?.type != 'cash') }}>
+        <TouchableOpacity style={styles.payView} onPress={() => { props?.setIsPayByPaypal(props?.type != 'cash'), props?.setPayMethodSelected(true) }}>
             <Image source={props?.type == 'cash' ? Images.ic_empty_wallet : Images.ic_paypal}
                 style={{ height: scaler(16), width: scaler(19) }} />
             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>

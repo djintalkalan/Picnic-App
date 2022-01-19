@@ -95,6 +95,7 @@ const EditEvent: FC<any> = props => {
         myGroups: state?.group?.myGroups
     }))
 
+
     const dispatch = useDispatch();
     const {
         control,
@@ -227,7 +228,7 @@ const EditEvent: FC<any> = props => {
             _id: props?.route?.params?.id,
             image: uploadedImage?.current || undefined,
             name: data?.eventName,
-            group_id: selectedGroupRef.current._id,
+            group_id: selectedGroupRef.current.id,
             is_online_event: isOnlineEvent ? '1' : '0',
             short_description: data?.aboutEvent,
             address: address?.main_text + ', ' + address?.secondary_text,

@@ -92,7 +92,7 @@ const Settings: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
-                            NavigationService.navigate("PrivacyScreen")
+                            // NavigationService.navigate("PrivacyScreen")
                         }}
                         image={Images.ic_share}
                         title={Language.share_picnic}
@@ -101,7 +101,7 @@ const Settings: FC<any> = (props) => {
                     {!userData?.is_premium ?
                         <SettingButton
                             onPress={() => {
-                                NavigationService.navigate("PrivacyScreen")
+                                NavigationService.navigate("Subscription")
                             }}
                             image={Images.ic_smiley}
                             title={Language.join_now}
