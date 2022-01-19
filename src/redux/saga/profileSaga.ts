@@ -1,8 +1,8 @@
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction } from "app-store/actions";
-import { setNotificationSettings, setUserGroups, setUserPastEvents, setUserUpcomingEvents } from 'app-store/actions/profileActions';
+import { setNotificationSettings, setUserGroups, setUserUpcomingPastEvents } from 'app-store/actions/profileActions';
 import { store } from 'app-store/store';
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
@@ -153,8 +153,8 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
 }
 
 function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any, any> {
-    console.log('type in profile saga', payload?.event_filter_type)
-    let events = store.getState()?.userGroupsEvents?.[payload?.event_filter_type];
+    const event_filter_type: 'upcoming' | 'past' = payload?.event_filter_type
+    let events = store.getState()?.userGroupsEvents?.[event_filter_type];
     if (!events?.length)
         yield put(setLoadingAction(true));
     try {
@@ -169,15 +169,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
                 data: res?.data?.data
             })
             if (res?.data?.pagination?.currentPage == 1) events = []
-            console.log('payload?.event_filter_type', payload?.event_filter_type);
-            if (payload?.event_filter_type == 'upcoming') {
-                yield put(setUserUpcomingEvents(res?.data?.data))
-            }
-            else {
-                yield put(setUserPastEvents(res?.data?.data))
-            }
-
-
+            yield put(setUserUpcomingPastEvents({ type: event_filter_type, data: [...events, ...res?.data?.data] }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -197,8 +189,7 @@ export default function* watchProfile() {
     yield takeLatest(ActionTypes.UPDATE_PROFILE, updateProfile);
     yield takeLatest(ActionTypes.UPDATE_PASSWORD, updatePassword);
     yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
-    yield takeLatest(ActionTypes.GET_USER_UPCOMING_EVENTS, _getUpcomingPastEvents);
-    yield takeLatest(ActionTypes.GET_USER_PAST_EVENTS, _getUpcomingPastEvents);
+    yield takeEvery(ActionTypes.GET_USER_UPCOMING_PAST_EVENTS, _getUpcomingPastEvents);
     // yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
 
 };

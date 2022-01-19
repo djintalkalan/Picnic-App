@@ -377,7 +377,7 @@ export const _scanTicket = async (body: any) => {
 
 export const _getUpcomingPastEvents = async (body: any, page: number) => {
     console.log("---------- _getUpcomingPastEvents Api Call ---------------")
-    return fetchApiData(config.API_URL + 'user/get-my-upcoming-past-events?page=' + page + '&event_filter_type=' + body?.event_filter_type + '&q=' + (body?.q ?? "") + '&limit=20', null, "GET")
+    return fetchApiData(config.API_URL + 'user/get-my-upcoming-past-events?page=' + page + '&event_filter_type=' + body?.event_filter_type + '&q=' + (body?.q ?? "") + '&limit=8', null, "GET")
 }
 
 export const _getMyAllGroups = async (body: any, page: number) => {

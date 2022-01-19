@@ -96,10 +96,8 @@ export const userEventGroupReducer = (state: IUserEventsGroups = initialUserEven
     switch (action.type) {
         case ActionTypes.SET_USER_GROUPS:
             return { ...state, groups: action?.payload }
-        case ActionTypes.SET_USER_UPCOMING_EVENTS:
-            return { ...state, upcoming: action?.payload }
-        case ActionTypes.SET_USER_PAST_EVENTS:
-            return { ...state, past: action?.payload }
+        case ActionTypes.SET_USER_UPCOMING_PAST_EVENTS:
+            return { ...state, [action?.payload?.type]: action?.payload?.data }
         default:
             return state
     }

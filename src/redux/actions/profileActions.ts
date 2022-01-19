@@ -74,22 +74,12 @@ export const setUserGroups = (payload: Array<any>) => ({
     payload
 })
 
-export const getUserUpcomingevents = (payload: { event_filter_type: string, body: any }) => ({
-    type: ActionTypes.GET_USER_UPCOMING_EVENTS,
+export const getUserUpcomingPastEvents = (payload: { event_filter_type: string, body: any }) => ({
+    type: ActionTypes.GET_USER_UPCOMING_PAST_EVENTS,
     payload
 })
 
-export const setUserUpcomingEvents = (payload: Array<any>) => ({
-    type: ActionTypes.SET_USER_UPCOMING_EVENTS,
-    payload
-})
-
-export const getUserPastEvents = (payload: { event_filter_type: string, body: any }) => ({
-    type: ActionTypes.GET_USER_PAST_EVENTS,
-    payload
-})
-
-export const setUserPastEvents = (payload: Array<any>) => ({
-    type: ActionTypes.SET_USER_PAST_EVENTS,
+export const setUserUpcomingPastEvents = (payload: { type: string, data: Array<any> }) => ({
+    type: ActionTypes.SET_USER_UPCOMING_PAST_EVENTS,
     payload
 })

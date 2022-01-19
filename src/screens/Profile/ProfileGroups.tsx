@@ -43,7 +43,6 @@ const ProfileGroups: FC<any> = (props) => {
     }, [])
 
     const _renderEventMembers = useCallback(({ item, index }) => {
-        console.log('item', item)
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
@@ -53,11 +52,11 @@ const ProfileGroups: FC<any> = (props) => {
                 subtitle={item?.group?.city + ", " + (item?.group?.state ? (item?.group?.state + ", ") : "") + item?.group?.country}
 
                 onPress={() => {
-                    dispatch(setActiveGroup(item))
+                    dispatch(setActiveGroup(item?.group))
                     NavigationService.navigate("GroupChatScreen", { id: item?.resource_id })
                 }}
                 onPressImage={() => {
-                    dispatch(setActiveGroup(item))
+                    dispatch(setActiveGroup(item?.group))
                     setTimeout(() => {
                         NavigationService.navigate("GroupDetail", { id: item?.group?._id })
                     }, 0);

@@ -1,5 +1,5 @@
 import { RootState } from 'app-store'
-import { getUserPastEvents, getUserUpcomingevents, IPaginationState, setActiveEvent } from 'app-store/actions'
+import { getUserUpcomingPastEvents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader } from 'custom-components'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
@@ -38,13 +38,11 @@ const ProfileEvents: FC<any> = (props) => {
 
 
 const ProfileEventsList: FC<any> = (props) => {
-
-    const { isLoading, userEvents } = useSelector<RootState, any>((state) => ({
+    const type: 'upcoming' | 'past' = props?.route?.params?.type
+    const { isLoading, userEvents } = useSelector((state: RootState) => ({
         isLoading: state.isLoading,
-        userEvents: state?.userGroupsEvents?.[props?.route?.params?.type],
+        userEvents: state?.userGroupsEvents?.[type],
     }))
-
-    console.log('allEvents', userEvents)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const dispatch = useDispatch()
@@ -62,9 +60,7 @@ const ProfileEventsList: FC<any> = (props) => {
         }
         let page = (paginationState?.current?.currentPage) + 1
         {
-            props?.route?.params?.type == 'past' ?
-                dispatch(getUserPastEvents({ event_filter_type: props?.route?.params?.type, body: { page, onSuccess: onSuccess } }))
-                : dispatch(getUserUpcomingevents({ event_filter_type: props?.route?.params?.type, body: { page, onSuccess: onSuccess } }))
+            dispatch(getUserUpcomingPastEvents({ event_filter_type: type, body: { page, onSuccess: onSuccess } }))
         }
     }, [])
 
