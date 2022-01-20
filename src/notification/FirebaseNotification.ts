@@ -1,12 +1,14 @@
 
 // import PushNotification from "react-native-push-notification";
 import notifee, { AndroidDefaults, AndroidImportance, EventType, Notification } from "@notifee/react-native";
+import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
+import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { NavigationService, WaitTill } from 'utils';
+import { getDetailsFromDynamicUrl, NavigationService, WaitTill } from 'utils';
 
 const CHANNEL_NAME = "high-priority"
 
@@ -29,6 +31,7 @@ const FirebaseNotification = () => {
 
     dispatch = useDispatch()
 
+
     const checkPermission = useCallback(async () => {
         const authStatus = await messaging().requestPermission();
         const enabled =
@@ -50,12 +53,7 @@ const FirebaseNotification = () => {
 
 
     const createNotificationListeners = useCallback(() => {
-        return messaging().onMessage(onMessageReceived);
-    }, [isLogin])
-
-    useEffect(() => {
-        checkPermission();
-        const removeSubscription = createNotificationListeners()
+        const messageSubs = messaging().onMessage(onMessageReceived);
         const foregroundSubs = notifee.onForegroundEvent(({ type, detail }) => {
             switch (type) {
                 case EventType.PRESS:
@@ -63,23 +61,32 @@ const FirebaseNotification = () => {
                     break;
             }
         });
+        return () => {
+            messageSubs();
+            foregroundSubs();
+        };
+    }, [isLogin])
 
+    useEffect(() => {
+        dynamicLinks()
+            .getInitialLink()
+            .then(handleLink);
+        const removeLinkSubscription = dynamicLinks().onLink(handleLink);
+        return () => {
+            removeLinkSubscription()
+        }
+    }, [])
 
-        // PushNotification.configure({ onNotification: onNotificationOpened })
+    useEffect(() => {
+        checkPermission();
+        const removeSubscription = createNotificationListeners()
         setTimeout(() => {
             isFirstTime = false
         }, 1500);
         return () => {
-            // if (removeSubscription) {
             removeSubscription()
-            foregroundSubs()
-            // }
-            // PushNotification.unregister()
         }
-        return
     }, [isLogin])
-
-
 }
 
 export const onNotificationOpened = (notification: Notification) => {
@@ -100,6 +107,37 @@ const navigateToPages = async (notification: any) => {
         if (data?.group || data?.event) {
             dispatch && dispatch((data?.group ? setActiveGroup : setActiveEvent)(data?.group ?? data?.event))
             NavigationService.closeAndPush(data?.group ? "GroupChatScreen" : "EventChats", { id: data?.resource_id })
+        }
+    }
+}
+
+const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
+    console.log("Link is ", link);
+
+    if (link && link.url) {
+        const { id, type } = getDetailsFromDynamicUrl(link.url)
+        if (id && type) {
+            NavigationService.navigate("Home");
+            switch (type) {
+                case "group-detail":
+                    const group = store?.getState()?.group?.allGroups.find(_ => _._id == id) ?? { _id: id }
+                    dispatch(setActiveGroup(group))
+                    setTimeout(() => {
+                        NavigationService.navigate("GroupChatScreen", { id })
+                    }, 0);
+                    break;
+
+                case "event-detail":
+                    const event = store?.getState()?.event?.allEvents?.find(_ => _._id == id) ?? { _id: id }
+                    dispatch(setActiveEvent(event))
+                    setTimeout(() => {
+                        NavigationService.navigate("EventDetail", { id })
+                    }, 0);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }
