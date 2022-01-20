@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, _showErrorMessage, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareAppLink, _showErrorMessage, _showPopUpAlert } from 'utils'
 
 
 const Settings: FC<any> = (props) => {
@@ -92,7 +92,7 @@ const Settings: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
-                            // NavigationService.navigate("PrivacyScreen")
+                            shareAppLink("Picnic Groups")
                         }}
                         image={Images.ic_share}
                         title={Language.share_picnic}
