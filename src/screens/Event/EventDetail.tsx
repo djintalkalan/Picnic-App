@@ -80,6 +80,9 @@ const EventDetail: FC<any> = (props) => {
         });
     }, [event])
 
+    console.log('it is', event?.capacity - event?.total_sold_tickets);
+
+
     if (!event) {
         return <View style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
@@ -105,9 +108,11 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={Images.ic_more_group} />
-                    </TouchableOpacity>
+                    {stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() ?
+                        <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={Images.ic_more_group} />
+                        </TouchableOpacity>
+                        : undefined}
                 </View>
                 {isEditButtonOpened ?
                     <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
@@ -133,7 +138,8 @@ const EventDetail: FC<any> = (props) => {
                                         })
                                         setEditButtonOpened(false)
                                     }
-                                    } hideBorder /></> :
+                                    } hideBorder /></>
+                                :
                                 <><InnerButton onPress={shareEvent} title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
                                     _showPopUpAlert({
                                         message: Language.are_you_sure_mute_event,
@@ -290,7 +296,7 @@ const EventDetail: FC<any> = (props) => {
                     </View>
                 </View> :
                 (stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() &&
-                    (event?.capacity - event?.total_sold_tickets) > 0) ?
+                    (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                     <View style={{ marginHorizontal: scaler(10) }}>
                         <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                             onPress={() => NavigationService.navigate('BookEvent',

@@ -376,7 +376,7 @@ export const getOtherData = (addressComponent: any) => {
             }
         }
     }
-    return { city, state, country }
+    return { city: city?.trim(), state: state?.trim(), country: country?.trim() }
 }
 
 export const getOtherDataFromAddress = (address: { main_text: string, secondary_text: string }) => {
@@ -389,7 +389,7 @@ export const getOtherDataFromAddress = (address: { main_text: string, secondary_
             state = state + (i > 0 ? ", " : "") + _
         }
     })
-    return { city: address?.main_text, state, country }
+    return { city: address?.main_text?.trim(), state: state?.trim(), country: country?.trim() }
 }
 
 export const InitialPaginationState: IPaginationState = {
