@@ -66,7 +66,7 @@ export const en = {
   and: "and",
   enter_verification_code: "Enter verification code",
   enter_otp_sent: "Please enter the verification code that was sent to your email address",
-  location: "Default location",
+  location: "Location",
   edit_profile: "Edit Profile",
   events: "Events",
   groups: "Groups",
@@ -247,7 +247,4 @@ export const en = {
   are_you_sure_you_want_to_remove_member_from_event: 'Are you sure you want to remove member from the event',
   history: 'History',
   please_enter_default_location: 'Please enter a default location',
-  // block_from_chat:'Block from chat',
-  // block_from_chat:'Block from chat',
-  // block_from_chat:'Block from chat',
 }
