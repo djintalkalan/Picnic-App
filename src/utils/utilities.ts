@@ -433,3 +433,16 @@ export const WaitTill = async (time: number) => {
         }, time);
     })
 }
+
+type IDynamicType = "group-detail" | "event-detail"
+
+export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDynamicType } => {
+    try {
+        const arr = url?.split("/").reverse();
+        return { id: arr[0], type: arr[1] }
+    }
+    catch (e) {
+        return { id: undefined, type: undefined }
+    }
+
+}

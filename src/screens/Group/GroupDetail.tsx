@@ -18,9 +18,10 @@ const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
 const GroupDetail: FC<any> = (props) => {
+    console.log("props", props.route?.params);
+
     const language = useLanguage()
     const getBottomMenuButtons = useCallback((item) => {
-        console.log("Item", item)
         return [
             {
                 title: Language.block,

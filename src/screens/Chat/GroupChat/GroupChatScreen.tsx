@@ -24,6 +24,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
     }, shallowEqual)
 
 
+    console.log("activeGroup", activeGroup);
 
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
     useEffect(() => {

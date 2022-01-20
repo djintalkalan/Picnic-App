@@ -14,6 +14,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.65.1)
   - Firebase/CoreOnly (8.10.0):
     - FirebaseCore (= 8.10.0)
+  - Firebase/DynamicLinks (8.10.0):
+    - Firebase/CoreOnly
+    - FirebaseDynamicLinks (~> 8.10.0)
   - Firebase/Messaging (8.10.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.10.0)
@@ -26,6 +29,8 @@ PODS:
     - GoogleUtilities/Environment (~> 7.6)
     - GoogleUtilities/Logger (~> 7.6)
     - nanopb (~> 2.30908.0)
+  - FirebaseDynamicLinks (8.10.0):
+    - FirebaseCore (~> 8.0)
   - FirebaseInstallations (8.10.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.6)
@@ -482,6 +487,11 @@ PODS:
   - RNFBApp (14.2.2):
     - Firebase/CoreOnly (= 8.10.0)
     - React-Core
+  - RNFBDynamicLinks (14.2.2):
+    - Firebase/DynamicLinks (= 8.10.0)
+    - GoogleUtilities/AppDelegateSwizzler
+    - React-Core
+    - RNFBApp
   - RNFBMessaging (14.2.2):
     - Firebase/Messaging (= 8.10.0)
     - React-Core
@@ -623,6 +633,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNIap (from `../node_modules/react-native-iap`)
@@ -643,6 +654,7 @@ SPEC REPOS:
     - Firebase
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseDynamicLinks
     - FirebaseInstallations
     - FirebaseMessaging
     - Flipper
@@ -768,6 +780,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
+  RNFBDynamicLinks:
+    :path: "../node_modules/@react-native-firebase/dynamic-links"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
@@ -803,6 +817,7 @@ SPEC CHECKSUMS:
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
   FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
+  FirebaseDynamicLinks: bb6ac718f763ec43560f0e2bb6b655a798b277af
   FirebaseInstallations: 830327b45345ffc859eaa9c17bcd5ae893fd5425
   FirebaseMessaging: b0aeba17332ee1ee610662b4d1e02a86db82f08f
   Flipper: b1fddf9a17c32097b2b4c806ad158b2f36bb2692
@@ -871,6 +886,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNFBApp: 78d0446e8b28dc30616c134a9e4d8d4b01f9f966
+  RNFBDynamicLinks: 8ab778e082c207f566fb005b937fce46430f8c6a
   RNFBMessaging: 79910a2eb2fa5955f38259367b14431bd78bef19
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNIap: 881fb3f51199a6ba15e3550a4bff12d752fa5b41
