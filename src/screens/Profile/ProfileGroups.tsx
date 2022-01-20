@@ -18,9 +18,6 @@ const ProfileGroups: FC<any> = (props) => {
         userGroups: state?.userGroupsEvents?.groups,
     }))
 
-    console.log('groups are', userGroups);
-
-
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const dispatch = useDispatch()
 
