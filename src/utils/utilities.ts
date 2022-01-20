@@ -455,3 +455,20 @@ export const shareDynamicLink = async (name: string, { type, id }: { type: IDyna
     const link = await buildLink(type + "/" + id)
     share("Share " + name, link)
 }
+
+export const shareAppLink = async (name: string) => {
+    const link = await dynamicLinks().buildShortLink({
+        link: 'https://picnicapp.com/',
+        domainUriPrefix: 'https://picnicapp.page.link',
+        android: {
+            packageName: config.PACKAGE_NAME
+        },
+        ios: {
+            bundleId: config.BUNDLE_ID
+        },
+        navigation: {
+            forcedRedirectEnabled: true
+        }
+    });
+    share("Share " + name, link)
+}
