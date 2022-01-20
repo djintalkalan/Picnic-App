@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -120,6 +121,12 @@ const EventChats: FC<any> = (props) => {
         }
         return () => { loadMore = false }
     }, [])
+
+    useFocusEffect(useCallback(() => {
+        if (eventDetail && !eventDetail.is_event_member) {
+            NavigationService.goBack();
+        }
+    }, [eventDetail]))
 
 
 
