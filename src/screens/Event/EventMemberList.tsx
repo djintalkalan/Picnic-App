@@ -1,5 +1,5 @@
 
-import { removeEventMember, reportResource } from 'app-store/actions';
+import { reportResource } from 'app-store/actions';
 import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -8,6 +8,7 @@ import { MemberListItem } from 'custom-components/ListItem/ListItem';
 import React, { FC, useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { EMIT_EVENT_MEMBER_DELETE, SocketService } from 'socket';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
@@ -46,10 +47,10 @@ export const EventMemberList: FC<any> = (props) => {
                         message: Language.are_you_sure_remove_member,
                         buttonStyle: { backgroundColor: colors.colorErrorRed },
                         onPressButton: () => {
-                            dispatch(removeEventMember({
+                            SocketService.emit(EMIT_EVENT_MEMBER_DELETE, {
                                 resource_id: item?.resource_id,
                                 user_id: item?.user_id
-                            }))
+                            })
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_remove,
