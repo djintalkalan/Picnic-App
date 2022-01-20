@@ -268,7 +268,7 @@ const ProfileScreen: FC<any> = (props) => {
 
                             })
                         }}
-                        required={Language.group_location_required}
+                        required={Language.please_enter_default_location}
                         control={control}
                         errors={errors}
                     />

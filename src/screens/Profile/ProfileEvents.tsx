@@ -43,7 +43,6 @@ const ProfileEventsList: FC<any> = (props) => {
         isLoading: state.isLoading,
         userEvents: state?.userGroupsEvents?.[type],
     }))
-
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const dispatch = useDispatch()
 
@@ -85,7 +84,7 @@ const ProfileEventsList: FC<any> = (props) => {
                         if (item?.event?.is_event_member) {
                             NavigationService.navigate("EventChats", { id: item?.event?._id })
                         } else {
-                            NavigationService.navigate("EventDetail", { id: item?.event?._id })
+                            NavigationService.navigate("EventDetail", { id: item?.event?._id, type: type })
                         }
                     }, 0);
 
@@ -94,7 +93,7 @@ const ProfileEventsList: FC<any> = (props) => {
                 onPressImage={() => {
                     dispatch(setActiveEvent(item?.event))
                     setTimeout(() => {
-                        NavigationService.navigate("EventDetail", { id: item?.event?._id })
+                        NavigationService.navigate("EventDetail", { id: item?.event?._id, type: type })
                     }, 0);
 
                 }}

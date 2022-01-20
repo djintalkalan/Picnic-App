@@ -4,7 +4,8 @@ import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useEffect, useMemo } from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
@@ -13,6 +14,8 @@ import { getImageUrl, NavigationService, scaler } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import { GroupChats } from './GroupChats'
 
+const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
+const { height, width } = Dimensions.get('screen')
 
 const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) => {
 
@@ -52,6 +55,14 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
 
 
     const dispatch = useDispatch()
+    if (!groupDetail) {
+        return <View style={styles.container}>
+            <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                {/* <Image style={{ height: scaler(100), width: scaler(100) }} source={Images.ic_event_placeholder} /> */}
+            </View>
+            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+        </View>
+    }
 
     return (
         <SafeAreaView style={styles.container} >
@@ -105,5 +116,11 @@ const styles = StyleSheet.create({
     joinText: {
         color: colors.colorPrimary,
         fontSize: scaler(14)
-    }
+    },
+    linearGradient: {
+        position: 'absolute',
+        height: scaler(80),
+        top: width - scaler(80),
+        width: '100%'
+    },
 })

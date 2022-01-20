@@ -131,7 +131,7 @@ const BookEvent: FC = (props: any) => {
                                     buttonStyle: { width: '100%' }
                                 })
                             }}
-                            disabled={!payMethodSelected}
+                            disabled={!payMethodSelected && !event?.is_free_event}
                         />
                         : undefined
                     }

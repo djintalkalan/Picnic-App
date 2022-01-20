@@ -191,31 +191,19 @@ function getAge(dob: Date) {
 
 
 
-export const _showErrorMessage = async (msg: string, showAlert = false) => {
+export const _showErrorMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    if (!showAlert) {
-        DropDownHolder.alert('error', "Error", msg)
-    } else {
-        alert(msg);
-    }
+    DropDownHolder.alert('error', "Error", msg, time)
 }
 
-export const _showWarningMessage = async (msg: string, showAlert = false) => {
+export const _showWarningMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    if (!showAlert) {
-        DropDownHolder.alert('warn', "Warning", msg)
-    } else {
-        alert(msg);
-    }
+    DropDownHolder.alert('warn', "Warning", msg, time)
 }
 
-export const _showSuccessMessage = async (msg: string, showAlert = false) => {
+export const _showSuccessMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    if (!showAlert) {
-        DropDownHolder.alert('success', "Success", msg)
-    } else {
-        alert(msg);
-    }
+    DropDownHolder.alert('success', "Success", msg, time)
 }
 
 export const _showPopUpAlert = (data: IAlertType) => {
@@ -336,7 +324,8 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
     catch (e) {
         console.log(e)
-        _showErrorMessage("Location Error: " + e?.message)
+        // _showErrorMessage("Location Error: " + e?.message)
+        _showErrorMessage('Location is unavailable, please check your network.', 5000)
         return { address: null, otherData: null }
     }
 }

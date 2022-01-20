@@ -11,7 +11,7 @@ import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, share, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -95,7 +95,7 @@ const EventDetail: FC<any> = (props) => {
                         style={{ width: width, height: width, resizeMode: 'cover' }} />}
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
                 <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
-                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
+                    <TouchableOpacity onPress={() => event?.is_event_member ? NavigationService.goBack() : NavigationService.navigate('HomeEventTab')} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
@@ -106,65 +106,70 @@ const EventDetail: FC<any> = (props) => {
                     <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
-                                <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                    setEditButtonOpened(false)
-                                    NavigationService.navigate('EditEvent', { id: event?._id })
-                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_cancel_event,
-                                        onPressButton: () => {
-                                            dispatch(deleteEvent(event?._id))
-                                            _hidePopUpAlert()
-                                            setTimeout(() => {
-                                                NavigationService.navigate('HomeEventTab')
-                                            }, 200);
-                                        },
-                                        buttonStyle: { backgroundColor: colors.colorErrorRed },
-                                        buttonText: Language.yes_cancel,
-                                    })
-                                    setEditButtonOpened(false)
-                                }
-                                } hideBorder /></> :
-                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_mute_event,
-                                        onPressButton: () => {
-                                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
-                                            setTimeout(() => {
-                                                NavigationService.navigate('HomeEventTab')
-                                            }, 200);
-                                            _hidePopUpAlert()
-                                        },
-                                        buttonText: Language.yes_mute,
-                                        // cancelButtonText: Language.cancel
-                                    })
-                                    setEditButtonOpened(false)
-                                }} /><InnerButton title={Language.report} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_report_event,
-                                        onPressButton: () => {
-                                            dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                                            _hidePopUpAlert()
-                                        },
-                                        buttonText: Language.yes_report,
-                                        // cancelButtonText: Language.cancel
-                                    })
-                                    setEditButtonOpened(false)
-                                }} hideBorder={event?.is_event_member ? false : true} />
-                                    {event?.is_event_member ? <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                <>
+                                    <InnerButton visible={event?.is_admin && props?.route?.params?.type != 'past' ? true : false} onPress={() => {
+                                        setEditButtonOpened(false)
+                                        NavigationService.navigate('EditEvent', { id: event?._id })
+                                    }} title={Language.edit} />
+                                    <InnerButton title={Language.share} onPress={() => share('Share this event', 'share event')} hideBorder={props?.route?.params?.type == 'past' ? true : false} />
+                                    <InnerButton visible={props?.route?.params?.type != 'past' ? true : false} title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
-
-                                            message: Language.are_you_sure_cancel_reservation + '?',
-                                            customView: () => <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>,
+                                            message: Language.are_you_sure_cancel_event,
                                             onPressButton: () => {
-                                                dispatch(leaveEvent(event?._id))
+                                                dispatch(deleteEvent(event?._id))
+                                                _hidePopUpAlert()
+                                                setTimeout(() => {
+                                                    NavigationService.navigate('HomeEventTab')
+                                                }, 200);
+                                            },
+                                            buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                            buttonText: Language.yes_cancel,
+                                        })
+                                        setEditButtonOpened(false)
+                                    }
+                                    } hideBorder /></> :
+                                <><InnerButton title={Language.share} />
+                                    <InnerButton title={Language.mute} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_mute_event,
+                                            onPressButton: () => {
+                                                dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
+                                                setTimeout(() => {
+                                                    NavigationService.navigate('HomeEventTab')
+                                                }, 200);
                                                 _hidePopUpAlert()
                                             },
-                                            buttonText: Language.yes_cancel,
+                                            buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
                                         })
                                         setEditButtonOpened(false)
-                                    }} hideBorder /> : undefined}
+                                    }} /><InnerButton title={Language.report} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_report_event,
+                                            onPressButton: () => {
+                                                dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_report,
+                                            // cancelButtonText: Language.cancel
+                                        })
+                                        setEditButtonOpened(false)
+                                    }} hideBorder={event?.is_event_member && props?.route?.params?.type != 'past' ? false : true} />
+                                    {event?.is_event_member && props?.route?.params?.type != 'past' ?
+                                        <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                            _showPopUpAlert({
+
+                                                message: Language.are_you_sure_cancel_reservation + '?',
+                                                customView: () => <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>,
+                                                onPressButton: () => {
+                                                    dispatch(leaveEvent(event?._id))
+                                                    _hidePopUpAlert()
+                                                },
+                                                buttonText: Language.yes_cancel,
+                                                // cancelButtonText: Language.cancel
+                                            })
+                                            setEditButtonOpened(false)
+                                        }} hideBorder /> : undefined}
                                 </>
                             }
                         </Card>
@@ -263,7 +268,9 @@ const EventDetail: FC<any> = (props) => {
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
             </ScrollView>
-            {stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() ?
+            {stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date()
+                && (event?.capacity - event?.total_sold_tickets) > 0
+                || (event?.is_admin || event?.is_event_member) ?
                 event?.is_admin || event?.is_event_member ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                         <View style={{ flex: 1 }}>

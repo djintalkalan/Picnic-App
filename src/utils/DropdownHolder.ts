@@ -15,10 +15,10 @@ export class DropDownHolder {
     static getDropDown() {
         return this.dropDown;
     }
-    static alert(type: AlertType, title: string, message: string) {
+    static alert(type: AlertType, title: string, message: string, time?: number) {
         if (message) {
 
-            (this.modalDropDown || this.dropDown)?.alertWithType(type, title, message, {}, 2000)
+            (this.modalDropDown || this.dropDown)?.alertWithType(type, title, message, {}, time ?? 2000)
         }
     }
 }

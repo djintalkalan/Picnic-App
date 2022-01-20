@@ -197,7 +197,7 @@ const EventChats: FC<any> = (props) => {
                         onPressSend={_onPressSend}
                     />
                     {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not working, trying to reconnect you</Text>
+                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
                     </View> : null}
                 </View> : null}
 

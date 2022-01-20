@@ -12,7 +12,7 @@ function* _getEventChat({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             yield put(setChatInEvent({ eventId: payload?.id, chats: res?.data?.data, message_id: payload?.message_id }))
         } else if (res.status == 400) {
-            _showErrorMessage(res.message);
+            _showErrorMessage(res.message, 5000);
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
