@@ -3,9 +3,9 @@ import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess,
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
-import { LanguageType } from "src/language/Language";
-import { NavigationService } from "utils";
-import { EMIT_JOIN, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_RECONNECT } from "./SocketEvents";
+import Language, { LanguageType } from "src/language/Language";
+import { NavigationService, _showErrorMessage } from "utils";
+import { EMIT_JOIN, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_RECONNECT } from "./SocketEvents";
 
 class Service {
     static instance?: Service;
@@ -86,8 +86,8 @@ class Service {
         this.socket?.on(ON_EVENT_MESSAGE, this.onEventMessage)
         this.socket?.on(ON_EVENT_MESSAGES, this.onEventMessages)
         this.socket?.on(ON_EVENT_MESSAGE_DELETE, this.onEventMessageDelete)
-        this.socket?.on(ON_GROUP_DELETE, this.onEventDelete)
-        this.socket?.on(ON_GROUP_MEMBER_DELETE, this.onEventMemberDelete)
+        this.socket?.on(ON_EVENT_DELETE, this.onEventDelete)
+        this.socket?.on(ON_EVENT_MEMBER_DELETE, this.onEventMemberDelete)
         this.listenErrors();
         // this.socket?.on(ON_EVENT_MESSAGE_TYPING, this.onEventMessageTyping)
     }
@@ -176,6 +176,7 @@ class Service {
             if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
                 params?.id == e?.data?.resource_id
             ) {
+                _showErrorMessage(Language.getString("this_group_is_deleted"), 5000)
                 NavigationService.navigate("Home")
             }
             this.dispatch &&
@@ -193,11 +194,11 @@ class Service {
                 if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
                     params?.id == e?.data?.resource_id
                 ) {
+                    _showErrorMessage(Language.getString("you_have_been_removed_from_group"), 5000)
                     NavigationService.navigate("Home")
                 }
                 this.dispatch(leaveGroupSuccess(e?.data?.resource_id))
                 this.dispatch(removeGroupMemberSuccess({ groupId: e?.data?.resource_id, data: e?.data?.user_id }))
-
             }
             this.dispatch(setChatInGroup({
                 groupId: e?.data?.resource_id,
@@ -266,6 +267,7 @@ class Service {
             if ((name == "EventDetail" || name == "EventChats") &&
                 params?.id == e?.data?.resource_id
             ) {
+                _showErrorMessage(Language.getString("this_event_is_deleted"), 5000)
                 NavigationService.navigate("Home")
             }
             this.dispatch &&
@@ -283,6 +285,7 @@ class Service {
                 if ((name == "EventDetail" || name == "EventChats") &&
                     params?.id == e?.data?.resource_id
                 ) {
+                    _showErrorMessage(Language.getString("you_have_been_removed_from_event"), 5000)
                     NavigationService.navigate("Home")
                 }
                 this.dispatch(leaveEventSuccess(e?.data?.resource_id))

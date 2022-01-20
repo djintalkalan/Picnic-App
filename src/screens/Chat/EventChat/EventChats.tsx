@@ -9,7 +9,7 @@ import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-s
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
-import { getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink, _showErrorMessage } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
@@ -133,6 +133,13 @@ const EventChats: FC<any> = (props) => {
             />)
     }, [eventDetail?.is_admin])
 
+    const shareEvent = useCallback(() => {
+        shareDynamicLink(eventDetail?.name, {
+            type: "event-detail",
+            id: eventDetail?._id
+        });
+    }, [eventDetail])
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
@@ -152,7 +159,7 @@ const EventChats: FC<any> = (props) => {
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
 
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ paddingHorizontal: scaler(5) }}  >
+                    <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                     </TouchableOpacity>
                 </View>

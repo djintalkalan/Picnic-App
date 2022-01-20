@@ -3,14 +3,14 @@ import { RootState } from 'app-store'
 import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo } from 'react'
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
 import Language from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import { GroupChats } from './GroupChats'
 
@@ -53,6 +53,12 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
 
 
     const dispatch = useDispatch()
+    const shareGroup = useCallback(() => {
+        shareDynamicLink(groupDetail?.name, {
+            type: "group-detail",
+            id: groupDetail?._id
+        });
+    }, [groupDetail])
     if (!groupDetail) {
         return <View style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
@@ -87,7 +93,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                             <Text style={styles.joinText} >{Language.join}</Text>
                         }
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ paddingHorizontal: scaler(5) }}  >
+                    <TouchableOpacity onPress={shareGroup} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                     </TouchableOpacity>
                 </View>

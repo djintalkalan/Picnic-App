@@ -247,4 +247,8 @@ export const en = {
   are_you_sure_you_want_to_remove_member_from_event: 'Are you sure you want to remove member from the event',
   history: 'History',
   please_enter_default_location: 'Please enter a default location',
+  you_have_been_removed_from_group: "You have been removed from the group by admin",
+  you_have_been_removed_from_event: "You have been removed from the event by admin",
+  this_group_is_deleted: "This group is deleted by admin",
+  this_event_is_deleted: "This event is deleted by admin",
 }
