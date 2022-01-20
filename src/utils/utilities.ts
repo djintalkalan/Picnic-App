@@ -1,4 +1,5 @@
 
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { config } from 'api';
 import { IPaginationState } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
@@ -11,6 +12,7 @@ import Database, { ILocation } from 'src/database/Database';
 import { BottomMenuHolder } from './BottomMenuHolder';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
+
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
 
 // export const launchMap = (address: string | { lat: string | number, long: string | number },) => {
@@ -444,5 +446,23 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
     catch (e) {
         return { id: undefined, type: undefined }
     }
+}
 
+const buildLink = async (l: string) => {
+    const link = await dynamicLinks().buildShortLink({
+        link: 'https://picnicapp.com/' + l,
+        domainUriPrefix: 'https://picnicapp.page.link',
+        android: {
+            packageName: config.PACKAGE_NAME
+        },
+        ios: {
+            bundleId: config.BUNDLE_ID
+        }
+    });
+    return link;
+}
+
+export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
+    const link = await buildLink(type + "/" + id)
+    share("Share " + name, link)
 }

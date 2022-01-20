@@ -13,12 +13,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
 const GroupDetail: FC<any> = (props) => {
-    console.log("props", props.route?.params);
 
     const language = useLanguage()
     const getBottomMenuButtons = useCallback((item) => {
@@ -188,6 +187,13 @@ const GroupDetail: FC<any> = (props) => {
 
     const [isDefault, setDefault] = useState<boolean>(false)
 
+    const shareGroup = useCallback(() => {
+        shareDynamicLink(group?.name, {
+            type: "group-detail",
+            id: group?._id
+        });
+    }, [group])
+
     // if (group)
     if (!group) {
         return <View style={styles.container}>
@@ -213,7 +219,7 @@ const GroupDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => group?.is_admin && setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
+                    <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
                     </TouchableOpacity>
                 </View>
@@ -224,15 +230,13 @@ const GroupDetail: FC<any> = (props) => {
                                 NavigationService.navigate("CreateGroup", { group })
                                 setEditButtonOpened(false)
                             }} title={Language.edit} />
-                            <InnerButton title={Language.share} />
+                            <InnerButton onPress={shareGroup} title={Language.share} />
                             <InnerButton title={Language.export_chat} />
                             <InnerButton title={Language.import_chat}
                                 hideBorder
                             />
                         </Card>
-
                     </View> : null
-
                 }
                 <View style={styles.infoContainer} >
                     <View style={styles.nameContainer}>

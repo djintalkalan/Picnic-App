@@ -39,8 +39,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>${IOS_BUILD_NUMBER}</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

@@ -11,7 +11,7 @@ import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -73,6 +73,13 @@ const EventDetail: FC<any> = (props) => {
 
     const [isDefault, setDefault] = useState<boolean>(false)
 
+    const shareEvent = useCallback(() => {
+        shareDynamicLink(event?.name, {
+            type: "event-detail",
+            id: event?._id
+        });
+    }, [event])
+
     if (!event) {
         return <View style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
@@ -109,23 +116,25 @@ const EventDetail: FC<any> = (props) => {
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     setEditButtonOpened(false)
                                     NavigationService.navigate('EditEvent', { id: event?._id })
-                                }} title={Language.edit} /><InnerButton title={Language.share} /><InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_cancel_event,
-                                        onPressButton: () => {
-                                            dispatch(deleteEvent(event?._id))
-                                            _hidePopUpAlert()
-                                            setTimeout(() => {
-                                                NavigationService.navigate('HomeEventTab')
-                                            }, 200);
-                                        },
-                                        buttonStyle: { backgroundColor: colors.colorErrorRed },
-                                        buttonText: Language.yes_cancel,
-                                    })
-                                    setEditButtonOpened(false)
-                                }
-                                } hideBorder /></> :
-                                <><InnerButton title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
+                                }} title={Language.edit} />
+                                    <InnerButton onPress={shareEvent} title={Language.share} />
+                                    <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_cancel_event,
+                                            onPressButton: () => {
+                                                dispatch(deleteEvent(event?._id))
+                                                _hidePopUpAlert()
+                                                setTimeout(() => {
+                                                    NavigationService.navigate('HomeEventTab')
+                                                }, 200);
+                                            },
+                                            buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                            buttonText: Language.yes_cancel,
+                                        })
+                                        setEditButtonOpened(false)
+                                    }
+                                    } hideBorder /></> :
+                                <><InnerButton onPress={shareEvent} title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
                                     _showPopUpAlert({
                                         message: Language.are_you_sure_mute_event,
                                         onPressButton: () => {

@@ -23,9 +23,6 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
         }
     }, shallowEqual)
 
-
-    console.log("activeGroup", activeGroup);
-
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
     useEffect(() => {
         if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {

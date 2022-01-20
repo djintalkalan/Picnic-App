@@ -53,7 +53,18 @@ const FirebaseNotification = () => {
 
 
     const createNotificationListeners = useCallback(() => {
-        return messaging().onMessage(onMessageReceived);
+        const messageSubs = messaging().onMessage(onMessageReceived);
+        const foregroundSubs = notifee.onForegroundEvent(({ type, detail }) => {
+            switch (type) {
+                case EventType.PRESS:
+                    detail?.notification && onNotificationOpened(detail?.notification)
+                    break;
+            }
+        });
+        return () => {
+            messageSubs();
+            foregroundSubs();
+        };
     }, [isLogin])
 
     useEffect(() => {
@@ -69,30 +80,13 @@ const FirebaseNotification = () => {
     useEffect(() => {
         checkPermission();
         const removeSubscription = createNotificationListeners()
-
-        const foregroundSubs = notifee.onForegroundEvent(({ type, detail }) => {
-            switch (type) {
-                case EventType.PRESS:
-                    detail?.notification && onNotificationOpened(detail?.notification)
-                    break;
-            }
-        });
-
-
-        // PushNotification.configure({ onNotification: onNotificationOpened })
         setTimeout(() => {
             isFirstTime = false
         }, 1500);
         return () => {
-            // if (removeSubscription) {
             removeSubscription()
-            foregroundSubs()
-            // }
-            // PushNotification.unregister()
         }
     }, [isLogin])
-
-
 }
 
 export const onNotificationOpened = (notification: Notification) => {
@@ -118,6 +112,8 @@ const navigateToPages = async (notification: any) => {
 }
 
 const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
+    console.log("Link is ", link);
+
     if (link && link.url) {
         const { id, type } = getDetailsFromDynamicUrl(link.url)
         if (id && type) {
