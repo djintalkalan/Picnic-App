@@ -80,9 +80,6 @@ const EventDetail: FC<any> = (props) => {
         });
     }, [event])
 
-    console.log('it is', event?.capacity - event?.total_sold_tickets);
-
-
     if (!event) {
         return <View style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>

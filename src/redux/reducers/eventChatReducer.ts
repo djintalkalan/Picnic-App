@@ -68,12 +68,10 @@ export const eventChatReducer = (state: IEventChatReducer = initialEventChatStat
 
         case ActionTypes.DELETE_CHAT_IN_EVENT_SUCCESS:
             if (state.events[eventId]) {
-                console.log("DELETE_CHAT_IN_EVENT_SUCCESS", action?.payload);
                 const i = state.events?.[eventId]?.chats?.findIndex(_ => _?._id == action?.payload?.resourceId)
                 if (i > -1) {
                     const newState = { ...state }
                     newState.events?.[eventId]?.chats.splice(i, 1)
-                    console.log("newState", newState);
                     return newState
                 }
             }

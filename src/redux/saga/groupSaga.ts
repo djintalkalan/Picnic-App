@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -89,9 +89,11 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
 }
 
 function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, any> {
-    const { groupId, ...rest } = payload?.data
+    const { groupId, eventId, ...rest } = payload?.data
     const { resource_type }: { resource_type: IResourceType } = rest
     yield put(setLoadingAction(true));
+    console.log("DATA", payload);
+
     try {
         let res = yield call(ApiProvider._muteUnmuteResource, rest);
         if (res.status == 200) {
@@ -100,8 +102,8 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
             if (payload?.data?.is_mute == "1")
                 switch (payload?.data?.resource_type) {
                     case 'message':
-                        yield put(deleteChatInGroupSuccess({
-                            groupId: groupId,
+                        yield put((groupId ? deleteChatInGroupSuccess : deleteChatInEventSuccess)({
+                            groupId, eventId,
                             resourceId: payload?.data?.resource_id
                         }))
                         break;

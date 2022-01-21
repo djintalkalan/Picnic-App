@@ -56,7 +56,7 @@ const ChatItem = (props: IChatItem) => {
         },
         {
             title: Language.mute,
-            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id } })),
+            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
         }]
         if (myMessage || isAdmin) {
             buttons.push({
@@ -117,7 +117,8 @@ const ChatItem = (props: IChatItem) => {
                         data: {
                             resource_id: _id,
                             resource_type: 'message',
-                            is_mute: '0'
+                            is_mute: '0',
+                            [isGroupType ? "groupId" : "eventId"]: group?._id
                         },
                         onSuccess: (res) => {
                             // setResources(_ => _.filter(_ => _._id != item?._id))

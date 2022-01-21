@@ -24,6 +24,7 @@
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "cSpell.words": [
+        "authorise",
         "bootsplash",
         "netinfo",
         "notifee",

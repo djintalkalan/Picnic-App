@@ -296,6 +296,53 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
     }
 }
 
+function* _authorizePayment({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    const { resource_id, no_of_tickets, currency } = payload
+    try {
+        let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency });
+        if (res.status == 200) {
+            NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
+            _showSuccessMessage(res.message);
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    const { onSuccess } = payload
+    try {
+        let res = yield call(ApiProvider._scanTicket, payload?.data);
+        if (res.status == 200) {
+            yield put(getEventMembers(payload?.data?.resource_id));
+            _showSuccessMessage(res.message);
+            onSuccess(true)
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+            onSuccess(false)
+
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+            onSuccess(false)
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+        onSuccess(false)
+    }
+}
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -311,5 +358,7 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.GET_EVENT_MEMBERS, _getEventMembers);
     yield takeLatest(ActionTypes.REMOVE_EVENT_MEMBER, _removeEventMember);
     yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
+    yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);
+    yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
 
 };

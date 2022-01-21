@@ -120,6 +120,16 @@ export const verifyQrCode = (payload: any) => ({
     payload
 })
 
+export const capturePayment = (payload: any) => ({
+    type: ActionTypes.CAPTURE_PAYMENT,
+    payload
+})
+
+
+export const authorizePayment = (payload: any) => ({
+    type: ActionTypes.AUTHORIZE_PAYMENT,
+    payload
+})
 
 
 

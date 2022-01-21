@@ -1,5 +1,5 @@
 
-import { joinEvent } from 'app-store/actions';
+import { authorizePayment, joinEvent } from 'app-store/actions';
 import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -18,7 +18,7 @@ type FormType = {
 }
 const BookEvent: FC = (props: any) => {
     const [isPayByPaypal, setIsPayByPaypal] = useState()
-    const [noOfTickets, setNoOfTickets] = useState()
+    const [noOfTickets, setNoOfTickets] = useState("")
     const [payMethodSelected, setPayMethodSelected] = useState(false);
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
@@ -32,10 +32,10 @@ const BookEvent: FC = (props: any) => {
     const dispatch = useDispatch();
 
 
-    const confirmReservation = useCallback((data) => {
+    const confirmReservation = useCallback(async (data) => {
         let payload = {
             resource_id: event?._id,
-            no_of_tickets: noOfTickets,
+            no_of_tickets: noOfTickets?.toString(),
             transaction_id: "",
             amount: event?.event_fees ?? '',
             currency: event?.event_currency ?? "",
@@ -43,10 +43,35 @@ const BookEvent: FC = (props: any) => {
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
-        dispatch(joinEvent(payload))
+        dispatch(isPayByPaypal ? authorizePayment(payload) : joinEvent(payload))
     }, [event, noOfTickets, isPayByPaypal])
 
-    console.log('event group', event?.event_group)
+    // const onSubmit = useCallback(() => {
+    //     event?.is_free_event ? handleSubmit((data) => confirmReservation(data)) : () => {
+    //         _showPopUpAlert({
+    //             title: Language.confirm_payment_method,
+    //             message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
+    //                 : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
+    //             onPressButton: handleSubmit((data) => { confirmReservation(data), _hidePopUpAlert() }),
+    //             buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees),
+    //             buttonStyle: { width: '100%' }
+    //         })
+    //     }
+    // },[])
+
+    const onSubmit = useCallback(() => handleSubmit(data => {
+        if (event?.is_free_event)
+            confirmReservation(data)
+        _showPopUpAlert({
+            title: Language.confirm_payment_method,
+            message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
+                : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
+            onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
+            buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees),
+            buttonStyle: { width: '100%' }
+        })
+    })(), [event, noOfTickets, isPayByPaypal])
+
     return (
         <SafeAreaView style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
@@ -121,16 +146,7 @@ const BookEvent: FC = (props: any) => {
                         <Button
                             title={event?.is_free_event ? Language.book_ticket
                                 : Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees)}
-                            onPress={event?.is_free_event ? handleSubmit((data) => confirmReservation(data)) : () => {
-                                _showPopUpAlert({
-                                    title: Language.confirm_payment_method,
-                                    message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
-                                        : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
-                                    onPressButton: handleSubmit((data) => { confirmReservation(data), _hidePopUpAlert() }),
-                                    buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + (parseInt(noOfTickets) * event?.event_fees),
-                                    buttonStyle: { width: '100%' }
-                                })
-                            }}
+                            onPress={onSubmit}
                             disabled={!payMethodSelected && !event?.is_free_event}
                         />
                         : undefined

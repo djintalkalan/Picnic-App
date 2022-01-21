@@ -131,7 +131,6 @@ const EventChats: FC<any> = (props) => {
 
 
     const _renderChatItem = useCallback(({ item, index }) => {
-        console.log("chatItem", item)
         return (
             <ChatItem
                 {...item}
