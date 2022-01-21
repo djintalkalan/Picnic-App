@@ -46,11 +46,13 @@ const HiddenPosts: FC = () => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
+
     const _renderChatItem = useCallback(({ item, index }) => {
         console.log("chatItem", item?.muted_message?.message)
         return (
             <ChatItem
                 {...item}
+                _id={item?.muted_messages?._id}
                 message={item?.muted_messages?.message}
                 message_type={item?.muted_messages?.message_type}
                 isMuted={true}
@@ -59,6 +61,7 @@ const HiddenPosts: FC = () => {
             // setRepliedMessage={setRepliedMessage}
             />)
     }, [])
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }}>

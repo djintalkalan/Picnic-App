@@ -113,19 +113,16 @@ const ChatItem = (props: IChatItem) => {
             buttons = [{
                 title: Language.unmute,
                 onPress: () => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_block_member,
-                        onPressButton: () => {
-                            dispatch(blockUnblockResource({
-                                data: { resource_id: userId, resource_type: 'user', is_blocked: '1' },
-                                onSuccess: () => {
-
-                                }
-                            }))
-                            _hidePopUpAlert()
+                    dispatch(muteUnmuteResource({
+                        data: {
+                            resource_id: _id,
+                            resource_type: 'message',
+                            is_mute: '0'
                         },
-                        buttonText: Language.yes_block
-                    })
+                        onSuccess: (res) => {
+                            // setResources(_ => _.filter(_ => _._id != item?._id))
+                        }
+                    }))
                 },
             }]
         }
