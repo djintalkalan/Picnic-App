@@ -25,8 +25,6 @@ const HiddenPosts: FC = () => {
     const paginationState = useRef<IPaginationState>(initialPaginationState)
     const dispatch = useDispatch();
 
-    console.log('hidden posts', mutedPosts)
-
     useEffect(() => {
         paginationState.current = initialPaginationState
         fetchResources()
@@ -48,17 +46,10 @@ const HiddenPosts: FC = () => {
 
 
     const _renderChatItem = useCallback(({ item, index }) => {
-        console.log("chatItem", item?.muted_message?.message)
         return (
             <ChatItem
-                {...item}
-                _id={item?.muted_messages?._id}
-                message={item?.muted_messages?.message}
-                message_type={item?.muted_messages?.message_type}
+                {...item?.muted_messages}
                 isMuted={true}
-                user={item?.muted_messages?.user}
-            // isAdmin={eventDetail?.is_admin}
-            // setRepliedMessage={setRepliedMessage}
             />)
     }, [])
 

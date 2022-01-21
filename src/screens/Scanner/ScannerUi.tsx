@@ -13,8 +13,6 @@ const ScannerUi = (props: { isQrScanning: boolean, setQrScanning: any }) => {
     const duration = 1500;
 
     useLayoutEffect(() => {
-        console.log("Scanning", props?.isQrScanning)
-
         let animation: Animated.CompositeAnimation = null
         if (props?.isQrScanning) {
             animation = Animated.loop(

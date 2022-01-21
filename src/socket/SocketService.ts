@@ -185,7 +185,7 @@ class Service {
     }
 
     private onGroupMemberDelete = (e: any) => {
-        console.log("onGroupMemberDelete", e, Database.getStoredValue('userData'), Database.getStoredValue('userData')?._id, NavigationService?.getCurrentScreen())
+        console.log("onGroupMemberDelete", e)
         if (this.dispatch && e?.data) {
             const id = Database.getStoredValue('userData')?._id
             if (id == e?.data?.user_id) {
@@ -276,7 +276,7 @@ class Service {
     }
 
     private onEventMemberDelete = (e: any) => {
-        console.log("onEventMemberDelete", e, Database.getStoredValue('userData'), Database.getStoredValue('userData')?._id, NavigationService?.getCurrentScreen())
+        console.log("onEventMemberDelete", e)
         if (this.dispatch && e?.data) {
             const id = Database.getStoredValue('userData')?._id
             if (id == e?.data?.user_id) {

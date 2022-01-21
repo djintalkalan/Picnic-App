@@ -34,8 +34,6 @@ const MutedResources: FC<any> = (props) => {
 
     const mutedResource = type == 'group' ? mutedGroups : mutedEvents
 
-    console.log("mutedResource : " + type, mutedResource)
-
     const paginationState = useRef<IPaginationState>(initialPaginationState)
 
     const [resources, setResources] = useState<Array<any>>([])

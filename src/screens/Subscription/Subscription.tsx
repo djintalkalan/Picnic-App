@@ -187,7 +187,7 @@ const Subscription: FC = (props: any) => {
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
         if (props?.route?.params?.from == 'editEvent' || props?.route?.params?.from == 'settings') {
             NavigationService.goBack();
-            props?.route?.params?.onSuccess();
+            props?.route?.params?.onSuccess && props?.route?.params?.onSuccess();
         }
         else {
             props?.route?.params?.data?.isFreeEvent ?

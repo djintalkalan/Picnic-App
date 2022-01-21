@@ -27,9 +27,6 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
         }
     }, isEqual)
 
-    console.log('events are', events);
-
-
     const _renderItem = useCallback(({ item, index }) => {
 
         return (
