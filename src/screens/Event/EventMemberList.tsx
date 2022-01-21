@@ -5,6 +5,7 @@ import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { MemberListItem } from 'custom-components/ListItem/ListItem';
+import { useDatabase } from 'database/Database';
 import React, { FC, useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,8 @@ export const EventMemberList: FC<any> = (props) => {
     const { members } = useSelector((state: RootState) => ({
         members: state?.eventDetails?.[props?.route?.params?.id]?.[props?.route?.params?.isCheckedIn ? 'eventMembersCheckedIn' : 'eventMembersNotCheckedIn'],
     }))
+    const [userData] = useDatabase<any>("userData");
+
     const getButtons = useCallback((item: any) => {
         const buttons: Array<IBottomMenuButton> = []
         // buttons.push({
@@ -49,7 +52,7 @@ export const EventMemberList: FC<any> = (props) => {
                         onPressButton: () => {
                             SocketService.emit(EMIT_EVENT_MEMBER_DELETE, {
                                 resource_id: item?.resource_id,
-                                user_id: item?.user_id
+                                user_id: userData?._id,
                             })
                             _hidePopUpAlert()
                         },

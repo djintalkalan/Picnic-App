@@ -7,7 +7,7 @@ import { Button, KeyboardHideView, MyHeader, TextInput } from 'custom-components
 import { isEqual } from 'lodash';
 import React, { FC, Fragment, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
@@ -74,7 +74,7 @@ const BookEvent: FC = (props: any) => {
                         name={'noOfSeats'}
                         required={Language.number_of_seats_is_required}
                         keyboardType='number-pad'
-                        multiline
+                        multiline={Platform.OS == 'ios' ? true : false}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         // control={control}

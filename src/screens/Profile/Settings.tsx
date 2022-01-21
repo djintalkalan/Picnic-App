@@ -183,7 +183,7 @@ const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeigh
                 style={[styles.buttonContainer, { ...StyleSheet.flatten(containerStyle) }]} >
                 <Image style={{ height: scaler(22), width: scaler(22) }} source={props?.image} />
                 <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{props?.title}</Text>
-                {props?.arrowRight ? <Image style={{ height: scaler(15), width: scaler(7) }} source={Images.ic_right} /> : undefined}
+                {props?.arrowRight ? <Image style={{ height: scaler(15), width: scaler(7) }} resizeMode='contain' source={Images.ic_right} /> : undefined}
 
             </TouchableOpacity>
             {divider ? <View style={styles.divider} /> : null}
