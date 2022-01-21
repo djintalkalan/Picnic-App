@@ -170,7 +170,10 @@ const EventDetail: FC<any> = (props) => {
                                         _showPopUpAlert({
 
                                             message: Language.are_you_sure_cancel_reservation + '?',
-                                            customView: () => <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>,
+                                            customView: () => <TouchableOpacity
+                                                onPress={() => { _showPopUpAlert({ message: event?.event_refund_policy }) }}>
+                                                <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
+                                            </TouchableOpacity>,
                                             onPressButton: () => {
                                                 dispatch(leaveEvent(event?._id))
                                                 _hidePopUpAlert()

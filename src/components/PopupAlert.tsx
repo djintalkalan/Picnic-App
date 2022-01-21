@@ -16,7 +16,7 @@ export interface IAlertType {
     title?: string
     customView?: FC<any>
     message?: string
-    buttonText: string
+    buttonText?: string
     buttonStyle?: StyleProp<ViewStyle>
     cancelButtonText?: string
     onPressCancel?: () => void

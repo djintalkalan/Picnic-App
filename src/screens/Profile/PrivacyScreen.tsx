@@ -54,8 +54,6 @@ const PrivacyScreen: FC<any> = (props) => {
                     <SettingButton
                         onPress={() => {
                             NavigationService.navigate("MutedGroupsEvents")
-
-
                         }}
                         image={Images.ic_muted}
                         title={Language.unmute}
@@ -64,7 +62,7 @@ const PrivacyScreen: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
-
+                            NavigationService.navigate("HiddenPosts")
                         }}
                         image={Images.ic_hidden_posts}
                         title={Language.restore}

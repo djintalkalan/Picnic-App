@@ -30,6 +30,7 @@ import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
 import BlockedMembers from 'screens/Profile/BlockedMembers';
+import HiddenPosts from 'screens/Profile/HiddenPosts';
 import MutedGroupsEvents from 'screens/Profile/MutedGroupsEvents';
 import PrivacyScreen from 'screens/Profile/PrivacyScreen';
 import ProfileEvents from 'screens/Profile/ProfileEvents';
@@ -88,6 +89,7 @@ const dashboardScreens = {
   Scanner: Scanner,
   ProfileEvents: ProfileEvents,
   ProfileGroups: ProfileGroups,
+  HiddenPosts: HiddenPosts,
 };
 
 const MyNavigationContainer = () => {

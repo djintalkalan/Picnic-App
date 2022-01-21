@@ -101,7 +101,7 @@ const Settings: FC<any> = (props) => {
                     {!userData?.is_premium ?
                         <SettingButton
                             onPress={() => {
-                                NavigationService.navigate("Subscription")
+                                NavigationService.navigate("Subscription", { from: 'settings' })
                             }}
                             image={Images.ic_smiley}
                             title={Language.join_now}

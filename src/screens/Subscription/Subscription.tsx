@@ -185,7 +185,7 @@ const Subscription: FC = (props: any) => {
     const continueToMemberShip = useCallback((message: string) => {
         _showSuccessMessage(message)
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
-        if (props?.route?.params?.from == 'editEvent') {
+        if (props?.route?.params?.from == 'editEvent' || props?.route?.params?.from == 'settings') {
             NavigationService.goBack();
             props?.route?.params?.onSuccess();
         }

@@ -1,4 +1,4 @@
-import { blockUnblockResource, reportResource } from 'app-store/actions'
+import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { InnerBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -31,6 +31,7 @@ interface IChatItem {
     event?: any
     isGroupType: boolean
     message_deleted_by_user: any
+    isMuted?: boolean
 }
 
 const DelText = "{{admin_name}} has deleted post from {{display_name}}"
@@ -38,7 +39,7 @@ const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id } = props ?? {}
+    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id, isMuted } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, image: userImage, _id: userId } = user ?? {}
     const [userData] = useDatabase<any>("userData");
@@ -52,6 +53,10 @@ const ChatItem = (props: IChatItem) => {
         let buttons: IBottomMenuButton[] = [{
             title: Language.reply,
             onPress: () => setRepliedMessage({ _id, user, message }),
+        },
+        {
+            title: Language.mute,
+            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id } })),
         }]
         if (myMessage || isAdmin) {
             buttons.push({
@@ -100,6 +105,26 @@ const ChatItem = (props: IChatItem) => {
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_report
+                    })
+                },
+            }]
+        }
+        if (isMuted) {
+            buttons = [{
+                title: Language.unmute,
+                onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_block_member,
+                        onPressButton: () => {
+                            dispatch(blockUnblockResource({
+                                data: { resource_id: userId, resource_type: 'user', is_blocked: '1' },
+                                onSuccess: () => {
+
+                                }
+                            }))
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_block
                     })
                 },
             }]
