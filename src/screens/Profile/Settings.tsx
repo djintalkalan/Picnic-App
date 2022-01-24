@@ -1,8 +1,8 @@
-import { deleteAccount, doLogout } from 'app-store/actions'
+import { deleteAccount, doLogout, getProfile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
-import React, { FC, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
@@ -24,6 +24,9 @@ const Settings: FC<any> = (props) => {
 
     const [profileImage, setProfileImage] = useState()
 
+    useEffect(() => {
+        dispatch(getProfile())
+    }, []);
 
     return (
         <SafeAreaView style={styles.container} >

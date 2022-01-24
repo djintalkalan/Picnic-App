@@ -283,23 +283,15 @@ class Service {
                 console.log("SCREEN", NavigationService?.getCurrentScreen());
                 const { name, params } = NavigationService?.getCurrentScreen() ?? {}
                 console.log('data is', name, e?.data, params?.id);
-
                 if ((name == "EventDetail" || name == "EventChats") &&
                     params?.id == e?.data?.resource_id
                 ) {
                     _showErrorMessage(Language.getString("you_have_been_removed_from_event"), 5000)
                     NavigationService.navigate("Home")
                 }
-
                 this.dispatch(leaveEventSuccess(e?.data?.resource_id))
-                this.dispatch(removeEventMemberSuccess({ eventId: e?.data?.resource_id, data: e?.data?.user_id }))
-
             }
-            this.dispatch(setChatInEvent({
-                eventId: e?.data?.resource_id,
-                chats: e?.data?.message
-            }))
-
+            this.dispatch(removeEventMemberSuccess({ eventId: e?.data?.resource_id, data: e?.data?.user_id }))
             this.dispatch(setChatInEvent({
                 eventId: e?.data?.resource_id,
                 chats: e?.data?.message
