@@ -12,7 +12,6 @@ import Language from 'src/language/Language';
 import { NavigationService } from 'utils';
 import EventMemberList from './EventMemberList';
 
-
 const EventMembers: FC<any> = (props) => {
 
     const dispatch = useDispatch()
