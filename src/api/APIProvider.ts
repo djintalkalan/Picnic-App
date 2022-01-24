@@ -386,12 +386,12 @@ export const _getMyAllGroups = async (body: any, page: number) => {
 }
 
 export const _authorizePayment = async (body: any) => {
-    console.log("---------- _getMyAllGroups Api Call ---------------")
+    console.log("---------- _authorizePayment Api Call ---------------")
     return fetchApiData(config.API_URL + 'payment/authorise-paypal', body, "POST")
 }
 
 export const _capturePayment = async (body: any) => {
-    console.log("---------- _getMyAllGroups Api Call ---------------")
+    console.log("---------- _capturePayment Api Call ---------------")
     return fetchApiData(config.API_URL + 'payment/capture-paypal', body, "POST")
 }
 

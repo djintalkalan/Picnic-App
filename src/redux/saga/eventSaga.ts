@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getEventDetail, getEventMembers, joinEvent, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -303,7 +303,6 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
         let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency });
         if (res.status == 200) {
             NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
-            _showSuccessMessage(res.message);
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -319,27 +318,21 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
 
 function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { onSuccess } = payload
+    const { res: R, ...rest } = payload
     try {
-        let res = yield call(ApiProvider._scanTicket, payload?.data);
+        let res = yield call(ApiProvider._capturePayment, { _id: R?._id });
         if (res.status == 200) {
-            yield put(getEventMembers(payload?.data?.resource_id));
-            _showSuccessMessage(res.message);
-            onSuccess(true)
+            yield put(joinEvent(rest));
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
-            onSuccess(false)
-
         } else {
             _showErrorMessage(Language.something_went_wrong);
-            onSuccess(false)
         }
         yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
         yield put(setLoadingAction(false));
-        onSuccess(false)
     }
 }
 
@@ -360,5 +353,4 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
     yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);
     yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
-
 };
