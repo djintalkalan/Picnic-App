@@ -16,12 +16,16 @@ const Payment: FC<any> = (props) => {
     const [url, setUrl] = useState(props?.route?.params?.data?.res?.url)
     const dispatch = useDispatch()
     const onNavigationStateChange = useCallback((e: WebViewNavigation) => {
-        console.log("URL is ", e?.url);
+        // console.log("URL is ", e?.url);
+        console.log("EVENT is ", e);
         dispatch(setLoadingAction(e?.loading))
         if (!closed?.current && e?.url?.includes("compute.amazonaws.com/")) {
             closed.current = true
             NavigationService.goBack()
             dispatch(capturePayment(props?.route?.params?.data))
+        }
+        else if (!closed?.current) {
+            dispatch(setLoadingAction(e?.loading))
         }
 
     }, [])
