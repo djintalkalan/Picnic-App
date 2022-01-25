@@ -70,7 +70,7 @@ const CreateEvent2: FC<any> = props => {
         const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
         const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
         let is_premium = 1
-        if (expireAt < thisDate || !res.data || !res?.data?.is_premium) {
+        if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
           is_premium = 0
         }
         if (userData?.is_premium != is_premium) {
