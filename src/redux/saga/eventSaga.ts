@@ -322,6 +322,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._capturePayment, { _id: R?._id });
         if (res.status == 200) {
+            NavigationService.goBack()
             yield put(joinEvent(rest));
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

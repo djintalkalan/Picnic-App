@@ -206,7 +206,7 @@ const GroupList: FC<any> = (props) => {
                         </View>
                     </View>
                 }}
-                keyExtractor={(_, i) => i.toString()}
+                keyExtractor={(_, i) => _?._id}
                 useAnimatedList
                 useNativeDriver
                 onEndReached={() => {

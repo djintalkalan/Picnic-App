@@ -1,10 +1,11 @@
 import { colors, Fonts, Images } from 'assets'
 import { Text } from 'custom-components'
+import ImageLoader from 'custom-components/ImageLoader'
 import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback } from 'react'
-import { Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import Language from 'src/language/Language'
-import { scaler } from 'utils'
+import { getImageUrl, scaler } from 'utils'
 
 interface ChatInputProps {
     value?: string,
@@ -15,6 +16,7 @@ interface ChatInputProps {
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
     onChooseImage?: (image: ImageOrVideo) => void
 }
+const { height, width } = Dimensions.get('screen')
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
     const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
@@ -42,15 +44,26 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
 
     return (
         <>
-            {repliedMessage ? <View style={[styles.inputContainer, { flexDirection: 'row', alignItems: 'center' }]} >
+            {repliedMessage ? <View style={[styles.inputContainer, { flexDirection: 'row', alignItems: 'flex-start' }]} >
                 <View style={{ flex: 1, paddingVertical: scaler(5) }} >
                     <Text style={styles.replied_to} >{Language.replied_to} <Text>
                         {repliedMessage?.user?.display_name}
-                    </Text></Text>
-                    <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>
+                    </Text>
+                    </Text>
+                    {repliedMessage?.message_type == 'image' ?
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                            <ImageLoader
+                                placeholderSource={Images.ic_image_placeholder}
+                                style={{ borderRadius: scaler(10), height: scaler(60), width: width - scaler(30), marginTop: scaler(10) }} source={{ uri: getImageUrl(repliedMessage?.message, { width: width - scaler(30), height: scaler(60), type: 'messages' }) }} />
+                            {/* <Text numberOfLines={1} type='mediumItalic' style={styles.message} >{"IMAGE"}</Text> */}
+
+                        </View>
+
+                        :
+                        <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>}
                 </View>
                 <TouchableOpacity onPress={() => setRepliedMessage(null)} >
-                    <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24) }} />
+                    <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24), paddingVertical: scaler(5) }} />
                 </TouchableOpacity>
             </View> : null}
             <View pointerEvents={disableButton ? 'none' : undefined} style={styles.inputContainer} >

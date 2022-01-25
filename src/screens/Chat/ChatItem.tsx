@@ -52,7 +52,7 @@ const ChatItem = (props: IChatItem) => {
     const _openChatActionMenu = useCallback(() => {
         let buttons: IBottomMenuButton[] = [{
             title: Language.reply,
-            onPress: () => setRepliedMessage({ _id, user, message }),
+            onPress: () => setRepliedMessage({ _id, user, message, message_type }),
         },
         {
             title: Language.mute,
@@ -211,8 +211,18 @@ const ChatItem = (props: IChatItem) => {
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5) }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
-                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.messageContainer, { maxWidth: undefined, width: '100%' }]} >
-                            <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.messageContainer, {
+                            maxWidth: undefined, width: '100%',
+                            padding: parent_message?.message_type == "image" ? 0 : scaler(10),
+
+                        }]} >
+                            {parent_message?.message_type == "image" ?
+                                <ImageLoader
+                                    placeholderSource={Images.ic_image_placeholder}
+                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                :
+                                <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                            }
                         </TouchableOpacity>
                     </View>
                     : null}
@@ -228,8 +238,16 @@ const ChatItem = (props: IChatItem) => {
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5), width: '100%' }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
-                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, { maxWidth: undefined, width: '100%' }]} >
-                            <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
+                            maxWidth: undefined, width: '100%',
+                            padding: parent_message?.message_type == "image" ? 0 : scaler(10),
+                        }]} >
+                            {parent_message?.message_type == "image" ?
+                                <ImageLoader
+                                    placeholderSource={Images.ic_image_placeholder}
+                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                            }
                         </TouchableOpacity>
                     </View>
                     : null}
@@ -255,8 +273,7 @@ const styles = StyleSheet.create({
     myMessageContainer: {
         borderRadius: scaler(15),
         backgroundColor: colors.colorWhite,
-        paddingHorizontal: scaler(10),
-        paddingVertical: scaler(10),
+        padding: scaler(10),
     },
     myMessage: {
         color: colors.colorBlackText,
@@ -273,8 +290,7 @@ const styles = StyleSheet.create({
         maxWidth: '70%',
         alignSelf: 'baseline',
         backgroundColor: colors.colorPrimary,
-        paddingHorizontal: scaler(10),
-        paddingVertical: scaler(10),
+        padding: scaler(10),
     },
     systemText: {
         color: "#656565",

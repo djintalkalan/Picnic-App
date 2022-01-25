@@ -5,6 +5,7 @@ import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem';
+import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -125,7 +126,7 @@ const EventList: FC<any> = (props) => {
         isLoading: state.isLoading,
         allEvents: state?.event?.allEvents,
         searchedEvents: state?.homeData?.searchedEvents
-    }))
+    }), isEqual)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')
@@ -264,7 +265,7 @@ const EventList: FC<any> = (props) => {
                         </View>
                     </View>
                 }}
-                keyExtractor={(_, i) => i.toString()}
+                keyExtractor={(_, i) => _?._id}
                 useAnimatedList
                 useNativeDriver
                 onEndReached={() => {

@@ -172,7 +172,7 @@ const showNotification = (message: any, isBackground: boolean) => {
             } else {
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
-                    body: data?.message,
+                    body: data?.message_type == 'image' ? "Image" : data?.message,
                     title: data?.user?.display_name,
                     data: { title, body, message: JSON.stringify(data) },
                     android: {

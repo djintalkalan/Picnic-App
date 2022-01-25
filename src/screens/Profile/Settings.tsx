@@ -2,7 +2,7 @@ import { deleteAccount, doLogout, getProfile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
@@ -180,13 +180,14 @@ const Settings: FC<any> = (props) => {
 }
 
 const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, arrowRight?: boolean, onPress: () => void, title: string, image: ImageSourcePropType }) => {
+    const cStyle = useMemo(() => ({ ...StyleSheet.flatten(containerStyle) }), [])
     return (
         <>
             <TouchableOpacity onPress={props?.onPress}
-                style={[styles.buttonContainer, { ...StyleSheet.flatten(containerStyle) }]} >
-                <Image style={{ height: scaler(22), width: scaler(22) }} source={props?.image} />
+                style={[styles.buttonContainer, cStyle]} >
+                <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} />
                 <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{props?.title}</Text>
-                {props?.arrowRight ? <Image style={{ height: scaler(15), width: scaler(7) }} resizeMode='contain' source={Images.ic_right} /> : undefined}
+                {props?.arrowRight ? <Image style={{ height: scaler(15), width: scaler(7), resizeMode: 'contain' }} source={Images.ic_right} /> : undefined}
 
             </TouchableOpacity>
             {divider ? <View style={styles.divider} /> : null}

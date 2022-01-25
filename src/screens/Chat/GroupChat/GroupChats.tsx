@@ -51,6 +51,7 @@ export const GroupChats: FC<any> = (props) => {
             if (repliedMessage) {
                 setRepliedMessage(null)
             }
+            flatListRef?.current?.scrollToPosition(0, 0, true);
         } else {
             _showErrorMessage("Please enter message")
         }
