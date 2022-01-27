@@ -98,6 +98,7 @@ const EventChats: FC<any> = (props) => {
     }))
 
     const { name, city, image, state, country, _id } = eventDetail ?? activeEvent
+    console.log('chats are', chats);
 
 
 

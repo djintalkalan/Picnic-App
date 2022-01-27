@@ -27,6 +27,7 @@ interface IChatItem {
     message_total_likes_count: number
     message_liked_by_user_name: []
     message_recently_liked_user_ids: Array<any>
+    is_message_sender_is_admin: boolean
     group?: any
     event?: any
     isGroupType: boolean
@@ -39,13 +40,16 @@ const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id, isMuted } = props ?? {}
+    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, is_message_sender_is_admin, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id, isMuted } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, image: userImage, _id: userId } = user ?? {}
     const [userData] = useDatabase<any>("userData");
     const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
 
     const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
+
+    const isCreatorMessage = group?.user_id == userId
+    console.log('isCreatorMessage', isCreatorMessage, group)
 
     const myMessage = userId == userData?._id
 
@@ -168,14 +172,21 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'image') {
+
         const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <ImageLoader
+                {is_message_sender_is_admin ? <ImageLoader
                     placeholderSource={Images.ic_home_profile}
                     source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
-                    style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
-                <Text style={styles.imageDisplayName} >{display_name}</Text>
+                    style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} /> :
+                    <View style={styles.imageContainer}>
+                        <ImageLoader
+                            placeholderSource={Images.ic_home_profile}
+                            source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                            style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                    </View>}
+                <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
@@ -233,7 +244,7 @@ const ChatItem = (props: IChatItem) => {
 
     return (
         <View style={styles.container} >
-            <Text style={styles.userName} >{display_name}</Text>
+            <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text>
             <TouchableOpacity activeOpacity={1} onLongPress={_openChatActionMenu} style={styles.messageContainer} >
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5), width: '100%' }} >
@@ -323,6 +334,15 @@ const styles = StyleSheet.create({
         fontSize: scaler(12),
         fontWeight: '400',
         flex: 1
+    },
+    imageContainer: {
+        width: scaler(34),
+        height: scaler(34),
+        borderRadius: scaler(17),
+        borderColor: colors.colorPrimary,
+        borderWidth: scaler(3),
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 
 })

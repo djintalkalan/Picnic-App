@@ -92,7 +92,7 @@ export const en = {
   mute_groups: "Mute groups",
   mute_group: "Mute group",
   mute_events: "Mute events",
-  create_group: "Create group",
+  create_group: "Create Group",
   host_event: "Host Event",
   permission_required: "Permission required",
   app_needs_location_permission: "App needs location permission to verify your current location",
@@ -156,7 +156,7 @@ export const en = {
 
   report_has_been_sent: "Report has been sent!!",
   close: "Close",
-  host_an_event: 'Host an event',
+  host_an_event: 'Host An Event',
   event_name: 'Event name',
   select_group: 'Select group',
   online_event: 'Online event',
