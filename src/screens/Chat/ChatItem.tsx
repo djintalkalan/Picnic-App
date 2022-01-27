@@ -49,7 +49,6 @@ const ChatItem = (props: IChatItem) => {
     const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
 
     const isCreatorMessage = group?.user_id == userId
-    console.log('isCreatorMessage', isCreatorMessage, group)
 
     const myMessage = userId == userData?._id
 
@@ -176,10 +175,12 @@ const ChatItem = (props: IChatItem) => {
         const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                {is_message_sender_is_admin ? <ImageLoader
-                    placeholderSource={Images.ic_home_profile}
-                    source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
-                    style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} /> :
+                {is_message_sender_is_admin ?
+                    <ImageLoader
+                        placeholderSource={Images.ic_home_profile}
+                        source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                        style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                    :
                     <View style={styles.imageContainer}>
                         <ImageLoader
                             placeholderSource={Images.ic_home_profile}
