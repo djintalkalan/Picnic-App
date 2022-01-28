@@ -82,8 +82,8 @@ const EventDetail: FC<any> = (props) => {
 
     if (!event) {
         return <View style={styles.container}>
-            <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                <Image style={{ height: scaler(100), width: scaler(100) }} source={Images.ic_event_placeholder} />
+            <View style={styles.placeholder}>
+                <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
             </View>
             <LinearGradient colors={gradientColors} style={styles.linearGradient} />
         </View>
@@ -93,15 +93,15 @@ const EventDetail: FC<any> = (props) => {
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
                 {isDefault || !event?.image ?
-                    <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                        <Image style={{ height: scaler(100), width: scaler(100) }} source={Images.ic_event_placeholder} />
+                    <View style={styles.placeholder}>
+                        <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
                     </View>
                     : <Image onError={() => {
                         setDefault(true)
                     }} source={event?.image ? { uri: getImageUrl(event?.image, { width: width, type: 'events' }) } : Images.ic_group_placeholder}
                         style={{ width: width, height: width, resizeMode: 'cover' }} />}
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-                <View style={{ width: '100%', top: scaler(30), position: 'absolute', flexDirection: 'row', padding: scaler(20), justifyContent: 'space-between' }} >
+                <View style={styles.subHeading} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
@@ -163,23 +163,23 @@ const EventDetail: FC<any> = (props) => {
                                     })
                                     setEditButtonOpened(false)
                                 }} hideBorder={event?.is_event_member ? false : true} />
-                                    {event?.is_event_member ? <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
-                                        _showPopUpAlert({
-
-                                            message: Language.are_you_sure_cancel_reservation + '?',
-                                            customView: () => <TouchableOpacity
-                                                onPress={() => { _showPopUpAlert({ message: event?.event_refund_policy }) }}>
-                                                <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
-                                            </TouchableOpacity>,
-                                            onPressButton: () => {
-                                                dispatch(leaveEvent(event?._id))
-                                                _hidePopUpAlert()
-                                            },
-                                            buttonText: Language.yes_cancel,
-                                            // cancelButtonText: Language.cancel
-                                        })
-                                        setEditButtonOpened(false)
-                                    }} hideBorder /> : undefined}
+                                    {event?.is_event_member ?
+                                        <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                            _showPopUpAlert({
+                                                message: Language.are_you_sure_cancel_reservation + '?',
+                                                customView: () => <TouchableOpacity
+                                                    onPress={() => { _showPopUpAlert({ message: event?.event_refund_policy }) }}>
+                                                    <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
+                                                </TouchableOpacity>,
+                                                onPressButton: () => {
+                                                    dispatch(leaveEvent(event?._id))
+                                                    _hidePopUpAlert()
+                                                },
+                                                buttonText: Language.yes_cancel,
+                                                // cancelButtonText: Language.cancel
+                                            })
+                                            setEditButtonOpened(false)
+                                        }} hideBorder /> : undefined}
                                 </>
                             }
                         </Card>
@@ -191,10 +191,14 @@ const EventDetail: FC<any> = (props) => {
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
                             <Text style={styles.name} >{event?.name}</Text>
-                            <Text style={styles.address} >{event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}</Text>
+                            <Text style={styles.address} >
+                                {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                            </Text>
                         </View>
                         <View >
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>{event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}</Text>
+                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
+                            </Text>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
 
                         </View>
@@ -423,5 +427,24 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.colorBlackText,
         textAlign: 'center'
+    },
+    placeholder: {
+        width: width,
+        height: width,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors?.colorFadedPrimary
+    },
+    eventImage: {
+        height: scaler(100),
+        width: scaler(100)
+    },
+    subHeading: {
+        width: '100%',
+        top: scaler(30),
+        position: 'absolute',
+        flexDirection: 'row',
+        padding: scaler(20),
+        justifyContent: 'space-between'
     }
 })

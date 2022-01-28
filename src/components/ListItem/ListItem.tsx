@@ -142,7 +142,13 @@ const styles = StyleSheet.create({
         borderRadius: scaler(30),
         resizeMode: 'cover'
     },
-    textContainer: { flex: 1, paddingVertical: scaler(5), justifyContent: 'space-between', marginHorizontal: scaler(10) },
+    textContainer: {
+        flex: 1,
+        paddingVertical: scaler(5),
+        justifyContent: 'space-between',
+        // backgroundColor: 'red',
+        marginHorizontal: scaler(10)
+    },
     title: {
         color: "#272727",
         fontWeight: '600',
@@ -158,7 +164,8 @@ const styles = StyleSheet.create({
         color: colors.colorGreyInactive,
         fontWeight: '400',
         fontSize: scaler(11),
-        maxWidth: '90%'
+        maxWidth: '90%',
+        minHeight: scaler(31)
     },
     rightText: {
         color: colors.colorPrimary,

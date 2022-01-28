@@ -14,7 +14,7 @@ import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
 
 const tabs: TabProps[] = [
   {
@@ -158,6 +158,9 @@ const Home: FC = () => {
             <InnerButton
               title={Language.share_picnic}
               icon={Images.ic_share_picnic}
+              onPress={() => {
+                shareAppLink("Picnic Groups")
+              }}
             />
             <InnerButton
               onPress={() => {

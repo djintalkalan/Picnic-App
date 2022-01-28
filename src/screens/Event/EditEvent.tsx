@@ -315,7 +315,6 @@ const EditEvent: FC<any> = props => {
         })
     }, [])
 
-    console.log('payment methods', paymentMethods)
 
     return (
         <SafeAreaView style={styles.container}>
