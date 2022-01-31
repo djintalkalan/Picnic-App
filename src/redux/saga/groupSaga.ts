@@ -426,5 +426,4 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
     yield takeLatest(ActionTypes.GET_MY_EVENTS, _getMyEvents);
 
-
 };

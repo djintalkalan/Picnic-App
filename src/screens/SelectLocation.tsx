@@ -23,7 +23,6 @@ const DefaultDelta = {
 const SelectLocation: FC<any> = (props) => {
     const onSelectLocation = props?.route?.params?.onSelectLocation
     const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
-    // console.log("prevSelectedLocation", prevSelectedLocation)
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
@@ -36,7 +35,6 @@ const SelectLocation: FC<any> = (props) => {
     }, [])
 
     useEffect(() => {
-        // console.log("localLocation", localLocation)
         setTimeout(() => {
             localLocation && mapRef?.current?.animateCamera({ center: localLocation }, { duration: 500 })
         }, 200)
@@ -146,7 +144,6 @@ const SelectLocation: FC<any> = (props) => {
                     </View>
 
                     <TouchableOpacity onPress={() => {
-                        // console.log("currentLocation", currentLocation)
                         if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
                             setLocalLocation(currentLocation)
                         } else {
@@ -205,7 +202,8 @@ const styles = StyleSheet.create({
         // height: height
     },
     searchInput: {
-        height: scaler(40), backgroundColor: colors.colorWhite,
+        height: scaler(40),
+        backgroundColor: colors.colorWhite,
         borderRadius: scaler(10),
         paddingHorizontal: scaler(45),
         paddingVertical: 0, marginVertical: 0,

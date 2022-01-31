@@ -121,7 +121,7 @@ const BookEvent: FC = (props: any) => {
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
                         </Text>
-                        {event?.payment_method.map((_, i) => {
+                        {event?.payment_method.map((_: any, i: any) => {
                             return <Fragment key={i}>
                                 <PaymentMethod
                                     type={_}
