@@ -160,6 +160,9 @@ const Home: FC = () => {
               icon={Images.ic_share_picnic}
               onPress={() => {
                 shareAppLink("Picnic Groups")
+                setTimeout(() => {
+                  setFABOpen(false);
+                }, 1000);
               }}
             />
             <InnerButton

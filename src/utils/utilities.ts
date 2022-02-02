@@ -453,7 +453,7 @@ const buildLink = async (l: string) => {
 
 export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
     const link = await buildLink(type + "/" + id)
-    share('', "Share " + name, link)
+    share("Share " + name, link)
 }
 
 export const shareAppLink = async (name: string) => {
@@ -470,5 +470,5 @@ export const shareAppLink = async (name: string) => {
             forcedRedirectEnabled: true
         }
     });
-    share('', "Share " + name, link)
+    share("Share " + name, link)
 }
