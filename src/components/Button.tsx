@@ -39,6 +39,7 @@ export const Button = (props: ButtonProps) => {
                 ...container,
                 ...StyleSheet.flatten(containerStyle) // Object.assign({}, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle]))
             },
+
             buttonStyle: {
                 borderRadius: radius ?? scaler(10),
                 backgroundColor: disabled ? colors?.colorGreyText : backgroundColor ?? colors?.colorPrimary,
@@ -69,11 +70,13 @@ export const Button = (props: ButtonProps) => {
                     });
                 }
                     : undefined
-                } style={styles.buttonStyle}>
+                }
+                style={styles.buttonStyle}>
                 <Text style={styles.textStyle} type={type} >{title}</Text>
             </TouchableOpacity>
         </View>
     );
 }
+
 
 export default Button
