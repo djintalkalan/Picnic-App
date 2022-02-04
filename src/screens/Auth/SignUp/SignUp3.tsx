@@ -1,22 +1,23 @@
-import {doSignUp} from 'app-store/actions';
-import {colors, Images} from 'assets';
+import { config } from 'api';
+import { doSignUp } from 'app-store/actions';
+import { colors, Images } from 'assets';
 import {
   Button,
   CheckBox,
   PhoneInput,
   Stepper,
   Text,
-  TextInput,
+  TextInput
 } from 'custom-components';
-import React, {FC, useCallback, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {Image, Platform, StyleSheet, View} from 'react-native';
-import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import React, { FC, useCallback, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Image, Linking, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import {scaler} from 'utils';
+import { scaler } from 'utils';
 
 type FormType = {
   username: string;
@@ -35,7 +36,7 @@ const SignUp3: FC<any> = props => {
     getValues,
     setValue,
     setError,
-    formState: {errors},
+    formState: { errors },
   } = useForm<FormType>({
     defaultValues: {
       // username: "deepaktesting1",
@@ -86,7 +87,7 @@ const SignUp3: FC<any> = props => {
             paddingHorizontal: scaler(20),
             paddingVertical: scaler(15),
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={styles.welcomeStyle}>
               {Language.optional_information}
             </Text>
@@ -96,7 +97,7 @@ const SignUp3: FC<any> = props => {
           <TextInput
             placeholder={Language.username}
             name={'username'}
-            style={{fontSize: scaler(13)}}
+            style={{ fontSize: scaler(13) }}
             control={control}
             errors={errors}
           />
@@ -106,7 +107,7 @@ const SignUp3: FC<any> = props => {
             ref={phoneRef}
             title={Language.phone}
             placeholder={'0000-000-000'}
-            controlObject={{control, getValues, setValue, setError}}
+            controlObject={{ control, getValues, setValue, setError }}
             defaultCountry={Database.DefaultCountry}
             errors={errors}
           />
@@ -126,15 +127,19 @@ const SignUp3: FC<any> = props => {
               style={styles.iAccept}>
               {Language.i_accept_the}
               <Text
-                onPress={() => {}}
-                style={[styles.iAccept, {color: colors.colorPrimary}]}>
+                onPress={() => {
+                  Linking.openURL(config.TERMS_URL)
+                }}
+                style={[styles.iAccept, { color: colors.colorPrimary }]}>
                 {' '}
                 {Language.term_of_service}
               </Text>{' '}
               {Language.and}{' '}
               <Text
-                onPress={() => {}}
-                style={[styles.iAccept, {color: colors.colorPrimary}]}>
+                onPress={() => {
+                  Linking.openURL(config.PRIVACY_URL)
+                }}
+                style={[styles.iAccept, { color: colors.colorPrimary }]}>
                 {Language.privacy_policy}
               </Text>
             </Text>
@@ -142,7 +147,7 @@ const SignUp3: FC<any> = props => {
 
           <Button
             disabled={calculateButtonDisability()}
-            containerStyle={{marginTop: scaler(25)}}
+            containerStyle={{ marginTop: scaler(25) }}
             title={Language.sign_up}
             onPress={onSubmit}
           />

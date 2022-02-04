@@ -49,15 +49,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>${APP_NAME} would like access to your camera</string>
+	<string>${APP_NAME} would like access to your camera to scan the QR code to complete ticket booking flow.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>${APP_NAME} would like to get your location</string>
+	<string>${APP_NAME} requires your location to improve your app experience by fetching nearby groups and events for you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>${APP_NAME} would like to get your location</string>
+	<string>${APP_NAME} requires your location to improve your app experience by fetching nearby groups and events for you.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>${APP_NAME} would like to save photos to your photo gallery</string>
+	<string>${APP_NAME} would like to save photos to your photo gallery.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>${APP_NAME} would like access to your photo gallery</string>
+	<string>${APP_NAME} requires access to your photo gallery to let you chose photos for your profile picture as well as for groups and events.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

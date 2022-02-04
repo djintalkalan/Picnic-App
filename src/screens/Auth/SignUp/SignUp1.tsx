@@ -1,20 +1,20 @@
-import {checkEmail} from 'app-store/actions';
-import {colors, Images} from 'assets';
-import {Button, Stepper, Text, TextInput} from 'custom-components';
+import { checkEmail } from 'app-store/actions';
+import { colors, Images } from 'assets';
+import { Button, Stepper, Text, TextInput } from 'custom-components';
 import {
   ConfirmPasswordValidations,
   EmailValidations,
   PasswordValidations,
-  validateEmail,
+  validateEmail
 } from 'custom-components/TextInput/rules';
-import React, {FC, useCallback, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {Image, StyleSheet, View} from 'react-native';
-import {KeyboardAwareScrollView as ScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import React, { FC, useCallback, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Image, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import {NavigationService, scaler, _showErrorMessage} from 'utils';
+import { NavigationService, scaler, _showErrorMessage } from 'utils';
 
 type FormType = {
   email: string;
@@ -33,7 +33,7 @@ const SignUp1: FC = () => {
     control,
     handleSubmit,
     getValues,
-    formState: {errors},
+    formState: { errors },
     setError,
   } = useForm<FormType>({
     defaultValues: {
@@ -48,7 +48,7 @@ const SignUp1: FC = () => {
     () =>
       handleSubmit(data => {
         if (isTerms) {
-          const {confirmPassword, ...rest} = data;
+          const { confirmPassword, ...rest } = data;
           NavigationService.navigate('SignUp2', rest);
         } else {
           _showErrorMessage(Language.please_accept_terms);
@@ -75,7 +75,7 @@ const SignUp1: FC = () => {
           email: getValues('email'),
           onSuccess: (errorMessage: string) => {
             if (errorMessage) {
-              setError('email', {message: errorMessage});
+              setError('email', { message: errorMessage });
               isValidEmail.current = false;
             } else {
               isValidEmail.current = true;
@@ -97,7 +97,7 @@ const SignUp1: FC = () => {
             paddingHorizontal: scaler(20),
             paddingVertical: scaler(15),
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={styles.welcomeStyle}>{Language.lets_get_started}</Text>
             <Image source={Images.ic_logo_name} style={styles.icon} />
           </View>
@@ -107,7 +107,7 @@ const SignUp1: FC = () => {
             name={'email'}
             keyboardType={'email-address'}
             required={true}
-            onChangeText={(text: string) => {}}
+            onChangeText={(text: string) => { }}
             // onBlur={onBlurEmail}
             rules={EmailValidations}
             control={control}
@@ -127,7 +127,7 @@ const SignUp1: FC = () => {
             iconSize={scaler(18)}
           />
 
-          <TextInput containerStyle={{height: 0, padding: 0, margin: 0}} />
+          <TextInput containerStyle={{ height: 0, padding: 0, margin: 0 }} />
 
           <TextInput
             placeholder={Language.confirm_password}
@@ -166,7 +166,7 @@ const SignUp1: FC = () => {
 
           <Button
             disabled={calculateButtonDisability()}
-            containerStyle={{marginTop: scaler(20)}}
+            containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={onBlurEmail}
           />
@@ -177,7 +177,7 @@ const SignUp1: FC = () => {
               onPress={() => {
                 NavigationService.navigate('Login');
               }}
-              style={[styles.notAMember, {color: colors.colorPrimary}]}>
+              style={[styles.notAMember, { color: colors.colorPrimary }]}>
               {Language.log_in}
             </Text>
           </Text>

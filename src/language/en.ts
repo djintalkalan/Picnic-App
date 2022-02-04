@@ -30,7 +30,7 @@ export const en = {
   invalid_phone: "Invalid Phone",
   lets_get_started: "Let’s get started",
   i_accept_the: "I accept the",
-  term_of_service: "terms of service",
+  term_of_service: "Terms of service",
   next: "Next",
   already_a_member: "Already a member?",
   log_in: "Log in",

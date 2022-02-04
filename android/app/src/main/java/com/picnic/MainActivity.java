@@ -16,7 +16,7 @@ public class MainActivity extends ReactActivity {
     return "Picnic";
   }
 
-   @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

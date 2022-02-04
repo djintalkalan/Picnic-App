@@ -45,7 +45,7 @@ import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
-import { navigationRef } from 'utils';
+import { NavigationService } from 'utils';
 
 
 export let TOKEN_EXPIRED = false;
@@ -142,8 +142,10 @@ const MyNavigationContainer = () => {
 
   return (
     <NavigationContainer
-      ref={ref => (navigationRef.current = ref)}
-      onReady={() => RNBootSplash.hide()}>
+      ref={NavigationService.setNavigationRef}
+      onReady={() => setTimeout(() => {
+        RNBootSplash.hide({ fade: true })
+      }, 1000)}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Object.entries({
           // Use some screens conditionally based on some condition

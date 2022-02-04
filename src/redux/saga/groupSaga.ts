@@ -6,7 +6,7 @@ import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_GROUP_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { navigationRef, NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any, any, any> {
@@ -337,7 +337,7 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._deleteGroup, payload);
         if (res.status == 200) {
-            if (navigationRef.current?.getCurrentRoute()?.name == "GroupDetail") {
+            if (NavigationService?.getCurrentScreen()?.name == "GroupDetail") {
                 NavigationService.goBack()
             }
             // yield put(deleteGroupSuccess(payload))

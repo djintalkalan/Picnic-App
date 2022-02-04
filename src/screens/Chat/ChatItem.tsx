@@ -167,10 +167,10 @@ const ChatItem = (props: IChatItem) => {
     if (is_system_message) {
         return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (message_deleted_by_user?.display_name ?? "") + "**") + '”'} />
     }
+    const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 
     if (message_type == 'image') {
 
-        const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                 {is_message_sender_is_admin || isMuted ?
@@ -217,7 +217,7 @@ const ChatItem = (props: IChatItem) => {
 
     if (myMessage) {
         return <View style={styles.myContainer} >
-            <TouchableOpacity activeOpacity={1} onLongPress={_openChatActionMenu} style={styles.myMessageContainer} >
+            <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5) }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
@@ -236,33 +236,81 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                     </View>
                     : null}
-                <Text style={styles.myMessage} >{message?.trim()}</Text>
+                <Text style={[styles.myMessage, {}]} >{message?.trim()}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                    <TouchableOpacity onPress={() => {
+                        SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                            message_id: _id,
+                            is_like: is_message_liked_by_me ? "0" : '1'
+                        })
+                    }} >
+                        <Image source={Images.ic_smiley} style={{
+                            resizeMode: 'contain',
+                            height: scaler(20), width: scaler(20), marginLeft: scaler(5),
+                            tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                        }} />
+                    </TouchableOpacity>
+                    {(is_message_liked_by_me || message_total_likes_count) ?
+                        <Text style={[styles.likeBy, { flex: 0, marginLeft: scaler(5) }]} >
+                            {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                        </Text> : null}
+                </View>
+            </View>
+            <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
             </TouchableOpacity>
         </View>
     }
 
     return (
         <View style={styles.container} >
-            <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text>
-            <TouchableOpacity activeOpacity={1} onLongPress={_openChatActionMenu} style={styles.messageContainer} >
-                {parent_message ?
-                    <View style={{ marginBottom: scaler(5), width: '100%' }} >
-                        <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
-                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
-                            maxWidth: undefined, width: '100%',
-                            padding: parent_message?.message_type == "image" ? 0 : scaler(10),
-                        }]} >
-                            {parent_message?.message_type == "image" ?
-                                <ImageLoader
-                                    placeholderSource={Images.ic_image_placeholder}
-                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
-                                : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
-                            }
-                        </TouchableOpacity>
+            <View style={{ flexDirection: 'row' }} >
+                <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity>
+                <View style={{ flex: 1 }} >
+                    <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text>
+                    <View style={styles.messageContainer} >
+                        {parent_message ?
+                            <View style={{ marginBottom: scaler(5), width: '100%' }} >
+                                <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
+                                <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
+                                    maxWidth: undefined, width: '100%',
+                                    padding: parent_message?.message_type == "image" ? 0 : scaler(10),
+                                }]} >
+                                    {parent_message?.message_type == "image" ?
+                                        <ImageLoader
+                                            placeholderSource={Images.ic_image_placeholder}
+                                            style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                        : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                            : null}
+                        <Text style={styles.message} >{message?.trim()}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                            <TouchableOpacity onPress={() => {
+                                SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                                    message_id: _id,
+                                    is_like: is_message_liked_by_me ? "0" : '1'
+                                })
+                            }} >
+                                <Image source={Images.ic_smiley} style={{
+                                    resizeMode: 'contain',
+                                    height: scaler(20), width: scaler(20), marginRight: scaler(5),
+                                    tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
+                                }} />
+                            </TouchableOpacity>
+                            {(is_message_liked_by_me || message_total_likes_count) ?
+                                <Text style={[styles.likeBy, { flex: 0, color: colors.colorWhite }]} >
+                                    {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                                </Text> : null}
+                        </View>
                     </View>
-                    : null}
-                <Text style={styles.message} >{message?.trim()}</Text>
-            </TouchableOpacity>
+                </View>
+
+            </View>
+
         </View>
     )
 }
@@ -276,9 +324,10 @@ export default memo(ChatItem)
 const styles = StyleSheet.create({
     myContainer: {
         width: '100%',
-        alignItems: 'flex-end',
-        paddingHorizontal: scaler(15),
         paddingVertical: scaler(10),
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        paddingHorizontal: scaler(8),
     },
     myMessageContainer: {
         borderRadius: scaler(15),
@@ -292,7 +341,6 @@ const styles = StyleSheet.create({
         textAlign: 'right'
     },
     container: {
-        paddingHorizontal: scaler(15),
         paddingVertical: scaler(10)
     },
     messageContainer: {

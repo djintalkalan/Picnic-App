@@ -1,8 +1,10 @@
 import { NavigationContainerRef, Route, StackActions } from '@react-navigation/native';
 import * as React from 'react';
 
-export const navigationRef: React.MutableRefObject<NavigationContainerRef | null> =
+const navigationRef: React.MutableRefObject<NavigationContainerRef | null> =
   React.createRef();
+
+const setNavigationRef = (ref: any) => navigationRef.current = ref
 
 const navigate = (name: string, params: any = {}) => {
   navigationRef?.current?.navigate(name, params);
@@ -63,4 +65,4 @@ const goBack = () => {
     console.log(e);
   }
 };
-export const NavigationService = { getCurrentScreen, navigate, goBack, push, replace, logout, closeAndPush };
+export const NavigationService = { setNavigationRef, getCurrentScreen, navigate, goBack, push, replace, logout, closeAndPush };
