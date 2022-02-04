@@ -472,3 +472,7 @@ export const shareAppLink = async (name: string) => {
     });
     share("Share " + name, link)
 }
+
+export const getDisplayName = (username: string, firstName: string, lastName: string) => {
+    return username || ((firstName || "") + (lastName ? (" " + lastName) : ""))
+}

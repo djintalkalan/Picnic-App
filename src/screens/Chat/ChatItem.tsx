@@ -42,8 +42,9 @@ const { height, width } = Dimensions.get('screen')
 const ChatItem = (props: IChatItem) => {
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, is_message_sender_is_admin, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id, isMuted } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
-    const { display_name, image: userImage, _id: userId } = user ?? {}
+    const { display_name, image: userImage, _id: userId, first_name, last_name } = user ?? {}
     const [userData] = useDatabase<any>("userData");
+
     const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
 
     const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
@@ -173,18 +174,12 @@ const ChatItem = (props: IChatItem) => {
 
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                {is_message_sender_is_admin || isMuted ?
+                <View style={(is_message_sender_is_admin || isMuted) ? {} : styles.imageContainer}>
                     <ImageLoader
                         placeholderSource={Images.ic_home_profile}
                         source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
                         style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
-                    :
-                    <View style={styles.imageContainer}>
-                        <ImageLoader
-                            placeholderSource={Images.ic_home_profile}
-                            source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
-                            style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
-                    </View>}
+                </View>
                 <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
@@ -264,12 +259,24 @@ const ChatItem = (props: IChatItem) => {
 
     return (
         <View style={styles.container} >
-            <View style={{ flexDirection: 'row' }} >
-                <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2) }} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                {/* <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2), marginTop: scaler(3) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <View style={{ flex: 1 }} >
-                    <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? {} : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                        <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                            <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                        </TouchableOpacity>
+                    </View>
+                    {/* <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text> */}
                     <View style={styles.messageContainer} >
                         {parent_message ?
                             <View style={{ marginBottom: scaler(5), width: '100%' }} >

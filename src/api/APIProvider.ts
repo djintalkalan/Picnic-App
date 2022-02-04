@@ -217,7 +217,7 @@ export const _getAllGroups = async (body: any, page: number) => {
 
 export const _getGroupChat = async (body: any) => {
     console.log("---------- _getGroupChat Api Call ---------------")
-    return fetchApiData(config.API_URL + 'message/group-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=20&message_id=' + (body?.message_id || ""), null, "GET")
+    return fetchApiData(config.API_URL + 'message/group-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=40&message_id=' + (body?.message_id || ""), null, "GET")
 }
 
 export const _createGroup = async (body: any) => {
@@ -337,7 +337,7 @@ export const _joinEvent = async (body: string) => {
 
 export const _getEventChat = async (body: any) => {
     console.log("---------- _getGroupChat Api Call ---------------")
-    return fetchApiData(config.API_URL + 'message/event-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=20&message_id=' + (body?.message_id || ""), null, "GET")
+    return fetchApiData(config.API_URL + 'message/event-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=40&message_id=' + (body?.message_id || ""), null, "GET")
 }
 
 export const _leaveEvent = async (body: any) => {
