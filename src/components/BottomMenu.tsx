@@ -1,7 +1,7 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component } from "react";
-import { BackHandler, FlatList, GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import { BackHandler, FlatList, GestureResponderEvent, Image, ImageSourcePropType, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -15,6 +15,7 @@ export interface IBottomMenuButton {
     textStyle?: StyleProp<TextStyle>
     buttonContainerStyle?: StyleProp<ViewStyle>
     onPress?: (e?: GestureResponderEvent) => void
+    iconSource?: ImageSourcePropType
 }
 
 export interface IBottomMenu {
@@ -73,7 +74,10 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
                 item?.onPress && item?.onPress()
                 this.setState({ alertVisible: false })
 
-            }} style={[{ paddingVertical: scaler(15) }, item?.buttonContainerStyle]} >
+            }} style={[{ paddingVertical: scaler(15) }, item?.buttonContainerStyle, { flexDirection: item?.iconSource ? 'row' : 'column', justifyContent: 'center', alignItems: 'center' }]} >
+                {item?.iconSource ?
+                    <Image style={{ left: scaler(30), position: 'absolute', height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={item?.iconSource} />
+                    : null}
                 <Text style={[styles.title, item?.textStyle]} >{item?.title}</Text>
             </TouchableOpacity>
         </>

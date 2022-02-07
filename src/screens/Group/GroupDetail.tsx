@@ -1,19 +1,21 @@
 import { useFocusEffect } from '@react-navigation/native'
+import { _whatsappImport } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -187,6 +189,34 @@ const GroupDetail: FC<any> = (props) => {
 
     const [isDefault, setDefault] = useState<boolean>(false)
 
+    const pickFile = useCallback((type: 'whatsapp' | 'telegram') => {
+        pickSingle({
+            type: Platform.OS == 'android' ? (type == 'telegram' ? 'application/json' : 'text/plain') : (type == 'telegram' ? "public.content" : "public.plain-text"),
+            // copyTo: 'cachesDirectory'
+        }).then(document => {
+            console.log(document);
+            if (document?.uri && document?.name.endsWith(type == 'telegram' ? ".json" : ".txt")) {
+                const { uri, name, type } = document
+                const file = { uri, name, type }
+                const formData = new FormData()
+                formData.append("file", file);
+                formData.append("resource_id", group?.id);
+                formData.append("imported_platform", type);
+
+                dispatch(setLoadingAction(true))
+
+                _whatsappImport(formData).then((res) => {
+                    dispatch(setLoadingAction(false))
+
+                }).catch((e) => {
+                    dispatch(setLoadingAction(false))
+                })
+            } else {
+                _showErrorMessage("Wrong file picked")
+            }
+        })
+    }, [group])
+
     const shareGroup = useCallback(() => {
         shareDynamicLink(group?.name, {
             type: "group-detail",
@@ -231,8 +261,22 @@ const GroupDetail: FC<any> = (props) => {
                                 setEditButtonOpened(false)
                             }} title={Language.edit} />
                             <InnerButton onPress={shareGroup} title={Language.share} />
-                            <InnerButton title={Language.export_chat} />
-                            <InnerButton title={Language.import_chat}
+                            {/* <InnerButton title={Language.export_chat} /> */}
+                            <InnerButton onPress={() => {
+                                _showBottomMenu({
+                                    buttons: [{
+                                        title: "Whatsapp",
+                                        iconSource: Images.ic_whatsapp,
+                                        onPress: () => pickFile('whatsapp')
+
+                                    }, {
+                                        title: "Telegram",
+                                        iconSource: Images.ic_telegram,
+                                        onPress: () => pickFile('telegram')
+                                    }]
+                                })
+                                setEditButtonOpened(false)
+                            }} title={Language.import_chat}
                                 hideBorder
                             />
                         </Card>

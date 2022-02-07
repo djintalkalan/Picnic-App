@@ -1,7 +1,8 @@
 
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { config } from 'api';
-import { IPaginationState } from 'app-store/actions';
+import { store } from 'app-store';
+import { IPaginationState, setLoadingAction } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
@@ -452,8 +453,18 @@ const buildLink = async (l: string) => {
 }
 
 export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
-    const link = await buildLink(type + "/" + id)
-    share("Share " + name, link)
+    try {
+        store.dispatch(setLoadingAction(true))
+        const link = await buildLink(type + "/" + id)
+        store.dispatch(setLoadingAction(false))
+        setTimeout(() => {
+            share("Share " + name, link)
+        }, 100);
+    }
+    catch (e) {
+        store.dispatch(setLoadingAction(false))
+    }
+
 }
 
 export const shareAppLink = async (name: string) => {

@@ -6,6 +6,7 @@ import { useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
 import { scaler, _showErrorMessage } from 'utils'
@@ -21,6 +22,7 @@ export const GroupChats: FC<any> = (props) => {
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
 
+    const insets = useSafeAreaInsets()
 
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
@@ -149,7 +151,7 @@ export const GroupChats: FC<any> = (props) => {
                     renderItem={_renderChatItem}
                 />
             </View>
-            {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+            {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - insets?.bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                 <ChatInput
                     // value={textMessage}

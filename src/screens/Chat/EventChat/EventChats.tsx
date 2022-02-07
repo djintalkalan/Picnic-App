@@ -7,7 +7,7 @@ import { useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
 import { getImageUrl, NavigationService, scaler, shareDynamicLink, _showErrorMessage } from 'utils'
@@ -23,7 +23,7 @@ const EventChats: FC<any> = (props) => {
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
-
+    const insets = useSafeAreaInsets()
 
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
@@ -199,7 +199,7 @@ const EventChats: FC<any> = (props) => {
                         renderItem={_renderChatItem}
                     />
                 </View>
-                {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - scaler(25)) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+                {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - insets?.bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                     <ChatInput
                         // value={textMessage}
