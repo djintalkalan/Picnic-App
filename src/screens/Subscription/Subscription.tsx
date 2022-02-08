@@ -3,7 +3,7 @@ import { _authorizeMembership, _captureMembership, _getActiveMembership } from '
 import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text, useStatusBar } from 'custom-components';
-import Database, { useDatabase } from 'database/Database';
+import Database from 'database/Database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -14,13 +14,13 @@ import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showSuccessMessage } from 'utils';
 
 const productIds = [
-    'y_payment',
-    'm_payment'
+    'y_subscription',
+    'm_subscription'
 ];
 
-const subscriptionIds = [
-    'ct_member',
-];
+// const subscriptionIds = [
+//     'ct_member',
+// ];
 
 
 const Subscription: FC = (props: any) => {
@@ -30,8 +30,6 @@ const Subscription: FC = (props: any) => {
     const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
     const [products, setProducts] = useState<Array<InAppPurchases.Product>>([])
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
-    const [userData] = useDatabase("userData")
-
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -56,12 +54,11 @@ const Subscription: FC = (props: any) => {
 
     const getItems = useCallback(async () => {
         try {
-            const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
-            console.log('ALL SUBSCRIPTIONS ', subscriptions);
-            if (subscriptions?.length) {
-                setSubscriptions(subscriptions)
-            }
-
+            // const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
+            // console.log('ALL SUBSCRIPTIONS ', subscriptions);
+            // if (subscriptions?.length) {
+            //     setSubscriptions(subscriptions)
+            // }
             const products = await InAppPurchases.getProducts(productIds);
             console.log('ALL PRODUCTS ', products);
             if (products?.length) {
@@ -95,8 +92,8 @@ const Subscription: FC = (props: any) => {
                 _authorizeMembership({
                     transaction_id: purchase?.transactionId,
                     transaction_receipt: purchase?.transactionReceipt,
-                    type: purchase?.productId == 'm_payment' ? "monthly" : "yearly",
-                    expire_at: dateFormat(add(new Date(), purchase?.productId == 'm_payment' ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
+                    type: purchase?.productId == 'm_subscription' ? "monthly" : "yearly",
+                    expire_at: dateFormat(add(new Date(), purchase?.productId == 'm_subscription' ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
                     payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
                     // transaction_date:purchase?.transactionDate,
                     device: Platform.OS
@@ -231,7 +228,6 @@ const Subscription: FC = (props: any) => {
             <View style={{ margin: scaler(20) }}>
                 <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
                 <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
-
             </View>
         </SafeAreaView>
     );

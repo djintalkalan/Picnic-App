@@ -15,7 +15,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "m_payment",
+      "productID" : "m_subscription",
       "referenceName" : "CoreTxt Monthly Membership",
       "type" : "Consumable"
     },
@@ -30,7 +30,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "y_payment",
+      "productID" : "y_subscription",
       "referenceName" : "CoreTxt Yearly Membership",
       "type" : "Consumable"
     }
