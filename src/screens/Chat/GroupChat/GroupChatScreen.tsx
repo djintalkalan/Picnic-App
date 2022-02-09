@@ -88,7 +88,9 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                         }
                     }} style={{ paddingHorizontal: scaler(5) }} >
                         {groupDetail?.is_group_member ?
-                            <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
+                            <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', { from: 'groupChat' })}>
+                                <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
+                            </TouchableOpacity>
                             :
                             <Text style={styles.joinText} >{Language.join}</Text>
                         }

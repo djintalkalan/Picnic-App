@@ -162,7 +162,7 @@ const EventChats: FC<any> = (props) => {
                 defaultIcon={Images.ic_event_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onPress={() => {
-
+                        NavigationService.navigate('SearchChatScreen', { from: 'eventChat' })
                     }} style={{ paddingHorizontal: scaler(5) }} >
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
 

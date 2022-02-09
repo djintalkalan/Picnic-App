@@ -62,7 +62,7 @@ const BookEvent: FC = (props: any) => {
     const onSubmit = useCallback(() => handleSubmit(data => {
         if (event?.is_free_event)
             confirmReservation(data)
-        _showPopUpAlert({
+        else _showPopUpAlert({
             title: Language.confirm_payment_method,
             message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                 : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
