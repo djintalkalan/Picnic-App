@@ -10,7 +10,7 @@ export const setActiveGroup = (payload: any) => ({
     payload
 })
 
-export const setChatInGroup = (payload: { groupId: string, chats: Array<any>, message_id?: string, new?: boolean }) => ({
+export const setChatInGroup = (payload: { groupId: string, chats: Array<any>, message_id?: string }) => ({
     type: ActionTypes.SET_CHAT_IN_GROUP,
     payload
 })

@@ -157,12 +157,10 @@ class Service {
         console.log("Group Message received", e)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            console.log("data", data);
             this.dispatch &&
                 this.dispatch(setChatInGroup({
                     groupId: data[0]?.resource_id,
-                    chats: data,
-                    new: true
+                    chats: data
                 }))
         }
 
@@ -170,14 +168,12 @@ class Service {
 
     private onGroupMessages = (e: any) => {
         console.log("Group Messages received", e)
-        console.log(e?.data)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
             this.dispatch &&
                 this.dispatch(setChatInGroup({
                     groupId: data?.[0]?.resource_id,
-                    chats: data,
-                    new: true
+                    chats: data
                 }))
         }
     }
@@ -220,14 +216,12 @@ class Service {
             this.dispatch(removeGroupMemberSuccess({ groupId: e?.data?.resource_id, data: e?.data?.user_id }))
             this.dispatch(setChatInGroup({
                 groupId: e?.data?.resource_id,
-                chats: e?.data?.message,
-                new: true
+                chats: e?.data?.message
             }))
 
             // this.dispatch(setChatInGroup({
             //     groupId: e?.data?.resource_id,
-            //     chats: e?.data?.message,
-            //     new: true
+            //     chats: e?.data?.message
             // }))
         }
     }
@@ -238,11 +232,12 @@ class Service {
     private onEventMessageDelete = (e: any) => {
         console.log("Event Message Delete", e)
         if (this.dispatch && e?.data) {
-            if (e?.data?.message) {
+            if (e?.data?.message?.data?.length) {
+                const data = mergeMessageObjects(e?.data?.message?.data, e?.data?.message?.message_total_likes_count, e?.data?.message?.is_message_liked_by_me)
                 this.dispatch(updateChatInEventSuccess({
                     eventId: e?.data?.resource_id,
                     resourceId: e?.data?.message_id,
-                    message: e?.data?.message?.[0]
+                    message: data?.[0]
                 }))
             } else {
                 this.dispatch(deleteChatInEventSuccess({
@@ -256,11 +251,12 @@ class Service {
 
     private onEventMessage = (e: any) => {
         console.log("Event Message received", e)
-        if (e?.data) {
+        if (e?.data?.data?.length) {
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
             this.dispatch &&
                 this.dispatch(setChatInEvent({
-                    eventId: e?.data?.[0]?.resource_id,
-                    chats: e?.data
+                    eventId: data?.[0]?.resource_id,
+                    chats: data
                 }))
         }
 
@@ -268,12 +264,13 @@ class Service {
 
     private onEventMessages = (e: any) => {
         console.log("Event Messages received", e)
-        console.log(e?.data)
-        if (e?.data) {
+        if (e?.data?.data?.length) {
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+
             this.dispatch &&
                 this.dispatch(setChatInEvent({
-                    eventId: e?.data?.[0]?.resource_id,
-                    chats: e?.data
+                    eventId: data?.[0]?.resource_id,
+                    chats: data
                 }))
         }
     }

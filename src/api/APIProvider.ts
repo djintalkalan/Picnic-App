@@ -404,3 +404,8 @@ export const _getGroupChatNew = async (body: any) => {
     console.log("---------- _getGroupChatNew Api Call ---------------")
     return fetchApiData(config.API_URL + 'message/group-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=30&message_id=' + (body?.message_id || ""), null, "GET")
 }
+
+export const _getEventChatNew = async (body: any) => {
+    console.log("---------- _getEventChatNew Api Call ---------------")
+    return fetchApiData(config.API_URL + 'message/event-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=30&message_id=' + (body?.message_id || ""), null, "GET")
+}

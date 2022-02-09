@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -29,6 +29,8 @@ const EventChats: FC<any> = (props) => {
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
 
     const { keyboardHeight, isKeyboard } = useKeyboardService();
+
+    const isFocused = useIsFocused()
 
     useEffect(() => {
         if (repliedMessage) {
@@ -98,9 +100,6 @@ const EventChats: FC<any> = (props) => {
     }))
 
     const { name, city, image, state, country, _id } = eventDetail ?? activeEvent
-    console.log('chats are', chats);
-
-
 
     const dispatch = useDispatch()
 
@@ -175,8 +174,6 @@ const EventChats: FC<any> = (props) => {
                 }
             />
 
-
-
             <View style={styles.container} >
                 <View pointerEvents={(eventDetail?.is_event_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
                     <FlatList
@@ -190,10 +187,14 @@ const EventChats: FC<any> = (props) => {
                         onEndReached={() => {
                             console.log("End", chats[chats.length - 1]?._id);
                             if (loadMore) {
+                                loadMore = false
                                 dispatch(getEventChat({
                                     id: activeEvent?._id,
                                     message_id: chats[chats.length - 1]?._id
                                 }))
+                                setTimeout(() => {
+                                    loadMore = true
+                                }, 5000);
                             }
 
                         }}

@@ -103,11 +103,6 @@ export const GroupChats: FC<any> = (props) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if (chats?.length)
-            loadMore = true
-    }, [chats])
-
-    useEffect(() => {
         dispatch(getGroupChat({
             id: activeGroup?._id,
         }))
@@ -149,6 +144,9 @@ export const GroupChats: FC<any> = (props) => {
                                 id: activeGroup?._id,
                                 message_id: chats[chats.length - 1]?._id
                             }))
+                            setTimeout(() => {
+                                loadMore = true
+                            }, 5000);
                         }
 
                     }}

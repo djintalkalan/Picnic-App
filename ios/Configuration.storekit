@@ -16,7 +16,7 @@
         }
       ],
       "productID" : "m_subscription",
-      "referenceName" : "CoreTxt Monthly Membership",
+      "referenceName" : "Picnic Groups Monthly Membership",
       "type" : "Consumable"
     },
     {
@@ -31,7 +31,7 @@
         }
       ],
       "productID" : "y_subscription",
-      "referenceName" : "CoreTxt Yearly Membership",
+      "referenceName" : "Picnic Groups Yearly Membership",
       "type" : "Consumable"
     }
   ],

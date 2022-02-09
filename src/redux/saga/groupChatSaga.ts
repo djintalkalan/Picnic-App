@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setChatInGroup, setLoadingAction } from "app-store/actions";
+import { refreshChatInGroup, setChatInGroup, setLoadingAction } from "app-store/actions";
 import { call, put, takeLeading } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { mergeMessageObjects, _showErrorMessage } from "utils";
@@ -34,7 +34,7 @@ function* _getGroupChatNew({ type, payload, }: action): Generator<any, any, any>
             console.log("CHATS", chats);
             // return
 
-            yield put(setChatInGroup({ groupId: payload?.id, chats: chats, message_id: payload?.message_id }))
+            yield put((payload?.message_id ? setChatInGroup : refreshChatInGroup)({ groupId: payload?.id, chats: chats, message_id: payload?.message_id }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
