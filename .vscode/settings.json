@@ -29,6 +29,7 @@
         "codegen",
         "netinfo",
         "notifee",
+        "Passcode",
         "picnicapp",
         "qrcode"
     ]
