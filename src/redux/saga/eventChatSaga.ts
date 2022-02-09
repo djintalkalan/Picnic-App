@@ -31,7 +31,7 @@ function* _getEventChatNew({ type, payload, }: action): Generator<any, any, any>
         if (res.status == 200) {
             const chats = mergeMessageObjects(res?.data?.data, res?.data?.message_total_likes_count, res?.data?.is_message_liked_by_me)
             // merge()
-            // console.log("CHATS", chats);
+            console.log("CHATS", chats);
             // return
             yield put((payload?.message_id ? setChatInEvent : refreshChatInEvent)({ eventId: payload?.id, chats: chats, message_id: payload?.message_id }))
         } else if (res.status == 400) {

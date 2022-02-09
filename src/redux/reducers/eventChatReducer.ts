@@ -40,9 +40,11 @@ export const eventChatReducer = (state: IEventChatReducer = initialEventChatStat
 
             return newState
         case ActionTypes.REFRESH_CHAT_IN_EVENT:
-            const refreshChatState = state
-            if (!refreshChatState.events[eventId]) {
-                refreshChatState.events[eventId].chats = []
+            const refreshChatState = { ...state }
+            if (!refreshChatState.events?.[eventId]) {
+                refreshChatState.events[eventId] = {
+                    chats: [],
+                }
             }
             refreshChatState.events[eventId].chats = action?.payload?.chats
             return refreshChatState

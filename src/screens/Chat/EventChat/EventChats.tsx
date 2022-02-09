@@ -91,7 +91,7 @@ const EventChats: FC<any> = (props) => {
     }, [])
 
     const { eventDetail, activeEvent } = useSelector((state: RootState) => ({
-        eventDetail: state?.eventDetails?.[state?.activeEvent?._id]?.event,
+        eventDetail: state?.eventDetails?.[state?.activeEvent?._id]?.event ?? state?.activeEvent,
         activeEvent: state?.activeEvent,
     }), shallowEqual)
 

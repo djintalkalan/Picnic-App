@@ -43,9 +43,11 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             }
             return newState
         case ActionTypes.REFRESH_CHAT_IN_GROUP:
-            const refreshChatState = state
-            if (!refreshChatState.groups[groupId]) {
-                refreshChatState.groups[groupId].chats = []
+            const refreshChatState = { ...state }
+            if (!refreshChatState.groups?.[groupId]) {
+                refreshChatState.groups[groupId] = {
+                    chats: [],
+                }
             }
             refreshChatState.groups[groupId].chats = action?.payload?.chats
             return refreshChatState
