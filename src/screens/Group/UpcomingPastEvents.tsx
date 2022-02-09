@@ -23,7 +23,7 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
 
     const { events } = useSelector((state: RootState) => {
         return {
-            events: state?.groupDetails?.[route?.params?.id]?.upcomingEvents
+            events: state?.groupDetails?.[route?.params?.id]?.[route?.params?.type == "upcoming" ? 'upcomingEvents' : 'pastEvents']
         }
     }, isEqual)
 

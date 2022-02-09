@@ -6,7 +6,7 @@ import React, { FC, useCallback } from 'react'
 import { StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
-import Language from 'src/language/Language'
+import Language, { useLanguage } from 'src/language/Language'
 import { RootParams } from 'src/routes/Routes'
 import UpcomingPastEvents from './UpcomingPastEvents'
 
@@ -19,20 +19,20 @@ const Events: FC<StackScreenProps<RootParams, 'Events'>> = ({ route, navigation 
     const getTabs = useCallback((): TabProps[] => {
         return [
             {
-                title: 'Upcoming Events',
+                title: Language.upcoming_events,
                 name: 'UpcomingEventsTab',
                 screen: UpcomingPastEvents,
                 initialParams: { type: 'upcoming', id: route?.params.id }
             },
             {
-                title: 'Past Events',
+                title: Language.past_events,
                 name: 'PastEventsTab',
-                screen: () => null,
-                disable: true,
+                screen: UpcomingPastEvents,
+                // disable: true,
                 initialParams: { type: 'past', id: route?.params.id }
             },
         ]
-    }, [])
+    }, [useLanguage()])
 
     return (
         <SafeAreaView style={styles.container} >

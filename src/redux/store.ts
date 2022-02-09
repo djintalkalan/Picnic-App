@@ -36,10 +36,10 @@ const persistConfig = {
     whitelist: [
         // "group",
         // "event",
+        // "groupChat",
+        // "eventChat",
         // "groupDetails",
         // "eventDetails",
-        // "homeData",
-        // "groupChat",
     ],
     blacklist: [],
     throttle: 1000,

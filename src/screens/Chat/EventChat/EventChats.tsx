@@ -136,10 +136,11 @@ const EventChats: FC<any> = (props) => {
         return (
             <ChatItem
                 {...item}
+                event={eventDetail}
                 isAdmin={eventDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [eventDetail?.is_admin])
+    }, [eventDetail])
 
     const shareEvent = useCallback(() => {
         shareDynamicLink(eventDetail?.name, {

@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors } from 'assets'
@@ -28,6 +29,8 @@ export const GroupChats: FC<any> = (props) => {
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
 
     const { keyboardHeight, isKeyboard } = useKeyboardService();
+
+    const isFocused = useIsFocused()
 
     useEffect(() => {
         if (repliedMessage) {
@@ -99,12 +102,10 @@ export const GroupChats: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         // console.log("chats", chats);
-    //         // flatListRef?.current?.scrollToEnd()
-    //     }, 200);
-    // }, [chats])
+    useEffect(() => {
+        if (chats?.length)
+            loadMore = true
+    }, [chats])
 
     useEffect(() => {
         dispatch(getGroupChat({
@@ -122,10 +123,11 @@ export const GroupChats: FC<any> = (props) => {
             <ChatItem
                 {...item}
                 isGroupType={true}
+                group={groupDetail}
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [groupDetail?.is_admin])
+    }, [groupDetail])
 
     return (
         <View style={styles.container} >
@@ -137,10 +139,12 @@ export const GroupChats: FC<any> = (props) => {
                     keyExtractor={_ => _._id}
                     bounces={false}
                     ref={flatListRef}
+                    onEndReachedThreshold={1}
                     inverted
                     onEndReached={() => {
-                        console.log("End", chats[chats.length - 1]?._id);
-                        if (loadMore) {
+                        if (loadMore && isFocused) {
+                            console.log("End", chats[chats.length - 1]?._id);
+                            loadMore = false
                             dispatch(getGroupChat({
                                 id: activeGroup?._id,
                                 message_id: chats[chats.length - 1]?._id

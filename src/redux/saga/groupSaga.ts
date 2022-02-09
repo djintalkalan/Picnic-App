@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -392,9 +392,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
             yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._getMyEvents, payload);
         if (res.status == 200) {
-            if (payload?.type == 'upcoming') {
-                yield put(setUpcomingEvents({ groupId: payload?.groupId, data: res?.data?.data }))
-            }
+            yield put((payload?.type == 'upcoming' ? setUpcomingEvents : setPastEvents)({ groupId: payload?.groupId, data: res?.data?.data }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -424,6 +422,6 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
     yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
     yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
-    yield takeLatest(ActionTypes.GET_MY_EVENTS, _getMyEvents);
+    yield takeEvery(ActionTypes.GET_MY_EVENTS, _getMyEvents);
 
 };

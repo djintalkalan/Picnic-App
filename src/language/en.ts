@@ -251,4 +251,6 @@ export const en = {
   you_have_been_removed_from_event: "You have been removed from the event by admin",
   this_group_is_deleted: "This group is deleted by admin",
   this_event_is_deleted: "This event is deleted by admin",
+  upcoming_events: "Upcoming Events",
+  past_events: "Past Events",
 }

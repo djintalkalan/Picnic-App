@@ -336,7 +336,7 @@ export const _joinEvent = async (body: string) => {
 }
 
 export const _getEventChat = async (body: any) => {
-    console.log("---------- _getGroupChat Api Call ---------------")
+    console.log("---------- _getEventChat Api Call ---------------")
     return fetchApiData(config.API_URL + 'message/event-chat?load_more=0&page=' + (body?.message_id ? 1 : 1) + '&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=40&message_id=' + (body?.message_id || ""), null, "GET")
 }
 
@@ -398,4 +398,9 @@ export const _capturePayment = async (body: any) => {
 export const _whatsappImport = async (body: FormData) => {
     console.log("---------- whatsappImport Api Call ---------------")
     return fetchApiData(config.API_URL + 'whatsapp/import', body, "POST")
+}
+
+export const _getGroupChatNew = async (body: any) => {
+    console.log("---------- _getGroupChatNew Api Call ---------------")
+    return fetchApiData(config.API_URL + 'message/group-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=30&message_id=' + (body?.message_id || ""), null, "GET")
 }

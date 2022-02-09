@@ -13,11 +13,13 @@ export interface IGroupDetail {
     group: any,
     groupMembers: Array<any>
     upcomingEvents: Array<any>
+    pastEvents: Array<any>
 }
 const initialGroupDetailState: IGroupDetail = {
     group: null,
     groupMembers: [],
-    upcomingEvents: []
+    upcomingEvents: [],
+    pastEvents: [],
 }
 
 const initialGroupState = {
@@ -45,7 +47,7 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
             if (i > -1) {
                 const newState = { ...state }
                 newState.allGroups[i] = {
-                    ...newState?.allGroups,
+                    ...newState?.allGroups[i],
                     ...action?.payload?.data?.group
                 }
                 return newState
@@ -91,10 +93,16 @@ export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: acti
                 return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], groupMembers: state?.[action?.payload?.groupId]?.groupMembers?.filter(_ => _.user_id != action?.payload?.data) } }
             return state
         case ActionTypes.SET_UPCOMING_EVENTS:
+        case ActionTypes.SET_PAST_EVENTS:
             if (!state?.[action?.payload?.groupId]) {
                 state[action?.payload?.groupId] = initialGroupDetailState
             }
-            return { ...state, [action?.payload?.groupId]: { ...state?.[action?.payload?.groupId], upcomingEvents: action?.payload?.data } }
+            return {
+                ...state, [action?.payload?.groupId]: {
+                    ...state?.[action?.payload?.groupId],
+                    [action.type == ActionTypes.SET_UPCOMING_EVENTS ? "upcomingEvents" : "pastEvents"]: action?.payload?.data
+                }
+            }
         default:
             return state
     }

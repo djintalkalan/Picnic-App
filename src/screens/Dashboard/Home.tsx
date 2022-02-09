@@ -4,7 +4,7 @@ import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import _ from 'lodash'
+import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -40,14 +40,12 @@ const Home: FC = () => {
     address: { main_text: "Los Angeles, USA", secondary_text: "" }
   }
   const dispatch = useDispatch()
-  const { allCurrencies } = useSelector((state: RootState) => ({
-    allCurrencies: state?.event?.allCurrencies
-  }))
 
   const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
     eventLength: state?.event?.allEvents?.length,
-    groupLength: state?.group?.allGroups?.length
-  }))
+    groupLength: state?.group?.allGroups?.length,
+    // a: console.log(state)
+  }), isEqual)
   const [currentTabIndex, setCurrentTabIndex] = useState(0)
   const [userData] = useDatabase("userData");
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)

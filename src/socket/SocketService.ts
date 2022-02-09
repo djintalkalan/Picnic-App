@@ -4,7 +4,7 @@ import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
-import { NavigationService, _showErrorMessage } from "utils";
+import { mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
 import { EMIT_JOIN, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_RECONNECT } from "./SocketEvents";
 
 class Service {
@@ -34,7 +34,8 @@ class Service {
                     transports: ['websocket', 'polling'],
                     extraHeaders: {
                         Authorization: authToken ? ("Bearer " + authToken) : "",
-                        'Accept-Language': selectedLanguage
+                        'Accept-Language': selectedLanguage,
+                        version: '1'
                     }
                 });
                 this.initListeners();
@@ -108,16 +109,17 @@ class Service {
 
     private onLikeUnlike = (e: any) => {
         console.log("on Like Unlike", e)
-        if (this.dispatch && e?.data && Array.isArray(e?.data) && e?.data?.length) {
-            if (e?.data?.[0]?.group)
+        if (this.dispatch && e?.data?.data?.length && Array.isArray(e?.data?.data)) {
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+            if (data?.[0]?.group)
                 this.dispatch(updateChatInGroup({
-                    groupId: e?.data?.[0]?.resource_id,
-                    chat: e?.data?.[0]
+                    groupId: data?.[0]?.resource_id,
+                    chat: data?.[0]
                 }))
             else
                 this.dispatch(updateChatInEvent({
-                    eventId: e?.data?.[0]?.resource_id,
-                    chat: e?.data?.[0]
+                    eventId: data?.[0]?.resource_id,
+                    chat: data?.[0]
                 }))
         }
     }
@@ -127,11 +129,12 @@ class Service {
     private onGroupMessageDelete = (e: any) => {
         console.log("Group Message Delete", e)
         if (this.dispatch && e?.data) {
-            if (e?.data?.message) {
+            if (e?.data?.message?.data?.length) {
+                const data = mergeMessageObjects(e?.data?.message?.data, e?.data?.message?.message_total_likes_count, e?.data?.message?.is_message_liked_by_me)
                 this.dispatch(updateChatInGroupSuccess({
                     groupId: e?.data?.resource_id,
                     resourceId: e?.data?.message_id,
-                    message: e?.data?.message?.[0]
+                    message: data?.[0]
                 }))
             } else {
                 this.dispatch(deleteChatInGroupSuccess({
@@ -145,11 +148,14 @@ class Service {
 
     private onGroupMessage = (e: any) => {
         console.log("Group Message received", e)
-        if (e?.data) {
+        if (e?.data?.data?.length) {
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+            console.log("data", data);
             this.dispatch &&
                 this.dispatch(setChatInGroup({
-                    groupId: e?.data?.[0]?.resource_id,
-                    chats: e?.data
+                    groupId: data[0]?.resource_id,
+                    chats: data,
+                    new: true
                 }))
         }
 
@@ -158,11 +164,13 @@ class Service {
     private onGroupMessages = (e: any) => {
         console.log("Group Messages received", e)
         console.log(e?.data)
-        if (e?.data) {
+        if (e?.data?.data?.length) {
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
             this.dispatch &&
                 this.dispatch(setChatInGroup({
-                    groupId: e?.data?.[0]?.resource_id,
-                    chats: e?.data
+                    groupId: data?.[0]?.resource_id,
+                    chats: data,
+                    new: true
                 }))
         }
     }
@@ -205,13 +213,15 @@ class Service {
             this.dispatch(removeGroupMemberSuccess({ groupId: e?.data?.resource_id, data: e?.data?.user_id }))
             this.dispatch(setChatInGroup({
                 groupId: e?.data?.resource_id,
-                chats: e?.data?.message
+                chats: e?.data?.message,
+                new: true
             }))
 
-            this.dispatch(setChatInGroup({
-                groupId: e?.data?.resource_id,
-                chats: e?.data?.message
-            }))
+            // this.dispatch(setChatInGroup({
+            //     groupId: e?.data?.resource_id,
+            //     chats: e?.data?.message,
+            //     new: true
+            // }))
         }
     }
 

@@ -10,7 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
+import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 
 interface IChatItem {
     _id: string
@@ -28,6 +28,7 @@ interface IChatItem {
     message_liked_by_user_name: []
     message_recently_liked_user_ids: Array<any>
     is_message_sender_is_admin: boolean
+    message_liked_by_users: Array<any>
     group?: any
     event?: any
     isGroupType: boolean
@@ -40,14 +41,24 @@ const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
-    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user, message_type, _id, setRepliedMessage, parent_message, is_message_sender_is_admin, message_recently_liked_user_ids, message_liked_by_last_five, message_liked_by_user_name, message_total_likes_count, parent_id, isMuted } = props ?? {}
+    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+        message_type, _id, setRepliedMessage, parent_message,
+        // is_message_sender_is_admin,
+        // message_recently_liked_user_ids,
+        // message_liked_by_user_name,
+        // parent_id,
+        message_liked_by_users,
+        message_total_likes_count, isMuted } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
-    const { display_name, image: userImage, _id: userId, first_name, last_name } = user ?? {}
+    const { username, image: userImage, _id: userId, first_name, last_name } = user ?? {}
+    const display_name = getDisplayName(username, first_name, last_name)
     const [userData] = useDatabase<any>("userData");
 
-    const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
+    const is_message_liked_by_me = props?.is_message_liked_by_me || false
+    const is_message_sender_is_admin = group?.user_id == props?.created_by
+    // const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
 
-    const remainingNames = message_liked_by_user_name?.filter(_ => _ != userData?.username) ?? []
+    const remainingNames = message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName(_?.liked_by?.username, _?.liked_by?.first_name, _?.liked_by?.last_name))) ?? []
 
     const myMessage = userId == userData?._id
 
@@ -164,9 +175,11 @@ const ChatItem = (props: IChatItem) => {
 
     const dispatch = useDispatch()
 
+    const { first_name: admin_f, last_name: admin_l, username: admin_u } = message_deleted_by_user || {}
+
 
     if (is_system_message) {
-        return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (message_deleted_by_user?.display_name ?? "") + "**") + '”'} />
+        return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (getDisplayName(admin_u, admin_f, admin_l)) + "**") + '”'} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 
@@ -174,7 +187,7 @@ const ChatItem = (props: IChatItem) => {
 
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <View style={(is_message_sender_is_admin || isMuted) ? {} : styles.imageContainer}>
+                <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
                     <ImageLoader
                         placeholderSource={Images.ic_home_profile}
                         source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -265,7 +278,7 @@ const ChatItem = (props: IChatItem) => {
                 </TouchableOpacity> */}
                 <View style={{ flex: 1 }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? {} : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
