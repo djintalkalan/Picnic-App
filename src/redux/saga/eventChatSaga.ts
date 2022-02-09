@@ -50,7 +50,7 @@ function* _getEventChatNew({ type, payload, }: action): Generator<any, any, any>
 // Watcher: watch auth request
 export default function* watchEventChat() {
     // yield takeLeading(ActionTypes.GET_EVENT_CHAT, _getEventChat);
-    yield takeLeading(ActionTypes.GET_GROUP_CHAT, _getEventChatNew);
+    yield takeLeading(ActionTypes.GET_EVENT_CHAT, _getEventChatNew);
 
 
 };
