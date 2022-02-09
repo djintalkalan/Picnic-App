@@ -110,7 +110,14 @@ class Service {
     private onLikeUnlike = (e: any) => {
         console.log("on Like Unlike", e)
         if (this.dispatch && e?.data?.data?.length && Array.isArray(e?.data?.data)) {
-            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+            const userId = Database.getStoredValue("userData")?._id
+            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
+            e?.liked_by_users?.some((e: any, index: number) => {
+                if (e?.user_id == userId) {
+                    data[0].is_message_liked_by_me = true
+                    return true
+                }
+            });
             if (data?.[0]?.group)
                 this.dispatch(updateChatInGroup({
                     groupId: data?.[0]?.resource_id,
