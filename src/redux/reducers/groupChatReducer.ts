@@ -83,7 +83,7 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             }
             updateChatState.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
                 if (action?.payload?.chat?._id == _._id)
-                    return { ...action?.payload?.chat }
+                    return action?.payload?.chat
                 else {
                     return _
                 }

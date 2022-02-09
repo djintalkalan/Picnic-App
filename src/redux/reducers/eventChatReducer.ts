@@ -62,7 +62,7 @@ export const eventChatReducer = (state: IEventChatReducer = initialEventChatStat
             }
             updateChatState.events[eventId].chats = (state.events?.[eventId]?.chats ?? []).map((_) => {
                 if (action?.payload?.chat?._id == _._id)
-                    return { ..._, ...action?.payload?.chat }
+                    return action?.payload?.chat
                 else {
                     return _
                 }
