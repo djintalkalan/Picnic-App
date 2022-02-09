@@ -171,6 +171,7 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._deleteEvent, payload);
         if (res.status == 200) {
             _showSuccessMessage(res.message)
+            NavigationService?.navigate("Home")
             yield put(deleteEventSuccess(payload))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

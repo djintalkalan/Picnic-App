@@ -337,9 +337,10 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._deleteGroup, payload);
         if (res.status == 200) {
-            if (NavigationService?.getCurrentScreen()?.name == "GroupDetail") {
-                NavigationService.goBack()
-            }
+            NavigationService?.navigate("Home")
+            // if (NavigationService?.getCurrentScreen()?.name == "GroupDetail") {
+            //     NavigationService.goBack()
+            // }
             // yield put(deleteGroupSuccess(payload))
             SocketService.emit(EMIT_GROUP_DELETE, {
                 resource_id: payload
