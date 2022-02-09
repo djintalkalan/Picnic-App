@@ -186,7 +186,7 @@ const EventChats: FC<any> = (props) => {
                         inverted
                         onEndReached={() => {
                             console.log("End", chats[chats.length - 1]?._id);
-                            if (loadMore) {
+                            if (loadMore && isFocused) {
                                 loadMore = false
                                 dispatch(getEventChat({
                                     id: activeEvent?._id,

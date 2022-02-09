@@ -1,11 +1,11 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getEventDetail, getEventMembers, joinEvent, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { getEventDetail, getEventMembers, joinEvent, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
 import { isEmpty } from 'lodash';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
+import { EMIT_EVENT_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
@@ -172,7 +172,10 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             _showSuccessMessage(res.message)
             NavigationService?.navigate("Home")
-            yield put(deleteEventSuccess(payload))
+            // yield put(deleteEventSuccess(payload))
+            SocketService.emit(EMIT_EVENT_DELETE, {
+                resource_id: payload
+            })
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
