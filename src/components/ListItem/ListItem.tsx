@@ -3,7 +3,7 @@ import { Images } from 'assets/Images'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, ReactElement, useMemo } from 'react'
-import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, View, ViewStyle } from 'react-native'
+import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
@@ -17,6 +17,7 @@ interface ListItemProps {
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     containerStyle?: StyleProp<ViewStyle>
+    textContainerStyle?: StyleProp<TextStyle>
 
 }
 
@@ -33,17 +34,22 @@ interface MemberListItemProps {
     onLongPress?: (e?: GestureResponderEvent) => void
 }
 
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView }) => {
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+    const style = useMemo(() => StyleSheet.create({
+        containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
+        textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) }
+    }), [containerStyle])
+
     return (
         <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
-            <View style={styles.container} >
+            <View style={style.containerStyle} >
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
                         source={icon ?? defaultIcon}
                         style={styles.iconStyle} />
                 </TouchableHighlight>
-                <View style={styles.textContainer} >
+                <View style={style.textContainer} >
                     <Text style={styles.title} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
                 </View>
@@ -165,7 +171,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: scaler(11),
         maxWidth: '90%',
-        minHeight: scaler(31)
+        // minHeight: scaler(31)
     },
     rightText: {
         color: colors.colorPrimary,

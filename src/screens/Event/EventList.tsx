@@ -15,7 +15,7 @@ import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
-
+const ITEM_HEIGHT = scaler(90)
 const EventList: FC<any> = (props) => {
 
     const getButtons = useCallback((item: any) => {
@@ -159,6 +159,8 @@ const EventList: FC<any> = (props) => {
         const { is_event_member, city, state, country } = item
         return (
             <ListItem
+                containerStyle={{ height: ITEM_HEIGHT }}
+                textContainerStyle={{ justifyContent: 'center' }}
                 defaultIcon={Images.ic_event_placeholder}
                 title={item?.name}
                 // highlight={}
@@ -190,7 +192,7 @@ const EventList: FC<any> = (props) => {
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
         const { is_event_member, is_event_pinned_by_me } = item
-        return (<View style={{ flex: 1, flexDirection: 'row', }} >
+        return (<View style={{ flex: 1, flexDirection: 'row', height: ITEM_HEIGHT }} >
             <View style={{
                 alignItems: 'center',
                 flex: 1,
@@ -251,6 +253,9 @@ const EventList: FC<any> = (props) => {
                 directionalLockEnabled
                 ItemSeparatorComponent={ListItemSeparator}
                 ref={swipeListRef}
+                getItemLayout={(data: any, index: number) => (
+                    { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
+                )}
                 ListEmptyComponent={() => {
                     return <View style={{ flex: 1, }} >
                         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: '35%' }} >

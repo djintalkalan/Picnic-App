@@ -100,7 +100,6 @@ const SearchChatScreen: FC<any> = (props) => {
                         setSearchedText(text?.toLowerCase())
                     }}
                     autoFocus
-
                     style={styles.searchInput}
                     // value={searchedText}
                     clearButtonMode={'while-editing'}

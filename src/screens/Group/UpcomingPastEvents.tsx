@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import { RootState } from 'app-store'
-import { getMyEvents } from 'app-store/actions'
+import { getMyEvents, setActiveEvent } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
@@ -33,7 +33,14 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
             <ListItem
                 title={item?.name}
                 subtitle={dateStringFormat(item?.event_date + " " + item?.event_start_time, "MMMM DD, YYYY, hh:mm A", "YYYY-MM-DD")}
-                onPressImage={() => NavigationService.navigate('EventDetail', { id: item?._id })}
+                onPressImage={() => {
+                    dispatch(setActiveEvent(item))
+                    NavigationService.navigate('EventDetail', { id: item?._id })
+                }}
+                onPress={() => {
+                    dispatch(setActiveEvent(item))
+                    NavigationService.navigate('EventDetail', { id: item?._id })
+                }}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 customView={<TicketView {...item} is_event_admin={true} />}
@@ -45,7 +52,6 @@ const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>>
 
     return (
         <View style={styles.container} >
-
             <FlatList
                 data={events}
                 keyExtractor={(_, i) => i.toString()}

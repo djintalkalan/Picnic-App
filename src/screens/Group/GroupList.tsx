@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
-
+const ITEM_HEIGHT = scaler(90)
 
 const GroupList: FC<any> = (props) => {
 
@@ -109,6 +109,8 @@ const GroupList: FC<any> = (props) => {
         const { is_group_member, city, state, country } = item
         return (
             <ListItem
+                containerStyle={{ height: ITEM_HEIGHT }}
+                textContainerStyle={{ justifyContent: 'center' }}
                 defaultIcon={Images.ic_group_placeholder}
                 title={item?.name}
                 // highlight={}
@@ -131,7 +133,7 @@ const GroupList: FC<any> = (props) => {
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
         const { is_group_member } = item
-        return (<View style={{ flex: 1, flexDirection: 'row', }} >
+        return (<View style={{ flex: 1, flexDirection: 'row', height: ITEM_HEIGHT }} >
             <View style={{
                 alignItems: 'center',
                 flex: 1,
@@ -190,6 +192,9 @@ const GroupList: FC<any> = (props) => {
                 leftOpenValue={scaler(80)}
                 rightOpenValue={-scaler(80)}
                 directionalLockEnabled
+                getItemLayout={(data: any, index: number) => (
+                    { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
+                )}
                 ItemSeparatorComponent={ListItemSeparator}
                 ref={swipeListRef}
                 ListEmptyComponent={() => {

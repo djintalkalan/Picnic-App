@@ -47,9 +47,7 @@ const EventDetail: FC<any> = (props) => {
 
     useFocusEffect(useCallback(() => {
         pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent', barStyle: 'light-content' })
-        return () => {
-            popStatusBarStyle()
-        }
+        return popStatusBarStyle
     }, []))
 
 
@@ -119,7 +117,10 @@ const EventDetail: FC<any> = (props) => {
                                     setEditButtonOpened(false)
                                     NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
-                                    <InnerButton onPress={shareEvent} title={Language.share} />
+                                    <InnerButton onPress={() => {
+                                        shareEvent();
+                                        setEditButtonOpened(false)
+                                    }} title={Language.share} />
                                     <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
                                             message: Language.are_you_sure_cancel_event,
@@ -137,32 +138,36 @@ const EventDetail: FC<any> = (props) => {
                                     }
                                     } hideBorder /></>
                                 :
-                                <><InnerButton onPress={shareEvent} title={Language.share} /><InnerButton title={Language.mute} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_mute_event,
-                                        onPressButton: () => {
-                                            dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
-                                            setTimeout(() => {
-                                                NavigationService.navigate('HomeEventTab')
-                                            }, 200);
-                                            _hidePopUpAlert()
-                                        },
-                                        buttonText: Language.yes_mute,
-                                        // cancelButtonText: Language.cancel
-                                    })
+                                <><InnerButton onPress={() => {
+                                    shareEvent();
                                     setEditButtonOpened(false)
-                                }} /><InnerButton title={Language.report} onPress={() => {
-                                    _showPopUpAlert({
-                                        message: Language.are_you_sure_report_event,
-                                        onPressButton: () => {
-                                            dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                                            _hidePopUpAlert()
-                                        },
-                                        buttonText: Language.yes_report,
-                                        // cancelButtonText: Language.cancel
-                                    })
-                                    setEditButtonOpened(false)
-                                }} hideBorder={event?.is_event_member ? false : true} />
+                                }} title={Language.share} />
+                                    <InnerButton title={Language.mute} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_mute_event,
+                                            onPressButton: () => {
+                                                dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "event", resource_id: event?._id } }))
+                                                setTimeout(() => {
+                                                    NavigationService.navigate('HomeEventTab')
+                                                }, 200);
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_mute,
+                                            // cancelButtonText: Language.cancel
+                                        })
+                                        setEditButtonOpened(false)
+                                    }} /><InnerButton title={Language.report} onPress={() => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_report_event,
+                                            onPressButton: () => {
+                                                dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_report,
+                                            // cancelButtonText: Language.cancel
+                                        })
+                                        setEditButtonOpened(false)
+                                    }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showPopUpAlert({
