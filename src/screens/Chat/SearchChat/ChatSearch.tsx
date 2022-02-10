@@ -1,37 +1,53 @@
 import { colors } from 'assets';
-import { Text } from 'custom-components';
-import React, { FC, useCallback } from 'react';
+import { SingleBoldText, Text } from 'custom-components';
+import React, { FC, useCallback, useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { scaler } from 'utils';
+import { getDisplayName, scaler } from 'utils';
+import { useSearchState } from './SearchProvider';
 
-const ChatSearch: FC = () => {
-    const data = [
-        { message: 'hello', sender: 'Sangeeta' },
-        { message: 'hello this id from the sender sangeeta', sender: 'Sangeeta' },
-        { message: 'hello', sender: 'Sangeeta' },
-        { message: 'hello', sender: 'Sangeeta' },
-    ]
+let searched = ""
+
+const insertAtIndex = (text: string, i: number) => {
+    const pair = Array.from(text)
+    pair.splice(i, 0, '**')
+    return pair.join('')
+}
+
+const ChatSearch: FC<any> = () => {
+    const { chats, searchedText } = useSearchState()
     const _renderChatItem = useCallback(({ item, index }) => {
-        // console.log("chatItem", item)
+        const { username, first_name, last_name } = item?.user
+        // let regEx = new RegExp(searched?.trim(), "ig");
+        // const message = item?.message.replace(regEx, ("**" + searched?.trim() + "**"))
+        // item?.message?.toLowerCase()?.indexOf(searched);
+
+        let message = insertAtIndex(item?.message, item?.message?.toLowerCase()?.indexOf(searched))
+        message = insertAtIndex(message, message?.toLowerCase()?.indexOf(searched) + searched?.length)
+
         return (
             <View style={{ paddingHorizontal: scaler(24), paddingTop: scaler(17) }}>
-                <Text>{item?.sender}</Text>
+                <Text>{getDisplayName(username, first_name, last_name)}</Text>
                 <View style={styles.msgContainer}>
-                    <Text style={{ fontSize: scaler(15), color: colors.colorWhite, fontWeight: '400' }}>{item?.message}</Text>
+                    <SingleBoldText fontWeight='600' style={{ fontSize: scaler(15), color: colors.colorWhite, fontWeight: '400' }} text={message} />
                 </View>
             </View>
         )
 
-    }, [])
+    }, [searchedText])
+
+    useEffect(() => {
+        searched = searchedText
+    }, [searchedText])
+
     return (
         <View style={styles.container}>
             <View style={{ flexShrink: 1 }} >
                 <FlatList
                     keyboardShouldPersistTaps={'handled'}
-                    data={data}
+                    data={chats}
                     // extraData={chats?.length}
-                    // keyExtractor={_ => _._id}
-                    // bounces={false}
+                    keyExtractor={_ => _._id}
+                    bounces={false}
                     // ref={flatListRef}
                     // onEndReachedThreshold={1}
                     // inverted

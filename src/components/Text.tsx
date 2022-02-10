@@ -52,7 +52,10 @@ export const Text: FC<TextProps> = (props) => {
     )
 }
 
-export const InnerBoldText = ({ text: IText, style }: { text: string, style: StyleProp<TextStyle> }) => {
+type IFontWeight = 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | undefined;
+
+
+export const InnerBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
     const { arr, text } = useMemo(() => {
         const arr = IText.split(' ')
         return {
@@ -67,10 +70,50 @@ export const InnerBoldText = ({ text: IText, style }: { text: string, style: Sty
         <Text style={style} >
             {text.map((text: string, index: number) => {
                 if (text.includes('**')) {
-                    // console.log("index", index)
                     return (
-                        <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: '500' }]}>
-                            {text.replaceAll('**', '')}{' '}
+                        <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
+                            {text.replace('**', '')?.replace('**', '')}{' '}
+                        </Text>
+                    );
+                }
+                return `${text} `;
+            })}
+        </Text>
+    );
+};
+
+export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
+
+    let startBoldIndex = IText?.indexOf("**")
+    let endBoldIndex = IText?.lastIndexOf("**")
+    return <Text style={style} >
+        {IText?.substring(0, startBoldIndex)}
+        <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
+            {IText?.substring(startBoldIndex, endBoldIndex + 2).replaceAll('**', '')}
+        </Text>
+        {IText?.substring(endBoldIndex + 2)}
+    </Text>
+
+
+
+    const { arr, text } = useMemo(() => {
+        const arr = IText.split(' ')
+        return {
+            arr,
+            text: arr.reduce(reducer, [])
+        }
+    }, [IText])
+
+    // console.log("text", text)
+
+    return (
+        <Text style={style} >
+            {text.map((text: string, index: number) => {
+                if (text.includes('**')) {
+                    console.log("text", text)
+                    return (
+                        <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
+                            {text.replace('**', '')?.replace('**', '')}{' '}
                         </Text>
                     );
                 }

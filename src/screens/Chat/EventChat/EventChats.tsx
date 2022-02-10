@@ -161,15 +161,15 @@ const EventChats: FC<any> = (props) => {
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity onPress={() => {
-                        NavigationService.navigate('SearchChatScreen', { from: 'eventChat' })
-                    }} style={{ paddingHorizontal: scaler(5) }} >
+                    <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', {
+                        type: 'event'
+                    })} style={{ paddingHorizontal: scaler(5) }} >
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
 
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
+                    {/* <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 }
             />

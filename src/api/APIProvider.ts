@@ -278,7 +278,7 @@ export const _searchAtHome = async (body: any) => {
 
 export const _getMyEvents = async (body: any) => {
     console.log("---------- _getMyEvents Api Call ---------------")
-    return fetchApiData(config.API_URL + 'user/get-my-events' + '?page=' + 1 + '&group_id=' + body?.groupId + '&event_filter_type=' + body?.type + '&limit=100000&q=' + (body?.text ?? ""), null, "GET")
+    return fetchApiData(config.API_URL + 'user/get-my-events' + '?page=' + 1 + '&group_id=' + body?.groupId + '&event_filter_type=' + (body?.type ?? "") + '&limit=100000&q=' + (body?.text ?? ""), null, "GET")
 }
 export const _getMyGroups = async () => {
     console.log("---------- _getMyGroups Api Call ---------------")
@@ -408,4 +408,9 @@ export const _getGroupChatNew = async (body: any) => {
 export const _getEventChatNew = async (body: any) => {
     console.log("---------- _getEventChatNew Api Call ---------------")
     return fetchApiData(config.API_URL + 'message/event-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=30&message_id=' + (body?.message_id || ""), null, "GET")
+}
+
+export const _searchChat = async (body: any) => {
+    console.log("---------- _searchChat Api Call ---------------")
+    return fetchApiData(config.API_URL + 'message/search?resource_id=' + (body?.id ?? "") + '&q=' + (body?.q ?? ""), null, "GET")
 }

@@ -84,6 +84,7 @@ export const en = {
   muted_post: "Muted post",
   hidden_posts: "Hidden Posts",
   search_placeholder: "Search for groups and events near you",
+  search_messages_here: "Search messages here",
   search_location: "Search location",
   tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
   unblock: "Unblock",
@@ -249,7 +250,7 @@ export const en = {
   you_have_been_removed_from_group: "You have been removed from the group by admin",
   you_have_been_removed_from_event: "You have been removed from the event by admin",
   this_group_is_deleted: "This group is deleted by admin",
-  this_event_is_deleted: "This event is deleted by admin",
+  this_event_is_deleted: "This event is cancelled by admin",
   upcoming_events: "Upcoming Events",
   past_events: "Past Events",
 }

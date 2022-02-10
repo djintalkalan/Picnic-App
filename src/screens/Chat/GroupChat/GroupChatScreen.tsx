@@ -3,7 +3,7 @@ import { RootState } from 'app-store'
 import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,6 +18,7 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 const { height, width } = Dimensions.get('screen')
 
 const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) => {
+    const currentIndexRef = useRef(0);
 
     const { groupDetail, activeGroup } = useSelector((state: RootState) => {
         return {
@@ -88,21 +89,26 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
                         }
                     }} style={{ paddingHorizontal: scaler(5) }} >
                         {groupDetail?.is_group_member ?
-                            <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', { from: 'groupChat' })}>
+                            <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', {
+                                screen: currentIndexRef?.current ? 'SearchedEvents' : 'ChatSearch',
+                                type: 'group'
+                            })}>
                                 <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                             </TouchableOpacity>
                             :
                             <Text style={styles.joinText} >{Language.join}</Text>
                         }
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={shareGroup} style={{ paddingHorizontal: scaler(5) }}  >
+                    {/* <TouchableOpacity onPress={shareGroup} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 }
             />
             {/* <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} > */}
-            <TopTab swipeEnabled={false} iconPosition='right' tabs={tabs} />
+            <TopTab onChangeIndex={(i) => {
+                currentIndexRef.current = i
+            }} swipeEnabled={false} iconPosition='right' tabs={tabs} />
 
             {/* </View> */}
 

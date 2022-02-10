@@ -1,42 +1,88 @@
+import { _getMyEvents, _searchChat } from 'api'
+import { RootState } from 'app-store'
+import { setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _ from 'lodash'
-import React, { useCallback, useMemo, useState } from 'react'
-import { Image, StyleSheet, TextInput, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { scaler } from 'utils'
+import { NavigationService, scaler } from 'utils'
 import ChatSearch from './ChatSearch'
+import SearchedEvents from './SearchedEvents'
+import { SearchProvider, useSearchState } from './SearchProvider'
+
+const SearchChatScreen: FC<any> = (props) => {
+    const dispatch = useDispatch()
+    const [currentTabIndex, setCurrentTabIndex] = useState(0)
+
+    const { setChats, setEvents, searchedText, setSearchedText } = useSearchState()
+
+    const { activeGroup } = useSelector((state: RootState) => {
+        return {
+            activeGroup: props?.route?.params?.type == 'group' ? state?.activeGroup : state?.activeEvent,
+
+        }
+    }, shallowEqual)
 
 
-
-const SearchChatScreen = (props: any) => {
-    const [searchText, setSearchText] = useState("")
     const tabs: TabProps[] = useMemo(() => [
         {
             title: Language.chat,
-            name: "Chats",
+            name: "ChatSearch",
             screen: ChatSearch,
             // icon: Images.ic_chat_bubble,
-            // initialParams: { id: _id },
+            initialParams: { type: props?.route?.params?.type },
         },
         {
             title: Language.upcoming,
-            name: "UpcomingEventsChat",
-            screen: UpcomingPastEvents,
-            // initialParams: { type: 'upcoming', id: _id, noLoader: true },
-            // icon: Images.ic_calender
+            name: "SearchedEvents",
+            screen: SearchedEvents,
+            initialParams: { type: props?.route?.params?.type },
         }
     ], [])
 
     const debounceSearch = useCallback(_.debounce((text) => {
-        // dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups' }))
-    }, 500), [])
+        if (!text?.length) return
+        if (currentTabIndex == 0) {
+            dispatch(setLoadingAction(true))
+            _searchChat({
+                id: activeGroup?._id,
+                q: text
+            }).then(res => {
+                dispatch(setLoadingAction(false))
+                res?.data && setChats(res?.data)
+            }).catch(e => {
+                dispatch(setLoadingAction(false))
+                console.log(e)
+            })
+        } else {
+            dispatch(setLoadingAction(true))
+            _getMyEvents({
+                groupId: activeGroup?._id,
+                type: 'upcoming',
+                text
+            }).then(res => {
+                dispatch(setLoadingAction(false))
+                res?.data?.data && setEvents(res?.data?.data)
+            }).catch(e => {
+                dispatch(setLoadingAction(false))
+                console.log(e)
+            })
+        }
+    }, 1000), [currentTabIndex])
 
     const debounceClear = useCallback(_.debounce(() => {
-        // dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
-    }, 1000), [])
+        setChats([])
+        setEvents([])
+    }, 500), [])
+
+    useEffect(() => {
+        debounceSearch(searchedText?.trim()?.length > 2 ? searchedText : null)
+        searchedText?.trim()?.length < 3 && debounceClear()
+    }, [currentTabIndex, searchedText])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -48,23 +94,34 @@ const SearchChatScreen = (props: any) => {
             }} >
                 <TextInput
                     onChangeText={(text) => {
-                        setSearchText(text)
-                        debounceSearch(text?.trim()?.length > 2 ? text : null)
-                        text?.trim()?.length < 3 && debounceClear()
+                        setSearchedText(text?.toLowerCase())
                     }}
+                    autoFocus
                     style={styles.searchInput}
-                    value={searchText}
+                    value={searchedText}
                     clearButtonMode={'while-editing'}
-                // placeholder={Language.search_placeholder}a
+                    placeholder={Language.search_messages_here}
                 />
-                <Image style={styles.imagePlaceholder} source={Images.ic_left} />
+                <TouchableOpacity style={styles.imagePlaceholderContainer} onPress={NavigationService.goBack} >
+                    <Image style={styles.imagePlaceholder} source={Images.ic_left} />
+                </TouchableOpacity>
             </View>
-            <TopTab swipeEnabled={false} iconPosition='right' tabs={tabs} />
+            {props?.route?.params?.type == 'group' ?
+                <TopTab onChangeIndex={(i) => {
+                    setCurrentTabIndex(i);
+                }} swipeEnabled={false} iconPosition='right' tabs={tabs} />
+                :
+                <ChatSearch />
+            }
         </SafeAreaView>
     )
 }
 
-export default SearchChatScreen;
+export default (props: any) => {
+    return <SearchProvider>
+        <SearchChatScreen {...props} />
+    </SearchProvider>
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -85,10 +142,15 @@ const styles = StyleSheet.create({
         color: colors.colorBlackText,
     },
     imagePlaceholder: {
-        height: scaler(17),
+        height: scaler(19),
+        // top: scaler(30),
+        // left: scaler(25),
+        resizeMode: 'contain',
+    },
+    imagePlaceholderContainer: {
+        height: scaler(20),
         position: 'absolute',
         top: scaler(30),
         left: scaler(25),
-        resizeMode: 'contain',
     },
 })
