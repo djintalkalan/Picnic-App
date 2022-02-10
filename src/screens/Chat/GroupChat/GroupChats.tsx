@@ -62,9 +62,9 @@ export const GroupChats: FC<any> = (props) => {
         }
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image) => {
+    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
         dispatch(uploadFile({
-            prefixType: 'messages',
+            prefixType: mediaType == 'video' ? 'video' : 'messages',
             image, onSuccess: (url) => {
                 dispatch(setLoadingAction(false))
                 if (url) {
@@ -72,8 +72,9 @@ export const GroupChats: FC<any> = (props) => {
                         resource_id: activeGroup?._id,
                         parent_id: repliedMessage?._id,
                         resource_type: "group",
-                        message_type: "image",
-                        message: url
+                        message_type: mediaType == 'video' ? 'file' : "image",
+                        message: url,
+                        media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
                     })
                     inputRef.current?.clear()
                     if (repliedMessage) {
