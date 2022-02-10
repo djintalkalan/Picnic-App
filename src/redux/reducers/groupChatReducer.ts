@@ -34,12 +34,10 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                 // newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
                 //     .sort((a, b) => { return (new Date(b?.created_at)).getTime() - new Date(a?.created_at).getTime() });
                 newState.groups[groupId].chats = unionBy(newState.groups[groupId]?.chats, action?.payload?.chats, "_id")
-
-            } else if (action?.payload?.new) {
-                newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
             } else {
+
+                newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
                 // newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
-                newState.groups[groupId].chats = action?.payload?.chats
             }
             return newState
         case ActionTypes.REFRESH_CHAT_IN_GROUP:

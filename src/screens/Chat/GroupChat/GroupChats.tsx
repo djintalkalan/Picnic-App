@@ -134,7 +134,7 @@ export const GroupChats: FC<any> = (props) => {
                     keyExtractor={_ => _._id}
                     bounces={false}
                     ref={flatListRef}
-                    onEndReachedThreshold={1}
+                    onEndReachedThreshold={0.1}
                     inverted
                     onEndReached={() => {
                         if (loadMore && isFocused) {
