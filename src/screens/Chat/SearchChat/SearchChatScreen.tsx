@@ -72,7 +72,7 @@ const SearchChatScreen: FC<any> = (props) => {
                 console.log(e)
             })
         }
-    }, 2000), [currentTabIndex])
+    }, 1000), [currentTabIndex])
 
     const debounceClear = useCallback(_.debounce(() => {
         setChats([])
@@ -80,6 +80,8 @@ const SearchChatScreen: FC<any> = (props) => {
     }, 500), [])
 
     useEffect(() => {
+        // console.log("Text Changed is ", searchedText);
+
         debounceSearch(searchedText?.trim()?.length > 2 ? searchedText : null)
         searchedText?.trim()?.length < 3 && debounceClear()
     }, [currentTabIndex, searchedText])
@@ -94,11 +96,13 @@ const SearchChatScreen: FC<any> = (props) => {
             }} >
                 <TextInput
                     onChangeText={(text) => {
+                        // console.log("Text is ", text);
                         setSearchedText(text?.toLowerCase())
                     }}
                     autoFocus
+
                     style={styles.searchInput}
-                    value={searchedText}
+                    // value={searchedText}
                     clearButtonMode={'while-editing'}
                     placeholder={Language.search_messages_here}
                 />
