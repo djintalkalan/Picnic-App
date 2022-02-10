@@ -85,6 +85,7 @@ export const en = {
   hidden_posts: "Hidden Posts",
   search_placeholder: "Search for groups and events near you",
   search_messages_here: "Search messages here",
+  search_here: "Search here",
   search_location: "Search location",
   tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
   unblock: "Unblock",

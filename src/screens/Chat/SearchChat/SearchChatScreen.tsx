@@ -103,7 +103,7 @@ const SearchChatScreen: FC<any> = (props) => {
                     style={styles.searchInput}
                     // value={searchedText}
                     clearButtonMode={'while-editing'}
-                    placeholder={Language.search_messages_here}
+                    placeholder={Language.search_here}
                 />
                 <TouchableOpacity style={styles.imagePlaceholderContainer} onPress={NavigationService.goBack} >
                     <Image style={styles.imagePlaceholder} source={Images.ic_left} />
