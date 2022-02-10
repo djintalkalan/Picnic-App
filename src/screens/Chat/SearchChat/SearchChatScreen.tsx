@@ -72,7 +72,7 @@ const SearchChatScreen: FC<any> = (props) => {
                 console.log(e)
             })
         }
-    }, 1000), [currentTabIndex])
+    }, 2000), [currentTabIndex])
 
     const debounceClear = useCallback(_.debounce(() => {
         setChats([])

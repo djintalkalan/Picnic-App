@@ -73,7 +73,7 @@ const HiddenPosts: FC = () => {
                         keyExtractor={_ => _._id}
                         bounces={false}
                         ref={flatListRef}
-                        inverted
+                        // inverted
                         onEndReached={() => {
                             if (!isLoading && paginationState.current?.currentPage != 0) {
                                 fetchResources()

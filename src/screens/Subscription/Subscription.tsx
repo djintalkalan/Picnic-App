@@ -13,9 +13,12 @@ import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showSuccessMessage } from 'utils';
 
-const productIds = [
+const productIds = Platform.OS == 'ios' ? [
     'y_subscription',
     'm_subscription'
+] : [
+    "y_payment",
+    "m_payment"
 ];
 
 // const subscriptionIds = [
@@ -92,8 +95,8 @@ const Subscription: FC = (props: any) => {
                 _authorizeMembership({
                     transaction_id: purchase?.transactionId,
                     transaction_receipt: purchase?.transactionReceipt,
-                    type: purchase?.productId == 'm_subscription' ? "monthly" : "yearly",
-                    expire_at: dateFormat(add(new Date(), purchase?.productId == 'm_subscription' ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
+                    type: purchase?.productId == productIds[1] ? "monthly" : "yearly",
+                    expire_at: dateFormat(add(new Date(), purchase?.productId == productIds[1] ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
                     payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
                     // transaction_date:purchase?.transactionDate,
                     device: Platform.OS
