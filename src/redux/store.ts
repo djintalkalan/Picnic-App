@@ -34,12 +34,12 @@ const persistConfig = {
     // storage: AsyncStorage // 
     // Whitelist (Save Specific Reducers)
     whitelist: [
-        // "group",
-        // "event",
-        // "groupChat",
-        // "eventChat",
-        // "groupDetails",
-        // "eventDetails",
+        "group",
+        "event",
+        "groupChat",
+        "eventChat",
+        "groupDetails",
+        "eventDetails",
     ],
     blacklist: [],
     throttle: 1000,

@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { _whatsappImport } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupDetail, joinGroup, leaveGroup, reportResource, setLoadingAction } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -187,8 +187,6 @@ const GroupDetail: FC<any> = (props) => {
         </View>
     }, [group])
 
-    const [isDefault, setDefault] = useState<boolean>(false)
-
     const pickFile = useCallback((type: 'whatsapp' | 'telegram') => {
         pickSingle({
             type: Platform.OS == 'android' ? (type == 'telegram' ? 'application/json' : 'text/plain') : (type == 'telegram' ? "public.content" : "public.plain-text"),
@@ -196,18 +194,27 @@ const GroupDetail: FC<any> = (props) => {
         }).then(document => {
             console.log(document);
             if (document?.uri && document?.name.endsWith(type == 'telegram' ? ".json" : ".txt")) {
-                const { uri, name, type } = document
-                const file = { uri, name, type }
+                const { uri, name, type: t } = document
+                const file = { uri, name, type: t }
                 const formData = new FormData()
                 formData.append("file", file);
-                formData.append("resource_id", group?.id);
+                formData.append("resource_id", group?._id);
                 formData.append("imported_platform", type);
 
                 dispatch(setLoadingAction(true))
-
-                _whatsappImport(formData).then((res) => {
+                _whatsappImport(formData, type).then((res) => {
                     dispatch(setLoadingAction(false))
-
+                    if (res.status == 200) {
+                        _showSuccessMessage(Language.successfully_imported);
+                        dispatch(getGroupChat({
+                            id: props?.route?.params?.id
+                        }))
+                        NavigationService.replace("GroupChatScreen", { id: props?.route?.params?.id })
+                    } else if (res.status == 400) {
+                        _showErrorMessage(res.message);
+                    } else {
+                        _showErrorMessage(Language.something_went_wrong);
+                    }
                 }).catch((e) => {
                     dispatch(setLoadingAction(false))
                 })
