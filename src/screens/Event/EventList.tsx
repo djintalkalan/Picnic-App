@@ -16,6 +16,7 @@ import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(90)
+let LOADING = false
 const EventList: FC<any> = (props) => {
 
     const getButtons = useCallback((item: any) => {
@@ -141,9 +142,13 @@ const EventList: FC<any> = (props) => {
     }, [selectedLocation])
 
     const fetchEventList = useCallback(() => {
-        if (paginationState?.current?.currentPage == paginationState?.current?.totalPages) {
+        if (LOADING || paginationState?.current?.currentPage == paginationState?.current?.totalPages) {
             return
         }
+        LOADING = true
+        setTimeout(() => {
+            LOADING = false
+        }, 2000);
         let page = (paginationState?.current?.currentPage) + 1
         dispatch(getAllEvents({ page, onSuccess: onSuccess }))
     }, [])
