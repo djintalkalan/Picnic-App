@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         color: colors.colorPrimary
     },
     button: {
-        marginHorizontal: scaler(15),
+        paddingHorizontal: scaler(15),
         // backgroundColor: 'red',
         position: 'absolute',
         left: 0, height: '100%',

@@ -345,7 +345,8 @@ export default memo(ChatItem)
 
 const styles = StyleSheet.create({
     myContainer: {
-        width: '100%',
+        width: '90%',
+        alignSelf: 'flex-end',
         paddingVertical: scaler(10),
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
         color: colors.colorBlackText,
         fontSize: scaler(14),
         fontWeight: '400',
-        textAlign: 'right'
+        // textAlign: 'justify'
     },
     container: {
         paddingVertical: scaler(10)

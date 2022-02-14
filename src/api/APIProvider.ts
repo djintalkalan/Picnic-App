@@ -395,9 +395,9 @@ export const _capturePayment = async (body: any) => {
     return fetchApiData(config.API_URL + 'payment/capture-paypal', body, "POST")
 }
 
-export const _whatsappImport = async (body: FormData) => {
+export const _whatsappImport = async (body: FormData, type: string) => {
     console.log("---------- whatsappImport Api Call ---------------")
-    return fetchApiData(config.API_URL + 'whatsapp/import', body, "POST")
+    return fetchApiData(config.API_URL + type + '/import', body, "POST")
 }
 
 export const _getGroupChatNew = async (body: any) => {

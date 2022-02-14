@@ -30,7 +30,7 @@ export const BackButton: FC<BackButtonProps> = (props) => {
 
     return (
         <TouchableOpacity onPress={onPress} style={[styles.button, {
-            marginVertical: marginVertical ?? scaler(10),
+            paddingVertical: marginVertical ?? scaler(10),
 
         }]} >
             <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     button: {
         alignSelf: 'baseline',
         flexDirection: 'row',
-        marginHorizontal: scaler(15),
+        paddingHorizontal: scaler(15),
         alignItems: 'center'
     }
 })

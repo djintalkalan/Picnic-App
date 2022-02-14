@@ -254,4 +254,5 @@ export const en = {
   this_event_is_deleted: "This event is cancelled by admin",
   upcoming_events: "Upcoming Events",
   past_events: "Past Events",
+  successfully_imported: "Successfully Imported",
 }
