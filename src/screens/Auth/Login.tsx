@@ -24,8 +24,10 @@ const Login: FC = () => {
         defaultValues: __DEV__ ? Platform.OS == 'ios' ? {
             // email: "mukeshkaushal2008@gmail.com",
             // password: "Mukesh@123",
-            email: "sangeeta@shinewebservices.com",
-            password: "Shine@2022",
+            // email: "sangeeta@shinewebservices.com",
+            // password: "Shine@2022",
+            email: "deepak@shinewebservices.com",
+            password: "Deepak@123",
 
         } : {
             email: "deepak@shinewebservices.com",

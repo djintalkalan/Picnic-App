@@ -1,12 +1,15 @@
+import { config } from 'api'
 import { RootState } from 'app-store'
 import { getAllCurrencies, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
+import axios from 'axios'
 import { Card, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { S3Policy } from 'react-native-aws3/src/S3Policy'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -63,6 +66,68 @@ const Home: FC = () => {
 
   useEffect(() => {
     dispatch(getAllCurrencies())
+
+
+
+  }, [])
+
+
+  const onPressSetting = useCallback(() => {
+    // NavigationService.navigate("Settings")
+    const options = {
+      awsUrl: config.AWS3_REGION + ".amazonaws.com:443",
+      keyPrefix: "",
+      bucket: "videotrancoded",
+      region: config.AWS3_REGION,
+      accessKey: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
+      secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
+      successActionStatus: 201,
+      key: "37AA2330-A66D-4EB2-9DCB-02048392041C.mp4",
+      date: new Date,
+      contentType: "application/x-amz-json-1.0"
+    }
+    const policy = S3Policy.generate(options)
+    policy["X-Amz-Credential"] = policy['X-Amz-Credential']?.replace('s3', "elastictranscoder")
+    console.log("S3Policy", policy);
+    axios({
+      method: "POST", //you can set what request you want to be
+      url: "https://elastictranscoder.us-west-2.amazonaws.com:443",
+      data: {
+        Input: {
+          Key: "37AA2330-A66D-4EB2-9DCB-02048392041C.mp4",
+          FrameRate: "auto",
+          "Resolution": "auto",
+          "AspectRatio": "auto",
+          "Interlaced": "auto",
+          "Container": "mp4"
+        },
+        "OutputKeyPrefix": "/",
+        "Outputs": [
+          {
+            "Key": "transcoded_" + "37AA2330-A66D-4EB2-9DCB-02048392041C.mp4",
+            "ThumbnailPattern": "thumbnails/abc-{count}",
+            "Rotate": "0",
+            "PresetId": "1351620000000-100080"
+          }
+        ],
+        "PipelineId": "1644842506334-kobrsg"
+      },
+      headers: {
+        "host": "elastictranscoder.us-west-2.amazonaws.com:443",
+        "Content-Type": "application/x-amz-json-1.0",
+        "X-Amz-Date": policy["X-Amz-Date"],
+        // "Authorization": policy["X-Amz-Algorithm"] + " Credential=" + policy["X-Amz-Credential"] + ",SignedHeaders=host,Signature=" + policy["X-Amz-Signature"],
+        "X-Amz-Credential": policy["X-Amz-Credential"],
+        "X-Amz-Algorithm": policy["X-Amz-Algorithm"],
+        "X-Amz-Signature": policy["X-Amz-Signature"],
+        // "Policy": policy["Policy"],
+        Accept: "*/*"
+      }
+    }).then((res) => {
+      console.log("Response", res);
+
+    })
+
   }, [])
 
   return (
@@ -89,7 +154,7 @@ const Home: FC = () => {
             }
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => NavigationService.navigate("Settings")} >
+        <TouchableOpacity onPress={onPressSetting} >
           <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
         </TouchableOpacity>
 
