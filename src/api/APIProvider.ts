@@ -101,10 +101,9 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
 
 const callUploadFileAWS = async (file: { uri: string, name: string, type: any }, prefix: any) => {
     console.log("Body S3", JSON.stringify(file))
-
     const options = {
-        keyPrefix: config.AWS3_KEY_PREFIX + prefix + "/",
-        bucket: config.AWS3_BUCKET,
+        keyPrefix: prefix == 'video' ? "" : (config.AWS3_KEY_PREFIX + prefix + "/"),
+        bucket: prefix == 'video' ? config.AWS3_VIDEO_BUCKET : config.AWS3_IMAGE_BUCKET,
         region: config.AWS3_REGION,
         accessKey: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
         secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
@@ -122,60 +121,6 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
 }
 
 export const uploadFileAWS = async (body: any, prefix: any) => {
-    if (prefix == 'video') {
-        const options = {
-            keyPrefix: "",
-            bucket: "videotrancoded",
-            region: config.AWS3_REGION,
-            accessKey: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
-            secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
-            successActionStatus: 201
-        }
-        return RNS3.put(body, options).then(async (response) => {
-            console.log("response", response)
-
-            axios({
-                method: "POST", //you can set what request you want to be
-                url: "https://elastictranscoder.us-east-1.amazonaws.com:443",
-                data: {
-                    Input: {
-                        Key: body?.name,
-                        FrameRate: "auto",
-                        "Resolution": "auto",
-                        "AspectRatio": "auto",
-                        "Interlaced": "auto",
-                        "Container": "mp4"
-                    },
-                    "OutputKeyPrefix": "/",
-                    "Outputs": [
-                        {
-                            "Key": "transcoded_" + body?.name,
-                            "ThumbnailPattern": "thumbnails/abc-{count}",
-                            "Rotate": "0",
-                            "PresetId": "1351620000000-100080"
-                        }
-                    ],
-                    "PipelineId": "1644842506334-kobrsg"
-                },
-                headers: {
-                    "Content-Type": "application/x-amz-json-1.0",
-                    "X-Amz-Date": "20220214T203622Z",
-                }
-            }).then((res) => {
-                console.log("Response", res);
-
-                if (response.status !== 201)
-                    throw new Error("Failed to upload image to S3");
-                // console.log("res" + response.body);
-                return response
-
-            })
-
-
-        }).catch((error) => {
-            console.log("AWS ERROR ", JSON.stringify(error));
-        })
-    }
     return callUploadFileAWS(body, prefix)
 }
 

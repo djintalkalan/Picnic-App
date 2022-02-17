@@ -10,5 +10,8 @@ module.exports = (api) => {
       ...plugins,
       'react-native-reanimated/plugin'
     ],
+    ignore: [
+      "node_modules/aws-sdk/dist/aws-sdk-react-native.js"
+    ]
   }
 };

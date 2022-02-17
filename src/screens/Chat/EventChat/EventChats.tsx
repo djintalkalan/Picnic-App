@@ -62,10 +62,10 @@ const EventChats: FC<any> = (props) => {
         }
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image) => {
+    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
         dispatch(uploadFile({
-            prefixType: 'messages',
-            image, onSuccess: (url) => {
+            prefixType: mediaType == 'video' ? 'video' : 'messages',
+            image, onSuccess: (url, thumbnail) => {
                 dispatch(setLoadingAction(false))
                 if (url) {
                     SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
@@ -73,7 +73,9 @@ const EventChats: FC<any> = (props) => {
                         parent_id: repliedMessage?._id,
                         resource_type: "event",
                         message_type: "image",
-                        message: url
+                        // thumbnail,
+                        message: url,
+                        media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
                     })
                     inputRef.current?.clear()
                     if (repliedMessage) {

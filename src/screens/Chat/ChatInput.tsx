@@ -26,22 +26,23 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
             buttons: [
                 { title: "Image", onPress: () => pickImage("photo") },
                 { title: "Video", onPress: () => pickImage("video") }
-
             ]
         })
     }, [])
     const pickImage = useCallback((mediaType: 'photo' | 'video') => {
         console.log("media", mediaType);
-
         setTimeout(() => {
             ImagePicker.openPicker({
-                width: 400,
-                height: 400,
+                // width: 400,
+                // height: 400,
+                forceJpg: true,
+                freeStyleCropEnabled: true,
                 compressImageQuality: 0.5,
                 compressImageMaxWidth: 400,
-                compressImageMaxHeight: 400,
+                // compressImageMaxHeight: 400,
                 enableRotationGesture: true,
                 cropping: mediaType == 'photo' ? true : undefined,
+                compressVideoPreset: mediaType == 'photo' ? undefined : "MediumQuality",
                 mediaType
             }).then((image) => {
                 onChooseImage && onChooseImage(image, mediaType)

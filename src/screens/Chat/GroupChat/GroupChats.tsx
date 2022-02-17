@@ -65,7 +65,7 @@ export const GroupChats: FC<any> = (props) => {
     const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
         dispatch(uploadFile({
             prefixType: mediaType == 'video' ? 'video' : 'messages',
-            image, onSuccess: (url) => {
+            image, onSuccess: (url, thumbnail) => {
                 dispatch(setLoadingAction(false))
                 if (url) {
                     SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
@@ -74,6 +74,7 @@ export const GroupChats: FC<any> = (props) => {
                         resource_type: "group",
                         message_type: mediaType == 'video' ? 'file' : "image",
                         message: url,
+                        // thumbnail,
                         media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
                     })
                     inputRef.current?.clear()

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface IImageLoader {
@@ -13,6 +13,7 @@ interface IImageLoader {
     placeholderSource?: any
     placeholderStyle?: ViewStyle
     customImagePlaceholderDefaultStyle?: any
+    reload?: boolean
 }
 const ImageLoader = (props: IImageLoader) => {
     const { isShowActivity = true, source, resizeMode, borderRadius, backgroundColor, children,
@@ -20,9 +21,20 @@ const ImageLoader = (props: IImageLoader) => {
         customImagePlaceholderDefaultStyle } = props
     const [isLoaded, setLoaded] = useState(false)
     const [isError, setError] = useState(false)
+    const currentRetry = useRef(0);
+    const onLoadEnd = () => {
+        setLoaded(true)
+    }
 
-    const onLoadEnd = () => setLoaded(true)
-    const onError = () => setError(true)
+    const onError = () => {
+        if (props.reload && currentRetry?.current < 10)
+            setTimeout(() => {
+                currentRetry.current++
+                setError(false)
+                setLoaded(false)
+            }, 7000);
+        setError(true)
+    }
     const style = StyleSheet.flatten(props?.style)
     const styles = useMemo(() => StyleSheet.create({
         backgroundImage: {
@@ -63,6 +75,7 @@ const ImageLoader = (props: IImageLoader) => {
 
     return (
         <ImageBackground
+            key={currentRetry.current}
             onLoadEnd={onLoadEnd}
             onError={onError}
             style={styles.backgroundImage}
