@@ -1,5 +1,7 @@
+import { colors } from 'assets/Colors';
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Spinner from "react-native-loading-spinner-overlay";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Video from 'react-native-video';
 
@@ -12,6 +14,7 @@ export const VideoContext = createContext<{
 export const VideoProvider: FC<any> = ({ children }) => {
 
     const [videoUrl, loadVideo] = useState("")
+    const [isLoading, setLoader] = useState(false)
     const videoPlayerRef = useRef()
 
     useEffect(() => {
@@ -20,26 +23,39 @@ export const VideoProvider: FC<any> = ({ children }) => {
             loadVideo("")
         }
     }, [])
+
+    useEffect(() => {
+        if (videoUrl) {
+            setLoader(true)
+        } else {
+            setLoader(false)
+        }
+    }, [videoUrl])
+
     return (
         <VideoContext.Provider value={{ videoUrl, videoPlayerRef, loadVideo }}  >
             {children}
             {videoUrl ?
-                <View style={[styles.backgroundVideo, { backgroundColor: '#000000', alignItems: 'center', justifyContent: 'center' }]} >
+                <View style={[styles.backgroundVideo, { backgroundColor: 'rgba(0, 0, 0, 0.6)', alignItems: 'center', justifyContent: 'center' }]} >
                     <Video source={{ uri: videoUrl }}   // Can be a URL or a local file.
                         ref={videoPlayerRef}
-                        resizeMode={'contain'}
+                        resizeMode={'cover'}
                         // isFullScreen={true}
                         // toggleResizeModeOnFullscreen={false}
-                        repeat
+                        // repeat
                         controls={true}// Store reference
                         onBuffer={(d) => {
-                            console.log(d, "d")
+                            // console.log(d, "d")
                         }}                // Callback when remote video is buffering
+                        onLoad={() => {
+                            setLoader(false)
+                        }}
                         onError={(e) => {
-                            console.log(e, "e")
-
+                            // console.log(e, "e")
+                            setLoader(false)
                         }}               // Callback when video cannot be loaded
                         style={styles.backgroundVideo} />
+
                     <View style={{ position: 'absolute', zIndex: 11, top: 20, alignSelf: 'center' }} >
                         <SafeAreaView />
                         <TouchableOpacity
@@ -48,6 +64,11 @@ export const VideoProvider: FC<any> = ({ children }) => {
                             <Icon name={'close'} size={30} />
                         </TouchableOpacity>
                     </View>
+                    <Spinner
+                        visible={isLoading}
+                        color={colors.colorPrimary}
+                        overlayColor={'rgba(0, 0, 0, 0.6)'}
+                    />
                 </View> : null}
         </VideoContext.Provider>
     )

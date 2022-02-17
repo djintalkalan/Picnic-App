@@ -5,7 +5,7 @@ import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback } from '
 import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler } from 'utils'
+import { getImageUrl, scaler, _showBottomMenu } from 'utils'
 
 interface ChatInputProps {
     value?: string,
@@ -14,25 +14,38 @@ interface ChatInputProps {
     repliedMessage: any,
     disableButton: boolean,
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
-    onChooseImage?: (image: ImageOrVideo) => void
+    onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void
 }
 const { height, width } = Dimensions.get('screen')
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
     const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
 
-    const pickImage = useCallback(() => {
+    const chooseMediaType = useCallback(() => {
+        _showBottomMenu({
+            buttons: [
+                { title: "Image", onPress: () => pickImage("photo") },
+                { title: "Video", onPress: () => pickImage("video") }
+            ]
+        })
+    }, [])
+    const pickImage = useCallback((mediaType: 'photo' | 'video') => {
+        console.log("media", mediaType);
         setTimeout(() => {
             ImagePicker.openPicker({
-                width: 400,
-                height: 400,
+                // width: 400,
+                // height: 400,
+                forceJpg: true,
+                freeStyleCropEnabled: true,
                 compressImageQuality: 0.5,
                 compressImageMaxWidth: 400,
-                compressImageMaxHeight: 400,
+                // compressImageMaxHeight: 400,
                 enableRotationGesture: true,
-                cropping: true,
+                cropping: mediaType == 'photo' ? true : undefined,
+                compressVideoPreset: mediaType == 'photo' ? undefined : "MediumQuality",
+                mediaType
             }).then((image) => {
-                onChooseImage && onChooseImage(image)
+                onChooseImage && onChooseImage(image, mediaType)
             }).catch(e => {
                 console.log(e)
             });
@@ -85,7 +98,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     <TouchableOpacity onPress={onPressSend} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
                         <Image source={Images.ic_send} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={pickImage} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
+                    <TouchableOpacity onPress={chooseMediaType} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
                         <Image source={Images.ic_add_circle} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
                     </TouchableOpacity>
                 </View>

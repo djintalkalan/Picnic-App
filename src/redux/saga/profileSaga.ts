@@ -127,6 +127,7 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getMyAllGroups, null, payload?.page);
+        yield put(setLoadingAction(false));
         if (res.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
@@ -144,7 +145,6 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
@@ -159,6 +159,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getUpcomingPastEvents, payload, payload?.body?.page);
+        yield put(setLoadingAction(false));
         if (res.status == 200) {
             if (payload?.body?.onSuccess) payload?.body?.onSuccess({
                 pagination: {

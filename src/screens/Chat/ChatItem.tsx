@@ -1,11 +1,14 @@
+import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { InnerBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
+import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { useDatabase } from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
@@ -41,6 +44,8 @@ const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 const { height, width } = Dimensions.get('screen')
 
 const ChatItem = (props: IChatItem) => {
+    const { loadVideo } = useVideoPlayer()
+
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
         // is_message_sender_is_admin,
@@ -203,6 +208,56 @@ const ChatItem = (props: IChatItem) => {
                 borderRadius={scaler(15)}
                 source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
+            {isMuted ?
+                null :
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <TouchableOpacity onPress={() => {
+                        SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                            message_id: _id,
+                            is_like: is_message_liked_by_me ? "0" : '1'
+                        })
+                    }} >
+                        <Image source={Images.ic_smiley} style={{
+                            resizeMode: 'contain',
+                            height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
+                            tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                        }} />
+                    </TouchableOpacity>
+                    <Text style={styles.likeBy} >
+                        {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                    </Text>
+                </View>}
+        </View>
+    }
+
+    if (message_type == 'file') {
+
+        return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
+                    <ImageLoader
+                        placeholderSource={Images.ic_home_profile}
+                        source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                        style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                </View>
+                <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity>
+            </View>
+            <ImageLoader
+                reload={true}
+                placeholderSource={Images.ic_image_placeholder}
+                borderRadius={scaler(15)}
+                source={{ uri: config.VIDEO_URL + (message?.substring(0, message?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
+                style={{ resizeMode: 'contain', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
+            <TouchableOpacity onPress={() => {
+                loadVideo(config.VIDEO_URL + message)
+            }} style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: scaler(55), bottom: scaler(40), left: width / 3, right: width / 3, }} >
+                {/* <View style={{ backgroundColor: colors.colorWhite, borderRadius: scaler(30), height: scaler(60), width: scaler(60) }} > */}
+                <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
+                {/* </View> */}
+            </TouchableOpacity>
             {isMuted ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >

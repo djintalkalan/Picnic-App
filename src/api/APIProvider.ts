@@ -7,6 +7,7 @@ import { RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
 import { _showErrorMessage } from 'utils';
+
 interface header {
     Accept: string;
     "Content-Type": string;
@@ -73,6 +74,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
                 }
             }
             else {
+                DeviceEventEmitter.emit("STOP_LOADER_EVENT");
                 store.dispatch(setLoadingAction(false));
                 throw new Error("Request Failed");
             }
@@ -99,10 +101,9 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
 
 const callUploadFileAWS = async (file: { uri: string, name: string, type: any }, prefix: any) => {
     console.log("Body S3", JSON.stringify(file))
-
     const options = {
-        keyPrefix: config.AWS3_KEY_PREFIX + prefix + "/",
-        bucket: config.AWS3_BUCKET,
+        keyPrefix: prefix == 'video' ? "" : (config.AWS3_KEY_PREFIX + prefix + "/"),
+        bucket: prefix == 'video' ? config.AWS3_VIDEO_BUCKET : config.AWS3_IMAGE_BUCKET,
         region: config.AWS3_REGION,
         accessKey: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
         secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
@@ -122,7 +123,6 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
 export const uploadFileAWS = async (body: any, prefix: any) => {
     return callUploadFileAWS(body, prefix)
 }
-
 
 export const _signUp = async (body: any) => {
     console.log("---------- new_signup OTP Api Call ---------------")

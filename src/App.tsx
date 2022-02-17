@@ -5,6 +5,7 @@ import { BottomMenu } from 'custom-components/BottomMenu';
 import { KeyboardProvider } from 'custom-components/KeyboardService';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { PopupAlert } from 'custom-components/PopupAlert';
+import { VideoProvider } from 'custom-components/VideoProvider';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import React, { FC, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -32,15 +33,17 @@ const App: FC = () => {
     }, [])
     const getChildren = useCallback(() => {
         return <LocationServiceProvider>
-            <Provider store={store}>
-                <PersistGate persistor={persistor}>
-                    <MyNavigationContainer />
-                    <Loader />
-                </PersistGate>
-            </Provider>
-            <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
-            <BottomMenu ref={ref => BottomMenuHolder.setBottomMenu(ref)} />
-            <DropdownAlertWithStatusBar />
+            <VideoProvider>
+                <Provider store={store}>
+                    <PersistGate persistor={persistor}>
+                        <MyNavigationContainer />
+                        <Loader />
+                    </PersistGate>
+                </Provider>
+                <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
+                <BottomMenu ref={ref => BottomMenuHolder.setBottomMenu(ref)} />
+                <DropdownAlertWithStatusBar />
+            </VideoProvider>
         </LocationServiceProvider>
     }, [])
     return (

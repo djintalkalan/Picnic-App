@@ -65,6 +65,13 @@ const Home: FC = () => {
     dispatch(getAllCurrencies())
   }, [])
 
+
+
+
+  const onPressSetting = useCallback(() => {
+    NavigationService.navigate("Settings")
+  }, [])
+
   return (
     <SafeAreaView style={styles.container} >
 
@@ -89,7 +96,7 @@ const Home: FC = () => {
             }
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => NavigationService.navigate("Settings")} >
+        <TouchableOpacity onPress={onPressSetting} >
           <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
         </TouchableOpacity>
 
