@@ -211,11 +211,13 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
 function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
     let groupList = store.getState()?.group?.allGroups
-    if (!groupList?.length)
-        yield put(setLoadingAction(true));
+    // if (!groupList?.length)
+    // yield put(setLoadingAction(true));
     try {
         const location = Database?.getStoredValue("selectedLocation", defaultLocation)
         let res = yield call(ApiProvider._getAllGroups, location, payload?.page);
+        yield put(setLoadingAction(false));
+
         if (res.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
@@ -226,14 +228,13 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
                 data: res?.data?.data
             })
             if (res?.data?.pagination?.currentPage == 1) groupList = []
-            yield put(setAllGroups([...groupList, ...res?.data?.data]))
+            yield put(setAllGroups(res?.data?.data))
 
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);

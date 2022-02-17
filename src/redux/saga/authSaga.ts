@@ -11,6 +11,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     const firebaseToken = Database.getStoredValue('firebaseToken')
     try {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
+        yield put(setLoadingAction(false));
         if (res.status == 200) {
             _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
@@ -24,7 +25,6 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);

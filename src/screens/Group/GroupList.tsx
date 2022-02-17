@@ -220,12 +220,12 @@ const GroupList: FC<any> = (props) => {
                 keyExtractor={(_, i) => _?._id}
                 useAnimatedList
                 useNativeDriver
-                onEndReached={() => {
+                // onEndReached={() => {
 
-                    if (!isLoading && paginationState.current?.currentPage != 0) {
-                        fetchGroupList()
-                    }
-                }}
+                //     if (!isLoading && paginationState.current?.currentPage != 0) {
+                //         fetchGroupList()
+                //     }
+                // }}
                 closeOnRowOpen={true}
             />
         </View>

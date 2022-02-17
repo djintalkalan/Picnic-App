@@ -109,11 +109,14 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
     let eventList = store.getState()?.event?.allEvents
-    if (!eventList?.length)
-        yield put(setLoadingAction(true));
+
+    // if (!eventList?.length)
+    //     yield put(setLoadingAction(true));
     try {
         const location = Database?.getStoredValue("selectedLocation", defaultLocation)
         let res = yield call(ApiProvider._getAllEvents, location, payload?.page);
+        yield put(setLoadingAction(false));
+
         if (res.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
@@ -131,7 +134,6 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
