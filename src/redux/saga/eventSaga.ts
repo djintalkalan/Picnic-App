@@ -127,7 +127,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
                 data: res?.data?.data
             })
             if (res?.data?.pagination?.currentPage == 1) eventList = []
-            yield put(setAllEvents([...eventList, ...res?.data?.data]))
+            yield put(setAllEvents(res?.data?.data))
 
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
