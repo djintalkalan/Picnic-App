@@ -130,6 +130,7 @@ export const GroupChats: FC<any> = (props) => {
         <View style={styles.container} >
             <View pointerEvents={(groupDetail?.is_group_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
                 <FlatList
+                    // removeClippedSubviews={false}
                     keyboardShouldPersistTaps={'handled'}
                     data={chats}
                     extraData={chats?.length}

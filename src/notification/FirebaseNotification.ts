@@ -21,6 +21,15 @@ notifee.createChannel({
     importance: AndroidImportance.HIGH,
 })
 
+notifee.createChannel({
+    id: "upload",
+    name: "upload",
+    lights: true,
+    vibration: false,
+    sound: 'default',
+    importance: AndroidImportance.HIGH,
+})
+
 let isFirstTime = true
 
 let dispatch: Dispatch<any>
@@ -113,7 +122,6 @@ const navigateToPages = async (notification: any) => {
 
 const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
     console.log("Link is ", link);
-
     if (link && link.url) {
         const { id, type } = getDetailsFromDynamicUrl(link.url)
         if (id && type) {
@@ -170,9 +178,19 @@ const showNotification = (message: any, isBackground: boolean) => {
             ) {
 
             } else {
+                let body = data?.message
+                switch (data?.message_type) {
+                    case "image":
+                        body = 'Image message arrived'
+                        break
+                    case "file":
+                        body = 'Video message arrived'
+                        break
+                }
+
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
-                    body: data?.message_type == 'image' ? "Image" : data?.message,
+                    body,
                     title: data?.user?.display_name,
                     data: { title, body, message: JSON.stringify(data) },
                     android: {

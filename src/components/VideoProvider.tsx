@@ -1,6 +1,6 @@
 import { colors } from 'assets/Colors';
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BackHandler, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Spinner from "react-native-loading-spinner-overlay";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Video from 'react-native-video';
@@ -17,6 +17,8 @@ export const VideoProvider: FC<any> = ({ children }) => {
     const [isLoading, setLoader] = useState(false)
     const videoPlayerRef = useRef()
 
+
+
     useEffect(() => {
         loadVideo("")
         return () => {
@@ -25,10 +27,19 @@ export const VideoProvider: FC<any> = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        if (videoUrl) {
-            setLoader(true)
-        } else {
+        const listener = BackHandler.addEventListener('hardwareBackPress', function () {
+            if (videoUrl) {
+                loadVideo("")
+                return true
+            } else {
+                return false
+            }
+        });
+        if (videoUrl) setLoader(true)
+
+        return () => {
             setLoader(false)
+            listener.remove()
         }
     }, [videoUrl])
 

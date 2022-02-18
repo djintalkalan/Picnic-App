@@ -72,7 +72,7 @@ const EventChats: FC<any> = (props) => {
                         resource_id: activeEvent?._id,
                         parent_id: repliedMessage?._id,
                         resource_type: "event",
-                        message_type: "image",
+                        message_type: mediaType == 'video' ? 'file' : "image",
                         // thumbnail,
                         message: url,
                         media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
@@ -179,6 +179,7 @@ const EventChats: FC<any> = (props) => {
             <View style={styles.container} >
                 <View pointerEvents={(eventDetail?.is_event_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
                     <FlatList
+                        // removeClippedSubviews={false}
                         keyboardShouldPersistTaps={'handled'}
                         data={chats}
                         extraData={chats?.length}

@@ -3,7 +3,7 @@ import { store } from 'app-store';
 import { setLoadingAction } from 'app-store/actions';
 import axios, { Method } from 'axios';
 import { DeviceEventEmitter } from 'react-native';
-import { RNS3 } from 'react-native-aws3';
+import { Progress, RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
 import { _showErrorMessage } from 'utils';
@@ -99,7 +99,7 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
     }
 }
 
-const callUploadFileAWS = async (file: { uri: string, name: string, type: any }, prefix: any) => {
+const callUploadFileAWS = async (file: { uri: string, name: string, type: any, }, prefix: any, progressCallback: (progress: Progress, id: string) => any) => {
     console.log("Body S3", JSON.stringify(file))
     const options = {
         keyPrefix: prefix == 'video' ? "" : (config.AWS3_KEY_PREFIX + prefix + "/"),
@@ -109,7 +109,7 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
         secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
         successActionStatus: 201
     }
-    return RNS3.put(file, options).then((response) => {
+    return RNS3.put(file, options).progress((progress) => progressCallback(progress, file?.name.substring(0, file?.name?.indexOf(".")))).then((response) => {
         console.log("response", response)
         if (response.status !== 201)
             throw new Error("Failed to upload image to S3");
@@ -120,8 +120,8 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any },
     })
 }
 
-export const uploadFileAWS = async (body: any, prefix: any) => {
-    return callUploadFileAWS(body, prefix)
+export const uploadFileAWS = async (body: any, prefix: any, progressCallback: (progress: Progress, id: string) => any) => {
+    return callUploadFileAWS(body, prefix, progressCallback)
 }
 
 export const _signUp = async (body: any) => {

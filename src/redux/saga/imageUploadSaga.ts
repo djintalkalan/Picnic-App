@@ -1,9 +1,17 @@
+import notifee, { AndroidProgress } from "@notifee/react-native";
 import { config } from 'api';
 import * as ApiProvider from 'api/APIProvider';
-import { setLoadingAction } from "app-store/actions";
+import { setLoadingAction, setLoadingMsg } from "app-store/actions";
 import AWS from 'aws-sdk/dist/aws-sdk-react-native';
+import { Platform } from "react-native";
+import { Progress } from 'react-native-aws3';
 import { call, put, takeLatest } from 'redux-saga/effects';
+import { store } from "..";
 import ActionTypes, { action } from "../action-types";
+
+let activeUploads: Array<string> = []
+
+const isAndroid = Platform.OS == 'android'
 
 AWS.config.update({
     accessKeyId: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
@@ -35,7 +43,7 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     }
     yield put(setLoadingAction(true))
     try {
-        let res = yield call(ApiProvider.uploadFileAWS, file, prefixType);
+        let res = yield call(ApiProvider.uploadFileAWS, file, prefixType, uploadProgress);
         if (res && res.status == 201) {
             let location: string = res?.body?.postResponse?.location ?? res?.headers?.Location
             if (location) {
@@ -61,6 +69,45 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     }
 
 };
+const uploadProgress = async (progress: Progress, id: string) => {
+    console.log("Progress", progress);
+    await showNotification(id, progress)
+}
+
+const showNotification = async (id: string, p: Progress) => {
+    let title = "Uploading file"
+    let progress: AndroidProgress = {
+        indeterminate: true,
+    }
+    let finalize = p?.loaded == p?.total
+    if (!activeUploads.includes(id)) {
+        store.dispatch(setLoadingAction(true))
+        activeUploads.push(id)
+        title = "Starting upload..."
+
+    } else if (finalize) {
+        title = "Finalizing upload..."
+    } else progress = { max: p?.total, current: p?.loaded, }
+    store.dispatch(setLoadingMsg(JSON.stringify(p) + "%"))
+    isAndroid && await notifee.displayNotification({
+        id,
+        title,
+        android: {
+            onlyAlertOnce: true,
+            progress,
+            channelId: "upload",
+        },
+        ios: {
+
+        }
+    })
+    if (finalize) {
+        setTimeout(async () => {
+            store.dispatch(setLoadingMsg(""))
+            isAndroid && await notifee.cancelNotification(id);
+        }, 1000);
+    }
+}
 
 const transcodeVideo = async (key: string, callback: (obj: any) => void) => {
     // presets: http://docs.aws.amazon.com/elastictranscoder/latest/developerguide/system-presets.html

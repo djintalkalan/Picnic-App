@@ -9,10 +9,12 @@ import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
 import { Keyboard, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
 import { BottomMenuHolder } from './BottomMenuHolder';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
+
 
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
 
@@ -494,4 +496,8 @@ export const mergeMessageObjects = (chats: Array<any>, total_likes: Array<any>, 
     total_likes?.length && total_likes?.forEach(item => map.set(item._id, { ...map.get(item._id), message_total_likes_count: item?.total_likes }));
     like_by_me?.length && like_by_me?.forEach(item => map.set(item.message_id, { ...map.get(item.message_id), is_message_liked_by_me: true }));
     return Array.from(map.values());
+}
+
+export const _showToast = (message: string, duration: 'SHORT' | 'LONG' = 'SHORT', gravity: 'TOP' | 'BOTTOM' | 'CENTER' = 'BOTTOM') => {
+    Toast.showWithGravity(message, Toast?.[duration], Toast?.[gravity]);
 }

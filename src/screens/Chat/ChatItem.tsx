@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -7,14 +8,13 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { useDatabase } from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
-import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
-
+import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
 interface IChatItem {
     _id: string
     isAdmin: any,
@@ -182,6 +182,22 @@ const ChatItem = (props: IChatItem) => {
 
     const { first_name: admin_f, last_name: admin_l, username: admin_u } = message_deleted_by_user || {}
 
+    const _onCopy = useCallback((e: GestureResponderEvent) => {
+        let gravity = 'BOTTOM'
+        if (e.nativeEvent.pageY) {
+            const d = ((height) / 3)
+            // if (e.nativeEvent.pageY < d) {
+            //     gravity = "TOP"
+            // } else
+            if (e.nativeEvent.pageY < (2 * d)) {
+                gravity = "CENTER"
+            }
+
+        }
+        Clipboard.setString(message?.trim());
+        // console.log("e", e, ((height - scaler(80)) / 3));
+        _showToast("Copied", 'SHORT', gravity);
+    }, [])
 
     if (is_system_message) {
         return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (getDisplayName(admin_u, admin_f, admin_l)) + "**") + '”'} />
@@ -231,7 +247,6 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'file') {
-
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                 <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
@@ -288,20 +303,22 @@ const ChatItem = (props: IChatItem) => {
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
                         <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.messageContainer, {
                             maxWidth: undefined, width: '100%',
-                            padding: parent_message?.message_type == "image" ? 0 : scaler(10),
-
+                            padding: parent_message?.message_type == "image" || parent_message?.message_type == "file" ? 0 : scaler(10),
                         }]} >
-                            {parent_message?.message_type == "image" ?
+                            {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
                                 <ImageLoader
                                     placeholderSource={Images.ic_image_placeholder}
-                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
+                                    source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
                                 :
                                 <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                             }
                         </TouchableOpacity>
                     </View>
                     : null}
-                <Text style={[styles.myMessage, {}]} >{message?.trim()}</Text>
+                <Text
+                    onLongPress={_onCopy}
+                    style={[styles.myMessage, {}]} >{message?.trim()}</Text>
                 {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
                     <TouchableOpacity onPress={() => {
                         SocketService?.emit(EMIT_LIKE_UNLIKE, {
@@ -353,18 +370,20 @@ const ChatItem = (props: IChatItem) => {
                                 <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
                                 <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
                                     maxWidth: undefined, width: '100%',
-                                    padding: parent_message?.message_type == "image" ? 0 : scaler(10),
+                                    padding: parent_message?.message_type == "image" || parent_message?.message_type == "file" ? 0 : scaler(10),
                                 }]} >
-                                    {parent_message?.message_type == "image" ?
+                                    {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
                                         <ImageLoader
                                             placeholderSource={Images.ic_image_placeholder}
-                                            style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }} source={{ uri: getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                            style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
+                                            source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
                                         : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                                     }
                                 </TouchableOpacity>
                             </View>
                             : null}
-                        <Text style={styles.message} >{message?.trim()}</Text>
+                        <Text onLongPress={_onCopy}
+                            style={styles.message} >{message?.trim()}</Text>
                         {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
                             <TouchableOpacity onPress={() => {
                                 SocketService?.emit(EMIT_LIKE_UNLIKE, {
