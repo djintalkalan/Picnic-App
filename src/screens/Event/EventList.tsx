@@ -278,11 +278,11 @@ const EventList: FC<any> = (props) => {
                 keyExtractor={(_, i) => _?._id}
                 useAnimatedList
                 useNativeDriver
-                onEndReached={() => {
-                    if (!isLoading && paginationState.current?.currentPage != 0) {
-                        fetchEventList()
-                    }
-                }}
+                // onEndReached={() => {
+                //     if (!isLoading && paginationState.current?.currentPage != 0) {
+                //         fetchEventList()
+                //     }
+                // }}
                 closeOnRowOpen={true}
             />
         </View>

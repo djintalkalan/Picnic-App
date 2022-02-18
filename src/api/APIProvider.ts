@@ -273,7 +273,7 @@ export const _reportResource = async (body: any) => {
 
 export const _searchAtHome = async (body: any) => {
     console.log("---------- _searchAtHome Api Call ---------------")
-    return fetchApiData(config.API_URL + (body?.type == 'events' ? 'event/get-all-events' : 'group/get-all-groups') + '?page=' + 1 + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=100000&q=' + body?.text, null, "GET")
+    return fetchApiData(config.API_URL + (body?.type == 'events' ? 'event/get-all-events-new' : 'group/get-all-groups-new') + '?page=' + 1 + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=100000&q=' + body?.text, null, "GET")
 }
 
 export const _getMyEvents = async (body: any) => {
@@ -297,7 +297,7 @@ export const _createEvent = async (body: any) => {
 
 export const _getAllEvents = async (body: any, page: number) => {
     console.log("---------- _getAllEvents Api Call ---------------")
-    return fetchApiData(config.API_URL + 'event/get-all-events?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=20', null, "GET")
+    return fetchApiData(config.API_URL + 'event/get-all-events-new?page=' + page + '&lat=' + body?.latitude + '&lng=' + body?.longitude + '&limit=50000', null, "GET")
 }
 
 export const _getEventDetails = async (id: string) => {
