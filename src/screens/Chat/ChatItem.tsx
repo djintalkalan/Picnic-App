@@ -9,6 +9,7 @@ import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { useDatabase } from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import MapView, { Marker } from 'react-native-maps'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
@@ -42,6 +43,12 @@ interface IChatItem {
 const DelText = "{{admin_name}} has deleted post from {{display_name}}"
 
 const { height, width } = Dimensions.get('screen')
+
+const ASPECT_RATIO = width / height;
+const DefaultDelta = {
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05 * ASPECT_RATIO,
+}
 
 const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
@@ -243,6 +250,73 @@ const ChatItem = (props: IChatItem) => {
                         {(is_message_liked_by_me || message_total_likes_count) ? "Liked by" : "Like"}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " You" + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                     </Text>
                 </View>}
+        </View>
+    }
+
+    if (message_type == 'location') {
+        const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
+
+        }} style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(5),
+            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
+        }} >
+            <MapView
+                pointerEvents='none'
+                style={{ flex: 1, borderRadius: scaler(15), }}
+                minZoomLevel={2}
+                // customMapStyle={MapStyle}
+                provider={'google'}
+                cacheEnabled
+                showsMyLocationButton={false}
+                initialRegion={{
+                    latitude: 30.725751,
+                    longitude: 76.682856,
+                    ...DefaultDelta
+                }}
+
+            >
+                <Marker
+                    coordinate={{
+                        latitude: 30.725751,
+                        longitude: 76.682856,
+                        ...DefaultDelta
+                    }}
+                >
+                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+
+                </Marker>
+
+            </MapView>
+        </TouchableOpacity>
+        if (!myMessage) {
+            return <View style={styles.myContainer} >
+                <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
+                    {map}
+                </View>
+                <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity>
+            </View>
+        }
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1 }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                        <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                            <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                        </TouchableOpacity>
+                    </View>
+                    {map}
+                </View>
+            </View>
         </View>
     }
 
