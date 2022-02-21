@@ -23,6 +23,7 @@ const DefaultDelta = {
 const SelectLocation: FC<any> = (props) => {
     const onSelectLocation = props?.route?.params?.onSelectLocation
     const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
+    const type = props?.route?.params?.type || ""
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
@@ -32,6 +33,11 @@ const SelectLocation: FC<any> = (props) => {
     const [localLocation, setLocalLocation] = useState<ILocation>(onSelectLocation ? prevSelectedLocation : selectedLocation)
     useEffect(() => {
         askPermission && askPermission()
+        if (type == 'currentLocation') {
+            setTimeout(() => {
+                getCurrentLocation()
+            }, 1000);
+        }
     }, [])
 
     useEffect(() => {
@@ -54,6 +60,16 @@ const SelectLocation: FC<any> = (props) => {
         }
     }, []))
 
+    const getCurrentLocation = useCallback(() => {
+        if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
+            setLocalLocation(currentLocation)
+        } else {
+            askPermission().then(() => {
+                setLocalLocation(Database.getStoredValue('currentLocation'))
+            })
+        }
+    }, [currentLocation, defaultLocation])
+
     const setPosition = useCallback(async (location: ILocation) => {
         let { address, otherData } = await getAddressFromLocation(location)
         if (address)
@@ -70,7 +86,7 @@ const SelectLocation: FC<any> = (props) => {
 
             <View style={styles.map} >
                 {focused ?
-                    <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                    <MapView pointerEvents={type == 'currentLocation' ? 'none' : undefined} provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                         style={styles.map}
                         minZoomLevel={2}
                         showsMyLocationButton={false}
@@ -119,7 +135,7 @@ const SelectLocation: FC<any> = (props) => {
                             <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ marginVertical: scaler(10) }} >
+                    {type == 'currentLocation' ? null : <View style={{ marginVertical: scaler(10) }} >
                         <TouchableOpacity activeOpacity={0.9} onPress={() => {
                             NavigationService.navigate("GooglePlacesTextInput", {
                                 onSelectLocation: (location: ILocation) => {
@@ -140,17 +156,9 @@ const SelectLocation: FC<any> = (props) => {
                         </TouchableOpacity>
                         <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
 
-                    </View>
+                    </View>}
 
-                    <TouchableOpacity onPress={() => {
-                        if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
-                            setLocalLocation(currentLocation)
-                        } else {
-                            askPermission().then(() => {
-                                setLocalLocation(Database.getStoredValue('currentLocation'))
-                            })
-                        }
-                    }} style={styles.currentLocationButton} >
+                    <TouchableOpacity onPress={getCurrentLocation} style={[styles.currentLocationButton, type == 'currentLocation' ? { marginTop: scaler(20) } : {}]} >
                         <MaterialCommunityIcons name={'crosshairs-gps'} size={scaler(20)} color={colors.colorWhite} />
                     </TouchableOpacity>
                 </SafeAreaView>
@@ -183,7 +191,7 @@ const SelectLocation: FC<any> = (props) => {
                             onSelectLocation(localLocation) :
                             setSelectedLocation(localLocation)
                         NavigationService.goBack()
-                    }} containerStyle={{ marginTop: scaler(20) }} title={'Confirm Location'} />
+                    }} containerStyle={{ marginTop: scaler(20) }} title={type == 'currentLocation' ? 'Share current location' : 'Confirm Location'} />
 
 
                 </View> : null

@@ -255,4 +255,6 @@ export const en = {
   upcoming_events: "Upcoming Events",
   past_events: "Past Events",
   successfully_imported: "Successfully Imported",
+  select_contact: "Select Contact",
+  add_to_contacts: "Add to contacts",
 }

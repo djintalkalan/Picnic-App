@@ -1,11 +1,12 @@
 import { colors, Fonts, Images } from 'assets'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
+import { ILocation } from 'database/Database'
 import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler, _showBottomMenu } from 'utils'
+import { getImageUrl, NavigationService, scaler, _showBottomMenu } from 'utils'
 
 interface ChatInputProps {
     value?: string,
@@ -14,18 +15,41 @@ interface ChatInputProps {
     repliedMessage: any,
     disableButton: boolean,
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
-    onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void
+    onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void,
+    onChooseLocation: (location: any) => void,
+    onChooseContacts: (contacts: Array<any>) => void,
 }
 const { height, width } = Dimensions.get('screen')
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
-    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
+    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
             buttons: [
-                { title: "Image", onPress: () => pickImage("photo") },
-                { title: "Video", onPress: () => pickImage("video") }
+                { title: "Photo", onPress: () => pickImage("photo") },
+                { title: "Video", onPress: () => pickImage("video") },
+                {
+                    title: "Contact", onPress: () => {
+                        NavigationService.navigate("SelectContacts", {
+                            onChooseContacts: (contacts: Array<any>) => {
+                                onChooseContacts(contacts)
+                                NavigationService.goBack()
+                            }
+                        })
+                    }
+                },
+                {
+                    title: "Location", onPress: () => {
+                        NavigationService.navigate("SelectLocation", {
+                            type: 'currentLocation',
+                            prevSelectedLocation: Database.getStoredValue("currentLocation"),
+                            onSelectLocation: (location: ILocation) => {
+
+                            }
+                        })
+                    }
+                }
             ]
         })
     }, [])

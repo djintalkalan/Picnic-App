@@ -33,6 +33,8 @@ const SearchedEvents: FC<any> = ({ route, navigation }) => {
         <View style={styles.container} >
 
             <FlatList
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps={'handled'}
                 data={events}
                 keyExtractor={(_, i) => i.toString()}
                 renderItem={_renderItem}

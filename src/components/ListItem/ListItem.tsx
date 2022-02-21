@@ -17,8 +17,37 @@ interface ListItemProps {
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     containerStyle?: StyleProp<ViewStyle>
-    textContainerStyle?: StyleProp<TextStyle>
+    textContainerStyle?: StyleProp<ViewStyle>
+    titleTextStyle?: StyleProp<TextStyle>
+    subtitleTextStyle?: StyleProp<TextStyle>
+}
 
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, subtitleTextStyle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+    const style = useMemo(() => StyleSheet.create({
+        containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
+        textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) },
+        title: { ...styles.title, ...StyleSheet.flatten(titleTextStyle) },
+        subtitle: { ...styles.subtitle, ...StyleSheet.flatten(subtitleTextStyle) },
+    }), [containerStyle])
+
+    return (
+        <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
+            <View style={style.containerStyle} >
+                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
+                    <ImageLoader
+                        placeholderSource={defaultIcon}
+                        source={icon ?? defaultIcon}
+                        style={styles.iconStyle} />
+                </TouchableHighlight>
+                <View style={style.textContainer} >
+                    <Text style={style.title} >{title}</Text>
+                    <Text numberOfLines={2} style={style.subtitle}>{subtitle}</Text>
+                </View>
+                {CustomView ? React.isValidElement(CustomView) ?
+                    CustomView : <CustomView /> : null}
+            </View>
+        </TouchableHighlight>
+    )
 }
 
 interface MemberListItemProps {
@@ -32,32 +61,6 @@ interface MemberListItemProps {
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     onLongPress?: (e?: GestureResponderEvent) => void
-}
-
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
-    const style = useMemo(() => StyleSheet.create({
-        containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
-        textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) }
-    }), [containerStyle])
-
-    return (
-        <TouchableHighlight onPress={onPress} underlayColor={colors.colorPrimary} >
-            <View style={style.containerStyle} >
-                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
-                    <ImageLoader
-                        placeholderSource={defaultIcon}
-                        source={icon ?? defaultIcon}
-                        style={styles.iconStyle} />
-                </TouchableHighlight>
-                <View style={style.textContainer} >
-                    <Text style={styles.title} >{title}</Text>
-                    <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
-                </View>
-                {CustomView ? React.isValidElement(CustomView) ?
-                    CustomView : <CustomView /> : null}
-            </View>
-        </TouchableHighlight>
-    )
 }
 
 export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {

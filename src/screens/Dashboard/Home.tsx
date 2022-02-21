@@ -69,7 +69,7 @@ const Home: FC = () => {
 
 
   const onPressSetting = useCallback(() => {
-    NavigationService.navigate("Settings")
+    // NavigationService.navigate("Settings")
   }, [])
 
   return (

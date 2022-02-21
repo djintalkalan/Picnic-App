@@ -9,6 +9,7 @@ import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { useDatabase } from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import Contacts, { Contact } from 'react-native-contacts'
 import MapView, { Marker } from 'react-native-maps'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -16,6 +17,57 @@ import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
+
+const contact = {
+    "jobTitle": "Producer",
+    "emailAddresses": [
+        {
+            "label": "work",
+            "email": "kate-bell@mac.com"
+        }
+    ],
+    "urlAddresses": [
+        {
+            "label": "homepage",
+            "url": "www.icloud.com"
+        }
+    ],
+    "phoneNumbers": [
+        {
+            "label": "mobile",
+            "number": "(555) 564-8584"
+        },
+        {
+            "label": "main",
+            "number": "(415) 555-3694"
+        }
+    ],
+    "recordID": "177C371E-701D-42F8-A03B-C61CA31627F6",
+    "postalAddresses": [
+        {
+            "state": "CA",
+            "label": "work",
+            "region": "CA",
+            "postCode": "94010",
+            "country": "",
+            "city": "Hillsborough",
+            "street": "165 Davis Street"
+        }
+    ],
+    "thumbnailPath": "",
+    "company": "Creative Consulting",
+    "middleName": "",
+    "imAddresses": [
+    ],
+    "givenName": "Kate",
+    "birthday": {
+        "day": 20,
+        "month": 1,
+        "year": 1978
+    },
+    "hasThumbnail": false,
+    "familyName": "Bell"
+}
 interface IChatItem {
     _id: string
     isAdmin: any,
@@ -289,7 +341,76 @@ const ChatItem = (props: IChatItem) => {
 
             </MapView>
         </TouchableOpacity>
-        if (!myMessage) {
+        if (myMessage) {
+            return <View style={styles.myContainer} >
+                <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
+                    {map}
+                </View>
+                <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity>
+            </View>
+        }
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1 }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                        <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                            <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                        </TouchableOpacity>
+                    </View>
+                    {map}
+                </View>
+            </View>
+        </View>
+    }
+
+    if (message_type == 'contact') {
+        const c: Contact = contact
+        const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
+            Contacts.openContactForm(c).then(v => {
+                console.log("v", v);
+
+            }).catch(e => {
+                console.log("Error", e);
+
+            })
+        }} style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(5),
+
+            // maxWidth: '80%',
+            // height: (width - scaler(20)) / 2.8,
+            width: (width - scaler(20)) / 1.5,
+            backgroundColor: 'white'
+        }} >
+            <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 1, padding: scaler(5), paddingBottom: scaler(10) }} >
+                <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                    <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{c.givenName?.[0]?.toUpperCase()}</Text>
+                </View>
+                <Text style={{ flex: 1, marginRight: scaler(10) }} >{c.givenName + (c?.familyName ? (" " + c?.familyName) : "")}</Text>
+            </View>
+            <TouchableOpacity onPress={() => {
+                Contacts.openContactForm(c).then(v => {
+                    console.log("v", v);
+
+                }).catch(e => {
+                    console.log("Error", e);
+
+                })
+            }} style={{ paddingVertical: scaler(6), alignItems: 'center', flex: 1, justifyContent: 'center' }} >
+                <Text>{Language.add_to_contacts}</Text>
+            </TouchableOpacity>
+        </TouchableOpacity>
+
+        if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
                     {map}

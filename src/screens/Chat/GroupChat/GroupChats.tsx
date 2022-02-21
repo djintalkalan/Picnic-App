@@ -88,6 +88,21 @@ export const GroupChats: FC<any> = (props) => {
         }))
     }, [repliedMessage])
 
+    const _onChooseContacts = useCallback((contacts: Array<any>) => {
+        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+            resource_id: activeGroup?._id,
+            parent_id: repliedMessage?._id,
+            resource_type: "group",
+            message_type: "contact",
+            message: "",
+            contacts: contacts,
+        })
+        inputRef.current?.clear()
+        if (repliedMessage) {
+            setRepliedMessage(null)
+        }
+    }, [repliedMessage])
+
     const _updateTextMessage = useCallback((text: string) => {
         textMessageRef.current = text
     }, [])
@@ -165,6 +180,8 @@ export const GroupChats: FC<any> = (props) => {
                     repliedMessage={repliedMessage}
                     setRepliedMessage={setRepliedMessage}
                     onChooseImage={_onChooseImage}
+                    onChooseContacts={_onChooseContacts}
+                    onChooseLocation={_onChooseContacts}
                     onChangeText={_updateTextMessage}
                     onPressSend={_onPressSend}
                 />
