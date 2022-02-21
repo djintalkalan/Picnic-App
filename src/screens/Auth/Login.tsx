@@ -1,10 +1,11 @@
+import { config } from 'api'
 import { doLogin } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Text, TextInput } from 'custom-components'
+import { Button, CheckBox, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, Platform, StyleSheet, View } from 'react-native'
+import { Image, Linking, Platform, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
@@ -19,6 +20,7 @@ type LoginFormType = {
 const Login: FC = () => {
 
     const [isSecure, setSecure] = useState(true)
+    const [isTerms, setTerms] = useState(__DEV__);
 
     const { control, handleSubmit, getValues, formState: { errors } } = useForm<LoginFormType>({
         defaultValues: __DEV__ ? Platform.OS == 'ios' ? {
@@ -51,10 +53,10 @@ const Login: FC = () => {
     })(), []);
 
     const calculateButtonDisability = useCallback(() => {
-        if (!getValues('email') || !getValues('password') || (errors && (errors.email || errors.password)))
+        if (!isTerms || !getValues('email') || !getValues('password') || (errors && (errors.email || errors.password)))
             return true
         return false
-    }, [errors])
+    }, [errors, isTerms])
 
     return (
         <SafeAreaView style={styles.container} >
@@ -100,6 +102,39 @@ const Login: FC = () => {
                     <Text onPress={() => {
                         NavigationService.navigate("ForgotPassword")
                     }} style={styles.forgotPassword} >{Language.forgot_your_password}</Text>
+
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginTop: scaler(20),
+                            justifyContent: 'center',
+                        }}>
+                        <CheckBox checked={isTerms} setChecked={setTerms} />
+                        <Text
+                            onPress={() => {
+                                setTerms(_ => !_);
+                            }}
+                            style={styles.iAccept}>
+                            {Language.i_accept_the}
+                            <Text
+                                onPress={() => {
+                                    Linking.openURL(config.TERMS_URL)
+                                }}
+                                style={[styles.iAccept, { color: colors.colorPrimary }]}>
+                                {' '}
+                                {Language.term_of_service}
+                            </Text>{' '}
+                            {Language.and}{' '}
+                            <Text
+                                onPress={() => {
+                                    Linking.openURL(config.PRIVACY_URL)
+                                }}
+                                style={[styles.iAccept, { color: colors.colorPrimary }]}>
+                                {Language.privacy_policy}
+                            </Text>
+                        </Text>
+                    </View>
 
                     <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.login} onPress={onSubmit} />
 
@@ -147,7 +182,15 @@ const styles = StyleSheet.create({
         // marginVertical: scaler(20),
         marginTop: scaler(40),
         color: colors.colorGreyText
-    }
+    },
+
+    iAccept: {
+        alignSelf: 'center',
+        fontWeight: '400',
+        fontSize: scaler(12),
+        marginLeft: scaler(10),
+        color: colors.colorGreyText,
+    },
 })
 
 
