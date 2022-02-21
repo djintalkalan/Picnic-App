@@ -4,7 +4,8 @@ import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
-import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem';
+import { EventItem } from 'custom-components/ListItem/EventItem';
+import { TicketView } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -15,7 +16,7 @@ import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
-const ITEM_HEIGHT = scaler(90)
+const ITEM_HEIGHT = scaler(120)
 let LOADING = false
 const EventList: FC<any> = (props) => {
 
@@ -163,15 +164,15 @@ const EventList: FC<any> = (props) => {
     const _renderItem = useCallback(({ item }, rowMap) => {
         const { is_event_member, city, state, country } = item
         return (
-            <ListItem
+            <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
-                textContainerStyle={{ justifyContent: 'center' }}
+                // textContainerStyle={{ justifyContent: 'center' }}
                 defaultIcon={Images.ic_event_placeholder}
                 title={item?.name}
                 // highlight={}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'events' }) } : undefined}
+                icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT, type: 'events' }) } : undefined}
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
-                customView={<TicketView {...item} />}
+                customView={<TicketView size={'small'} {...item} />}
                 onPress={() => {
                     dispatch(setActiveEvent(item))
                     setTimeout(() => {
@@ -256,7 +257,13 @@ const EventList: FC<any> = (props) => {
                 leftOpenValue={scaler(80)}
                 rightOpenValue={-scaler(80)}
                 directionalLockEnabled
-                ItemSeparatorComponent={ListItemSeparator}
+                ItemSeparatorComponent={() => {
+                    return <View style={{
+                        flex: 1, marginHorizontal: scaler(15), height: 1,
+                        // backgroundColor: '#EBEBEB',
+                        marginVertical: scaler(4)
+                    }} />
+                }}
                 ref={swipeListRef}
                 getItemLayout={(data: any, index: number) => (
                     { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }

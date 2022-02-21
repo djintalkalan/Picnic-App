@@ -266,7 +266,7 @@ const ChatItem = (props: IChatItem) => {
                 borderRadius={scaler(15)}
                 source={{ uri: config.VIDEO_URL + (message?.substring(0, message?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'contain', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity disabled={isMuted} onPress={() => {
                 loadVideo(config.VIDEO_URL + message)
             }} style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: scaler(55), bottom: scaler(40), left: width / 3, right: width / 3, }} >
                 {/* <View style={{ backgroundColor: colors.colorWhite, borderRadius: scaler(30), height: scaler(60), width: scaler(60) }} > */}

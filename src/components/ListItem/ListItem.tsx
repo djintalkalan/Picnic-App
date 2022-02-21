@@ -90,20 +90,21 @@ interface ITicketView {
     is_event_admin: boolean,
     total_sold_tickets: number | string,
     capacity: number | string
-    is_event_member: boolean
+    is_event_member: boolean,
+    size: 'small' | 'normal'
 }
 
-export const TicketView: FC<ITicketView> = ({ capacity_type, is_event_admin, capacity, is_event_member, total_sold_tickets }) => {
+export const TicketView: FC<ITicketView> = ({ size = 'normal', capacity_type, is_event_admin, capacity, is_event_member, total_sold_tickets }) => {
     const styles = useMemo(() => {
         const color = (is_event_member && !is_event_admin) ? colors.colorPrimary : "#DBDBDB"
         const tintColor = (is_event_member && !is_event_admin) ? colors.colorPrimary : colors.colorBlackText
         return StyleSheet.create({
             container: {
-                padding: scaler(7),
-                paddingVertical: scaler(9),
+                padding: scaler(size == 'small' ? 6 : 7),
+                paddingVertical: scaler(size == 'small' ? 6 : 7),
                 borderRadius: scaler(50),
                 flexDirection: 'row',
-                alignSelf: 'center',
+                alignSelf: size == 'small' ? undefined : 'center',
                 alignItems: 'center',
                 justifyContent: 'center',
                 // minWidth: scaler(60),
@@ -111,18 +112,18 @@ export const TicketView: FC<ITicketView> = ({ capacity_type, is_event_admin, cap
                 borderColor: color
             },
             image: {
-                height: scaler(14),
-                width: scaler(14),
+                height: scaler(size == 'small' ? 10 : 14),
+                width: scaler(size == 'small' ? 10 : 14),
                 marginRight: scaler(6),
                 tintColor: tintColor
             },
             unlimited: {
-                fontSize: scaler(9),
+                fontSize: scaler(size == 'small' ? 8 : 9),
                 color: colors.colorBlackText
             }
         })
 
-    }, [is_event_member, is_event_admin])
+    }, [is_event_member, is_event_admin, size])
 
 
 
