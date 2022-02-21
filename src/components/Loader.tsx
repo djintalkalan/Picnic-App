@@ -2,7 +2,7 @@ import { RootState } from 'app-store';
 import { colors } from 'assets';
 import { isEqual, round, toNumber } from 'lodash';
 import React, { FC } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Platform, View } from 'react-native';
 import { Progress as S3Progress } from 'react-native-aws3';
 import Spinner from "react-native-loading-spinner-overlay";
 import * as Progress from 'react-native-progress';
@@ -11,7 +11,7 @@ import { scaler } from 'utils';
 import { Text } from './Text';
 
 const { width } = Dimensions.get("window")
-
+const size = Platform.OS == 'ios' ? undefined : scaler(50)
 interface LoaderProps {
     customLoadingMsg?: string;
     loading?: boolean;
@@ -33,7 +33,7 @@ export const Loader: FC<LoaderProps> = (props) => {
             <Spinner
                 visible={props?.loading || isLoading}
                 // visible
-                size={scaler(50)}
+                size={size}
                 color={colors.colorPrimary}
                 overlayColor={'rgba(0, 0, 0, 0.7)'}
                 customIndicator={
