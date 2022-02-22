@@ -3,7 +3,7 @@ import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
-import { useDatabase } from 'database/Database'
+import { ILocation, useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
@@ -89,10 +89,10 @@ const EventChats: FC<any> = (props) => {
     }, [repliedMessage])
 
     const _onChooseContacts = useCallback((contacts: Array<any>) => {
-        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
-            resource_id: activeGroup?._id,
-            parent_id: repliedMessage?._id,
-            resource_type: "group",
+        SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
+            resource_id: activeEvent?._id,
+            // parent_id: repliedMessage?._id,
+            resource_type: "event",
             message_type: "contact",
             message: "",
             contacts: contacts,
@@ -104,10 +104,10 @@ const EventChats: FC<any> = (props) => {
     }, [repliedMessage])
 
     const _onChooseLocation = useCallback((location: ILocation) => {
-        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
-            resource_id: activeGroup?._id,
-            parent_id: repliedMessage?._id,
-            resource_type: "group",
+        SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
+            resource_id: activeEvent?._id,
+            // parent_id: repliedMessage?._id,
+            resource_type: "event",
             message_type: "location",
             message: "",
             coordinates: {
@@ -117,7 +117,7 @@ const EventChats: FC<any> = (props) => {
         })
         inputRef.current?.clear()
         if (repliedMessage) {
-            setRepliedMessage(null)
+            // setRepliedMessage(null)
         }
     }, [repliedMessage])
 

@@ -67,6 +67,7 @@ const ChatItem = (props: IChatItem) => {
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
+        coordinates, contacts,
         // is_message_sender_is_admin,
         // message_recently_liked_user_ids,
         // message_liked_by_user_name,
@@ -91,7 +92,6 @@ const ChatItem = (props: IChatItem) => {
             longitude: parseFloat(props?.coordinates?.lng),
             ...DefaultDelta
         }
-        console.log("region ", region, props);
 
         return <TouchableOpacity activeOpacity={0.8} onPress={() => {
             launchMap({ lat: props?.coordinates?.lat, long: props?.coordinates?.lng })
@@ -100,9 +100,9 @@ const ChatItem = (props: IChatItem) => {
             padding: scaler(5),
             height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
         }} >
-            <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents='none' >
+            <View style={{ flex: 1, overflow: 'hidden', borderRadius: scaler(15), }} pointerEvents='none' >
                 <MapView
-                    style={{ flex: 1, borderRadius: scaler(15), overflow: 'hidden' }}
+                    style={{ flex: 1, overflow: 'hidden' }}
                     minZoomLevel={2}
                     customMapStyle={MapStyle}
                     provider={'google'}
@@ -125,7 +125,7 @@ const ChatItem = (props: IChatItem) => {
     const _openChatActionMenu = useCallback(() => {
         let buttons: IBottomMenuButton[] = [{
             title: Language.reply,
-            onPress: () => setRepliedMessage({ _id, user, message, message_type }),
+            onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
         },
         {
             title: Language.mute,
@@ -253,6 +253,18 @@ const ChatItem = (props: IChatItem) => {
         // console.log("e", e, ((height - scaler(80)) / 3));
         _showToast("Copied", 'SHORT', gravity);
     }, [])
+
+    const region = useMemo(() => {
+        return parent_message?.message_type == 'location' ? {
+            latitude: parseFloat(parent_message?.coordinates?.lat ?? "12"),
+            longitude: parseFloat(parent_message?.coordinates?.lng ?? "12"),
+            ...DefaultDelta
+        } : {
+            latitude: 12,
+            longitude: 12,
+            ...DefaultDelta
+        }
+    }, [parent_message])
 
 
 
@@ -468,17 +480,39 @@ const ChatItem = (props: IChatItem) => {
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5) }} >
                         <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
-                        <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.messageContainer, {
+                        <TouchableOpacity disabled style={[styles.messageContainer, {
                             maxWidth: undefined, width: '100%',
-                            padding: parent_message?.message_type == "image" || parent_message?.message_type == "file" ? 0 : scaler(10),
+                            padding: parent_message?.message_type != "text" ? 0 : scaler(10),
                         }]} >
                             {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
                                 <ImageLoader
                                     placeholderSource={Images.ic_image_placeholder}
                                     style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
                                     source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
-                                :
-                                <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                                : parent_message?.message_type == 'contact' ?
+                                    <View style={{ flexDirection: 'row', width: width / 2, alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
+                                        <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                                            <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
+                                        </View>
+                                        <Text style={{ flex: 1, marginRight: scaler(10) }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
+                                    </View>
+                                    : parent_message?.message_type == 'location' ?
+                                        <View pointerEvents='none' style={{ borderRadius: scaler(10), borderColor: colors.colorPrimary, borderWidth: scaler(0.5), overflow: 'hidden' }} >
+                                            <MapView
+                                                style={{ width: width / 2, height: scaler(80), overflow: 'hidden' }}
+                                                minZoomLevel={2}
+                                                customMapStyle={MapStyle}
+                                                provider={'google'}
+                                                cacheEnabled
+                                                showsMyLocationButton={false}
+                                                initialRegion={region} >
+                                                <Marker coordinate={region} >
+                                                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                                </Marker>
+
+                                            </MapView>
+                                        </View>
+                                        : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -537,14 +571,36 @@ const ChatItem = (props: IChatItem) => {
                                 <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
                                 <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
                                     maxWidth: undefined, width: '100%',
-                                    padding: parent_message?.message_type == "image" || parent_message?.message_type == "file" ? 0 : scaler(10),
+                                    padding: parent_message?.message_type != "text" ? 0 : scaler(10),
                                 }]} >
                                     {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
                                         <ImageLoader
                                             placeholderSource={Images.ic_image_placeholder}
                                             style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
                                             source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
-                                        : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                                        : parent_message?.message_type == 'contact' ?
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
+                                                <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                                                    <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
+                                                </View>
+                                                <Text style={{ marginRight: scaler(10), color: colors.colorBlack }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
+                                            </View>
+                                            : parent_message?.message_type == 'location' ?
+                                                <View pointerEvents='none' style={{ width: width / 2, height: scaler(80), borderRadius: scaler(10), overflow: 'hidden' }} >
+                                                    <MapView
+                                                        style={{ flex: 1, overflow: 'hidden' }}
+                                                        minZoomLevel={2}
+                                                        customMapStyle={MapStyle}
+                                                        provider={'google'}
+                                                        cacheEnabled
+                                                        showsMyLocationButton={false}
+                                                        initialRegion={region} >
+                                                        <Marker coordinate={region} >
+                                                            <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                                        </Marker>
+                                                    </MapView>
+                                                </View>
+                                                : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
                                     }
                                 </TouchableOpacity>
                             </View>

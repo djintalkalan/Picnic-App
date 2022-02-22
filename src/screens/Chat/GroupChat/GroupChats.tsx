@@ -91,7 +91,7 @@ export const GroupChats: FC<any> = (props) => {
     const _onChooseContacts = useCallback((contacts: Array<any>) => {
         SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
             resource_id: activeGroup?._id,
-            parent_id: repliedMessage?._id,
+            // parent_id: repliedMessage?._id,
             resource_type: "group",
             message_type: "contact",
             message: "",
@@ -99,14 +99,14 @@ export const GroupChats: FC<any> = (props) => {
         })
         inputRef.current?.clear()
         if (repliedMessage) {
-            setRepliedMessage(null)
+            // setRepliedMessage(null)
         }
     }, [repliedMessage])
 
     const _onChooseLocation = useCallback((location: ILocation) => {
         SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
             resource_id: activeGroup?._id,
-            parent_id: repliedMessage?._id,
+            // parent_id: repliedMessage?._id,
             resource_type: "group",
             message_type: "location",
             message: "",
@@ -117,7 +117,7 @@ export const GroupChats: FC<any> = (props) => {
         })
         inputRef.current?.clear()
         if (repliedMessage) {
-            setRepliedMessage(null)
+            // setRepliedMessage(null)
         }
     }, [repliedMessage])
 

@@ -1,5 +1,5 @@
 import { Fonts } from "assets/Fonts";
-import React, { FC, useMemo } from "react";
+import React, { FC, Fragment, useMemo } from "react";
 import { Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 
 interface TextProps extends RNTextProps {
@@ -118,13 +118,13 @@ export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text
     return <Text style={style} >
 
         {indexArray.map(({ start: startBoldIndex, end: endBoldIndex }, i) => {
-            return <>
+            return <Fragment key={i.toString()} >
                 {IText?.substring(i == 0 ? 0 : indexArray[i - 1].end, startBoldIndex)?.replace('**', '')}
                 <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
                     {IText?.substring(startBoldIndex, endBoldIndex + 2).replaceAll('**', '')}
                 </Text>
                 {IText?.substring(endBoldIndex + 2, i == indexArray.length - 1 ? undefined : endBoldIndex + 2)?.replace('**', '')}
-            </>
+            </Fragment>
         })}
     </Text>
 };

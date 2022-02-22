@@ -94,6 +94,7 @@ const SelectLocation: FC<any> = (props) => {
                             minZoomLevel={2}
                             showsMyLocationButton={false}
                             ref={mapRef}
+                            cacheEnabled
                             onUserLocationChange={async (e) => {
                                 const coords = {
                                     latitude: e.nativeEvent.coordinate.latitude,
