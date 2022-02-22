@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
-import { colors, Images } from 'assets'
+import { colors, Images, MapStyle } from 'assets'
 import { MultiBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
+import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
     if (i < 0) {
         return text
@@ -83,7 +83,7 @@ const ChatItem = (props: IChatItem) => {
     // const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
 
     const renderMap = useMemo(() => {
-        if (!props?.coordinates?.lat) {
+        if (!props?.coordinates?.lat || !props?.coordinates?.lng) {
             return null
         }
         const region = {
@@ -94,30 +94,27 @@ const ChatItem = (props: IChatItem) => {
         console.log("region ", region, props);
 
         return <TouchableOpacity activeOpacity={0.8} onPress={() => {
-
+            launchMap({ lat: props?.coordinates?.lat, long: props?.coordinates?.lng })
         }} style={{
             borderRadius: scaler(15), overflow: 'hidden',
             padding: scaler(5),
             height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
         }} >
-            <MapView
-                pointerEvents='none'
-                style={{ flex: 1, borderRadius: scaler(15), }}
-                minZoomLevel={2}
-                // customMapStyle={MapStyle}
-                provider={'google'}
-                cacheEnabled
-                showsMyLocationButton={false}
-                initialRegion={region}
+            <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents='none' >
+                <MapView
+                    style={{ flex: 1, borderRadius: scaler(15), overflow: 'hidden' }}
+                    minZoomLevel={2}
+                    customMapStyle={MapStyle}
+                    provider={'google'}
+                    cacheEnabled
+                    showsMyLocationButton={false}
+                    initialRegion={region} >
+                    <Marker coordinate={region} >
+                        <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                    </Marker>
 
-            >
-                <Marker
-                    coordinate={region}
-                >
-                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
-                </Marker>
-
-            </MapView>
+                </MapView>
+            </View>
         </TouchableOpacity>
     }, [JSON.stringify(props?.coordinates)])
 
@@ -318,7 +315,7 @@ const ChatItem = (props: IChatItem) => {
     if (message_type == 'location') {
         if (myMessage) {
             return <View style={styles.myContainer} >
-                <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
+                <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0, overflow: 'hidden' }]} >
                     {renderMap}
                 </View>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
@@ -328,7 +325,7 @@ const ChatItem = (props: IChatItem) => {
         }
         return <View style={styles.container} >
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
-                <View style={{ flex: 1 }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
                         <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader

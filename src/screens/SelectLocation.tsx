@@ -86,43 +86,47 @@ const SelectLocation: FC<any> = (props) => {
 
             <View style={styles.map} >
                 {focused ?
-                    <MapView pointerEvents={type == 'currentLocation' ? 'none' : undefined} provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                        style={styles.map}
-                        minZoomLevel={2}
-                        showsMyLocationButton={false}
-                        ref={mapRef}
-                        onUserLocationChange={async (e) => {
-                            const coords = {
-                                latitude: e.nativeEvent.coordinate.latitude,
-                                longitude: e.nativeEvent.coordinate.longitude,
-                            }
-                            let { address, otherData } = await getAddressFromLocation(coords)
-                            address && Database.setCurrentLocation({
-                                ...coords, address, otherData
-                            })
-                        }}
-                        initialRegion={{
-                            latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
-                            longitude: localLocation?.longitude ?? currentLocation?.longitude ?? defaultLocation?.longitude,
-                            ...DefaultDelta
-                        }}
-                        showsUserLocation
-                        onPress={onMapPress}
-                        customMapStyle={MapStyle}>
-                        {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
-                            <Marker
-                                draggable
-                                onDragEnd={onMapPress}
-                                coordinate={{
-                                    latitude: localLocation?.latitude ?? defaultLocation?.latitude,
-                                    longitude: localLocation?.longitude ?? defaultLocation?.longitude,
-                                    ...DefaultDelta
-                                }}
-                            >
-                                <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
+                    <View style={styles.map}
+                    // pointerEvents={type == 'currentLocation' ? 'none' : undefined}
+                    >
+                        <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                            style={styles.map}
+                            minZoomLevel={2}
+                            showsMyLocationButton={false}
+                            ref={mapRef}
+                            onUserLocationChange={async (e) => {
+                                const coords = {
+                                    latitude: e.nativeEvent.coordinate.latitude,
+                                    longitude: e.nativeEvent.coordinate.longitude,
+                                }
+                                let { address, otherData } = await getAddressFromLocation(coords)
+                                address && Database.setCurrentLocation({
+                                    ...coords, address, otherData
+                                })
+                            }}
+                            initialRegion={{
+                                latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
+                                longitude: localLocation?.longitude ?? currentLocation?.longitude ?? defaultLocation?.longitude,
+                                ...DefaultDelta
+                            }}
+                            showsUserLocation
+                            onPress={onMapPress}
+                            customMapStyle={MapStyle}>
+                            {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
+                                <Marker
+                                    draggable
+                                    onDragEnd={onMapPress}
+                                    coordinate={{
+                                        latitude: localLocation?.latitude ?? defaultLocation?.latitude,
+                                        longitude: localLocation?.longitude ?? defaultLocation?.longitude,
+                                        ...DefaultDelta
+                                    }}
+                                >
+                                    <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
 
-                            </Marker> : null}
-                    </MapView> : null}
+                                </Marker> : null}
+                        </MapView>
+                    </View> : null}
                 <SafeAreaView edges={['top']} style={{
                     width: '100%',
                 }} >
@@ -173,7 +177,7 @@ const SelectLocation: FC<any> = (props) => {
                     bottom: 0,
                     position: 'absolute',
                 }} >
-                    <Text style={styles.drag} >{"Drag pin to select location"}</Text>
+                    {type == 'currentLocation' ? null : <Text style={styles.drag} >{"Drag pin to select location"}</Text>}
                     <View style={{
                         flexDirection: 'row',
                         alignItems: 'center',

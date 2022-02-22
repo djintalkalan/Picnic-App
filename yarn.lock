@@ -6849,6 +6849,11 @@ react-native-keyboard-aware-scroll-view@^0.9.5:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
+react-native-launch-navigator@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-launch-navigator/-/react-native-launch-navigator-1.0.8.tgz#c86f45406d37c0942a9d1a3e54a6d4e28c91ee81"
+  integrity sha512-9/xsmcoXa02waKYX37Fx86U3e9FUDeNz0RmWiZ/JeBRAO1U0J2yK0xmTLiGyP4J9txZ9Qc9iZBJF+qMq8LXsEQ==
+
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"

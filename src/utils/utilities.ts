@@ -7,34 +7,52 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
-import { Keyboard, Share } from 'react-native';
+import { Keyboard, Platform, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
 import { BottomMenuHolder } from './BottomMenuHolder';
 import { DropDownHolder } from './DropdownHolder';
 import { PopupAlertHolder } from './PopupAlertHolder';
 
-
+const LaunchNavigator: LType = LaunchNVG
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
+try {
+    LaunchNVG.setGoogleApiKey(config.GOOGLE_MAP_API_KEY);
+} catch (e) {
 
-// export const launchMap = (address: string | { lat: string | number, long: string | number },) => {
-//     if (address && typeof address === 'string') {
-//         LaunchNavigator.navigate(address)
-//             .then(() => console.log('Launched navigator'))
-//             .catch((err) => console.error('Error launching navigator: ', err));
-//     } else if (
-//         address &&
-//         typeof address === 'object' &&
-//         address?.lat &&
-//         address?.long
-//     ) {
-//         LaunchNavigator.navigate([address?.lat, address?.long])
-//             .then(() => console.log('Launched navigator'))
-//             .catch((err: any) => console.log('Error launching navigator: ', err));
-//     } else {
-//     }
-// };
+}
+
+export const launchMap = async (address: string | { lat: number, long: number },) => {
+    let app = null;
+
+    const map = Platform.OS == 'android' ? LaunchNavigator.APP.GOOGLE_MAPS : LaunchNavigator.APP.APPLE_MAPS
+    const map2 = Platform.OS == 'ios' ? LaunchNavigator.APP.GOOGLE_MAPS : LaunchNavigator.APP.APPLE_MAPS
+
+    app = await LaunchNavigator.isAppAvailable(map) ? map : null
+    if (!app) {
+        app = await LaunchNavigator.isAppAvailable(map2) ? map2 : null
+    }
+
+
+    if (address && typeof address === 'string') {
+        LaunchNavigator.navigate(address, { app })
+            .then(() => console.log('Launched navigator'))
+            .catch((err) => console.error('Error launching navigator: ', err));
+    } else if (
+        address &&
+        typeof address === 'object' &&
+        address?.lat &&
+        address?.long
+    ) {
+        LaunchNavigator.navigate([address?.lat, address?.long], { app })
+            .then(() => console.log('Launched navigator'))
+            .catch((err: any) => console.log('Error launching navigator: ', err));
+    } else {
+    }
+
+};
 
 export const share = (title: string, message: string, url?: string | undefined) => {
     try {
