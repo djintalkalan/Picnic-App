@@ -479,7 +479,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
                 {parent_message ?
                     <View style={{ marginBottom: scaler(5) }} >
-                        <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
+                        <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
                         <TouchableOpacity disabled style={[styles.messageContainer, {
                             maxWidth: undefined, width: '100%',
                             padding: parent_message?.message_type != "text" ? 0 : scaler(10),
@@ -568,7 +568,7 @@ const ChatItem = (props: IChatItem) => {
                     <View style={styles.messageContainer} >
                         {parent_message ?
                             <View style={{ marginBottom: scaler(5), width: '100%' }} >
-                                <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{parent_message?.parent_message_creator?.display_name}</Text>
+                                <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
                                 <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
                                     maxWidth: undefined, width: '100%',
                                     padding: parent_message?.message_type != "text" ? 0 : scaler(10),
