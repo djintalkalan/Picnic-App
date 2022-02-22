@@ -84,8 +84,6 @@ export const en = {
   muted_post: "Muted post",
   hidden_posts: "Hidden Posts",
   search_placeholder: "Search for groups and events near you",
-  search_messages_here: "Search messages here",
-  search_here: "Search here",
   search_location: "Search location",
   tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
   unblock: "Unblock",
@@ -147,7 +145,6 @@ export const en = {
   are_you_sure_report_event: "Are you sure you want to report event ?",
   are_you_sure_report_member: "Are you sure you want to report member ?",
   are_you_sure_delete_message: "  Are you sure you want to delete the post ?",
-
   yes_report: "Yes, Report",
   are_you_sure_block_member: "Are you sure you want to block member ?",
   yes_block: "Yes, Block",
@@ -156,7 +153,6 @@ export const en = {
   are_you_sure_remove_member: "Are you sure you want to remove member ?",
   yes_remove: "Yes, Remove",
   yes_delete_post: "Yes, Delete post",
-
   report_has_been_sent: "Report has been sent !",
   close: "Close",
   host_an_event: 'Host An Event',
@@ -258,4 +254,6 @@ export const en = {
   successfully_imported: "Successfully Imported",
   select_contact: "Select Contact",
   add_to_contacts: "Add to contacts",
+  search_messages_here: "Search messages here",
+  search_here: "Search here",
 }
