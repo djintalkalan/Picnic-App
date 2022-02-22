@@ -18,57 +18,8 @@ import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
 
-const contact = {
-    "jobTitle": "Producer",
-    "emailAddresses": [
-        {
-            "label": "work",
-            "email": "kate-bell@mac.com"
-        }
-    ],
-    "urlAddresses": [
-        {
-            "label": "homepage",
-            "url": "www.icloud.com"
-        }
-    ],
-    "phoneNumbers": [
-        {
-            "label": "mobile",
-            "number": "(555) 564-8584"
-        },
-        {
-            "label": "main",
-            "number": "(415) 555-3694"
-        }
-    ],
-    "recordID": "177C371E-701D-42F8-A03B-C61CA31627F6",
-    "postalAddresses": [
-        {
-            "state": "CA",
-            "label": "work",
-            "region": "CA",
-            "postCode": "94010",
-            "country": "",
-            "city": "Hillsborough",
-            "street": "165 Davis Street"
-        }
-    ],
-    "thumbnailPath": "",
-    "company": "Creative Consulting",
-    "middleName": "",
-    "imAddresses": [
-    ],
-    "givenName": "Kate",
-    "birthday": {
-        "day": 20,
-        "month": 1,
-        "year": 1978
-    },
-    "hasThumbnail": false,
-    "familyName": "Bell"
-}
 interface IChatItem {
+    contacts: Array<Contact>
     _id: string
     isAdmin: any,
     message: string
@@ -90,6 +41,7 @@ interface IChatItem {
     isGroupType: boolean
     message_deleted_by_user: any
     isMuted?: boolean
+    coordinates: { lat: string, lng: string }
 }
 
 const DelText = "{{admin_name}} has deleted post from {{display_name}}"
@@ -121,6 +73,45 @@ const ChatItem = (props: IChatItem) => {
     const is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
     // const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
+
+    const renderMap = useMemo(() => {
+        if (!props?.coordinates?.lat) {
+            return null
+        }
+        const region = {
+            latitude: parseFloat(props?.coordinates?.lat),
+            longitude: parseFloat(props?.coordinates?.lng),
+            ...DefaultDelta
+        }
+        console.log("region ", region, props);
+
+        return <TouchableOpacity activeOpacity={0.8} onPress={() => {
+
+        }} style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(5),
+            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
+        }} >
+            <MapView
+                pointerEvents='none'
+                style={{ flex: 1, borderRadius: scaler(15), }}
+                minZoomLevel={2}
+                // customMapStyle={MapStyle}
+                provider={'google'}
+                cacheEnabled
+                showsMyLocationButton={false}
+                initialRegion={region}
+
+            >
+                <Marker
+                    coordinate={region}
+                >
+                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                </Marker>
+
+            </MapView>
+        </TouchableOpacity>
+    }, [JSON.stringify(props?.coordinates)])
 
     const remainingNames = message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName(_?.liked_by?.username, _?.liked_by?.first_name, _?.liked_by?.last_name))) ?? []
 
@@ -306,45 +297,10 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'location') {
-        const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
-
-        }} style={{
-            borderRadius: scaler(15), overflow: 'hidden',
-            padding: scaler(5),
-            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
-        }} >
-            <MapView
-                pointerEvents='none'
-                style={{ flex: 1, borderRadius: scaler(15), }}
-                minZoomLevel={2}
-                // customMapStyle={MapStyle}
-                provider={'google'}
-                cacheEnabled
-                showsMyLocationButton={false}
-                initialRegion={{
-                    latitude: 30.725751,
-                    longitude: 76.682856,
-                    ...DefaultDelta
-                }}
-
-            >
-                <Marker
-                    coordinate={{
-                        latitude: 30.725751,
-                        longitude: 76.682856,
-                        ...DefaultDelta
-                    }}
-                >
-                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
-
-                </Marker>
-
-            </MapView>
-        </TouchableOpacity>
         if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
-                    {map}
+                    {renderMap}
                 </View>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
@@ -366,14 +322,14 @@ const ChatItem = (props: IChatItem) => {
                             <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                         </TouchableOpacity>
                     </View>
-                    {map}
+                    {renderMap}
                 </View>
             </View>
         </View>
     }
 
     if (message_type == 'contact') {
-        const c: Contact = contact
+        const c: Contact = props?.contacts?.[0]
         const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
             Contacts.openContactForm(c).then(v => {
                 console.log("v", v);

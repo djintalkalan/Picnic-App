@@ -3,7 +3,7 @@ import { RootState } from 'app-store'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors } from 'assets'
 import { useKeyboardService } from 'custom-components'
-import { useDatabase } from 'database/Database'
+import { ILocation, useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
@@ -103,6 +103,24 @@ export const GroupChats: FC<any> = (props) => {
         }
     }, [repliedMessage])
 
+    const _onChooseLocation = useCallback((location: ILocation) => {
+        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+            resource_id: activeGroup?._id,
+            parent_id: repliedMessage?._id,
+            resource_type: "group",
+            message_type: "location",
+            message: "",
+            coordinates: {
+                lat: location?.latitude,
+                lng: location?.longitude
+            },
+        })
+        inputRef.current?.clear()
+        if (repliedMessage) {
+            setRepliedMessage(null)
+        }
+    }, [repliedMessage])
+
     const _updateTextMessage = useCallback((text: string) => {
         textMessageRef.current = text
     }, [])
@@ -181,7 +199,7 @@ export const GroupChats: FC<any> = (props) => {
                     setRepliedMessage={setRepliedMessage}
                     onChooseImage={_onChooseImage}
                     onChooseContacts={_onChooseContacts}
-                    onChooseLocation={_onChooseContacts}
+                    onChooseLocation={_onChooseLocation}
                     onChangeText={_updateTextMessage}
                     onPressSend={_onPressSend}
                 />

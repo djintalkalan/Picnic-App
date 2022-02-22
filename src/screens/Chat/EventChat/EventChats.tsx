@@ -88,6 +88,39 @@ const EventChats: FC<any> = (props) => {
         }))
     }, [repliedMessage])
 
+    const _onChooseContacts = useCallback((contacts: Array<any>) => {
+        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+            resource_id: activeGroup?._id,
+            parent_id: repliedMessage?._id,
+            resource_type: "group",
+            message_type: "contact",
+            message: "",
+            contacts: contacts,
+        })
+        inputRef.current?.clear()
+        if (repliedMessage) {
+            setRepliedMessage(null)
+        }
+    }, [repliedMessage])
+
+    const _onChooseLocation = useCallback((location: ILocation) => {
+        SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
+            resource_id: activeGroup?._id,
+            parent_id: repliedMessage?._id,
+            resource_type: "group",
+            message_type: "location",
+            message: "",
+            coordinates: {
+                lat: location?.latitude,
+                lng: location?.longitude
+            },
+        })
+        inputRef.current?.clear()
+        if (repliedMessage) {
+            setRepliedMessage(null)
+        }
+    }, [repliedMessage])
+
     const _updateTextMessage = useCallback((text: string) => {
         textMessageRef.current = text
     }, [])
@@ -214,6 +247,8 @@ const EventChats: FC<any> = (props) => {
                         setRepliedMessage={setRepliedMessage}
                         onChooseImage={_onChooseImage}
                         onChangeText={_updateTextMessage}
+                        onChooseContacts={_onChooseContacts}
+                        onChooseLocation={_onChooseLocation}
                         onPressSend={_onPressSend}
                     />
                     {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >

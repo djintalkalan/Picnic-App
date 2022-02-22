@@ -1,7 +1,7 @@
 import { colors, Fonts, Images } from 'assets'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
-import { ILocation } from 'database/Database'
+import Database, { ILocation } from 'database/Database'
 import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
@@ -16,7 +16,7 @@ interface ChatInputProps {
     disableButton: boolean,
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
     onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void,
-    onChooseLocation: (location: any) => void,
+    onChooseLocation: (location: ILocation) => void,
     onChooseContacts: (contacts: Array<any>) => void,
 }
 const { height, width } = Dimensions.get('screen')
@@ -44,9 +44,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                         NavigationService.navigate("SelectLocation", {
                             type: 'currentLocation',
                             prevSelectedLocation: Database.getStoredValue("currentLocation"),
-                            onSelectLocation: (location: ILocation) => {
-
-                            }
+                            onSelectLocation: onChooseLocation
                         })
                     }
                 }
