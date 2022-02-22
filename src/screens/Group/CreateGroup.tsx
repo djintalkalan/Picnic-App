@@ -88,7 +88,7 @@ const CreateGroup: FC<any> = (props) => {
     const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
     let payload = {
       _id: group?._id,
-      name: data?.name,
+      name: data?.name?.trim(),
       category: data?.purpose?.toLowerCase(),
       short_description: data?.about,
       details: data?.about,
@@ -158,6 +158,13 @@ const CreateGroup: FC<any> = (props) => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'name'}
+            rules={{
+              validate: (v: string) => {
+                if (!v.trim()) {
+                  return Language.group_name_required
+                }
+              }
+            }}
             required={Language.group_name_required}
             control={control}
             errors={errors}

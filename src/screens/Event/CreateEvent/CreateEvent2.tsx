@@ -196,7 +196,15 @@ const CreateEvent2: FC<any> = props => {
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
-          <TouchableOpacity onPress={() => setIsUnlimitedCapacity(!isUnlimitedCapacity)} style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => {
+            setIsUnlimitedCapacity((b) => {
+              if (!b) {
+                clearErrors('capacity')
+                setValue('capacity', "")
+              }
+              return !b
+            })
+          }} style={{ flexDirection: 'row' }}>
             <CheckBox
               checked={isUnlimitedCapacity}
               setChecked={(b) => {
@@ -211,7 +219,15 @@ const CreateEvent2: FC<any> = props => {
               {Language.unlimited_capacity}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsFreeEvent(!isFreeEvent)} style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => {
+            setIsFreeEvent((b) => {
+              if (!b) {
+                clearErrors('ticketPrice')
+                setValue('ticketPrice', "")
+              }
+              return !b
+            })
+          }} style={{ flexDirection: 'row' }}>
             <CheckBox checked={isFreeEvent}
               setChecked={(b) => {
                 if (b) {

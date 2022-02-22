@@ -2,7 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { InnerBoldText, Text } from 'custom-components'
+import { MultiBoldText, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
@@ -17,6 +17,14 @@ import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
+const insertAtIndex = (text: string, i: number, add: number = 0) => {
+    if (i < 0) {
+        return text
+    }
+    const pair = Array.from(text)
+    pair.splice(i + add, 0, '**')
+    return pair.join('')
+}
 
 interface IChatItem {
     contacts: Array<Contact>
@@ -249,8 +257,19 @@ const ChatItem = (props: IChatItem) => {
         _showToast("Copied", 'SHORT', gravity);
     }, [])
 
+
+
     if (is_system_message) {
-        return <InnerBoldText style={styles.systemText} text={'“' + message.replace("{{display_name}}", "**" + display_name + "**")?.replace("{{name}}", "**" + group?.name + "**")?.replace("{{admin_name}}", "**" + (getDisplayName(admin_u, admin_f, admin_l)) + "**") + '”'} />
+        const adminName = getDisplayName(admin_u, admin_f, admin_l)
+        let m = message
+        m = insertAtIndex(m, m?.indexOf("{{display_name}}"))
+        m = insertAtIndex(m, m?.indexOf("{{display_name}}"), "{{display_name}}"?.length)
+        m = insertAtIndex(m, m.indexOf("{{name}}"))
+        m = insertAtIndex(m, m?.indexOf("{{name}}"), "{{name}}"?.length)
+        m = insertAtIndex(m, m.indexOf("{{admin_name}}"))
+        m = insertAtIndex(m, m?.indexOf("{{admin_name}}"), "{{admin_name}}"?.length)
+        m = '“' + m?.replace("{{display_name}}", display_name)?.replace("{{name}}", group?.name)?.replace("{{admin_name}}", adminName) + '”'
+        return <MultiBoldText fontWeight='600' style={[styles.systemText, {}]} text={m} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 

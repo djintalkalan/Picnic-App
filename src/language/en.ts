@@ -98,6 +98,7 @@ export const en = {
   host_event: "Host Event",
   permission_required: "Permission required",
   app_needs_location_permission: "We need location permission to verify your current location",
+  app_needs_contact_permission: "We need contact permission to share contact",
   give_permission: "Give Permission",
   deny: "Deny",
   group_name: "Group name",
