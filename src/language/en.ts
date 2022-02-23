@@ -259,4 +259,5 @@ export const en = {
   event_max_price: "Contact support for more event price",
   min_characters_group_name: "Group name should have atleast 3 characters",
   min_characters_event_name: "Event name should have atleast 3 characters",
+  invalid_seat_quantity: "Invalid seat quantity"
 }
