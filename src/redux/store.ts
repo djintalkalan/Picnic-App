@@ -25,7 +25,7 @@ export interface RootState {
     userGroupsEvents: IUserEventsGroups
 }
 
-const PERSIST_ENABLED = true
+const PERSIST_ENABLED = false
 
 const sagaMiddleware = createSagaMiddleware();
 

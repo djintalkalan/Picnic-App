@@ -4,6 +4,7 @@ import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { ILocation, useDatabase } from 'database/Database'
+import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
@@ -130,7 +131,7 @@ export const GroupChats: FC<any> = (props) => {
 
     const { chats } = useSelector((state: RootState) => ({
         chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
-    }))
+    }), isEqual)
 
 
     const dispatch = useDispatch()
@@ -147,7 +148,6 @@ export const GroupChats: FC<any> = (props) => {
     }, [])
 
     const _renderChatItem = useCallback(({ item, index }) => {
-        // console.log("chatItem", item)
         return (
             <ChatItem
                 {...item}
@@ -173,7 +173,7 @@ export const GroupChats: FC<any> = (props) => {
                     // removeClippedSubviews={false}
                     keyboardShouldPersistTaps={'handled'}
                     data={chats}
-                    extraData={chats?.length}
+                    // extraData={chats}
                     keyExtractor={_ => _._id}
                     bounces={false}
                     ref={flatListRef}

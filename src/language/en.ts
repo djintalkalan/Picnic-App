@@ -1,6 +1,6 @@
 export const en = {
   back: "Back",
-  welcome: "Welcome",
+  welcome_back: "Welcome",
   enter_email_or_password: "Enter your email address",
   password: "Password",
   old_password: "Current Password",

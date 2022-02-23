@@ -278,7 +278,7 @@ const ChatItem = (props: IChatItem) => {
         m = insertAtIndex(m, m.indexOf("{{admin_name}}"))
         m = insertAtIndex(m, m?.indexOf("{{admin_name}}"), "{{admin_name}}"?.length)
         m = '“' + m?.replace("{{display_name}}", display_name)?.replace("{{name}}", group?.name)?.replace("{{admin_name}}", adminName) + '”'
-        return <MultiBoldText fontWeight='600' style={[styles.systemText, {}]} text={m} />
+        return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={m} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 

@@ -5,9 +5,8 @@ import { Card, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useState } from 'react'
-import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/Event/EventList'
@@ -33,7 +32,6 @@ const tabs: TabProps[] = [
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
-  const [searchText, setSearchText] = useState("")
   const defaultLocation: ILocation = {
     latitude: 34.055101,
     longitude: -118.244797,
@@ -47,6 +45,8 @@ const Home: FC = () => {
     // a: console.log(state)
   }), isEqual)
   const [currentTabIndex, setCurrentTabIndex] = useState(0)
+  const [searchLoader, setSearchLoader] = useState(false)
+  const inputRef = useRef<TextInput>(null);
   const [userData] = useDatabase("userData");
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
   const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
@@ -54,26 +54,25 @@ const Home: FC = () => {
   const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
 
   const debounceSearch = useCallback(_.debounce((text) => {
-    dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups' }))
+    dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups', setSearchLoader: setSearchLoader }))
   }, 500), [currentTabIndex])
 
   const debounceClear = useCallback(_.debounce(() => {
     dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
-  }, 1000), [])
+  }, 0), [])
 
   useEffect(() => {
-    dispatch(getAllCurrencies())
+    InteractionManager.runAfterInteractions(() => {
+      dispatch(getAllCurrencies())
+    })
   }, [])
-
-
-
 
   const onPressSetting = useCallback(() => {
     NavigationService.navigate("Settings")
   }, [])
 
   return (
-    <SafeAreaView style={styles.container} >
+    <View style={styles.container} >
 
       <View style={styles.headerContainer} >
 
@@ -107,38 +106,27 @@ const Home: FC = () => {
         borderBottomColor: 'rgba(0, 0, 0, 0.04)',
         borderBottomWidth: 2,
         marginBottom: scaler(2),
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 1,
-        // },
-        // shadowOpacity: 0.20,
-        // shadowRadius: 1.41,
-
-        // elevation: 2,
-
       }} >
 
-
         <TextInput
+          ref={inputRef}
           onChangeText={(text) => {
-            setSearchText(text)
-            debounceSearch(text?.trim()?.length > 2 ? text : null)
-            text?.trim()?.length < 3 && debounceClear()
+            text?.trim()?.length > 2 ? debounceSearch(text) : debounceClear()
           }}
           style={styles.searchInput}
-          value={searchText}
           placeholder={Language.search_placeholder}
           placeholderTextColor={colors.colorGreyInactive}
         />
         <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
+
+        {searchLoader && <View style={[styles.imagePlaceholder, { top: scaler(10), left: undefined, right: scaler(30), alignItems: 'center', justifyContent: 'center' }]} >
+          <ActivityIndicator color={colors.colorPrimary} size={scaler(24)} />
+        </View>}
       </View>
 
       <TopTab onChangeIndex={(i) => {
-        if (searchText.trim()) {
-          setSearchText("");
-          debounceSearch(null);
-        }
+        inputRef?.current?.clear();
+        debounceClear();
         setCurrentTabIndex(i);
       }} swipeEnabled={false} tabs={tabs} />
 
@@ -204,7 +192,7 @@ const Home: FC = () => {
           />
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

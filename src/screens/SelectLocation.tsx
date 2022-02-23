@@ -32,31 +32,33 @@ const SelectLocation: FC<any> = (props) => {
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
     const [localLocation, setLocalLocation] = useState<ILocation>(onSelectLocation ? prevSelectedLocation : selectedLocation)
     useEffect(() => {
-        askPermission && askPermission()
-        if (type == 'currentLocation') {
-            setTimeout(() => {
-                getCurrentLocation()
-            }, 1000);
-        }
+        InteractionManager.runAfterInteractions(() => {
+            askPermission && askPermission()
+            if (type == 'currentLocation') {
+                setTimeout(() => {
+                    getCurrentLocation()
+                }, 1000);
+            }
+        })
     }, [])
 
     useEffect(() => {
         setTimeout(() => {
             localLocation && mapRef?.current?.animateCamera({ center: localLocation }, { duration: 500 })
-        }, 200)
+        }, 500)
     }, [localLocation])
 
     useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent' })
+        InteractionManager.runAfterInteractions(() => {
+            pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent' })
+            setTimeout(() => {
+                setFocused(true)
+            }, 200)
+        })
 
-        setTimeout(() => {
-            setFocused(true)
-        }, 200)
         return () => {
+            setFocused(false)
             popStatusBarStyle()
-            InteractionManager.runAfterInteractions(() => {
-                setFocused(false)
-            })
         }
     }, []))
 
@@ -83,7 +85,6 @@ const SelectLocation: FC<any> = (props) => {
 
     return (
         <View style={styles.container} >
-
             <View style={styles.map} >
                 {focused ?
                     <View style={styles.map}
