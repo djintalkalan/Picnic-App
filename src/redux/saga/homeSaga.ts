@@ -1,6 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
 import ActionTypes, { action } from "app-store/action-types";
-import { setLoadingAction, setSearchedData } from "app-store/actions";
+import { setSearchedData } from "app-store/actions";
 import { defaultLocation } from "custom-components";
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from "src/database/Database";
@@ -11,6 +11,7 @@ import { _showErrorMessage } from "utils";
 function* _searchAtHome({ type, payload, }: action): Generator<any, any, any> {
     try {
         // yield put(setLoadingAction(true));
+        payload?.setSearchLoader && payload?.setSearchLoader(true)
         const location = Database?.getStoredValue("selectedLocation", defaultLocation)
         let res = yield call(ApiProvider._searchAtHome, { ...payload, ...location });
         if (res.status == 200) {
@@ -21,11 +22,11 @@ function* _searchAtHome({ type, payload, }: action): Generator<any, any, any> {
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
+        payload?.setSearchLoader && payload?.setSearchLoader(false)
     }
     catch (error) {
         console.log("Catch Error", error);
-        yield put(setLoadingAction(false));
+        payload?.setSearchLoader && payload?.setSearchLoader(false)
     }
 }
 

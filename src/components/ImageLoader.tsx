@@ -1,10 +1,12 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import FastImage, { ImageStyle, Source } from 'react-native-fast-image';
+
 
 interface IImageLoader {
     isShowActivity?: boolean,
-    style?: StyleProp<ImageStyle | ViewStyle>,
-    source: ImageSourcePropType,
+    style?: StyleProp<ImageStyle>,
+    source: Source,
     resizeMode?: ImageResizeMode
     borderRadius?: number
     backgroundColor?: ColorValue
@@ -16,6 +18,85 @@ interface IImageLoader {
     reload?: boolean
 }
 const ImageLoader = (props: IImageLoader) => {
+    const { isShowActivity = true, source, resizeMode, borderRadius, backgroundColor, children,
+        loadingStyle, placeholderSource, placeholderStyle,
+        customImagePlaceholderDefaultStyle } = props
+    const [isLoaded, setLoaded] = useState(false)
+    const [isError, setError] = useState(false)
+    const currentRetry = useRef(0);
+    const onLoadEnd = useCallback(() => {
+        setLoaded(true)
+    }, [])
+
+
+    const onError = useCallback(() => {
+        if (props.reload && currentRetry?.current < 10)
+            setTimeout(() => {
+                currentRetry.current++
+                setError(false)
+                setLoaded(false)
+            }, 7000);
+        setError(true)
+        setLoaded(true)
+    }, [props.reload])
+    const styles = useMemo(() => StyleSheet.create({
+        mainStyle: StyleSheet.flatten(props?.style),
+        activityIndicator: {
+            position: 'absolute',
+            margin: 'auto',
+            zIndex: 9,
+            alignSelf: 'center'
+        },
+        viewImageStyles: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: borderRadius ?? undefined,
+            backgroundColor: backgroundColor ?? undefined
+        },
+        imagePlaceholderStyles: {
+            width: 40,
+            height: 40,
+            resizeMode: 'contain',
+            justifyContent: 'center',
+            alignItems: 'center',
+            ...customImagePlaceholderDefaultStyle
+            // overFlow: 'hidden'
+        },
+    }), [props?.style, borderRadius, backgroundColor, customImagePlaceholderDefaultStyle])
+
+    return (
+        <>
+            <FastImage
+                key={currentRetry.current}
+                source={source}
+                style={[styles.mainStyle, (isLoaded && !isError) ? {} : {}]}
+                onLoadEnd={onLoadEnd}
+                onError={onError}
+                resizeMode={resizeMode}
+                borderRadius={borderRadius}
+            >
+                {isLoaded && !isError ? null : <View style={styles.viewImageStyles} >
+                    {!isLoaded && <ActivityIndicator
+                        style={styles.activityIndicator}
+                        size={loadingStyle ? loadingStyle.size : 'small'}
+                        color={loadingStyle ? loadingStyle.color : 'gray'}
+                    />}
+
+                    {placeholderSource ?
+                        <Image
+                            style={placeholderStyle ?? styles?.mainStyle}
+                            source={placeholderSource ?? null}
+                        /> : null}
+                </View>}
+
+
+            </FastImage>
+        </>
+    );
+}
+
+const ImageLoader2 = (props: IImageLoader) => {
     const { isShowActivity = true, source, resizeMode, borderRadius, backgroundColor, children,
         loadingStyle, placeholderSource, placeholderStyle,
         customImagePlaceholderDefaultStyle } = props
