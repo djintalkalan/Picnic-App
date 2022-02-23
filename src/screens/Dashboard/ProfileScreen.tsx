@@ -186,6 +186,7 @@ const ProfileScreen: FC<any> = (props) => {
                             borderColor={colors.colorTextInputBackground}
                             backgroundColor={colors.colorTextInputBackground}
                             name={'firstName'}
+                            maxLength={30}
                             required={true}
                             control={control}
                             errors={errors}
@@ -196,6 +197,7 @@ const ProfileScreen: FC<any> = (props) => {
                             borderColor={colors.colorTextInputBackground}
                             backgroundColor={colors.colorTextInputBackground}
                             placeholder={Language.last_name}
+                            maxLength={30}
                             name={'lastName'}
                             required={true}
                             control={control}
@@ -208,6 +210,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.username}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
+                        maxLength={30}
                         name={'username'}
                         control={control}
                         errors={errors}

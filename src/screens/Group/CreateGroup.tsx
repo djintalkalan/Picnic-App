@@ -163,6 +163,8 @@ const CreateGroup: FC<any> = (props) => {
                 if (!v.trim()) {
                   return Language.group_name_required
                 }
+                if (v?.length < 3)
+                  return Language.min_characters_group_name
               }
             }}
             required={Language.group_name_required}

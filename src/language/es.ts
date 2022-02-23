@@ -1,6 +1,6 @@
 export const es = {
     back: "Atrás",
-    welcome_back: "Bienvenido otra vez",
+    welcome_back: "Bienvenidas",
     enter_email_or_password: "Ingresa tu correo electrónico",
     password: "Contraseña",
     old_password: "Contraseña actual",

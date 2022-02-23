@@ -102,6 +102,7 @@ const BookEvent: FC = (props: any) => {
                         multiline={Platform.OS == 'ios' ? true : false}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
+                        maxLength={5}
                         // control={control}
                         //@ts-ignore
                         onChangeText={setNoOfTickets}
