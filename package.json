@@ -45,7 +45,7 @@
     "aws-sdk": "^2.1074.0",
     "axios": "^0.21.1",
     "date-fns": "^2.23.0",
-    "dj-intl-phone-input": "^1.0.2",
+    "dj-intl-phone-input": "^1.1.0",
     "dj-react-native-dropdown-alert": "^0.0.3",
     "html-entities": "^2.3.2",
     "react": "17.0.2",

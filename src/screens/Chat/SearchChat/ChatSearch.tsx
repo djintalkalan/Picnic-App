@@ -41,7 +41,7 @@ const ChatSearch: FC<any> = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flexShrink: 1 }} >
+            <View style={{ flex: 1 }} >
                 <FlatList
                     style={{ flex: 1 }}
                     keyboardShouldPersistTaps={'handled'}

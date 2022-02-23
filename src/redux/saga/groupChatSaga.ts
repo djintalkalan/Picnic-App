@@ -25,7 +25,7 @@ function* _getGroupChat({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getGroupChatNew({ type, payload, }: action): Generator<any, any, any> {
-    // yield put(setLoadingAction(true));
+    payload?.setChatLoader && payload?.setChatLoader(true)
     try {
         let res = yield call(ApiProvider._getGroupChatNew, payload);
         if (res.status == 200) {
@@ -37,14 +37,18 @@ function* _getGroupChatNew({ type, payload, }: action): Generator<any, any, any>
             yield put((payload?.message_id ? setChatInGroup : refreshChatInGroup)({ groupId: payload?.id, chats: chats, message_id: payload?.message_id }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
+
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
+        // yield put(setLoadingAction(false));
+        payload?.setChatLoader && payload?.setChatLoader(false)
+
     }
     catch (error) {
         console.log("Catch Error", error);
-        yield put(setLoadingAction(false));
+        // yield put(setLoadingAction(false));
+        payload?.setChatLoader && payload?.setChatLoader(false)
     }
 }
 

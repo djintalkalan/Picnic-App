@@ -25,6 +25,8 @@ export interface RootState {
     userGroupsEvents: IUserEventsGroups
 }
 
+const PERSIST_ENABLED = false
+
 const sagaMiddleware = createSagaMiddleware();
 
 const persistConfig = {
@@ -33,14 +35,14 @@ const persistConfig = {
     // Storage Method (React Native)
     // storage: AsyncStorage // 
     // Whitelist (Save Specific Reducers)
-    whitelist: [
+    whitelist: PERSIST_ENABLED ? [
         "group",
         "event",
         "groupChat",
         "eventChat",
         "groupDetails",
         "eventDetails",
-    ],
+    ] : false,
     blacklist: [],
     throttle: 1000,
     debounce: 1000,

@@ -87,7 +87,6 @@ const SelectContacts: FC<any> = (props) => {
                 setContactPermission(false)
                 // _showErrorMessage("Contact Permission denied")
                 if (denyTime.current) {
-
                     askedForBlocked()
                 }
                 else {

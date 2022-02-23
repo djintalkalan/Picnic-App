@@ -25,7 +25,7 @@ function* _getEventChat({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getEventChatNew({ type, payload, }: action): Generator<any, any, any> {
-    // yield put(setLoadingAction(true));
+    payload?.setChatLoader && payload?.setChatLoader(true)
     try {
         let res = yield call(ApiProvider._getEventChatNew, payload);
         if (res.status == 200) {
@@ -39,11 +39,13 @@ function* _getEventChatNew({ type, payload, }: action): Generator<any, any, any>
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
-        yield put(setLoadingAction(false));
+        payload?.setChatLoader && payload?.setChatLoader(false)
+        // yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
-        yield put(setLoadingAction(false));
+        payload?.setChatLoader && payload?.setChatLoader(false)
+        // yield put(setLoadingAction(false));
     }
 }
 

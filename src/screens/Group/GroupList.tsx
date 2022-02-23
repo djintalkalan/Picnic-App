@@ -6,8 +6,8 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
-import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
+import { Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -89,10 +89,12 @@ const GroupList: FC<any> = (props) => {
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
 
-    useLayoutEffect(() => {
-        console.log("selectedLocation changed", selectedLocation)
-        paginationState.current = InitialPaginationState
-        fetchGroupList()
+    useEffect(() => {
+        InteractionManager.runAfterInteractions(() => {
+            console.log("selectedLocation changed", selectedLocation)
+            paginationState.current = InitialPaginationState
+            fetchGroupList()
+        })
     }, [selectedLocation])
 
     const fetchGroupList = useCallback(() => {

@@ -7,6 +7,7 @@ import { ILocation, useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
+import { Bar } from 'react-native-progress'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
@@ -16,6 +17,7 @@ import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
 
 let loadMore = false
+const { width } = Dimensions.get("screen")
 
 
 const EventChats: FC<any> = (props) => {
@@ -23,13 +25,11 @@ const EventChats: FC<any> = (props) => {
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
+    const [isChatLoader, setChatLoader] = useState(false)
     const insets = useSafeAreaInsets()
-
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
-
     const { keyboardHeight, isKeyboard } = useKeyboardService();
-
     const isFocused = useIsFocused()
 
     useEffect(() => {
@@ -148,6 +148,7 @@ const EventChats: FC<any> = (props) => {
     useEffect(() => {
         dispatch(getEventChat({
             id: activeEvent?._id,
+            setChatLoader: chats?.length ? null : setChatLoader
         }))
         setTimeout(() => {
             loadMore = true
@@ -211,6 +212,14 @@ const EventChats: FC<any> = (props) => {
 
             <View style={styles.container} >
                 <View pointerEvents={(eventDetail?.is_event_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
+                    {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
+                        borderWidth={0}
+                        animationConfig={{ bounciness: 2 }}
+                        animationType={'decay'}
+                        indeterminateAnimationDuration={600}
+                        indeterminate
+                        useNativeDriver
+                        color={colors.colorPrimary} />}
                     <FlatList
                         // removeClippedSubviews={false}
                         keyboardShouldPersistTaps={'handled'}
@@ -221,16 +230,17 @@ const EventChats: FC<any> = (props) => {
                         ref={flatListRef}
                         inverted
                         onEndReached={() => {
-                            console.log("End", chats[chats.length - 1]?._id);
-                            if (loadMore && isFocused) {
+                            if (loadMore && !isChatLoader && isFocused) {
+                                console.log("End", chats[chats.length - 1]?._id);
                                 loadMore = false
                                 dispatch(getEventChat({
                                     id: activeEvent?._id,
-                                    message_id: chats[chats.length - 1]?._id
+                                    message_id: chats[chats.length - 1]?._id,
+                                    setChatLoader: setChatLoader
                                 }))
                                 setTimeout(() => {
                                     loadMore = true
-                                }, 5000);
+                                }, 2000);
                             }
 
                         }}

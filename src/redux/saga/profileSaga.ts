@@ -140,7 +140,7 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
                 data: res?.data?.data
             })
             if (res?.data?.pagination?.currentPage == 1) groups = []
-            yield put(setUserGroups(res?.data?.data))
+            yield put(setUserGroups([...groups, ...res?.data?.data]))
 
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

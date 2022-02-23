@@ -87,7 +87,7 @@ const SelectLocation: FC<any> = (props) => {
             <View style={styles.map} >
                 {focused ?
                     <View style={styles.map}
-                    // pointerEvents={type == 'currentLocation' ? 'none' : undefined}
+                        pointerEvents={type == 'currentLocation' ? 'none' : undefined}
                     >
                         <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                             style={styles.map}

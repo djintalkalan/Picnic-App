@@ -4,7 +4,7 @@ import IntlPhoneInput, { IntlPhoneInputProps, IOnChangeText } from 'dj-intl-phon
 import { capitalize } from 'lodash';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Control, Controller, FieldErrors, FieldValues, RegisterOptions, UseFormClearErrors, UseFormGetValues, UseFormSetError, UseFormSetFocus, UseFormSetValue } from 'react-hook-form';
-import { GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ColorValue, GestureResponderEvent, Image, ImageSourcePropType, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Language from 'src/language/Language';
 import { scaler } from 'utils';
 
@@ -139,6 +139,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     {title || placeholder}
                                 </Text> : null} */}
                             <IntlPhoneInput
+                                extraCountries={[{ ru: "Пуэрто-Рико", lt: "Puerto Rikas", tr: "Porto Riko", en: 'Puerto Rico', flag: '🇵🇷', code: 'PR', dialCode: '+1787', mask: '(999) 999-9999' }]}
                                 containerStyle={styles.phoneInputStyle}
                                 dialCode={(currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) ?? undefined}
                                 onChangeText={(data: IOnChangeText) => {
