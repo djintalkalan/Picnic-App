@@ -70,6 +70,7 @@ const SignUp2: FC<any> = (props) => {
                             name={'firstName'}
                             style={{ fontSize: scaler(13) }}
                             required={true}
+                            maxLength={30}
                             control={control}
                             errors={errors}
                         />
@@ -79,6 +80,7 @@ const SignUp2: FC<any> = (props) => {
                             placeholder={Language.last_name}
                             style={{ fontSize: scaler(13) }}
                             name={'lastName'}
+                            maxLength={30}
                             required={true}
                             control={control}
                             errors={errors}

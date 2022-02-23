@@ -355,6 +355,15 @@ const EditEvent: FC<any> = props => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'eventName'}
+                        rules={{
+                            validate: (v: string) => {
+                                if (!v.trim()) {
+                                    return Language.event_name_required
+                                }
+                                if (v?.length < 3)
+                                    return Language.min_characters_event_name
+                            }
+                        }}
                         required={Language.event_name_required}
                         control={control}
                         errors={errors}
@@ -471,6 +480,7 @@ const EditEvent: FC<any> = props => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'capacity'}
+                        maxLength={5}
                         keyboardType={'number-pad'}
                         disabled={isUnlimitedCapacity ? true : false}
                         required={
@@ -519,6 +529,13 @@ const EditEvent: FC<any> = props => {
                             keyboardType={'number-pad'}
                             disabled={isFreeEvent ? true : false}
                             iconSize={scaler(18)}
+                            rules={{
+                                validate: (v: string) => {
+                                    if (parseFloat(v) > 99999.99) {
+                                        return Language.event_max_price
+                                    }
+                                }
+                            }}
                             icon={Images.ic_ticket}
                             required={
                                 isFreeEvent ? undefined : Language.ticket_price_required

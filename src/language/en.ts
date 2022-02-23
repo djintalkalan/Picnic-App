@@ -1,6 +1,6 @@
 export const en = {
   back: "Back",
-  welcome_back: "Welcome back",
+  welcome: "Welcome",
   enter_email_or_password: "Enter your email address",
   password: "Password",
   old_password: "Current Password",
@@ -256,4 +256,7 @@ export const en = {
   add_to_contacts: "Add to contacts",
   search_messages_here: "Search messages here",
   search_here: "Search here",
+  event_max_price: "Contact support for more event price",
+  min_characters_group_name: "Group name should have atleast 3 characters",
+  min_characters_event_name: "Event name should have atleast 3 characters",
 }

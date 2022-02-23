@@ -134,6 +134,15 @@ const CreateEvent1: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'eventName'}
+            rules={{
+              validate: (v: string) => {
+                if (!v.trim()) {
+                  return Language.event_name_required
+                }
+                if (v?.length < 3)
+                  return Language.min_characters_event_name
+              }
+            }}
             required={Language.event_name_required}
             control={control}
             errors={errors}

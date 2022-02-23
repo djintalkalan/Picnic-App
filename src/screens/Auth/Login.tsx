@@ -66,7 +66,7 @@ const Login: FC = () => {
 
                     <View style={{ marginTop: scaler(30), flexDirection: 'row', alignItems: 'center', }} >
 
-                        <Text style={styles.welcomeStyle} >{Language.welcome_back}</Text>
+                        <Text style={styles.welcomeStyle} >{Language.welcome}</Text>
 
 
                         <Image source={Images.ic_logo_name} style={styles.icon} />

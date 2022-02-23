@@ -252,6 +252,7 @@ const CreateEvent2: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
+            maxLength={5}
             keyboardType={'number-pad'}
             disabled={isUnlimitedCapacity ? true : false}
             required={
@@ -301,6 +302,13 @@ const CreateEvent2: FC<any> = props => {
               disabled={isFreeEvent ? true : false}
               iconSize={scaler(18)}
               icon={Images.ic_ticket}
+              rules={{
+                validate: (v: string) => {
+                  if (parseFloat(v) > 99999.99) {
+                    return Language.event_max_price
+                  }
+                }
+              }}
               required={
                 isFreeEvent ? undefined : Language.ticket_price_required
               }
