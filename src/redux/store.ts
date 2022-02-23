@@ -25,7 +25,7 @@ export interface RootState {
     userGroupsEvents: IUserEventsGroups
 }
 
-const PERSIST_ENABLED = false
+const PERSIST_ENABLED = true
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -42,7 +42,7 @@ const persistConfig = {
         "eventChat",
         "groupDetails",
         "eventDetails",
-    ] : false,
+    ] : [],
     blacklist: [],
     throttle: 1000,
     debounce: 1000,
