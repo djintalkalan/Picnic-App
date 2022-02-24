@@ -1,9 +1,10 @@
 import { config } from 'api';
 import { store } from 'app-store';
 import { setLoadingAction } from 'app-store/actions';
-import axios, { Method } from 'axios';
+import axios, { CancelToken, Method } from 'axios';
 import { DeviceEventEmitter } from 'react-native';
 import { Progress, RNS3 } from 'react-native-aws3';
+import { CANCEL } from 'redux-saga';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
 import { _showErrorMessage } from 'utils';
@@ -16,7 +17,8 @@ interface header {
     "Accept-Language"?: LanguageType
 }
 
-async function callApi(urlString: string, header: header, body: any, methodType: Method, isMultipart: boolean | undefined) {
+const CancelTokenConstructor = axios.CancelToken;
+async function callApi(urlString: string, header: header, body: any, methodType: Method, cancelToken?: CancelToken) {
     if (config.REACTOTRON_STATUS == 'false') {
         console.log("-----------AXIOS  Api request is----------- ");
         console.log("url string " + urlString);
@@ -28,7 +30,8 @@ async function callApi(urlString: string, header: header, body: any, methodType:
         method: methodType, //you can set what request you want to be
         url: urlString,
         data: methodType != "GET" && body ? body : undefined,// isMultipart ? body : (methodType != "GET" && body) ? body : undefined,
-        headers: header
+        headers: header,
+        cancelToken: cancelToken
     }).then(res => {
         if (config.REACTOTRON_STATUS == 'false') {
             console.log("-----------AXIOS  Api Response is----------- ");
@@ -81,7 +84,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
         })
 }
 
-async function fetchApiData(urlString: string, body: any | null, methodType: Method) {
+async function fetchApiData(urlString: string, body: any | null, methodType: Method, cancelToken?: CancelToken) {
     const isMultipart = (body && body instanceof FormData) ? true : false
     const authToken = Database.getStoredValue('authToken')
     const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
@@ -93,7 +96,10 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
             'Authorization': authToken ? ("Bearer " + authToken) : undefined,
             'Accept-Language': selectedLanguage
         }
-        return callApi(urlString, header, body, methodType, isMultipart)
+        const source = CancelTokenConstructor.source();
+        const promise = callApi(urlString, header, body, methodType, source.token)
+        promise[CANCEL] = () => source.cancel();
+        return promise
     } catch (error: any) {
         throw new Error(error)
     }

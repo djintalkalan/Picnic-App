@@ -15,8 +15,7 @@ function* _searchAtHome({ type, payload, }: action): Generator<any, any, any> {
         const location = Database?.getStoredValue("selectedLocation", defaultLocation)
         let res = yield call(ApiProvider._searchAtHome, { ...payload, ...location });
         if (res.status == 200) {
-            yield put(setSearchedData({ data: payload?.text ? res?.data?.data : null, type: payload?.type }))
-
+            yield put(setSearchedData({ data: Database.getOtherString("searchHomeText") ? res?.data?.data : null, type: payload?.type }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

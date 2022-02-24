@@ -96,7 +96,7 @@ interface ITicketView {
     is_event_member: boolean
 }
 
-export const TicketView: FC<ITicketView> = ({ capacity_type, is_event_admin, capacity, is_event_member, total_sold_tickets }) => {
+export const TicketView: FC<ITicketView> = ({ capacity_type, is_event_admin = false, capacity = 0, is_event_member = false, total_sold_tickets = 0 }) => {
     const styles = useMemo(() => {
         const color = (is_event_member && !is_event_admin) ? colors.colorPrimary : "#DBDBDB"
         const tintColor = (is_event_member && !is_event_admin) ? colors.colorPrimary : colors.colorBlackText

@@ -4,7 +4,8 @@ import { colors } from 'assets/Colors'
 import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, InteractionManager, Platform, StyleSheet, TextInput, TouchableOpacity as RTO, View } from 'react-native'
+import { TouchableOpacity as GTO } from 'react-native-gesture-handler'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -14,6 +15,8 @@ import Language from 'src/language/Language'
 import { getAddressFromLocation, NavigationService, scaler } from 'utils'
 
 const { width, height } = Dimensions.get('window');
+
+const TouchableOpacity = Platform.OS == 'android' ? RTO : GTO
 
 const ASPECT_RATIO = width / height;
 const DefaultDelta = {
@@ -91,11 +94,11 @@ const SelectLocation: FC<any> = (props) => {
                         pointerEvents={type == 'currentLocation' ? 'none' : undefined}
                     >
                         <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                            style={styles.map}
+                            style={{ flex: 1 }}
                             minZoomLevel={2}
                             showsMyLocationButton={false}
                             ref={mapRef}
-                            cacheEnabled
+                            // cacheEnabled
                             onUserLocationChange={async (e) => {
                                 const coords = {
                                     latitude: e.nativeEvent.coordinate.latitude,
@@ -125,7 +128,6 @@ const SelectLocation: FC<any> = (props) => {
                                     }}
                                 >
                                     <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
-
                                 </Marker> : null}
                         </MapView>
                     </View> : null}
@@ -192,7 +194,7 @@ const SelectLocation: FC<any> = (props) => {
                         </View>
                     </View>
 
-                    <Button onPress={() => {
+                    <Button opacityType='gesture' onPress={() => {
                         onSelectLocation ?
                             onSelectLocation(localLocation) :
                             setSelectedLocation(localLocation)

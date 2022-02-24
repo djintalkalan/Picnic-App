@@ -1,6 +1,7 @@
 import { colors } from "assets";
 import * as React from "react";
-import { ColorValue, GestureResponderEvent, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ColorValue, GestureResponderEvent, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity as RTO, View, ViewStyle } from "react-native";
+import { TouchableOpacity as GTO } from 'react-native-gesture-handler';
 import { scaler } from "utils";
 import { Text } from "./Text";
 
@@ -22,11 +23,19 @@ interface ButtonProps {
     paddingHorizontal?: number
     pointerEvents?: 'none'
     textStyle?: TextStyle
+    opacityType?: 'gesture' | 'react'
 }
 
 export const Button = (props: ButtonProps) => {
-    const { disabled = false, onPress, textStyle, containerStyle, center, radius, backgroundColor, width, title, type = 'medium', fontColor = colors.colorWhite, buttonStyle, fontSize = scaler(14), minWidth, paddingHorizontal, paddingVertical } = props
 
+    const { disabled = false, onPress, opacityType = "react", textStyle, containerStyle, center, radius, backgroundColor, width, title, type = 'medium', fontColor = colors.colorWhite, buttonStyle, fontSize = scaler(14), minWidth, paddingHorizontal, paddingVertical } = props
+    const TouchableOpacity = React.useMemo(() => {
+        if (opacityType == 'gesture' && Platform.OS == 'ios') {
+            return GTO
+        } else {
+            return RTO
+        }
+    }, [opacityType])
     const styles = React.useMemo(() => {
         let container = {}
         if (center) {
