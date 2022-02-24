@@ -56,10 +56,10 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches" | 'currencies' | 'socketConnected'
+    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText"
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches", "currencies", 'socketConnected']
+    "recentSearches", "currencies", 'socketConnected', "searchHomeText"]
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
