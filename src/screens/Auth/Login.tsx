@@ -3,6 +3,7 @@ import { doLogin } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, CheckBox, Text, TextInput } from 'custom-components'
 import { EmailValidations } from 'custom-components/TextInput/rules'
+import { useVideoPlayer } from 'custom-components/VideoProvider'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, Linking, Platform, StyleSheet, View } from 'react-native'
@@ -12,15 +13,16 @@ import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 
+
 type LoginFormType = {
     email: string
     password: string
 }
 
 const Login: FC = () => {
-
     const [isSecure, setSecure] = useState(true)
     const [isTerms, setTerms] = useState(__DEV__);
+    const { loadVideo } = useVideoPlayer()
 
     const { control, handleSubmit, getValues, formState: { errors } } = useForm<LoginFormType>({
         defaultValues: __DEV__ ? Platform.OS == 'ios' ? {
@@ -49,6 +51,8 @@ const Login: FC = () => {
         //     buttonText: "Close",
         //     // isCloseButton: true
         // })
+        // loadVideo("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
+
         dispatch(doLogin(data))
     })(), []);
 
