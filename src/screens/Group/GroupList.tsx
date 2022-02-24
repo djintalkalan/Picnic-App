@@ -12,7 +12,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDatabase } from 'src/database/Database';
+import Database, { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 const ITEM_HEIGHT = scaler(90)
@@ -193,7 +193,7 @@ const GroupList: FC<any> = (props) => {
                         fetchGroupList()
                     }}
                 />}
-                data={searchedGroups ? searchedGroups : allGroups}
+                data={searchedGroups && Database.getOtherString("searchHomeText") ? searchedGroups : allGroups}
                 contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
