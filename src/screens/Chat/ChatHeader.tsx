@@ -15,10 +15,6 @@ interface IChatHeader {
 }
 export const ChatHeader: FC<IChatHeader> = (props) => {
 
-
-
-
-
     const { isKeyboard, dismissKeyboard } = useKeyboardService()
 
     const { defaultIcon, subtitle, title, containerStyle, icon, onPress, rightView: RightView, } = props
