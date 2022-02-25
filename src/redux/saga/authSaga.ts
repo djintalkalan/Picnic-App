@@ -200,6 +200,8 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
         yield put(setAllGroups([]))
         yield put(setAllEvents([]))
 
+        Database.clearStorage()
+
 
 
     }

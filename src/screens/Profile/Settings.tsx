@@ -34,15 +34,17 @@ const Settings: FC<any> = (props) => {
 
     useEffect(() => {
         dispatch(getProfile())
-    }, []);
+    }, [selectedLanguage]);
 
     const customView = useCallback(memo(() => {
 
         return <View style={{ width: '100%' }} >
             <TouchableOpacity onPress={() => {
                 InteractionManager.runAfterInteractions(() => {
-                    updateLanguage("en")
                     _hidePopUpAlert()
+                    setTimeout(() => {
+                        updateLanguage("en")
+                    }, 0);
                 })
             }}
                 style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
@@ -52,8 +54,10 @@ const Settings: FC<any> = (props) => {
 
             <TouchableOpacity onPress={() => {
                 InteractionManager.runAfterInteractions(() => {
-                    updateLanguage("es")
                     _hidePopUpAlert()
+                    setTimeout(() => {
+                        updateLanguage("es")
+                    }, 0);
                 })
             }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
