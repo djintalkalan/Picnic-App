@@ -11,6 +11,7 @@ import ActionTypes, { action } from "../action-types";
 function* getProfile({ type, payload, }: action): Generator<any, any, any> {
     // yield put(setLoadingAction(true));
     try {
+        const uData = Database.getStoredValue("userData")
         let res = yield call(ApiProvider._getProfile);
         if (res.status == 200) {
             const { notification_settings, ...userData } = res?.data
@@ -18,7 +19,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
                 ...notification_settings,
                 is_notification_enabled: userData?.is_notification_enabled
             }))
-            Database.setUserData(userData)
+            Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -35,6 +36,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
 function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
+        const uData = Database.getStoredValue("userData")
         let res = yield call(ApiProvider._updateProfile, payload);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
@@ -43,7 +45,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
                 ...notification_settings,
                 is_notification_enabled: userData?.is_notification_enabled
             }))
-            Database.setUserData(userData)
+            Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
             NavigationService.replace("Settings")
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -138,7 +140,7 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
                 data: res?.data?.data
             })
             if (res?.data?.pagination?.currentPage == 1) groups = []
-            yield put(setUserGroups(res?.data?.data))
+            yield put(setUserGroups([...groups, ...res?.data?.data]))
 
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

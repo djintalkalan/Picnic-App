@@ -1,7 +1,7 @@
-import {useCallback} from 'react';
+import { useCallback } from 'react';
 import LocalizedStrings from 'react-native-localization';
-import Database, {useDatabase} from 'src/database/Database';
-import {en} from './en';
+import Database, { useDatabase } from 'src/database/Database';
+import { en } from './en';
 // import { es } from './es';
 
 export type LanguageType = 'en' | 'es';

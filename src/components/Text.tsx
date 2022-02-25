@@ -1,5 +1,5 @@
 import { Fonts } from "assets/Fonts";
-import React, { FC, useMemo } from "react";
+import React, { FC, Fragment, useMemo } from "react";
 import { Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 
 interface TextProps extends RNTextProps {
@@ -93,34 +93,40 @@ export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { tex
         </Text>
         {IText?.substring(endBoldIndex + 2)}
     </Text>
+};
 
+export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
 
-
-    const { arr, text } = useMemo(() => {
-        const arr = IText.split(' ')
-        return {
-            arr,
-            text: arr.reduce(reducer, [])
+    let isStart = true
+    let arr = Array.from(IText)
+    const indexArray: any[] = []
+    arr.forEach((s: string, i: number) => {
+        if ((s + (arr?.[i + 1] || "")) == "**") {
+            if (isStart) {
+                indexArray.push({
+                    start: i,
+                    end: null
+                })
+                isStart = false
+            }
+            else {
+                indexArray[(indexArray.length) - 1].end = i
+                isStart = true
+            }
         }
-    }, [IText])
+    })
+    return <Text style={style} >
 
-    // console.log("text", text)
-
-    return (
-        <Text style={style} >
-            {text.map((text: string, index: number) => {
-                if (text.includes('**')) {
-                    console.log("text", text)
-                    return (
-                        <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-                            {text.replace('**', '')?.replace('**', '')}{' '}
-                        </Text>
-                    );
-                }
-                return `${text} `;
-            })}
-        </Text>
-    );
+        {indexArray.map(({ start: startBoldIndex, end: endBoldIndex }, i) => {
+            return <Fragment key={i.toString()} >
+                {IText?.substring(i == 0 ? 0 : indexArray[i - 1].end, startBoldIndex)?.replace('**', '')}
+                <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
+                    {IText?.substring(startBoldIndex, endBoldIndex + 2).replaceAll('**', '')}
+                </Text>
+                {IText?.substring(endBoldIndex + 2, i == indexArray.length - 1 ? undefined : endBoldIndex + 2)?.replace('**', '')}
+            </Fragment>
+        })}
+    </Text>
 };
 
 const reducer = (acc: any, cur: any, index: number) => {

@@ -3163,10 +3163,10 @@ dijkstrajs@^1.0.1:
   resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.2.tgz#2e48c0d3b825462afe75ab4ad5e829c8ece36257"
   integrity sha512-QV6PMaHTCNmKSeP6QoXhVTw9snc9VD8MulTT0Bd99Pacp4SS1cjcrYPgBPmibqKVtMJJfqC6XvOXgPMEEPH/fg==
 
-dj-intl-phone-input@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.0.2.tgz#645c7b9374d5b49419bd587c2da38455762343ab"
-  integrity sha512-+BbGfQmBqmY1/jRtA2+iAMfmfbVh3GZcWCl/iXV3yCOeOE2Z2jYOa8L8vslq5I+lmb0C6iCcbt/n2RoLyZqhDw==
+dj-intl-phone-input@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.1.0.tgz#9a017eb8615bdf3fa0834d37393bc1b14dc3dd43"
+  integrity sha512-YnZxwUn0KHgIm1krXMgaDQ73jNFRa4sIT0whGiL+duu87Ok3t96bBb9MvY0ze4aBQYhx1w6c6xRhV64k4KplfQ==
 
 dj-react-native-dropdown-alert@^0.0.3:
   version "0.0.3"
@@ -5452,7 +5452,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.7.0:
+lodash@^4.16.4, lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -6743,6 +6743,11 @@ react-native-codegen@^0.0.7:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
+react-native-contacts@^7.0.4:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-7.0.4.tgz#6f084f651bb5dde433acc22553c6d1ca909e46b7"
+  integrity sha512-x6K9TMC0XBH/yyfqYh5BGS9JI1PpA2Ac/XHVVFVP8F8lPLNexQ0qPsNBo1cy9l2pPqlijpC33+FU0ty/N5iOWA==
+
 react-native-document-picker@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-8.0.0.tgz#f760f89049cda668be8b1cfb31a484af19716f35"
@@ -6756,6 +6761,11 @@ react-native-dropdownalert@^4.3.0:
   integrity sha512-x69zHkC5soblG1xTBlSdYiUco+vmUiik6NH+DktzUM+xRhhTAy6BrKWSzkzSZ5WqcpZ4UcRqI0b4+rHPNQtG3Q==
   dependencies:
     prop-types "15.5.10"
+
+react-native-fast-image@^8.5.11:
+  version "8.5.11"
+  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.5.11.tgz#e3dc969d0e4e8df026646bf18194465aa55cbc2b"
+  integrity sha512-cNW4bIJg3nvKaheG8vGMfqCt5LMWX9MS5+wMudgKIHbGO51spRr4sgnlhVgwHLcZ5aeNOVJ8CPRxDIWKRq/0QA==
 
 react-native-flipper@^0.34.0:
   version "0.34.0"
@@ -6809,13 +6819,6 @@ react-native-image-crop-picker@^0.37.2:
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.37.2.tgz#3aadc4ae4812c9975c49a294d9a17ffae057dbb4"
   integrity sha512-YwZXW21Km8+3tSt0smTaLVgY4398c0/OJcpcH6EP0JDOt1BNNxl/R8m6qdvnwdXdIoa0CCnMVW6TL9IN5ia9OA==
 
-react-native-indicators@^0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/react-native-indicators/-/react-native-indicators-0.17.0.tgz#92f95efaf5fb53be576dfe4e1980a25655a93f55"
-  integrity sha512-s23em477GHGxWeGczWrixScAZD6tQU4mx1fttlrwhEGKOxhBgp55Kh3RoD9Wj4yna4e5W35xQNoPqoJAT6QW5A==
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-internet-connection-alert@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/react-native-internet-connection-alert/-/react-native-internet-connection-alert-0.1.6.tgz#c1f786deb8e9b1aca804cd1df4b0bdebca0ad832"
@@ -6843,6 +6846,11 @@ react-native-keyboard-aware-scroll-view@^0.9.5:
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
+
+react-native-launch-navigator@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-launch-navigator/-/react-native-launch-navigator-1.0.8.tgz#c86f45406d37c0942a9d1a3e54a6d4e28c91ee81"
+  integrity sha512-9/xsmcoXa02waKYX37Fx86U3e9FUDeNz0RmWiZ/JeBRAO1U0J2yK0xmTLiGyP4J9txZ9Qc9iZBJF+qMq8LXsEQ==
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
@@ -7017,6 +7025,13 @@ react-native-vector-icons@^8.1.0:
     lodash.template "^4.5.0"
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-video-controls@^2.8.1:
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/react-native-video-controls/-/react-native-video-controls-2.8.1.tgz#30ae707d8d218fed34bba3fc027b3943c5f438d9"
+  integrity sha512-dBmrE3TAKaR1gYMfbukjAM6Xo8OMZyRrxPzZtnaUgWcvGo11PQwzaI/j8HPD5fLgO+rlweP2pDpEJyIBsJvJkw==
+  dependencies:
+    lodash "^4.16.4"
 
 react-native-video@^5.2.0:
   version "5.2.0"

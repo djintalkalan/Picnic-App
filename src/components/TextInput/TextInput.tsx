@@ -11,7 +11,7 @@ import { Text } from "../Text";
 interface TextInputProps extends RNTextInputProps {
     fontFamily?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic"
     containerStyle?: ViewStyle
-    iconContainerStyle?:StyleProp<ViewStyle>
+    iconContainerStyle?: StyleProp<ViewStyle>
     disabled?: boolean
     onPress?: (e?: GestureResponderEvent) => void
     onPressIcon?: (e?: GestureResponderEvent) => void
@@ -35,7 +35,7 @@ interface TextInputProps extends RNTextInputProps {
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const {iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
 
     const { openKeyboardAccessory } = useKeyboardService()
     const styles = useMemo(() => {
@@ -125,7 +125,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 multiline={multiline}
                                 inputAccessoryViewID={multiline ? name : undefined}
                                 autoCorrect={false}
-                                maxLength={limit}
+                                maxLength={limit ?? props?.maxLength}
                                 onFocus={(e) => {
                                     (multiline && Platform.OS == 'android') && openKeyboardAccessory(
                                         <View style={styles.accessory}>

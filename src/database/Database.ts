@@ -162,6 +162,14 @@ class Database {
         })
     }
 
+    public setOtherString = (key: string, value: string) => {
+        Database.phoneStorage.setString(key, value)
+    }
+
+    public getOtherString = (key: string) => {
+        return Database.phoneStorage.getString(key) ?? ""
+    }
+
     public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T | any => {
         switch (key) {
             case 'authToken':

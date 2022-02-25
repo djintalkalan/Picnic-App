@@ -12,7 +12,7 @@ import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDatabase } from 'src/database/Database';
+import Database, { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
@@ -250,7 +250,7 @@ const EventList: FC<any> = (props) => {
                         fetchEventList()
                     }}
                 />}
-                data={searchedEvents ? searchedEvents : allEvents}
+                data={searchedEvents && Database.getOtherString("searchHomeText") ? searchedEvents : allEvents}
                 contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}

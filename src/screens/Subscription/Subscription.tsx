@@ -11,7 +11,7 @@ import * as InAppPurchases from 'react-native-iap';
 import { requestPurchase } from 'react-native-iap';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, stringToDate, _showSuccessMessage } from 'utils';
+import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage, _showSuccessMessage } from 'utils';
 
 const productIds = Platform.OS == 'ios' ? [
     'y_subscription',
@@ -162,6 +162,25 @@ const Subscription: FC = (props: any) => {
 
     // console.log('product', products)
 
+    const restorePurchase = useCallback(() => {
+        dispatch(setLoadingAction(true))
+        _getActiveMembership().then(res => {
+            dispatch(setLoadingAction(false))
+            if (res?.status == 200) {
+                const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+                const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+                // if (expireAt >= new Date()) {
+                if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+                    _showErrorMessage("You are not a member, Please purchase membership")
+                } else continueToMemberShip("Purchase successfully restored")
+
+            }
+        }).catch(e => {
+            console.log(e);
+            dispatch(setLoadingAction(false))
+        })
+    }, [])
+
     const callPurchase = useCallback((i) => {
         dispatch(setLoadingAction(true))
         _getActiveMembership().then(res => {
@@ -191,7 +210,7 @@ const Subscription: FC = (props: any) => {
         }
         else {
             props?.route?.params?.data?.isFreeEvent ?
-                props?.route?.params?.onSubscription(props?.route?.params?.data) :
+                (props?.route?.params?.onSubscription && props?.route?.params?.onSubscription(props?.route?.params?.data)) :
                 NavigationService.replace('CreateEvent3', { data: props?.route?.params?.data })
         }
     }, [])
@@ -231,7 +250,13 @@ const Subscription: FC = (props: any) => {
             <View style={{ margin: scaler(20) }}>
                 <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
                 <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
+
+
             </View>
+            <Button containerStyle={{ marginHorizontal: scaler(20), }} title='Restore Purchase' onPress={() => {
+                restorePurchase()
+            }} />
+
         </SafeAreaView>
     );
 }

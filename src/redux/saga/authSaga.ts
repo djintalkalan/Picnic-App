@@ -17,7 +17,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
             const { access_token, notification_settings, ...userData } = res?.data
             Database.setMultipleValues({
                 authToken: access_token,
-                userData,
+                userData: { ...userData, is_premium: false },
                 isLogin: true
             })
         } else if (res.status == 400) {

@@ -1,4 +1,4 @@
-import { useNetInfo } from '@react-native-community/netinfo';
+// import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setLoadingAction, tokenExpired } from 'app-store/actions';
@@ -40,6 +40,7 @@ import ProfileGroups from 'screens/Profile/ProfileGroups';
 import Settings from 'screens/Profile/Settings';
 import UpdatePassword from 'screens/Profile/UpdatePassword';
 import Scanner from 'screens/Scanner/Scanner';
+import SelectContacts from 'screens/SelectContacts';
 import SelectLocation from 'screens/SelectLocation';
 import Subscription from 'screens/Subscription/Subscription';
 import { SocketService } from 'socket';
@@ -47,10 +48,7 @@ import { useDatabase } from 'src/database/Database';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService } from 'utils';
-
-
 export let TOKEN_EXPIRED = false;
-
 const Stack = createStackNavigator();
 
 const commonScreens = {};
@@ -94,13 +92,14 @@ const dashboardScreens = {
   HiddenPosts: HiddenPosts,
   Payment: Payment,
   SearchChatScreen: SearchChatScreen,
+  SelectContacts: SelectContacts,
 };
 
 const MyNavigationContainer = () => {
   FirebaseNotification();
   const dispatch = useDispatch();
 
-  const { isConnected, isInternetReachable } = useNetInfo()
+  // const { isConnected, isInternetReachable } = useNetInfo()
 
   const [isLogin] = useDatabase<boolean>('isLogin', false);
   // const language = useLanguage();

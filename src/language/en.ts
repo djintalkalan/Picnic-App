@@ -1,6 +1,6 @@
 export const en = {
   back: "Back",
-  welcome_back: "Welcome back",
+  welcome_back: "Welcome",
   enter_email_or_password: "Enter your email address",
   password: "Password",
   old_password: "Current Password",
@@ -84,8 +84,6 @@ export const en = {
   muted_post: "Muted post",
   hidden_posts: "Hidden Posts",
   search_placeholder: "Search for groups and events near you",
-  search_messages_here: "Search messages here",
-  search_here: "Search here",
   search_location: "Search location",
   tell_us_about: "Tell us about yourself, emojis are welcome! 😉",
   unblock: "Unblock",
@@ -98,6 +96,7 @@ export const en = {
   host_event: "Host Event",
   permission_required: "Permission required",
   app_needs_location_permission: "We need location permission to verify your current location",
+  app_needs_contact_permission: "We need contact permission to share contact",
   give_permission: "Give Permission",
   deny: "Deny",
   group_name: "Group name",
@@ -146,7 +145,6 @@ export const en = {
   are_you_sure_report_event: "Are you sure you want to report event ?",
   are_you_sure_report_member: "Are you sure you want to report member ?",
   are_you_sure_delete_message: "  Are you sure you want to delete the post ?",
-
   yes_report: "Yes, Report",
   are_you_sure_block_member: "Are you sure you want to block member ?",
   yes_block: "Yes, Block",
@@ -155,7 +153,6 @@ export const en = {
   are_you_sure_remove_member: "Are you sure you want to remove member ?",
   yes_remove: "Yes, Remove",
   yes_delete_post: "Yes, Delete post",
-
   report_has_been_sent: "Report has been sent !",
   close: "Close",
   host_an_event: 'Host An Event',
@@ -255,4 +252,12 @@ export const en = {
   upcoming_events: "Upcoming Events",
   past_events: "Past Events",
   successfully_imported: "Successfully Imported",
+  select_contact: "Select Contact",
+  add_to_contacts: "Add to contacts",
+  search_messages_here: "Search messages here",
+  search_here: "Search here",
+  event_max_price: "Contact support for more event price",
+  min_characters_group_name: "Group name should have atleast 3 characters",
+  min_characters_event_name: "Event name should have atleast 3 characters",
+  invalid_seat_quantity: "Invalid seat quantity"
 }

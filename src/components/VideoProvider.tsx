@@ -1,9 +1,7 @@
-import { colors } from 'assets/Colors';
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
-import { BackHandler, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Spinner from "react-native-loading-spinner-overlay";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Video from 'react-native-video';
+import { BackHandler, StyleSheet, View } from 'react-native';
+import Video from 'react-native-video-controls';
+import { NavigationService } from 'utils';
 
 export const VideoContext = createContext<{
     videoUrl: string,
@@ -43,6 +41,7 @@ export const VideoProvider: FC<any> = ({ children }) => {
         }
     }, [videoUrl])
 
+
     return (
         <VideoContext.Provider value={{ videoUrl, videoPlayerRef, loadVideo }}  >
             {children}
@@ -50,13 +49,16 @@ export const VideoProvider: FC<any> = ({ children }) => {
                 <View style={[styles.backgroundVideo, { backgroundColor: 'rgba(0, 0, 0, 0.6)', alignItems: 'center', justifyContent: 'center' }]} >
                     <Video source={{ uri: videoUrl }}   // Can be a URL or a local file.
                         ref={videoPlayerRef}
-                        resizeMode={'cover'}
+                        resizeMode={'contain'}
+                        onBack={() => { loadVideo("") }}
+                        disableVolume
+                        navigator={NavigationService.getNavigation()}
                         // isFullScreen={true}
                         // toggleResizeModeOnFullscreen={false}
                         // repeat
-                        controls={true}// Store reference
+                        controls={false}// Store reference
                         onBuffer={(d) => {
-                            // console.log(d, "d")
+                            // console.log("d", d)
                         }}                // Callback when remote video is buffering
                         onLoad={() => {
                             setLoader(false)
@@ -67,7 +69,7 @@ export const VideoProvider: FC<any> = ({ children }) => {
                         }}               // Callback when video cannot be loaded
                         style={styles.backgroundVideo} />
 
-                    <View style={{ position: 'absolute', zIndex: 11, top: 20, alignSelf: 'center' }} >
+                    {/* <View style={{ position: 'absolute', zIndex: 11, top: 20, alignSelf: 'center' }} >
                         <SafeAreaView />
                         <TouchableOpacity
                             onPress={() => loadVideo("")}
@@ -79,7 +81,7 @@ export const VideoProvider: FC<any> = ({ children }) => {
                         visible={isLoading}
                         color={colors.colorPrimary}
                         overlayColor={'rgba(0, 0, 0, 0.6)'}
-                    />
+                    /> */}
                 </View> : null}
         </VideoContext.Provider>
     )

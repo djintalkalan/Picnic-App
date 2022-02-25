@@ -4,7 +4,8 @@ import { colors } from 'assets/Colors'
 import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, InteractionManager, Platform, StyleSheet, TextInput, TouchableOpacity as RTO, View } from 'react-native'
+import { TouchableOpacity as GTO } from 'react-native-gesture-handler'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -15,6 +16,8 @@ import { getAddressFromLocation, NavigationService, scaler } from 'utils'
 
 const { width, height } = Dimensions.get('window');
 
+const TouchableOpacity = Platform.OS == 'android' ? RTO : GTO
+
 const ASPECT_RATIO = width / height;
 const DefaultDelta = {
     latitudeDelta: 0.1,
@@ -23,6 +26,7 @@ const DefaultDelta = {
 const SelectLocation: FC<any> = (props) => {
     const onSelectLocation = props?.route?.params?.onSelectLocation
     const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
+    const type = props?.route?.params?.type || ""
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
@@ -31,28 +35,45 @@ const SelectLocation: FC<any> = (props) => {
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
     const [localLocation, setLocalLocation] = useState<ILocation>(onSelectLocation ? prevSelectedLocation : selectedLocation)
     useEffect(() => {
-        askPermission && askPermission()
+        InteractionManager.runAfterInteractions(() => {
+            askPermission && askPermission()
+            if (type == 'currentLocation') {
+                setTimeout(() => {
+                    getCurrentLocation()
+                }, 1000);
+            }
+        })
     }, [])
 
     useEffect(() => {
         setTimeout(() => {
             localLocation && mapRef?.current?.animateCamera({ center: localLocation }, { duration: 500 })
-        }, 200)
+        }, 500)
     }, [localLocation])
 
     useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent' })
+        InteractionManager.runAfterInteractions(() => {
+            pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent' })
+            setTimeout(() => {
+                setFocused(true)
+            }, 200)
+        })
 
-        setTimeout(() => {
-            setFocused(true)
-        }, 200)
         return () => {
+            setFocused(false)
             popStatusBarStyle()
-            InteractionManager.runAfterInteractions(() => {
-                setFocused(false)
-            })
         }
     }, []))
+
+    const getCurrentLocation = useCallback(() => {
+        if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
+            setLocalLocation(currentLocation)
+        } else {
+            askPermission().then(() => {
+                setLocalLocation(Database.getStoredValue('currentLocation'))
+            })
+        }
+    }, [currentLocation, defaultLocation])
 
     const setPosition = useCallback(async (location: ILocation) => {
         let { address, otherData } = await getAddressFromLocation(location)
@@ -67,47 +88,49 @@ const SelectLocation: FC<any> = (props) => {
 
     return (
         <View style={styles.container} >
-
             <View style={styles.map} >
                 {focused ?
-                    <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                        style={styles.map}
-                        minZoomLevel={2}
-                        showsMyLocationButton={false}
-                        ref={mapRef}
-
-                        onUserLocationChange={async (e) => {
-                            const coords = {
-                                latitude: e.nativeEvent.coordinate.latitude,
-                                longitude: e.nativeEvent.coordinate.longitude,
-                            }
-                            let { address, otherData } = await getAddressFromLocation(coords)
-                            address && Database.setCurrentLocation({
-                                ...coords, address, otherData
-                            })
-                        }}
-                        initialRegion={{
-                            latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
-                            longitude: localLocation?.longitude ?? currentLocation?.longitude ?? defaultLocation?.longitude,
-                            ...DefaultDelta
-                        }}
-                        showsUserLocation
-                        onPress={onMapPress}
-                        customMapStyle={MapStyle}>
-                        {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
-                            <Marker
-                                draggable
-                                onDragEnd={onMapPress}
-                                coordinate={{
-                                    latitude: localLocation?.latitude ?? defaultLocation?.latitude,
-                                    longitude: localLocation?.longitude ?? defaultLocation?.longitude,
-                                    ...DefaultDelta
-                                }}
-                            >
-                                <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
-
-                            </Marker> : null}
-                    </MapView> : null}
+                    <View style={styles.map}
+                        pointerEvents={type == 'currentLocation' ? 'none' : undefined}
+                    >
+                        <MapView provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                            style={{ flex: 1 }}
+                            minZoomLevel={2}
+                            showsMyLocationButton={false}
+                            ref={mapRef}
+                            // cacheEnabled
+                            onUserLocationChange={async (e) => {
+                                const coords = {
+                                    latitude: e.nativeEvent.coordinate.latitude,
+                                    longitude: e.nativeEvent.coordinate.longitude,
+                                }
+                                let { address, otherData } = await getAddressFromLocation(coords)
+                                address && Database.setCurrentLocation({
+                                    ...coords, address, otherData
+                                })
+                            }}
+                            initialRegion={{
+                                latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
+                                longitude: localLocation?.longitude ?? currentLocation?.longitude ?? defaultLocation?.longitude,
+                                ...DefaultDelta
+                            }}
+                            showsUserLocation
+                            onPress={onMapPress}
+                            customMapStyle={MapStyle}>
+                            {(onSelectLocation && localLocation?.latitude) || (!onSelectLocation) ?
+                                <Marker
+                                    draggable
+                                    onDragEnd={onMapPress}
+                                    coordinate={{
+                                        latitude: localLocation?.latitude ?? defaultLocation?.latitude,
+                                        longitude: localLocation?.longitude ?? defaultLocation?.longitude,
+                                        ...DefaultDelta
+                                    }}
+                                >
+                                    <Image style={{ height: scaler(35), width: scaler(35), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                </Marker> : null}
+                        </MapView>
+                    </View> : null}
                 <SafeAreaView edges={['top']} style={{
                     width: '100%',
                 }} >
@@ -120,7 +143,7 @@ const SelectLocation: FC<any> = (props) => {
                             <AntDesign name={'close'} size={scaler(20)} color={colors.colorBlack} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ marginVertical: scaler(10) }} >
+                    {type == 'currentLocation' ? null : <View style={{ marginVertical: scaler(10) }} >
                         <TouchableOpacity activeOpacity={0.9} onPress={() => {
                             NavigationService.navigate("GooglePlacesTextInput", {
                                 onSelectLocation: (location: ILocation) => {
@@ -141,17 +164,9 @@ const SelectLocation: FC<any> = (props) => {
                         </TouchableOpacity>
                         <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
 
-                    </View>
+                    </View>}
 
-                    <TouchableOpacity onPress={() => {
-                        if (currentLocation && !isEqual(currentLocation, defaultLocation)) {
-                            setLocalLocation(currentLocation)
-                        } else {
-                            askPermission().then(() => {
-                                setLocalLocation(Database.getStoredValue('currentLocation'))
-                            })
-                        }
-                    }} style={styles.currentLocationButton} >
+                    <TouchableOpacity onPress={getCurrentLocation} style={[styles.currentLocationButton, type == 'currentLocation' ? { marginTop: scaler(20) } : {}]} >
                         <MaterialCommunityIcons name={'crosshairs-gps'} size={scaler(20)} color={colors.colorWhite} />
                     </TouchableOpacity>
                 </SafeAreaView>
@@ -166,7 +181,7 @@ const SelectLocation: FC<any> = (props) => {
                     bottom: 0,
                     position: 'absolute',
                 }} >
-                    <Text style={styles.drag} >{"Drag pin to select location"}</Text>
+                    {type == 'currentLocation' ? null : <Text style={styles.drag} >{"Drag pin to select location"}</Text>}
                     <View style={{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -179,12 +194,12 @@ const SelectLocation: FC<any> = (props) => {
                         </View>
                     </View>
 
-                    <Button onPress={() => {
+                    <Button opacityType='gesture' onPress={() => {
                         onSelectLocation ?
                             onSelectLocation(localLocation) :
                             setSelectedLocation(localLocation)
                         NavigationService.goBack()
-                    }} containerStyle={{ marginTop: scaler(20) }} title={'Confirm Location'} />
+                    }} containerStyle={{ marginTop: scaler(20) }} title={type == 'currentLocation' ? 'Share current location' : 'Confirm Location'} />
 
 
                 </View> : null

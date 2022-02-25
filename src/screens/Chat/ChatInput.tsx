@@ -1,11 +1,14 @@
-import { colors, Fonts, Images } from 'assets'
+import { config } from 'api'
+import { colors, Fonts, Images, MapStyle } from 'assets'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
-import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback } from 'react'
+import Database, { ILocation } from 'database/Database'
+import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
+import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler, _showBottomMenu } from 'utils'
+import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu } from 'utils'
 
 interface ChatInputProps {
     value?: string,
@@ -14,21 +17,48 @@ interface ChatInputProps {
     repliedMessage: any,
     disableButton: boolean,
     setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
-    onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void
+    onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void,
+    onChooseLocation: (location: ILocation) => void,
+    onChooseContacts: (contacts: Array<any>) => void,
 }
 const { height, width } = Dimensions.get('screen')
 
+const ASPECT_RATIO = width / height;
+const DefaultDelta = {
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05 * ASPECT_RATIO,
+}
+
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
-    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onPressSend } = props
+    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
             buttons: [
-                { title: "Image", onPress: () => pickImage("photo") },
-                { title: "Video", onPress: () => pickImage("video") }
+                { title: "Photo", onPress: () => pickImage("photo") },
+                { title: "Video", onPress: () => pickImage("video") },
+                {
+                    title: "Contact", onPress: () => {
+                        NavigationService.navigate("SelectContacts", {
+                            onChooseContacts: (contacts: Array<any>) => {
+                                onChooseContacts(contacts)
+                                NavigationService.goBack()
+                            }
+                        })
+                    }
+                },
+                {
+                    title: "Location", onPress: () => {
+                        NavigationService.navigate("SelectLocation", {
+                            type: 'currentLocation',
+                            prevSelectedLocation: Database.getStoredValue("currentLocation"),
+                            onSelectLocation: onChooseLocation
+                        })
+                    }
+                }
             ]
         })
-    }, [])
+    }, [onChooseLocation, onChooseContacts, onChooseImage])
     const pickImage = useCallback((mediaType: 'photo' | 'video') => {
         console.log("media", mediaType);
         setTimeout(() => {
@@ -51,29 +81,69 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
             });
         }, 200);
 
-    }, [])
+    }, [onChooseImage])
 
     if (repliedMessage) console.log(repliedMessage);
+
+    const region = useMemo(() => {
+        return repliedMessage?.message_type == 'location' ? {
+            latitude: parseFloat(repliedMessage?.coordinates?.lat),
+            longitude: parseFloat(repliedMessage?.coordinates?.lng),
+            ...DefaultDelta
+        } : {
+            latitude: 12,
+            longitude: 12,
+            ...DefaultDelta
+        }
+    }, [repliedMessage?.coordinates, repliedMessage?.message_type])
 
     return (
         <>
             {repliedMessage ? <View style={[styles.inputContainer, { flexDirection: 'row', alignItems: 'flex-start' }]} >
                 <View style={{ flex: 1, paddingVertical: scaler(5) }} >
                     <Text style={styles.replied_to} >{Language.replied_to} <Text>
-                        {repliedMessage?.user?.display_name}
+                        {getDisplayName(repliedMessage?.user?.username, repliedMessage?.user?.first_name, repliedMessage?.user?.last_name)}
                     </Text>
                     </Text>
-                    {repliedMessage?.message_type == 'image' ?
+                    {repliedMessage?.message_type == 'image' || repliedMessage?.message_type == 'file' ?
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <ImageLoader
                                 placeholderSource={Images.ic_image_placeholder}
-                                style={{ borderRadius: scaler(10), height: scaler(60), width: width - scaler(30), marginTop: scaler(10) }} source={{ uri: getImageUrl(repliedMessage?.message, { width: width - scaler(30), height: scaler(60), type: 'messages' }) }} />
+                                style={{ resizeMode: 'cover', borderRadius: scaler(10), height: scaler(60), width: width - scaler(30), marginTop: scaler(10) }}
+                                source={{
+                                    uri: (repliedMessage?.message_type == 'file') ?
+                                        config.VIDEO_URL + (repliedMessage?.message?.substring(0, repliedMessage?.message?.lastIndexOf("."))) + "-00001.png"
+                                        : getImageUrl(repliedMessage?.message, { width: width - scaler(30), height: scaler(60), type: 'messages' })
+                                }} />
                             {/* <Text numberOfLines={1} type='mediumItalic' style={styles.message} >{"IMAGE"}</Text> */}
 
                         </View>
 
-                        :
-                        <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>}
+                        : repliedMessage?.message_type == 'contact' ?
+                            <View style={{ flexDirection: 'row', alignItems: 'center', borderColor: colors.colorGreyText, borderWidth: 1, padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
+                                <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                                    <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{repliedMessage?.contacts[0]?.givenName?.[0]?.toUpperCase()}</Text>
+                                </View>
+                                <Text style={{ flex: 1, marginRight: scaler(10) }} >{repliedMessage?.contacts[0]?.givenName + (repliedMessage?.contacts[0]?.familyName ? (" " + repliedMessage?.contacts[0]?.familyName) : "")}</Text>
+                            </View>
+                            : repliedMessage?.message_type == 'location' ?
+                                <View style={{ width: '100%', height: scaler(60), borderRadius: scaler(10), overflow: 'hidden' }} >
+                                    <MapView
+                                        style={{ flex: 1, overflow: 'hidden' }}
+                                        minZoomLevel={2}
+                                        customMapStyle={MapStyle}
+                                        provider={'google'}
+                                        cacheEnabled
+                                        showsMyLocationButton={false}
+                                        initialRegion={region} >
+                                        <Marker coordinate={region} >
+                                            <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                        </Marker>
+
+                                    </MapView>
+                                </View>
+                                : <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>}
+
                 </View>
                 <TouchableOpacity onPress={() => setRepliedMessage(null)} >
                     <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24), paddingVertical: scaler(5) }} />

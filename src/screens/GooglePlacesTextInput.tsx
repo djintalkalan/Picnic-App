@@ -76,12 +76,14 @@ const GooglePlacesTextInput: FC<any> = (props) => {
 
                 <GooglePlacesAutocomplete
                     ref={placeInputRef}
+                    keyboardShouldPersistTaps={'always'}
                     placeholder={Language.search_location}
                     minLength={3}
                     fetchDetails={true}
+                    keepResultsAfterBlur
                     textInputProps={{
                         autoFocus: true,
-                        returnKeyType: 'search',
+                        returnKeyType: 'done',
                         placeholderTextColor: colors.colorGreyInactive,
                         onChangeText: (text) => { setSearchText(text) },
                         rightIcon: { type: 'font-awesome', name: 'chevron-left', color: 'black' },
@@ -107,6 +109,8 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                             marginTop: scaler(20),
                             borderTopColor: "rgba(0, 0, 0, 0.06)",
                             borderTopWidth: 1,
+                            flex: 1,
+                            // backgroundColor:'red'
                         },
                         row: {
                             padding: scaler(15),

@@ -65,4 +65,8 @@ const goBack = () => {
     console.log(e);
   }
 };
-export const NavigationService = { setNavigationRef, getCurrentScreen, navigate, goBack, push, replace, logout, closeAndPush };
+
+const getNavigation = () => {
+  return navigationRef?.current
+};
+export const NavigationService = { getNavigation, setNavigationRef, getCurrentScreen, navigate, goBack, push, replace, logout, closeAndPush };

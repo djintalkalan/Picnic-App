@@ -1,6 +1,6 @@
 import ActionTypes, { action } from "app-store/action-types"
 
-export const searchAtHome = (payload: { text: string, type: 'events' | 'groups' }): action => {
+export const searchAtHome = (payload: { text: string, type: 'events' | 'groups', setSearchLoader: any }): action => {
     return {
         type: ActionTypes.SEARCH_AT_HOME,
         payload

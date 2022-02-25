@@ -120,12 +120,13 @@ const SearchChatScreen: FC<any> = (props) => {
     )
 }
 
-export default (props: any) => {
+const SearchScreenWithProvider: FC<any> = (props: any) => {
     return <SearchProvider>
         <SearchChatScreen {...props} />
     </SearchProvider>
 };
 
+export default SearchScreenWithProvider
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -1,4 +1,3 @@
-import { _getActiveMembership } from 'api';
 import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
@@ -15,7 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -65,21 +64,21 @@ const CreateEvent2: FC<any> = props => {
   const bodyData = props?.route?.params
 
   useEffect(() => {
-    _getActiveMembership().then(res => {
-      if (res?.status == 200) {
-        const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-        const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
-        let is_premium = 1
-        if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
-          is_premium = 0
-        }
-        if (userData?.is_premium != is_premium) {
-          Database.setUserData({ ...userData, is_premium })
-        }
-      }
-    }).catch(e => {
-      console.log(e);
-    })
+    // _getActiveMembership().then(res => {
+    //   if (res?.status == 200) {
+    //     const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+    //     const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+    //     let is_premium = 1
+    //     if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+    //       is_premium = 0
+    //     }
+    //     if (userData?.is_premium != is_premium) {
+    //       Database.setUserData({ ...userData, is_premium })
+    //     }
+    //   }
+    // }).catch(e => {
+    //   console.log(e);
+    // })
   }, [])
 
   const onSubmit = useCallback(
@@ -197,7 +196,15 @@ const CreateEvent2: FC<any> = props => {
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
-          <TouchableOpacity onPress={() => setIsUnlimitedCapacity(!isUnlimitedCapacity)} style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => {
+            setIsUnlimitedCapacity((b) => {
+              if (!b) {
+                clearErrors('capacity')
+                setValue('capacity', "")
+              }
+              return !b
+            })
+          }} style={{ flexDirection: 'row' }}>
             <CheckBox
               checked={isUnlimitedCapacity}
               setChecked={(b) => {
@@ -212,7 +219,15 @@ const CreateEvent2: FC<any> = props => {
               {Language.unlimited_capacity}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsFreeEvent(!isFreeEvent)} style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => {
+            setIsFreeEvent((b) => {
+              if (!b) {
+                clearErrors('ticketPrice')
+                setValue('ticketPrice', "")
+              }
+              return !b
+            })
+          }} style={{ flexDirection: 'row' }}>
             <CheckBox checked={isFreeEvent}
               setChecked={(b) => {
                 if (b) {
@@ -237,6 +252,7 @@ const CreateEvent2: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
+            maxLength={5}
             keyboardType={'number-pad'}
             disabled={isUnlimitedCapacity ? true : false}
             required={
@@ -286,6 +302,13 @@ const CreateEvent2: FC<any> = props => {
               disabled={isFreeEvent ? true : false}
               iconSize={scaler(18)}
               icon={Images.ic_ticket}
+              rules={{
+                validate: (v: string) => {
+                  if (parseFloat(v) > 99999.99) {
+                    return Language.event_max_price
+                  }
+                }
+              }}
               required={
                 isFreeEvent ? undefined : Language.ticket_price_required
               }

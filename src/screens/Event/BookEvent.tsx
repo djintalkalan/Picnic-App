@@ -25,6 +25,7 @@ const BookEvent: FC = (props: any) => {
     }), isEqual)
     const {
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<FormType>({
         mode: 'onChange',
@@ -102,10 +103,18 @@ const BookEvent: FC = (props: any) => {
                         multiline={Platform.OS == 'ios' ? true : false}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
-                        // control={control}
+                        maxLength={5}
+                        rules={{
+                            validate: (v: string) => {
+                                if (parseInt(v) > (event?.capacity - event?.total_sold_tickets)) {
+                                    return Language.invalid_seat_quantity
+                                }
+                            }
+                        }}
+                        control={control}
                         //@ts-ignore
                         onChangeText={setNoOfTickets}
-                    // errors={errors}
+                        errors={errors}
                     />
                 </View>
                 <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >

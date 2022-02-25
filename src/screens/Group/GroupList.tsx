@@ -6,13 +6,13 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
-import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
+import { Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDatabase } from 'src/database/Database';
+import Database, { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 const ITEM_HEIGHT = scaler(90)
@@ -89,10 +89,12 @@ const GroupList: FC<any> = (props) => {
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
 
-    useLayoutEffect(() => {
-        console.log("selectedLocation changed", selectedLocation)
-        paginationState.current = InitialPaginationState
-        fetchGroupList()
+    useEffect(() => {
+        InteractionManager.runAfterInteractions(() => {
+            console.log("selectedLocation changed", selectedLocation)
+            paginationState.current = InitialPaginationState
+            fetchGroupList()
+        })
     }, [selectedLocation])
 
     const fetchGroupList = useCallback(() => {
@@ -191,7 +193,7 @@ const GroupList: FC<any> = (props) => {
                         fetchGroupList()
                     }}
                 />}
-                data={searchedGroups ? searchedGroups : allGroups}
+                data={searchedGroups && Database.getOtherString("searchHomeText") ? searchedGroups : allGroups}
                 contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1 }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
