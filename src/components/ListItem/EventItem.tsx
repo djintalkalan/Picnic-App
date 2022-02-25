@@ -37,7 +37,7 @@ export const EventItem: FC<EventProps> = ({ title, subtitle, date, currency, pri
 
                     <View style={{ flex: 1, marginVertical: scaler(5), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }} >
                         <View>
-                            <Text style={{ color: colors.colorBlack, fontWeight: '700', fontSize: scaler(14) }} >{price ? currency : ""}{price}</Text>
+                            <Text style={{ color: colors.colorBlack, fontWeight: '600', fontSize: scaler(14) }} >{price ? currency : ""}{price}</Text>
                             <Text style={{ color: price ? colors.colorGreyInactive : colors.colorBlackText, marginTop: scaler(2), fontSize: scaler(price ? 11 : 13) }} >{price ? Language.per_person : Language.free_event}</Text>
                         </View>
                         <View style={{ flexShrink: 1, alignItems: 'flex-end' }}>
