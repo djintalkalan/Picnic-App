@@ -7,6 +7,7 @@ import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/Event/EventList'
@@ -70,6 +71,8 @@ const Home: FC = () => {
       dispatch(getAllCurrencies())
     })
   }, [])
+
+  const { bottom } = useSafeAreaInsets()
 
   const onPressSetting = useCallback(() => {
     NavigationService.navigate("Settings")
@@ -144,7 +147,7 @@ const Home: FC = () => {
         style={{
           alignSelf: 'baseline',
           position: 'absolute',
-          bottom: scaler(40),
+          bottom: bottom + scaler(0),
           right: scaler(15),
         }}>
         {isFABOpen && (

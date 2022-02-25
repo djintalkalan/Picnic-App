@@ -266,7 +266,7 @@ const EventList: FC<any> = (props) => {
                     }}
                 />}
                 data={searchedEvents && searchHomeText ? searchedEvents : allEvents}
-                contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom }}
+                contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}

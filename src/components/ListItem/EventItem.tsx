@@ -1,7 +1,7 @@
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
-import React, { FC, ReactElement, useMemo } from 'react'
+import React, { FC, memo, ReactElement, useMemo } from 'react'
 import { GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
@@ -22,7 +22,7 @@ interface EventProps {
     price?: string
 }
 
-export const EventItem: FC<EventProps> = ({ title, subtitle, date, currency, price, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
     const style = useMemo(() => StyleSheet.create({
         containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
         textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) }
@@ -63,6 +63,7 @@ export const EventItem: FC<EventProps> = ({ title, subtitle, date, currency, pri
     )
 }
 
+export const EventItem = memo(EventItemS)
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
