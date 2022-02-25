@@ -249,6 +249,7 @@ export const es = {
     you_have_been_removed_from_event: "El administrador te ha eliminado del evento",
     this_group_is_deleted: "El administrador ha eliminado el grupo",
     this_event_is_deleted: "El administrador ha eliminado este evento",
+    change_language: "Cambiar idioma",
     upcoming_events: "",
     past_events: "",
     successfully_imported: "",
@@ -256,4 +257,9 @@ export const es = {
     add_to_contacts: "",
     search_messages_here: "",
     search_here: "",
+    event_max_price: "",
+    min_characters_group_name: "",
+    min_characters_event_name: "",
+    invalid_seat_quantity: "",
+    drag_pin_to_select_location: ""
 }

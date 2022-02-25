@@ -181,7 +181,7 @@ const SelectLocation: FC<any> = (props) => {
                     bottom: 0,
                     position: 'absolute',
                 }} >
-                    {type == 'currentLocation' ? null : <Text style={styles.drag} >{"Drag pin to select location"}</Text>}
+                    {type == 'currentLocation' ? null : <Text style={styles.drag} >{Language.drag_pin_to_select_location}</Text>}
                     <View style={{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -200,8 +200,6 @@ const SelectLocation: FC<any> = (props) => {
                             setSelectedLocation(localLocation)
                         NavigationService.goBack()
                     }} containerStyle={{ marginTop: scaler(20) }} title={type == 'currentLocation' ? 'Share current location' : 'Confirm Location'} />
-
-
                 </View> : null
             }
         </View >

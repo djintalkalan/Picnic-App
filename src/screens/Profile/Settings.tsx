@@ -2,16 +2,22 @@ import { deleteAccount, doLogout, getProfile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Image, ImageSourcePropType, InteractionManager, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Entypo from 'react-native-vector-icons/Entypo'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
-import Language from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareAppLink, _showErrorMessage, _showPopUpAlert } from 'utils'
+import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
+import { getImageUrl, NavigationService, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils'
 
+const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 
 const Settings: FC<any> = (props) => {
+
+    const updateLanguage = useUpdateLanguage()
+    const selectedLanguage = useLanguage()
 
     const [userData] = useDatabase("userData")
 
@@ -21,12 +27,40 @@ const Settings: FC<any> = (props) => {
 
     const passwordRef = useRef("")
 
+    const [isLanguageModal, setLanguageModal] = useState();
+
 
     const [profileImage, setProfileImage] = useState()
 
     useEffect(() => {
         dispatch(getProfile())
     }, []);
+
+    const customView = useCallback(memo(() => {
+
+        return <View style={{ width: '100%' }} >
+            <TouchableOpacity onPress={() => {
+                InteractionManager.runAfterInteractions(() => {
+                    updateLanguage("en")
+                    _hidePopUpAlert()
+                })
+            }}
+                style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
+                <MaterialIcons name={selectedLanguage == 'en' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
+                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }} >English</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => {
+                InteractionManager.runAfterInteractions(() => {
+                    updateLanguage("es")
+                    _hidePopUpAlert()
+                })
+            }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
+                <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
+                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>Spanish</Text>
+            </TouchableOpacity>
+        </View>
+    }), [updateLanguage, selectedLanguage])
 
     return (
         <SafeAreaView style={styles.container} >
@@ -108,6 +142,18 @@ const Settings: FC<any> = (props) => {
                             title={Language.join_now}
                         /> : undefined
                     }
+
+                    <SettingButton
+                        onPress={() => {
+                            _showPopUpAlert({
+                                title: Language.change_language,
+                                customView: customView
+
+                            })
+                        }}
+                        image={languageImageSource}
+                        title={Language.change_language}
+                    />
 
                     <SettingButton
                         onPress={() => {

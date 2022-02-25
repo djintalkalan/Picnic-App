@@ -115,13 +115,13 @@ export const TicketView: FC<ITicketView> = ({ size = 'normal', capacity_type, is
                 borderColor: color
             },
             image: {
-                height: scaler(size == 'small' ? 10 : 14),
-                width: scaler(size == 'small' ? 10 : 14),
+                height: scaler(size == 'small' ? 12 : 14),
+                width: scaler(size == 'small' ? 12 : 14),
                 marginRight: scaler(6),
                 tintColor: tintColor
             },
             unlimited: {
-                fontSize: scaler(size == 'small' ? 8 : 9),
+                fontSize: scaler(size == 'small' ? 9 : 9),
                 color: colors.colorBlackText
             }
         })

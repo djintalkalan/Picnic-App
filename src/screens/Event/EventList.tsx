@@ -9,16 +9,18 @@ import { TicketView } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
 import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Database, { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(120)
 let LOADING = false
 const EventList: FC<any> = (props) => {
+    const { bottom } = useSafeAreaInsets()
 
     const getButtons = useCallback((item: any) => {
         const { is_event_member, _id, is_event_admin } = item
@@ -162,7 +164,7 @@ const EventList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, city, state, country } = item
+        const { is_event_member, city, state, country, is_free_event, event_date, event_currency, event_fees } = item
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -172,27 +174,29 @@ const EventList: FC<any> = (props) => {
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT, type: 'events' }) } : undefined}
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
-                customView={<TicketView size={'small'} {...item} />}
+                customView={<TicketView size='small' {...item} />}
                 onPress={() => {
-                    dispatch(setActiveEvent(item))
+                    dispatch(setActiveEvent(item));
                     setTimeout(() => {
                         if (item?.is_event_member) {
-                            NavigationService.navigate("EventChats", { id: item?._id })
+                            NavigationService.navigate("EventChats", { id: item?._id });
                         } else {
-                            NavigationService.navigate("EventDetail", { id: item?._id })
+                            NavigationService.navigate("EventDetail", { id: item?._id });
                         }
                     }, 0);
 
 
                 }}
                 onPressImage={() => {
-                    dispatch(setActiveEvent(item))
+                    dispatch(setActiveEvent(item));
                     setTimeout(() => {
-                        NavigationService.navigate("EventDetail", { id: item?._id })
+                        NavigationService.navigate("EventDetail", { id: item?._id });
                     }, 0);
 
                 }}
-            />
+                date={dateStringFormat(event_date, "MMM DD, YYYY", "YYYY-MM-DD", "-")}
+                currency={getSymbol(event_currency)}
+                price={!is_free_event ? event_fees : ""} />
         )
     }, [])
 
@@ -251,7 +255,7 @@ const EventList: FC<any> = (props) => {
                     }}
                 />}
                 data={searchedEvents && Database.getOtherString("searchHomeText") ? searchedEvents : allEvents}
-                contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1 }}
+                contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}

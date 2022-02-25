@@ -8,6 +8,7 @@ import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -139,6 +140,8 @@ const GroupList: FC<any> = (props) => {
         )
     }, [])
 
+    const { bottom } = useSafeAreaInsets()
+
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
         const { is_group_member } = item
         return (<View style={{ flex: 1, flexDirection: 'row', height: ITEM_HEIGHT }} >
@@ -194,7 +197,7 @@ const GroupList: FC<any> = (props) => {
                     }}
                 />}
                 data={searchedGroups && Database.getOtherString("searchHomeText") ? searchedGroups : allGroups}
-                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1 }}
+                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}

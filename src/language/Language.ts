@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 import LocalizedStrings from 'react-native-localization';
 import Database, { useDatabase } from 'src/database/Database';
 import { en } from './en';
-// import { es } from './es';
+import { es } from './es';
 
 export type LanguageType = 'en' | 'es';
 const DefaultLanguage: LanguageType = 'en';
 const Language = new LocalizedStrings({
   en,
-  // es
+  es
 });
 Language.setLanguage(
   Database.getStoredValue('selectedLanguage')?.toString() || DefaultLanguage,

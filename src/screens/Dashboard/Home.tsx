@@ -5,30 +5,17 @@ import { Card, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
-import Language from 'src/language/Language'
+import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
 
-const tabs: TabProps[] = [
-  {
-    title: 'Groups',
-    icon: Images.ic_group_icon,
-    name: 'HomeGroupTab',
-    screen: GroupList,
-  },
-  {
-    title: 'Events',
-    icon: Images.ic_calender,
-    name: 'HomeEventTab',
-    screen: EventList,
-  },
-];
+
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
@@ -44,6 +31,22 @@ const Home: FC = () => {
     groupLength: state?.group?.allGroups?.length,
     // a: console.log(state)
   }), isEqual)
+
+  const tabs: TabProps[] = useMemo(() => [
+    {
+      title: Language.groups,
+      icon: Images.ic_group_icon,
+      name: 'HomeGroupTab',
+      screen: GroupList,
+    },
+    {
+      title: Language.events,
+      icon: Images.ic_calender,
+      name: 'HomeEventTab',
+      screen: EventList,
+    },
+  ], [useLanguage()])
+
   const [currentTabIndex, setCurrentTabIndex] = useState(0)
   const [searchLoader, setSearchLoader] = useState(false)
   const inputRef = useRef<TextInput>(null);
