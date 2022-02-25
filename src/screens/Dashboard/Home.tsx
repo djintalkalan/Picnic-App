@@ -57,14 +57,13 @@ const Home: FC = () => {
   const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
 
   const debounceSearch = useCallback(_.debounce((text) => {
-    Database.setOtherString("searchHomeText", text)
     dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups', setSearchLoader: setSearchLoader }))
   }, 500), [currentTabIndex])
 
   const debounceClear = useCallback(_.debounce(() => {
     Database.setOtherString("searchHomeText", "")
     dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
-  }, 100), [])
+  }, 0), [])
 
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -116,7 +115,13 @@ const Home: FC = () => {
         <TextInput
           ref={inputRef}
           onChangeText={(text) => {
-            text?.trim()?.length > 2 ? debounceSearch(text) : debounceClear()
+            if (text?.trim()?.length > 2) {
+              Database.setOtherString("searchHomeText", text)
+              debounceSearch(text)
+            } else {
+
+              debounceClear()
+            }
           }}
           style={styles.searchInput}
           placeholder={Language.search_placeholder}

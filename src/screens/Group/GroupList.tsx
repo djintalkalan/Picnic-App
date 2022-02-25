@@ -6,17 +6,19 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Bar } from 'react-native-progress';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import Database, { useDatabase } from 'src/database/Database';
+import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 const ITEM_HEIGHT = scaler(90)
+const { width, height } = Dimensions.get('screen')
 
 let LOADING = false
 
@@ -78,14 +80,15 @@ const GroupList: FC<any> = (props) => {
         return buttons
     }, [useLanguage()])
 
-    const { isLoading, allGroups, searchedGroups } = useSelector<RootState, any>((state) => ({
-        isLoading: state.isLoading,
+    const { allGroups, searchedGroups } = useSelector<RootState, any>((state) => ({
         allGroups: state?.group?.allGroups,
         searchedGroups: state?.homeData?.searchedGroups
     }), isEqual)
+    const [isLoader, setLoader] = useState(false)
 
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')
+    const [searchHomeText] = useDatabase("searchHomeText")
     const dispatch = useDispatch()
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
@@ -107,7 +110,7 @@ const GroupList: FC<any> = (props) => {
             LOADING = false
         }, 2000);
         let page = (paginationState?.current?.currentPage) + 1
-        dispatch(getAllGroups({ page, onSuccess: onSuccess }))
+        dispatch(getAllGroups({ page, onSuccess, setLoader }))
     }, [])
 
     const onSuccess = useCallback(({ pagination }) => {
@@ -188,6 +191,14 @@ const GroupList: FC<any> = (props) => {
     }, [])
     return (
         <View style={styles.container} >
+            {isLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
+                borderWidth={0}
+                animationConfig={{ bounciness: 2 }}
+                animationType={'decay'}
+                indeterminateAnimationDuration={600}
+                indeterminate
+                useNativeDriver
+                color={colors.colorPrimary} />}
             <SwipeListView
                 refreshControl={searchedGroups ? undefined : <RefreshControl
                     refreshing={false}
@@ -196,7 +207,7 @@ const GroupList: FC<any> = (props) => {
                         fetchGroupList()
                     }}
                 />}
-                data={searchedGroups && Database.getOtherString("searchHomeText") ? searchedGroups : allGroups}
+                data={(searchedGroups && searchHomeText) ? searchedGroups : allGroups}
                 contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}

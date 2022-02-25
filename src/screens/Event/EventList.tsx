@@ -7,17 +7,19 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { EventItem } from 'custom-components/ListItem/EventItem';
 import { TicketView } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef } from 'react';
-import { Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { Dimensions, Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Bar } from 'react-native-progress';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import Database, { useDatabase } from 'src/database/Database';
+import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { dateStringFormat, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
-const ITEM_HEIGHT = scaler(120)
+const ITEM_HEIGHT = scaler(90)
+const { width, height } = Dimensions.get('screen')
 let LOADING = false
 const EventList: FC<any> = (props) => {
     const { bottom } = useSafeAreaInsets()
@@ -126,8 +128,7 @@ const EventList: FC<any> = (props) => {
         return buttons
     }, [useLanguage()])
 
-    const { isLoading, allEvents, searchedEvents } = useSelector<RootState, any>((state) => ({
-        isLoading: state.isLoading,
+    const { allEvents, searchedEvents } = useSelector<RootState, any>((state) => ({
         allEvents: state?.event?.allEvents,
         searchedEvents: state?.homeData?.searchedEvents
     }), isEqual)
@@ -135,6 +136,8 @@ const EventList: FC<any> = (props) => {
     const paginationState = useRef<IPaginationState>(InitialPaginationState)
     const [selectedLocation] = useDatabase('selectedLocation')
     const dispatch = useDispatch()
+    const [isLoader, setLoader] = useState(false)
+    const [searchHomeText] = useDatabase("searchHomeText")
 
     const swipeListRef = useRef<SwipeListView<any>>(null)
 
@@ -153,7 +156,7 @@ const EventList: FC<any> = (props) => {
             LOADING = false
         }, 2000);
         let page = (paginationState?.current?.currentPage) + 1
-        dispatch(getAllEvents({ page, onSuccess: onSuccess }))
+        dispatch(getAllEvents({ page, onSuccess: onSuccess, setLoader: setLoader }))
     }, [])
 
     const onSuccess = useCallback(({ pagination }) => {
@@ -246,6 +249,14 @@ const EventList: FC<any> = (props) => {
     }, [])
     return (
         <View style={styles.container} >
+            {isLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
+                borderWidth={0}
+                animationConfig={{ bounciness: 2 }}
+                animationType={'decay'}
+                indeterminateAnimationDuration={600}
+                indeterminate
+                useNativeDriver
+                color={colors.colorPrimary} />}
             <SwipeListView
                 refreshControl={searchedEvents ? undefined : <RefreshControl
                     refreshing={false}
@@ -254,7 +265,7 @@ const EventList: FC<any> = (props) => {
                         fetchEventList()
                     }}
                 />}
-                data={searchedEvents && Database.getOtherString("searchHomeText") ? searchedEvents : allEvents}
+                data={searchedEvents && searchHomeText ? searchedEvents : allEvents}
                 contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
