@@ -1,7 +1,8 @@
 import { colors } from 'assets/Colors'
+import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, ReactElement, useMemo } from 'react'
-import { GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, Text, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native'
+import { GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
