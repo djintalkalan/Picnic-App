@@ -72,14 +72,15 @@ const styles = StyleSheet.create({
         height: scaler(120),
         width: scaler(120),
         // borderRadius: scaler(30),
+        // backgroundColor: 'red',
         resizeMode: 'stretch'
     },
     textContainer: {
         flex: 1,
         paddingHorizontal: scaler(10),
         paddingTop: scaler(10),
-        borderTopColor: colors.colorD,
-        borderTopWidth: 1
+        // borderTopColor: colors.colorD,
+        // borderTopWidth: 1
         // justifyContent: 'space-between',
         // backgroundColor: 'red',
         // marginHorizontal: scaler(10)

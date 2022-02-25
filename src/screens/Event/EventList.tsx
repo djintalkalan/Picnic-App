@@ -18,7 +18,7 @@ import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { dateStringFormat, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
-const ITEM_HEIGHT = scaler(90)
+const ITEM_HEIGHT = scaler(120)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
 const EventList: FC<any> = (props) => {
@@ -274,9 +274,10 @@ const EventList: FC<any> = (props) => {
                 directionalLockEnabled
                 ItemSeparatorComponent={() => {
                     return <View style={{
-                        flex: 1, marginHorizontal: scaler(15), height: 1,
-                        // backgroundColor: '#EBEBEB',
-                        marginVertical: scaler(4)
+                        flex: 1, height: 1,
+                        backgroundColor: colors.colorD,
+                        marginRight: scaler(120),
+                        marginVertical: scaler(0)
                     }} />
                 }}
                 ref={swipeListRef}
