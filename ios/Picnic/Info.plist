@@ -60,6 +60,8 @@
 	<string>${APP_NAME} requires access to your photo gallery to let you choose photos for your profile picture as well as for groups and events.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>${APP_NAME} requires access to your contacts to let you choose contact for sharing in groups and events.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>${APP_NAME} requires access to your calender to let you add events in calender.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

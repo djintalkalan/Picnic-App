@@ -208,7 +208,7 @@ const GroupList: FC<any> = (props) => {
                     }}
                 />}
                 data={(searchedGroups && searchHomeText) ? searchedGroups : allGroups}
-                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom + scaler(70) }}
+                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}

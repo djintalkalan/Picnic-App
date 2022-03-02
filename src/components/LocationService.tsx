@@ -3,7 +3,7 @@ import React, { createContext, FC, useCallback, useContext, useEffect, useRef, u
 import { Alert, InteractionManager, Platform } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
-import Database, { ILocation } from 'src/database/Database'
+import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
 
@@ -42,7 +42,7 @@ const LocationContext = createContext<LocationServiceValues>({
 navigator.geolocation = Geolocation
 
 export const LocationServiceProvider: FC<any> = ({ children }) => {
-
+    const [isLogin] = useDatabase<boolean>("isLogin")
     const askedForBlocked = useCallback(() => {
         Alert.alert(Language.permission_required, Language.app_needs_location_permission, [
             {
@@ -52,13 +52,8 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                         startChecking()
                     })
                 },
-
             },
-            {
-                text: Language.cancel,
-
-            }
-
+            { text: Language.cancel, }
         ], { cancelable: true })
     }, [])
 
@@ -74,46 +69,54 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                 setLocationEnabled(false)
                 // _showErrorMessage("Location Permission denied")
                 if (denyTime.current) {
-
                     askedForBlocked()
                 }
                 else {
                     denyTime.current = denyTime.current + 1
-
                     await askLocationPermission()
-
                 }
             case RESULTS.LIMITED:
-                console.log('The permission is limited: some actions are possible');
-                setLocationEnabled(true)
-                return true
             case RESULTS.GRANTED:
-                console.log('The permission is GRANTED: all actions are possible');
+                // console.log('The permission is limited: some actions are possible');
                 setLocationEnabled(true)
+                updateLocation()
                 return true
+            // console.log('The permission is GRANTED: all actions are possible');
+            // setLocationEnabled(true)
+            // updateLocation()
+            // return true
 
             case RESULTS.BLOCKED:
                 askedForBlocked()
                 break;
         }
-    }, [])
+    }, [isLogin])
 
     const checkLocationPermission = useCallback(async () => {
         const result = await check(Platform.OS == 'android' ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
         return await getPermissionResult(result)
-    }, [])
-
+    }, [isLogin])
 
     const askLocationPermission = useCallback(async () => {
-        const result = await request(Platform.OS == 'android' ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE, {
-            title: Language.permission_required,
-            message: Language.app_needs_location_permission,
-            buttonPositive: Language.give_permission,
-            buttonNegative: Language.deny,
-        })
-        await getPermissionResult(result);
-
-    }, [])
+        if (isLogin) {
+            Alert.alert(Language.permission_required, Language.app_needs_location_permission, [
+                {
+                    text: Language.give_permission, onPress: async () => {
+                        const result = await request(Platform.OS == 'android' ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE, {
+                            title: Language.permission_required,
+                            message: Language.app_needs_location_permission,
+                            buttonPositive: Language.give_permission,
+                            buttonNegative: Language.deny,
+                        })
+                        await getPermissionResult(result);
+                    },
+                },
+                {
+                    text: Language.cancel,
+                }
+            ], { cancelable: true })
+        }
+    }, [isLogin])
 
     useEffect(() => {
         const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
@@ -127,37 +130,48 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
             Database.setSelectedLocation(defaultLocation)
         }
         InteractionManager.runAfterInteractions(async () => {
-            startChecking()
+            askForChecking()
         })
-    }, [])
+    }, [isLogin])
+
+    const askForChecking = useCallback(() => {
+        // const isLogin = Database.getStoredValue<boolean>("isLogin")
+
+        if (isLogin) {
+            startChecking()
+        }
+        // startChecking()
+
+    }, [isLogin])
 
     const startChecking = useCallback(async () => {
-        const hasPermissionAvailable = await checkLocationPermission()
-        if (hasPermissionAvailable) {
-            Geolocation.getCurrentPosition(
-                async (position) => {
-                    console.log(position);
-                    const location = {
-                        latitude: position?.coords?.latitude,
-                        longitude: position?.coords?.longitude,
-                    }
-                    const { address, otherData } = await getAddressFromLocation(location)
-                    if (address) {
-                        Database.setCurrentLocation({ ...location, address, otherData })
-                        const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-                        if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
-                            Database.setSelectedLocation({ ...location, address, otherData })
-                        }
-                    }
+        await checkLocationPermission()
+    }, [isLogin])
 
-                },
-                (error) => {
-                    // See error code charts below.
-                    console.log(error.code, error.message);
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
-        }
+    const updateLocation = useCallback(() => {
+        Geolocation.getCurrentPosition(
+            async (position) => {
+                console.log(position);
+                const location = {
+                    latitude: position?.coords?.latitude,
+                    longitude: position?.coords?.longitude,
+                }
+                const { address, otherData } = await getAddressFromLocation(location)
+                if (address) {
+                    Database.setCurrentLocation({ ...location, address, otherData })
+                    const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+                    if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
+                        Database.setSelectedLocation({ ...location, address, otherData })
+                    }
+                }
+
+            },
+            (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
     }, [])
 
 

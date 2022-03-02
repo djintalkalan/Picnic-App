@@ -26,7 +26,7 @@ const EventChats: FC<any> = (props) => {
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
     const [isChatLoader, setChatLoader] = useState(false)
-    const insets = useSafeAreaInsets()
+    const { bottom } = useSafeAreaInsets()
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
     const { keyboardHeight, isKeyboard } = useKeyboardService();
@@ -52,6 +52,7 @@ const EventChats: FC<any> = (props) => {
                 message_type: "text",
                 message: textMessageRef?.current?.trim()
             })
+            textMessageRef.current = ""
             inputRef.current?.clear()
             if (repliedMessage) {
                 setRepliedMessage(null)
@@ -247,7 +248,7 @@ const EventChats: FC<any> = (props) => {
                         renderItem={_renderChatItem}
                     />
                 </View>
-                {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - insets?.bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+                {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                     <ChatInput
                         // value={textMessage}

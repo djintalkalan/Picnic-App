@@ -219,7 +219,7 @@ const GroupDetail: FC<any> = (props) => {
                     dispatch(setLoadingAction(false))
                 })
             } else {
-                _showErrorMessage("Wrong file picked")
+                _showErrorMessage(type == 'telegram' ? Language.unsupported_json : Language.unsupported_txt)
             }
         })
     }, [group])

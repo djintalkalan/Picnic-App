@@ -6,6 +6,7 @@ import { Button, Card, Text, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -290,7 +291,31 @@ const EventDetail: FC<any> = (props) => {
             {(event?.is_admin || event?.is_event_member) ?
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                     <View style={{ flex: 1 }}>
-                        <Button title={Language.add_to_calender} />
+                        <Button onPress={() => {
+                            try {
+                                const startDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-').toISOString()
+                                const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : undefined// add(startDate, { hours: 1 })
+
+
+                                presentEventCreatingDialog({
+                                    startDate,
+                                    endDate,
+                                    allDay: false,
+                                    title: '"' + event?.name + '" event from Picnic Groups',
+                                    notes: event?.name
+                                }).then(res => {
+                                    console.log("Res", res);
+
+                                }).catch(e => {
+                                    console.log("E", e);
+
+                                })
+                            }
+                            catch (e) {
+                                console.log("Error", e);
+
+                            }
+                        }} title={Language.add_to_calender} />
                     </View>
                     <View style={{ flex: 1 }}>
                         <Button title={Language.start_chat}

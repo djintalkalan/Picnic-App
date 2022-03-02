@@ -9,6 +9,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
 import { requestPurchase } from 'react-native-iap';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage, _showSuccessMessage } from 'utils';
@@ -217,45 +218,48 @@ const Subscription: FC = (props: any) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ flex: 1, marginHorizontal: scaler(16), marginVertical: scaler(20) }} >
-                <TouchableOpacity onPress={() => NavigationService.goBack()}>
-                    <Image source={Images.ic_close_subscription} style={styles.cancelView} />
-                </TouchableOpacity>
-                <Text style={styles.joinText} >{Language.join_us}</Text>
-                <ImageBackground imageStyle={{ resizeMode: 'contain' }} source={Images.ic_oval_shape}
-                    style={styles.ovalStyle} resizeMode='contain'>
-                    <Text style={[styles.joinText, { fontStyle: 'italic' }]} >{Language.here}</Text>
-                    {/* </View> */}
-                </ImageBackground>
-                <View style={[styles.listStyle, { marginTop: scaler(30) }]}>
-                    <Image source={Images.ic_list_dot} style={styles.dotView} />
-                    <Text style={styles.listText}> {Language.members_can_host_events},</Text>
+            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }} >
+                <View style={{ flex: 1, marginHorizontal: scaler(16), marginVertical: scaler(20) }} >
+                    <TouchableOpacity onPress={() => NavigationService.goBack()}>
+                        <Image source={Images.ic_close_subscription} style={styles.cancelView} />
+                    </TouchableOpacity>
+                    <Text style={styles.joinText} >{Language.join_us}</Text>
+                    <ImageBackground imageStyle={{ resizeMode: 'contain' }} source={Images.ic_oval_shape}
+                        style={styles.ovalStyle} resizeMode='contain'>
+                        <Text style={[styles.joinText, { fontStyle: 'italic' }]} >{Language.here}</Text>
+                        {/* </View> */}
+                    </ImageBackground>
+                    <View style={[styles.listStyle, { marginTop: scaler(30) }]}>
+                        <Image source={Images.ic_list_dot} style={styles.dotView} />
+                        <Text style={styles.listText}> {Language.members_can_host_events},</Text>
+                    </View>
+                    <View style={styles.listStyle}>
+                        <Image source={Images.ic_list_dot} style={styles.dotView} />
+                        <Text style={styles.listText}> {Language.get_access_to_premium_features}</Text>
+                    </View>
+                    <View style={styles.listStyle}>
+                        <Image source={Images.ic_list_dot} style={styles.dotView} />
+                        <Text style={styles.listText}> {Language.and_other_exclusive_offers}</Text>
+                    </View>
                 </View>
-                <View style={styles.listStyle}>
-                    <Image source={Images.ic_list_dot} style={styles.dotView} />
-                    <Text style={styles.listText}> {Language.get_access_to_premium_features}</Text>
-                </View>
-                <View style={styles.listStyle}>
-                    <Image source={Images.ic_list_dot} style={styles.dotView} />
-                    <Text style={styles.listText}> {Language.and_other_exclusive_offers}</Text>
-                </View>
-            </View>
 
-            {/* {subscriptions?.map((subscription, index) => {
+                {/* {subscriptions?.map((subscription, index) => {
                 return <View key={index} style={{ flex: 1 }} >
                     <Text>{subscription?.productId}</Text>
                     <Button title='Subscribe now' onPress={() => requestSubscription(subscription?.productId, true)} />
                 </View>
             })} */}
-            <View style={{ margin: scaler(20) }}>
-                <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
-                <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
+                <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
+                    <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
+                    <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
 
 
-            </View>
-            <Button containerStyle={{ marginHorizontal: scaler(20), }} title='Restore Purchase' onPress={() => {
-                restorePurchase()
-            }} />
+                </View>
+                <Button containerStyle={{ marginHorizontal: scaler(20), }} title='Restore Purchase' onPress={() => {
+                    restorePurchase()
+                }} />
+
+            </KeyboardAwareScrollView>
 
         </SafeAreaView>
     );

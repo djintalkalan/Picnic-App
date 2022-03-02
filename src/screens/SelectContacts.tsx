@@ -3,7 +3,7 @@ import { colors, Images } from 'assets'
 import { MyHeader } from 'custom-components'
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, FlatList, InteractionManager, Platform, StyleSheet } from 'react-native'
+import { Alert, FlatList, InteractionManager, Platform, StyleSheet, Text, View } from 'react-native'
 import Contacts, { Contact, PhoneNumber } from 'react-native-contacts'
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -16,11 +16,11 @@ const SelectContacts: FC<any> = (props) => {
     const onChooseContacts = props?.route?.params?.onChooseContacts
 
     const [contacts, setContacts] = useState<Array<Contact>>([]);
+    const [isLoaded, setLoaded] = useState<boolean>(false);
 
     const getPhoneNumber = useCallback((phoneNumbers: PhoneNumber[]) => {
         try {
             return phoneNumbers?.map(_ => _?.number).join("\n")
-
         }
         catch (e) {
             return phoneNumbers?.[0]?.number || ""
@@ -67,7 +67,6 @@ const SelectContacts: FC<any> = (props) => {
             },
             {
                 text: Language.cancel,
-
             }
 
         ], { cancelable: true })
@@ -76,15 +75,11 @@ const SelectContacts: FC<any> = (props) => {
     let denyTime = useRef(0)
     const getPermissionResult = useCallback(async (result) => {
         console.log("result", result);
-
         switch (result) {
-            case RESULTS.UNAVAILABLE:
-                setContactPermission(false)
-                console.log('This feature is not available (on this device / in this context)');
-                return false
             case RESULTS.DENIED:
                 console.log('The permission is DENIED: No actions is possible');
                 setContactPermission(false)
+                setLoaded(true)
                 // _showErrorMessage("Contact Permission denied")
                 if (denyTime.current) {
                     askedForBlocked()
@@ -94,19 +89,17 @@ const SelectContacts: FC<any> = (props) => {
                     await askContactPermission()
                 }
                 return false
-            case RESULTS.LIMITED:
-                console.log('The permission is limited: some actions are possible');
-                setContactPermission(false)
-                break;
-
             // return await checkContactPermission()
             case RESULTS.GRANTED:
                 console.log('The permission is GRANTED: all actions are possible');
                 setContactPermission(true)
                 return true
-
             case RESULTS.BLOCKED:
                 askedForBlocked()
+                setLoaded(true)
+                break;
+            default:
+                setContactPermission(false)
                 break;
         }
     }, [])
@@ -118,14 +111,24 @@ const SelectContacts: FC<any> = (props) => {
 
 
     const askContactPermission = useCallback(async () => {
-        const result = await request(Platform.OS == 'android' ? PERMISSIONS.ANDROID.READ_CONTACTS : PERMISSIONS.IOS.CONTACTS, {
-            title: Language.permission_required,
-            message: Language.app_needs_contact_permission,
-            buttonPositive: Language.give_permission,
-            buttonNegative: Language.deny,
-        })
-        await getPermissionResult(result);
+        Alert.alert(Language.permission_required, Language.app_needs_contact_permission, [
+            {
+                text: Language.give_permission, onPress: async () => {
+                    const result = await request(Platform.OS == 'android' ? PERMISSIONS.ANDROID.READ_CONTACTS : PERMISSIONS.IOS.CONTACTS, {
+                        title: Language.permission_required,
+                        message: Language.app_needs_contact_permission,
+                        buttonPositive: Language.give_permission,
+                        buttonNegative: Language.deny,
+                    })
+                    await getPermissionResult(result);
+                },
 
+            },
+            {
+                text: Language.cancel,
+            }
+
+        ], { cancelable: true })
     }, [])
 
     const startChecking = useCallback(async () => {
@@ -139,8 +142,8 @@ const SelectContacts: FC<any> = (props) => {
         if (isContactPermission) {
             console.log("isContactPermission", isContactPermission);
             // return
-            // dispatch(setLoadingAction(true))
-
+            dispatch(setLoadingAction(true))
+            setLoaded(false)
             Contacts.getAll()
                 .then((contacts) => {
                     // work with contacts
@@ -148,25 +151,32 @@ const SelectContacts: FC<any> = (props) => {
                     setContacts(contacts)
                     console.log(contacts)
                     dispatch(setLoadingAction(false))
+                    setLoaded(true)
                 })
                 .catch((e) => {
                     console.log(e)
                     dispatch(setLoadingAction(false))
+                    setLoaded(true)
                 })
         }
     }, [isContactPermission])
-
-
 
     return (
         <SafeAreaView style={styles.container} >
             <MyHeader title={Language.select_contact} />
             <FlatList
                 style={{ flex: 1 }}
-                keyboardShouldPersistTaps={'handled'}
+                bounces={false}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps={'always'}
                 keyExtractor={(_, i) => i.toString()}
                 data={contacts}
                 renderItem={_renderItem}
+                ListEmptyComponent={isLoaded ? () => {
+                    return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                        <Text>{isContactPermission ? Language.contacts_not_available : Language.contacts_permission_not_available}</Text>
+                    </View>
+                } : undefined}
                 ItemSeparatorComponent={ListItemSeparator}
 
             />

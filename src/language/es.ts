@@ -95,8 +95,6 @@ export const es = {
     create_group: "Crear grupo",
     host_event: "Organizar evento",
     permission_required: "Permiso requerido",
-    app_needs_location_permission: "Necesitamos el permiso de ubicación para verificar tu ubicación actual",
-    app_needs_contact_permission: "",
     give_permission: "Dar permiso",
     deny: "Denegar",
     group_name: "Nombre del grupo",
@@ -261,5 +259,11 @@ export const es = {
     min_characters_group_name: "",
     min_characters_event_name: "",
     invalid_seat_quantity: "",
-    drag_pin_to_select_location: ""
+    drag_pin_to_select_location: "",
+    app_needs_location_permission: "",
+    app_needs_contact_permission: "",
+    unsupported_txt: "",
+    unsupported_json: "",
+    contacts_not_available: "",
+    contacts_permission_not_available: "",
 }
