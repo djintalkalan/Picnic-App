@@ -186,8 +186,13 @@ const showNotification = (message: any, isBackground: boolean) => {
                     case "file":
                         body = 'Video message arrived'
                         break
+                    case "contact":
+                        body = 'Contact shared'
+                        break
+                    case "location":
+                        body = 'Location shared'
+                        break
                 }
-
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
                     body,
