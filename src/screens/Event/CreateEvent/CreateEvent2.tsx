@@ -305,18 +305,24 @@ const CreateEvent2: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'ticketPrice'}
-              keyboardType={'number-pad'}
+              keyboardType={'decimal-pad'}
               disabled={isFreeEvent ? true : false}
               iconSize={scaler(18)}
               icon={Images.ic_ticket}
               rules={{
                 validate: (v: string) => {
-                  if (parseInt(v) == 0) {
-                    return Language.invalid_ticket_price
-                  }
                   if (parseFloat(v) > 99999.99) {
                     return Language.event_max_price
                   }
+                  try {
+                    if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || ("1" + v.split(".")?.[1] > 199))) {
+                      return Language.invalid_ticket_price
+                    }
+                  }
+                  catch (e) {
+
+                  }
+
                 }
               }}
               required={
