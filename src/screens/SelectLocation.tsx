@@ -1,6 +1,5 @@
 import { useFocusEffect } from '@react-navigation/core'
-import { Images, MapStyle } from 'assets'
-import { colors } from 'assets/Colors'
+import { colors, Images, MapStyle } from 'assets'
 import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'

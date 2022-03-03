@@ -266,4 +266,7 @@ export const en = {
   unsupported_json: "Unsupported file, only JSON files are acceptable",
   contacts_not_available: "Contacts not available",
   contacts_permission_not_available: "Contacts permission not available",
+  invalid_ticket_price: "Invalid ticket price",
+  invalid_capacity: "Invalid capacity",
+
 }

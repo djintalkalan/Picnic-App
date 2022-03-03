@@ -266,4 +266,6 @@ export const es = {
     unsupported_json: "",
     contacts_not_available: "",
     contacts_permission_not_available: "",
+    invalid_ticket_price: "",
+    invalid_capacity: "",
 }

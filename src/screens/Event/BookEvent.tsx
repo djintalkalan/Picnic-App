@@ -5,7 +5,7 @@ import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, KeyboardHideView, MyHeader, TextInput } from 'custom-components';
 import { isEqual } from 'lodash';
-import React, { FC, Fragment, useCallback, useState } from 'react';
+import React, { FC, Fragment, useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -73,6 +73,13 @@ const BookEvent: FC = (props: any) => {
         })
     })(), [event, noOfTickets, isPayByPaypal])
 
+    const { availableSeats, allSeats } = useMemo(() => {
+        return {
+            allSeats: (event?.capacity - event?.total_sold_tickets),
+            availableSeats: ((event?.capacity - event?.total_sold_tickets) - (parseInt(noOfTickets || '0')))
+        }
+    }, [noOfTickets])
+
     return (
         <SafeAreaView style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
@@ -106,7 +113,7 @@ const BookEvent: FC = (props: any) => {
                         maxLength={5}
                         rules={{
                             validate: (v: string) => {
-                                if (parseInt(v) > (event?.capacity - event?.total_sold_tickets)) {
+                                if ((event?.capacity_type != 'unlimited' && parseInt(v) > (event?.capacity - event?.total_sold_tickets)) || parseInt(v) == 0) {
                                     return Language.invalid_seat_quantity
                                 }
                             }
@@ -118,10 +125,7 @@ const BookEvent: FC = (props: any) => {
                     />
                 </View>
                 <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
-                    {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' +
-                        noOfTickets ?
-                        Language.available_seats + ' ' + ((event?.capacity - event?.total_sold_tickets) - parseInt(noOfTickets || 0)) :
-                        (event?.capacity - event?.total_sold_tickets) :
+                    {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
                         undefined)}
                 </Text>
                 {!event?.is_free_event ?
