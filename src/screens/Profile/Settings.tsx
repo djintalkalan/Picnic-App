@@ -3,7 +3,7 @@ import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, InteractionManager, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -70,7 +70,7 @@ const Settings: FC<any> = (props) => {
         <SafeAreaView style={styles.container} >
             <BackButton />
 
-            <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
+            <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >
                     <TouchableOpacity onPress={() => NavigationService.navigate("ProfileScreen")}>
@@ -222,7 +222,7 @@ const Settings: FC<any> = (props) => {
 
 
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }
