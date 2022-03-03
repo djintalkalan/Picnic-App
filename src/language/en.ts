@@ -268,5 +268,8 @@ export const en = {
   contacts_permission_not_available: "Contacts permission not available",
   invalid_ticket_price: "Invalid ticket price",
   invalid_capacity: "Invalid capacity",
+  events_not_available: "Events not available",
+  groups_not_available: "Groups not available",
+
 
 }

@@ -293,7 +293,7 @@ const EventList: FC<any> = (props) => {
                             </Text>
                             <Text onPress={() => NavigationService.navigate("SelectLocation")} style={styles.youCanPress} >{Language.change_the_location}</Text>
                         </View>
-                        <View style={{ flex: 1, padding: scaler(10), alignItems: 'flex-end', marginBottom: scaler(90), marginRight: scaler(45) }} >
+                        <View style={{ flex: 1, padding: scaler(10), alignItems: 'flex-end', marginBottom: scaler(0), marginRight: scaler(45) }} >
                             <Image source={Images.ic_line} style={{ flex: 1, aspectRatio: 0.7145522388, }} />
                         </View>
                     </View>

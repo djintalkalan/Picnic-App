@@ -1,9 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { _whatsappImport } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, reportResource, setLoadingAction } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text, useStatusBar } from 'custom-components'
+import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
@@ -12,6 +13,8 @@ import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Interact
 import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { SwipeRow } from 'react-native-swipe-list-view'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
@@ -170,7 +173,7 @@ const GroupDetail: FC<any> = (props) => {
                     dispatch(joinGroup(group?._id))
                 }} />
 
-            <BottomButton
+            {/* <BottomButton
                 title={Language.report_group}
                 icon={Images.ic_report_group}
                 visibility={!group?.is_admin}
@@ -183,8 +186,72 @@ const GroupDetail: FC<any> = (props) => {
                         },
                         buttonText: Language.yes_report
                     })
-                }} />
+                }} /> */}
+
+            {!group?.is_admin && <SwipeRow disableRightSwipe
+                rightOpenValue={-scaler(80)}
+            >
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
+                    <View style={{
+                        alignItems: 'center',
+                        flex: 0.5,
+                        backgroundColor: "#DFDFDF",
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <TouchableOpacity onPress={() => {
+                            const buttons: Array<IBottomMenuButton> = []
+                            if (!group?.is_admin) {
+                                buttons.push({
+                                    title: Language.mute_group, onPress: () => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_mute_group,
+                                            onPressButton: () => {
+                                                dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "group", resource_id: group?._id } }))
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_mute
+                                        })
+                                    }
+                                })
+
+                                buttons.push({
+                                    title: Language.report_group, onPress: () => {
+                                        _showPopUpAlert({
+                                            message: Language.are_you_sure_report_group,
+                                            onPressButton: () => {
+                                                dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
+                                                _hidePopUpAlert()
+                                            },
+                                            buttonText: Language.yes_report
+                                        })
+                                    }
+                                })
+                            }
+                            // swipeListRef?.current?.closeAllOpenRows()
+                            _showBottomMenu({
+                                buttons
+                            })
+
+                        }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: "#DFDFDF" }}>
+                            <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(24)} />
+                            <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: "#7B7B7B" }} >{Language.more}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <TouchableOpacity activeOpacity={1} onPress={() => { }}
+                    style={[styles.buttonContainer, { borderBottomColor: "#DBDBDB", borderBottomWidth: scaler(1) }]} >
+                    {/* <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} /> */}
+                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{"Swipe left to more"}</Text>
+                    {/* <Image style={{ height: scaler(15), width: scaler(7), resizeMode: 'contain' }} source={Images.ic_right} /> */}
+
+                </TouchableOpacity>
+
+            </SwipeRow>}
         </View>
+
+
     }, [group])
 
     const pickFile = useCallback((type: 'whatsapp' | 'telegram') => {
@@ -367,7 +434,7 @@ const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPre
 
     return visibility ? (
         <>
-            <TouchableOpacity onPress={onPress} style={{ paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
+            <TouchableOpacity onPress={onPress} activeOpacity={1} style={{ backgroundColor: colors.colorWhite, paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
                 <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
                 <Text style={{ color: colors.colorRed, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>
@@ -479,5 +546,16 @@ const styles = StyleSheet.create({
         paddingVertical: scaler(4),
         backgroundColor: colors.colorWhite,
         alignItems: 'flex-start',
-    }
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        paddingVertical: scaler(20),
+        alignItems: 'center',
+        backgroundColor: colors.colorWhite
+    },
+    buttonText: {
+        fontWeight: '400',
+        fontSize: scaler(14),
+        marginLeft: scaler(20)
+    },
 })

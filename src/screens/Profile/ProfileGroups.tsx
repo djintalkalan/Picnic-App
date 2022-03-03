@@ -1,7 +1,7 @@
 import { getUserGroups, IPaginationState, setActiveGroup } from 'app-store/actions'
 import { RootState } from 'app-store/store'
 import { colors, Images } from 'assets'
-import { MyHeader } from 'custom-components'
+import { MyHeader, Text } from 'custom-components'
 import { ListItem } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
@@ -75,6 +75,10 @@ const ProfileGroups: FC<any> = (props) => {
                         fetchUserGroups()
                     }
                 }}
+                style={{ flex: 1 }}
+                contentContainerStyle={{ flexGrow: 1 }}
+                ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center' }} ><Text style={{ textAlign: 'center' }} >{Language.groups_not_available}</Text></View>}
+
                 renderItem={_renderEventMembers} />
 
         </SafeAreaView>

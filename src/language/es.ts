@@ -268,4 +268,6 @@ export const es = {
     contacts_permission_not_available: "",
     invalid_ticket_price: "",
     invalid_capacity: "",
+    events_not_available: "",
+    groups_not_available: "",
 }

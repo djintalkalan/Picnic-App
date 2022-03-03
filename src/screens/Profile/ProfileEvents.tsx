@@ -1,7 +1,7 @@
 import { RootState } from 'app-store'
 import { getUserUpcomingPastEvents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { MyHeader } from 'custom-components'
+import { MyHeader, Text } from 'custom-components'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
@@ -112,8 +112,10 @@ const ProfileEventsList: FC<any> = (props) => {
                 //     }}
                 // />}
                 data={userEvents}
-                // contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1 }}
+                style={{ flex: 1 }}
+                contentContainerStyle={{ flexGrow: 1 }}
                 renderItem={_renderItem}
+                ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center' }} ><Text style={{ textAlign: 'center' }} >{Language.events_not_available}</Text></View>}
                 ItemSeparatorComponent={ListItemSeparator}
                 ref={flatListRef}
                 keyExtractor={(_, i) => i.toString()}
