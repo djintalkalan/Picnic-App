@@ -33,7 +33,7 @@ export const EventMemberList: FC<any> = (props) => {
                 _showPopUpAlert({
                     message: Language.are_you_sure_report_member,
                     onPressButton: () => {
-                        dispatch(reportResource({ resource_id: item?.resource_id, resource_type: 'user' }))
+                        dispatch(reportResource({ resource_id: item?.user_id, resource_type: 'user' }))
                         _hidePopUpAlert()
                     },
                     buttonText: Language.yes_report,

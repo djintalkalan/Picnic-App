@@ -175,7 +175,7 @@ const ChatItem = (props: IChatItem) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_report_member,
                         onPressButton: () => {
-                            dispatch(reportResource({ resource_id: _id, resource_type: 'user' }))
+                            dispatch(reportResource({ resource_id: userId, resource_type: 'user' }))
                             _hidePopUpAlert()
                         },
                         buttonText: Language.yes_report
