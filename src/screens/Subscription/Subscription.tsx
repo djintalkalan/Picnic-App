@@ -31,7 +31,7 @@ const Subscription: FC = (props: any) => {
 
     const dispatch = useDispatch();
 
-    const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
+    // const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
     const [products, setProducts] = useState<Array<InAppPurchases.Product>>([])
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
@@ -172,8 +172,8 @@ const Subscription: FC = (props: any) => {
                 const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
                 // if (expireAt >= new Date()) {
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
-                    _showErrorMessage("You are not a member, Please purchase membership")
-                } else continueToMemberShip("Purchase successfully restored")
+                    _showErrorMessage(Language.you_are_not_a_member)
+                } else continueToMemberShip(Language.purchase_successfully_restored)
 
             }
         }).catch(e => {
@@ -192,7 +192,7 @@ const Subscription: FC = (props: any) => {
                 // if (expireAt >= new Date()) {
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                     requestPurchase(productIds[i], false)
-                } else continueToMemberShip("Your are already a member")
+                } else continueToMemberShip(Language.you_are_already_a_member)
 
             }
         }).catch(e => {
@@ -250,12 +250,10 @@ const Subscription: FC = (props: any) => {
                 </View>
             })} */}
                 <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
-                    <Button title='Join now for $17.99 a year' onPress={() => callPurchase(0)} />
-                    <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>or try membership at $1.99 a month</Text>
-
-
+                    <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
+                    <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
                 </View>
-                <Button containerStyle={{ marginHorizontal: scaler(20), }} title='Restore Purchase' onPress={() => {
+                <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
                     restorePurchase()
                 }} />
 

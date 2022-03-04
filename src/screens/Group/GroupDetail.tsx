@@ -24,6 +24,8 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 
 const GroupDetail: FC<any> = (props) => {
 
+    const swipeRef = useRef<SwipeRow<any>>(null)
+
     const language = useLanguage()
     const getBottomMenuButtons = useCallback((item) => {
         return [
@@ -188,7 +190,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} /> */}
 
-            {!group?.is_admin && <SwipeRow disableRightSwipe
+            {!group?.is_admin && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
@@ -233,6 +235,8 @@ const GroupDetail: FC<any> = (props) => {
                                 buttons
                             })
 
+                            swipeRef?.current?.closeRow();
+
                         }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-end', width: scaler(80), backgroundColor: "#DFDFDF" }}>
                             <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(24)} />
                             <Text style={{ fontWeight: '500', marginTop: scaler(5), fontSize: scaler(11), color: "#7B7B7B" }} >{Language.more}</Text>
@@ -240,7 +244,7 @@ const GroupDetail: FC<any> = (props) => {
                     </View>
                 </View>
 
-                <TouchableOpacity activeOpacity={1} onPress={() => { }}
+                <TouchableOpacity disabled activeOpacity={1} onPress={() => { }}
                     style={[styles.buttonContainer, { borderBottomColor: "#DBDBDB", borderBottomWidth: scaler(1) }]} >
                     {/* <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} /> */}
                     <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{"Swipe left to more"}</Text>

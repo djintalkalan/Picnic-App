@@ -270,6 +270,12 @@ export const en = {
   invalid_capacity: "Invalid capacity",
   events_not_available: "Events not available",
   groups_not_available: "Groups not available",
+  you_are_not_a_member: "You are not a member, Please purchase membership",
+  purchase_successfully_restored: "Purchase successfully restored",
+  you_are_already_a_member: "Your are already a member",
+  restore_purchase: 'Restore Purchase',
+  or_try_our_membership_at: "or try membership at $1.99 a month",
+  join_now_at: 'Join now for $17.99 a year',
 
 
 }

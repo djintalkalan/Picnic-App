@@ -270,4 +270,10 @@ export const es = {
     invalid_capacity: "",
     events_not_available: "",
     groups_not_available: "",
+    you_are_not_a_member: "",
+    purchase_successfully_restored: "",
+    you_are_already_a_member: '',
+    restore_purchase: '',
+    or_try_our_membership_at: "",
+    join_now_at: '',
 }
