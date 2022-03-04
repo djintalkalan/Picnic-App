@@ -33,10 +33,13 @@ function* _refreshLanguage({ type, payload, }: action): Generator<any, any, any>
     try {
         let res = yield call(ApiProvider._refreshLanguage);
         if (res.status == 200) {
-            // const languages = res?.data
-            // Database.setAllLanguages(languages)
-            // Language.setContent(languages)
-            // Database.setSelectedLanguage(Database?.getStoredValue("selectedLanguage") ?? "en")
+            const currentLanguage = Database?.getStoredValue("selectedLanguage") ?? "en"
+            const languages = res?.data
+            Database.setAllLanguages(languages)
+            Language.setContent(languages)
+            Language.setLanguage(currentLanguage);
+            Database.setSelectedLanguage(currentLanguage);
+            // Database.setSelectedLanguage()
         } else if (res.status == 400) {
             // _showErrorMessage(res.message);
         } else {

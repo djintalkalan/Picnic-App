@@ -123,6 +123,9 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
+  }, [isLogin])
+
+  useEffect(() => {
     if (isLogin) {
       SocketService.init(dispatch);
     }

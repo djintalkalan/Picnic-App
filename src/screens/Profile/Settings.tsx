@@ -1,4 +1,4 @@
-import { deleteAccount, doLogout, getProfile } from 'app-store/actions'
+import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
@@ -45,6 +45,9 @@ const Settings: FC<any> = (props) => {
                     setTimeout(() => {
                         updateLanguage("en")
                     }, 0);
+                    setTimeout(() => {
+                        dispatch(refreshLanguage())
+                    }, 500);
                 })
             }}
                 style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
@@ -58,6 +61,9 @@ const Settings: FC<any> = (props) => {
                     setTimeout(() => {
                         updateLanguage("es")
                     }, 0);
+                    setTimeout(() => {
+                        dispatch(refreshLanguage())
+                    }, 500);
                 })
             }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
