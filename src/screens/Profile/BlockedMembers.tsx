@@ -32,7 +32,7 @@ const BlockedMembers: FC<any> = (props) => {
 
     const _renderItem = useCallback(({ item, index }, rowMap) => (
         <MemberListItem
-            title={item?.blocked_users?.display_name}
+            title={item?.blocked_users?.first_name + item?.blocked_users?.last_name ? (" " + item?.blocked_users?.last_name) : ""}
             icon={item?.blocked_users?.image ? { uri: getImageUrl(item?.blocked_users?.image, { type: 'users', width: scaler(50) }) } : undefined}
             defaultIcon={Images.ic_home_profile}
             isSelected={false}

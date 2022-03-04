@@ -240,12 +240,7 @@ const CreateEvent2: FC<any> = props => {
             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            width: '100%',
-            paddingHorizontal: scaler(20),
-            paddingVertical: scaler(15),
-          }}>
+        <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
           <TextInput
             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
             placeholder={Language.capacity}
@@ -268,161 +263,160 @@ const CreateEvent2: FC<any> = props => {
             control={control}
             errors={errors}
           />
+          <View style={{ flex: 1, width: '100%' }} >
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+              <View>
+                <TextInput
+                  containerStyle={{ marginEnd: scaler(4) }}
+                  borderColor={colors.colorTextInputBackground}
+                  backgroundColor={colors.colorTextInputBackground}
+                  name={'currency'}
+                  disabled={isFreeEvent ? true : false}
+                  icon={Images.ic_arrow_dropdown}
+                  onChangeText={(text) => {
 
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex: 10 }}>
-            <View>
+                  }}
+                  required={isFreeEvent ? undefined : Language.event_name_required}
+                  control={control}
+                  iconContainerStyle={{ end: scaler(4) }}
+                  onPress={() => { setDropdown(_ => !_) }}
+                  errors={errors}
+                />
+                <FixedDropdown
+                  visible={isDropdown}
+                  data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                  onSelect={data => {
+                    setDropdown(false);
+                    setValue('currency', data?.title, { shouldValidate: true });
+                  }}
+                />
+              </View>
               <TextInput
-                containerStyle={{ marginEnd: scaler(4) }}
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={
+                  Language.event_ticket_price + ' (' + Language.per_person + ')'
+                }
+                style={{ paddingLeft: scaler(20) }}
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
-                name={'currency'}
+                name={'ticketPrice'}
+                keyboardType={'decimal-pad'}
                 disabled={isFreeEvent ? true : false}
-                icon={Images.ic_arrow_dropdown}
-                onChangeText={(text) => {
+                iconSize={scaler(18)}
+                icon={Images.ic_ticket}
+                rules={{
+                  validate: (v: string) => {
+                    if (parseFloat(v) > 99999.99) {
+                      return Language.event_max_price
+                    }
+                    try {
+                      if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                        return Language.invalid_ticket_price
+                      }
+                    }
+                    catch (e) { }
 
+                  }
                 }}
-                required={isFreeEvent ? undefined : Language.event_name_required}
+                required={
+                  isFreeEvent ? undefined : Language.ticket_price_required
+                }
                 control={control}
-                iconContainerStyle={{ end: scaler(4) }}
-                onPress={() => { setDropdown(_ => !_) }}
                 errors={errors}
-              />
-              <FixedDropdown
-                visible={isDropdown}
-                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                onSelect={data => {
-                  setDropdown(false);
-                  setValue('currency', data?.title, { shouldValidate: true });
-                }}
               />
             </View>
             <TextInput
               containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-              placeholder={
-                Language.event_ticket_price + ' (' + Language.per_person + ')'
-              }
-              style={{ paddingLeft: scaler(20) }}
+              placeholder={Language.select_date}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
-              name={'ticketPrice'}
-              keyboardType={'decimal-pad'}
-              disabled={isFreeEvent ? true : false}
-              iconSize={scaler(18)}
-              icon={Images.ic_ticket}
-              rules={{
-                validate: (v: string) => {
-                  if (parseFloat(v) > 99999.99) {
-                    return Language.event_max_price
-                  }
-                  try {
-                    if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                      return Language.invalid_ticket_price
-                    }
-                  }
-                  catch (e) {
-
-                  }
-
-                }
-              }}
-              required={
-                isFreeEvent ? undefined : Language.ticket_price_required
-              }
+              style={{ fontSize: scaler(13) }}
+              name={'eventDate'}
+              onPress={() => (openDatePicker("eventDate"))}
+              required={Language.date_required}
+              icon={Images.ic_calender}
+              iconSize={scaler(20)}
               control={control}
               errors={errors}
             />
+
+            <TextInput
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+              placeholder={Language.select_start_time}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              name={'startTime'}
+              iconSize={scaler(18)}
+              required={Language.start_time_required}
+              onPress={() => (openDatePicker("startTime"))}
+              icon={Images.ic_clock}
+              control={control}
+              errors={errors}
+            />
+            <TextInput
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+              placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              name={'endTime'}
+              onPress={() => (openDatePicker("endTime"))}
+              iconSize={scaler(18)}
+              icon={Images.ic_clock}
+              control={control}
+              errors={errors}
+            />
+
+            <TextInput
+              placeholder={Language.write_additional_information_about_event}
+              name={'additionalInfo'}
+              multiline
+              style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              control={control}
+              errors={errors}
+            />
+            <Button
+              disabled={calculateButtonDisability()}
+              containerStyle={{ marginTop: scaler(20) }}
+              title={Language.next}
+              onPress={() => handleSubmit((data) => {
+                !userData?.is_premium ?
+                  _showPopUpAlert({
+                    message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+                    buttonText: Language.join_now,
+                    onPressButton: () => {
+                      NavigationService.navigate("Subscription", {
+                        onSubscription: onSubmit, data: {
+                          ...data, ...bodyData,
+                          eventDateTime: eventDateTime.current,
+                          image: uploadedImage?.current,
+                          isUnlimitedCapacity: isUnlimitedCapacity,
+                          isFreeEvent: isFreeEvent
+                        }
+                      });
+                      _hidePopUpAlert()
+                    },
+                    cancelButtonText: Language.no_thanks_create_my_event,
+                    onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
+                  }) :
+                  isFreeEvent ?
+                    onSubmit(data)
+                    :
+                    NavigationService.navigate('CreateEvent3',
+                      {
+                        data: {
+                          ...data, ...bodyData,
+                          eventDateTime: eventDateTime.current,
+                          image: uploadedImage?.current,
+                          isUnlimitedCapacity: isUnlimitedCapacity
+                        }
+                      })
+                //   :
+                //  undefined
+              })()}
+            />
           </View>
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={Language.select_date}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            style={{ fontSize: scaler(13) }}
-            name={'eventDate'}
-            onPress={() => (openDatePicker("eventDate"))}
-            required={Language.date_required}
-            icon={Images.ic_calender}
-            iconSize={scaler(20)}
-            control={control}
-            errors={errors}
-          />
-
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={Language.select_start_time}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'startTime'}
-            iconSize={scaler(18)}
-            required={Language.start_time_required}
-            onPress={() => (openDatePicker("startTime"))}
-            icon={Images.ic_clock}
-            control={control}
-            errors={errors}
-          />
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'endTime'}
-            onPress={() => (openDatePicker("endTime"))}
-            iconSize={scaler(18)}
-            icon={Images.ic_clock}
-            control={control}
-            errors={errors}
-          />
-
-          <TextInput
-            placeholder={Language.write_additional_information_about_event}
-            name={'additionalInfo'}
-            multiline
-            style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            control={control}
-            errors={errors}
-          />
-          <Button
-            disabled={calculateButtonDisability()}
-            containerStyle={{ marginTop: scaler(20) }}
-            title={Language.next}
-            onPress={() => handleSubmit((data) => {
-              !userData?.is_premium ?
-                _showPopUpAlert({
-                  message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
-                  buttonText: Language.join_now,
-                  onPressButton: () => {
-                    NavigationService.navigate("Subscription", {
-                      onSubscription: onSubmit, data: {
-                        ...data, ...bodyData,
-                        eventDateTime: eventDateTime.current,
-                        image: uploadedImage?.current,
-                        isUnlimitedCapacity: isUnlimitedCapacity,
-                        isFreeEvent: isFreeEvent
-                      }
-                    });
-                    _hidePopUpAlert()
-                  },
-                  cancelButtonText: Language.no_thanks_create_my_event,
-                  onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
-                }) :
-                isFreeEvent ?
-                  onSubmit(data)
-                  :
-                  NavigationService.navigate('CreateEvent3',
-                    {
-                      data: {
-                        ...data, ...bodyData,
-                        eventDateTime: eventDateTime.current,
-                        image: uploadedImage?.current,
-                        isUnlimitedCapacity: isUnlimitedCapacity
-                      }
-                    })
-              //   :
-              //  undefined
-            })()}
-          />
         </View>
         <DateTimePickerModal
           style={{ zIndex: 20 }}
