@@ -289,6 +289,6 @@ export const en = {
   contact: 'Contact',
   whatsapp: 'Whatsapp',
   telegram: 'Telegram',
-  swipe_left_to_more: 'Swipe left to more',
+  swipe_left_for_more: 'Swipe left for more',
 
 }

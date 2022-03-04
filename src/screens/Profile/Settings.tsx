@@ -61,7 +61,7 @@ const Settings: FC<any> = (props) => {
                 })
             }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
-                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>Spanish</Text>
+                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>Española (Spanish)</Text>
             </TouchableOpacity>
         </View>
     }), [updateLanguage, selectedLanguage])
@@ -176,7 +176,7 @@ const Settings: FC<any> = (props) => {
 
 
                     <SettingButton
-                        containerStyle={{ paddingTop: 0 }}
+                        containerStyle={{}}
                         onPress={() => {
                             _showPopUpAlert({
                                 message: Language.are_you_sure_delete_account,

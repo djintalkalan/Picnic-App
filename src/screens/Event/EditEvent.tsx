@@ -497,240 +497,242 @@ const EditEvent: FC<any> = props => {
                         errors={errors}
                     />
 
-                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex: 10 }}>
-                        <View>
+                    <View style={{ flex: 1, width: '100%' }} >
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex: 10 }}>
+                            <View>
+                                <TextInput
+                                    containerStyle={{ marginEnd: scaler(4) }}
+                                    borderColor={colors.colorTextInputBackground}
+                                    backgroundColor={colors.colorTextInputBackground}
+                                    name={'currency'}
+                                    disabled={isFreeEvent ? true : false}
+                                    icon={Images.ic_arrow_dropdown}
+                                    onChangeText={(text) => {
+
+                                    }}
+                                    required={isFreeEvent ? undefined : Language.event_name_required}
+                                    control={control}
+                                    iconContainerStyle={{ end: scaler(4) }}
+                                    onPress={() => { setDropdown(_ => !_) }}
+                                    errors={errors}
+                                />
+                                <FixedDropdown
+                                    visible={isDropdown}
+                                    data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                                    onSelect={data => {
+                                        setDropdown(false);
+                                        setValue('currency', data?.title, { shouldValidate: true });
+                                    }}
+                                />
+                            </View>
                             <TextInput
-                                containerStyle={{ marginEnd: scaler(4) }}
+                                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                placeholder={
+                                    Language.event_ticket_price + ' (' + Language.per_person + ')'
+                                }
+                                style={{ paddingLeft: scaler(20) }}
                                 borderColor={colors.colorTextInputBackground}
                                 backgroundColor={colors.colorTextInputBackground}
-                                name={'currency'}
+                                name={'ticketPrice'}
+                                keyboardType={'number-pad'}
                                 disabled={isFreeEvent ? true : false}
-                                icon={Images.ic_arrow_dropdown}
-                                onChangeText={(text) => {
+                                iconSize={scaler(18)}
+                                rules={{
+                                    validate: (v: string) => {
+                                        if (parseFloat(v) > 99999.99) {
+                                            return Language.event_max_price
+                                        }
+                                        try {
+                                            if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                                return Language.invalid_ticket_price
+                                            }
+                                        }
+                                        catch (e) {
 
+                                        }
+                                    }
                                 }}
-                                required={isFreeEvent ? undefined : Language.event_name_required}
+                                icon={Images.ic_ticket}
+                                required={
+                                    isFreeEvent ? undefined : Language.ticket_price_required
+                                }
                                 control={control}
-                                iconContainerStyle={{ end: scaler(4) }}
-                                onPress={() => { setDropdown(_ => !_) }}
                                 errors={errors}
-                            />
-                            <FixedDropdown
-                                visible={isDropdown}
-                                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                                onSelect={data => {
-                                    setDropdown(false);
-                                    setValue('currency', data?.title, { shouldValidate: true });
-                                }}
                             />
                         </View>
                         <TextInput
                             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                            placeholder={
-                                Language.event_ticket_price + ' (' + Language.per_person + ')'
-                            }
-                            style={{ paddingLeft: scaler(20) }}
+                            placeholder={Language.select_date}
                             borderColor={colors.colorTextInputBackground}
                             backgroundColor={colors.colorTextInputBackground}
-                            name={'ticketPrice'}
-                            keyboardType={'number-pad'}
-                            disabled={isFreeEvent ? true : false}
-                            iconSize={scaler(18)}
-                            rules={{
-                                validate: (v: string) => {
-                                    if (parseFloat(v) > 99999.99) {
-                                        return Language.event_max_price
-                                    }
-                                    try {
-                                        if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                                            return Language.invalid_ticket_price
-                                        }
-                                    }
-                                    catch (e) {
-
-                                    }
-                                }
-                            }}
-                            icon={Images.ic_ticket}
-                            required={
-                                isFreeEvent ? undefined : Language.ticket_price_required
-                            }
+                            style={{ fontSize: scaler(13) }}
+                            name={'eventDate'}
+                            onPress={() => (openDatePicker("eventDate"))}
+                            required={Language.date_required}
+                            icon={Images.ic_calender}
+                            iconSize={scaler(20)}
                             control={control}
                             errors={errors}
                         />
-                    </View>
-                    <TextInput
-                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={Language.select_date}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        style={{ fontSize: scaler(13) }}
-                        name={'eventDate'}
-                        onPress={() => (openDatePicker("eventDate"))}
-                        required={Language.date_required}
-                        icon={Images.ic_calender}
-                        iconSize={scaler(20)}
-                        control={control}
-                        errors={errors}
-                    />
 
-                    <TextInput
-                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={Language.select_start_time}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        name={'startTime'}
-                        iconSize={scaler(18)}
-                        required={Language.start_time_required}
-                        onPress={() => (openDatePicker("startTime"))}
-                        icon={Images.ic_clock}
-                        control={control}
-                        errors={errors}
-                    />
-                    <TextInput
-                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        name={'endTime'}
-                        onPress={() => (openDatePicker("endTime"))}
-                        iconSize={scaler(18)}
-                        icon={Images.ic_clock}
-                        control={control}
-                        errors={errors}
-                    />
+                        <TextInput
+                            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                            placeholder={Language.select_start_time}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            name={'startTime'}
+                            iconSize={scaler(18)}
+                            required={Language.start_time_required}
+                            onPress={() => (openDatePicker("startTime"))}
+                            icon={Images.ic_clock}
+                            control={control}
+                            errors={errors}
+                        />
+                        <TextInput
+                            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                            placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            name={'endTime'}
+                            onPress={() => (openDatePicker("endTime"))}
+                            iconSize={scaler(18)}
+                            icon={Images.ic_clock}
+                            control={control}
+                            errors={errors}
+                        />
 
-                    <TextInput
-                        placeholder={Language.write_additional_information_about_event}
-                        name={'additionalInfo'}
-                        multiline
-                        style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        control={control}
-                        errors={errors}
-                    />
-                    {userData?.is_premium && !isFreeEvent ?
+                        <TextInput
+                            placeholder={Language.write_additional_information_about_event}
+                            name={'additionalInfo'}
+                            multiline
+                            style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            control={control}
+                            errors={errors}
+                        />
+                        {userData?.is_premium && !isFreeEvent ?
 
-                        <><View style={{ marginTop: scaler(15) }}>
-                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                                {Language.select_payment_options}
-                            </Text>
-                            <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('cash') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'cash')) : setPaymentMethods([...paymentMethods, 'cash'])}>
-                                <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
-                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_cash}</Text>
-                                <MaterialIcons name={paymentMethods?.includes('cash') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
-                            </TouchableOpacity>
-                            <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-                            <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('paypal') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'paypal')) : setPaymentMethods([...paymentMethods, 'paypal'])}>
-                                <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
-                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
-                                <MaterialIcons name={paymentMethods?.includes('paypal') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
-                            </TouchableOpacity>
-                        </View><View
-                            style={{
-                                width: '100%',
-                                paddingVertical: scaler(10),
-                            }}>
-                                {paymentMethods?.includes('paypal') ?
-                                    <TextInput
-                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                        placeholder={Language.paypal_id}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'paypalId'}
-                                        required={Language.paypal_id_required}
-                                        control={control}
-                                        errors={errors} /> : undefined}
-                                <View style={{ flex: 1, width: '100%' }}>
-                                    <TextInput
-                                        placeholder={Language.write_refund_policy}
-                                        name={'policy'}
-                                        multiline
-                                        style={{ minHeight: scaler(150), textAlignVertical: 'top' }}
-                                        limit={1000}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        control={control}
-                                        errors={errors} />
-                                </View>
-
-                            </View></>
-                        : undefined}
-                    <Button
-                        disabled={calculateButtonDisability()}
-                        containerStyle={{ marginTop: scaler(20) }}
-                        title={Language.done}
-                        onPress={() => handleSubmit((v) => onSubmit(v))()}
-                    />
-
-                    <DateTimePickerModal
-                        style={{ zIndex: 20 }}
-                        isVisible={isDatePickerVisible}
-                        minimumDate={getMinDate()}
-                        mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
-                        customConfirmButtonIOS={props => (
-                            <Text
-                                onPress={props.onPress}
+                            <><View style={{ marginTop: scaler(15) }}>
+                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                                    {Language.select_payment_options}
+                                </Text>
+                                <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('cash') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'cash')) : setPaymentMethods([...paymentMethods, 'cash'])}>
+                                    <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
+                                    <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_cash}</Text>
+                                    <MaterialIcons name={paymentMethods?.includes('cash') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                                </TouchableOpacity>
+                                <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
+                                <TouchableOpacity style={styles.payView} onPress={() => paymentMethods?.includes('paypal') ? setPaymentMethods(paymentMethods.filter(_ => _ != 'paypal')) : setPaymentMethods([...paymentMethods, 'paypal'])}>
+                                    <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
+                                    <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
+                                    <MaterialIcons name={paymentMethods?.includes('paypal') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                                </TouchableOpacity>
+                            </View><View
                                 style={{
-                                    fontWeight: '500',
-                                    fontSize: scaler(18),
-                                    color: colors.colorPrimary,
-                                    textAlign: 'center',
-                                    padding: scaler(10),
+                                    width: '100%',
+                                    paddingVertical: scaler(10),
                                 }}>
-                                {Language.confirm}
-                            </Text>
-                        )}
-                        customCancelButtonIOS={props => (
-                            <View
-                                style={{
-                                    padding: scaler(7),
-                                    backgroundColor: 'white',
-                                    borderRadius: scaler(10),
-                                    marginBottom: scaler(10),
-                                }}>
+                                    {paymentMethods?.includes('paypal') ?
+                                        <TextInput
+                                            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                            placeholder={Language.paypal_id}
+                                            borderColor={colors.colorTextInputBackground}
+                                            backgroundColor={colors.colorTextInputBackground}
+                                            name={'paypalId'}
+                                            required={Language.paypal_id_required}
+                                            control={control}
+                                            errors={errors} /> : undefined}
+                                    <View style={{ flex: 1, width: '100%' }}>
+                                        <TextInput
+                                            placeholder={Language.write_refund_policy}
+                                            name={'policy'}
+                                            multiline
+                                            style={{ minHeight: scaler(150), textAlignVertical: 'top' }}
+                                            limit={1000}
+                                            borderColor={colors.colorTextInputBackground}
+                                            backgroundColor={colors.colorTextInputBackground}
+                                            control={control}
+                                            errors={errors} />
+                                    </View>
+
+                                </View></>
+                            : undefined}
+                        <Button
+                            disabled={calculateButtonDisability()}
+                            containerStyle={{ marginTop: scaler(20) }}
+                            title={Language.done}
+                            onPress={() => handleSubmit((v) => onSubmit(v))()}
+                        />
+
+                        <DateTimePickerModal
+                            style={{ zIndex: 20 }}
+                            isVisible={isDatePickerVisible}
+                            minimumDate={getMinDate()}
+                            mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
+                            customConfirmButtonIOS={props => (
                                 <Text
                                     onPress={props.onPress}
                                     style={{
                                         fontWeight: '500',
                                         fontSize: scaler(18),
-                                        color: colors.colorBlack,
+                                        color: colors.colorPrimary,
                                         textAlign: 'center',
-                                        padding: scaler(5),
+                                        padding: scaler(10),
                                     }}>
-                                    {Language.close}
+                                    {Language.confirm}
                                 </Text>
-                            </View>
-                        )}
-                        date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
+                            )}
+                            customCancelButtonIOS={props => (
+                                <View
+                                    style={{
+                                        padding: scaler(7),
+                                        backgroundColor: 'white',
+                                        borderRadius: scaler(10),
+                                        marginBottom: scaler(10),
+                                    }}>
+                                    <Text
+                                        onPress={props.onPress}
+                                        style={{
+                                            fontWeight: '500',
+                                            fontSize: scaler(18),
+                                            color: colors.colorBlack,
+                                            textAlign: 'center',
+                                            padding: scaler(5),
+                                        }}>
+                                        {Language.close}
+                                    </Text>
+                                </View>
+                            )}
+                            date={eventDateTime.current?.[eventDateTime.current?.selectedType]}
 
-                        //  eventDateTime.current?.[startTime]
-                        //   maximumDate={sub(new Date(), {
-                        //     years: 15,
-                        //   })}
-                        onConfirm={(date: Date) => {
-                            const { selectedType } = eventDateTime.current
-                            eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
-                            let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
-                            let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-                            let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
-                            if (selectedType == 'eventDate') {
-                                setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
-                                    shouldValidate: true,
-                                });
-                                setValue('startTime', "");
-                                setValue('endTime', "");
-                            } else {
-                                setValue('endTime', "");
-                                setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
-                            }
-                            setDatePickerVisibility(false);
-                        }}
-                        onCancel={() => {
-                            setDatePickerVisibility(false);
-                        }}
-                    />
+                            //  eventDateTime.current?.[startTime]
+                            //   maximumDate={sub(new Date(), {
+                            //     years: 15,
+                            //   })}
+                            onConfirm={(date: Date) => {
+                                const { selectedType } = eventDateTime.current
+                                eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
+                                let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
+                                let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
+                                let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
+                                if (selectedType == 'eventDate') {
+                                    setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
+                                        shouldValidate: true,
+                                    });
+                                    setValue('startTime', "");
+                                    setValue('endTime', "");
+                                } else {
+                                    setValue('endTime', "");
+                                    setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
+                                }
+                                setDatePickerVisibility(false);
+                            }}
+                            onCancel={() => {
+                                setDatePickerVisibility(false);
+                            }}
+                        />
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
