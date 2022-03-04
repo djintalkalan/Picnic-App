@@ -35,10 +35,10 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
             buttons: [
-                { title: "Photo", onPress: () => pickImage("photo") },
-                { title: "Video", onPress: () => pickImage("video") },
+                { title: Language.photo, onPress: () => pickImage("photo") },
+                { title: Language.video, onPress: () => pickImage("video") },
                 {
-                    title: "Contact", onPress: () => {
+                    title: Language.contact, onPress: () => {
                         NavigationService.navigate("SelectContacts", {
                             onChooseContacts: (contacts: Array<any>) => {
                                 onChooseContacts(contacts)
@@ -48,7 +48,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     }
                 },
                 {
-                    title: "Location", onPress: () => {
+                    title: Language.location, onPress: () => {
                         NavigationService.navigate("SelectLocation", {
                             type: 'currentLocation',
                             prevSelectedLocation: Database.getStoredValue("currentLocation"),

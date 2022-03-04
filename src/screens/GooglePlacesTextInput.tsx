@@ -152,7 +152,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         marginHorizontal: scaler(20),
                         marginTop: scaler(20),
                         marginBottom: scaler(10),
-                    }}>{"Recent Search"}</Text>
+                    }}>{Language.recent_search}</Text>
                     <FlatList
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}

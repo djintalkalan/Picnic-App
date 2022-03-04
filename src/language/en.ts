@@ -276,6 +276,19 @@ export const en = {
   restore_purchase: 'Restore Purchase',
   or_try_our_membership_at: "or try membership at $1.99 a month",
   join_now_at: 'Join now for $17.99 a year',
-
+  save: 'Save',
+  messages: 'messages',
+  confirm_location: 'Confirm Location',
+  share_current_location: 'Share current location',
+  recent_search: 'Recent Search',
+  liked_by: 'Liked by',
+  you: 'You',
+  like: 'Like',
+  photo: 'Photo',
+  video: 'Video',
+  contact: 'Contact',
+  whatsapp: 'Whatsapp',
+  telegram: 'Telegram',
+  swipe_left_to_more: 'Swipe left to more',
 
 }

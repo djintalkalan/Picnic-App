@@ -48,7 +48,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_blocked_members}
                         title={Language.unblock}
-                        subtitle={privacyState?.users + " members"}
+                        subtitle={privacyState?.users + " " + Language.members?.toLowerCase()}
                     />
 
                     <SettingButton
@@ -57,7 +57,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_muted}
                         title={Language.unmute}
-                        subtitle={privacyState?.groups + " groups / " + privacyState?.events + " events"}
+                        subtitle={privacyState?.groups + ' ' + Language.groups?.toLowerCase() + " / " + privacyState?.events + ' ' + Language.events?.toLowerCase()}
                     />
 
                     <SettingButton
@@ -66,7 +66,7 @@ const PrivacyScreen: FC<any> = (props) => {
                         }}
                         image={Images.ic_hidden_posts}
                         title={Language.restore}
-                        subtitle={privacyState?.posts + " messages"}
+                        subtitle={privacyState?.posts + " " + Language.messages}
                     />
 
                 </View>

@@ -351,7 +351,7 @@ const ProfileScreen: FC<any> = (props) => {
                     } else {
                         setEditEnabled(true)
                     }
-                }} containerStyle={{ marginTop: 0, marginBottom: scaler(10), marginHorizontal: scaler(15) }} title={isEditEnabled ? "Save" : "Edit"} />
+                }} containerStyle={{ marginTop: 0, marginBottom: scaler(10), marginHorizontal: scaler(15) }} title={isEditEnabled ? Language.save : Language.edit} />
 
                 {/* <CardContent title={Language.phoneNumber} content="+1 234 543 657" /> */}
             </KeyboardHideView>

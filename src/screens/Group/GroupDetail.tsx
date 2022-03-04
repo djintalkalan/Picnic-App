@@ -247,7 +247,7 @@ const GroupDetail: FC<any> = (props) => {
                 <TouchableOpacity disabled activeOpacity={1} onPress={() => { }}
                     style={[styles.buttonContainer, { borderBottomColor: "#DBDBDB", borderBottomWidth: scaler(1) }]} >
                     {/* <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} /> */}
-                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{"Swipe left to more"}</Text>
+                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{Language.swipe_left_to_more}</Text>
                     {/* <Image style={{ height: scaler(15), width: scaler(7), resizeMode: 'contain' }} source={Images.ic_right} /> */}
 
                 </TouchableOpacity>
@@ -343,12 +343,12 @@ const GroupDetail: FC<any> = (props) => {
                             <InnerButton onPress={() => {
                                 _showBottomMenu({
                                     buttons: [{
-                                        title: "Whatsapp",
+                                        title: Language.whatsapp,
                                         iconSource: Images.ic_whatsapp,
                                         onPress: () => pickFile('whatsapp')
 
                                     }, {
-                                        title: "Telegram",
+                                        title: Language.telegram,
                                         iconSource: Images.ic_telegram,
                                         onPress: () => pickFile('telegram')
                                     }]

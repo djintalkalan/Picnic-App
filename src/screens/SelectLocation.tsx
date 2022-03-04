@@ -198,7 +198,7 @@ const SelectLocation: FC<any> = (props) => {
                             onSelectLocation(localLocation) :
                             setSelectedLocation(localLocation)
                         NavigationService.goBack()
-                    }} containerStyle={{ marginTop: scaler(20) }} title={type == 'currentLocation' ? 'Share current location' : 'Confirm Location'} />
+                    }} containerStyle={{ marginTop: scaler(20) }} title={type == 'currentLocation' ? Language.share_current_location : Language.confirm_location} />
                 </View> : null
             }
         </View >
