@@ -360,7 +360,8 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'contact') {
-        const c: Contact = props?.contacts?.[0]
+        const c: Contact = { ...props?.contacts?.[0] }
+        if (!c.company) c.company = ""
         const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
             Contacts.openContactForm(c).then(v => {
                 console.log("v", v);
