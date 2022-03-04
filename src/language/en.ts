@@ -77,7 +77,7 @@ export const en = {
   join_now: "Join now",
   join: "Join",
   joined: "Joined",
-  are_you_sure_logout: "Are you sure you want to Logout",
+  are_you_sure_logout: "Are you sure you want to Logout?",
   cancel: "Cancel",
   blocked_members: "Blocked member",
   muted_group: "Muted group/event",
