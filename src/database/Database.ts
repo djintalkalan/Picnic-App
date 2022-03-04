@@ -2,7 +2,7 @@ import { isEqual } from "lodash";
 import FastImage from "react-native-fast-image";
 import * as RNLocalize from "react-native-localize";
 import MMKVStorage, { useMMKVStorage } from "react-native-mmkv-storage";
-import { LanguageType } from "src/language/Language";
+import { ILanguages, LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
 
 export type LiteralUnion<T extends U, U = string> = T | (U & {});
@@ -57,10 +57,10 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText"
+    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText" | "allLanguages"
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches", "currencies", 'socketConnected', "searchHomeText"]
+    "recentSearches", "currencies", 'socketConnected', "searchHomeText", "allLanguages"]
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
@@ -71,7 +71,9 @@ type DataBaseType = {
     currentLocation?: ILocation
     selectedLocation?: ILocation
     recentSearches?: Array<IRecentSearches>
+    allLanguages?: ILanguages
 }
+
 
 export interface ILocation {
     latitude: number
@@ -115,6 +117,11 @@ class Database {
         Database.phoneStorage.setMap('userData', userData ?? null)
     }
 
+    public setAllLanguages = (languages: ILanguages) => {
+        Database.phoneStorage.setMap('allLanguages', languages ?? null)
+    }
+
+
     public setFirebaseToken = (token: string | null) => {
         Database.phoneStorage.setString('firebaseToken', token ?? "")
     }
@@ -155,6 +162,7 @@ class Database {
                 case 'userData':
                 case 'currentLocation':
                 case 'selectedLocation':
+                case 'allLanguages':
                     return Database.phoneStorage.setMap(key, data[key] ?? null)
 
                 case 'recentSearches':
@@ -171,7 +179,7 @@ class Database {
         return Database.phoneStorage.getString(key) ?? ""
     }
 
-    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T | any => {
+    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T | undefined => {
         switch (key) {
             case 'authToken':
             case 'firebaseToken':
@@ -185,6 +193,7 @@ class Database {
             case 'userData':
             case 'currentLocation':
             case 'selectedLocation':
+            case 'allLanguages':
                 return Database.phoneStorage.getMap(key) || defaultValue
 
             case 'recentSearches':
@@ -206,6 +215,7 @@ class Database {
             case 'userData':
             case 'currentLocation':
             case 'selectedLocation':
+            case 'allLanguages':
                 return Database.phoneStorage.setMap(key, value ?? null)
 
             case 'recentSearches':

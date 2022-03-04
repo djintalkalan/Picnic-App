@@ -22,3 +22,8 @@ export const uploadFile = (payload: { image: any, onSuccess?: (url: string, thum
   type: ActionTypes.UPLOAD_FILE,
   payload
 })
+
+export const refreshLanguage = (payload?: any): action => ({
+  type: ActionTypes.REFRESH_LANGUAGE,
+  payload
+})

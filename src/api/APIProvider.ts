@@ -420,3 +420,8 @@ export const _searchChat = async (body: any) => {
     console.log("---------- _searchChat Api Call ---------------")
     return fetchApiData(config.API_URL + 'message/search?resource_id=' + (body?.id ?? "") + '&q=' + (body?.q ?? ""), null, "GET")
 }
+
+export const _refreshLanguage = async (body?: any) => {
+    console.log("---------- _refreshLanguage Api Call ---------------")
+    return fetchApiData(config.API_URL + 'language/labels', null, "GET")
+}

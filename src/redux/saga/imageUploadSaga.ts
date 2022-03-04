@@ -3,9 +3,11 @@ import { config } from 'api';
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction, setLoadingMsg } from "app-store/actions";
 import AWS from 'aws-sdk/dist/aws-sdk-react-native';
+import { random } from "lodash";
 import { Platform } from "react-native";
 import { Progress } from 'react-native-aws3';
 import { call, put, takeLatest } from 'redux-saga/effects';
+import { dateFormat } from "utils";
 import { store } from "..";
 import ActionTypes, { action } from "../action-types";
 
@@ -35,11 +37,13 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     let fileName = "";
     const { image, onSuccess, prefixType } = payload
     if (!image?.path) return
-    fileName = image?.path?.substring(image?.path?.lastIndexOf('/') + 1, image?.path?.length)
+    const date = new Date()
+    // fileName = image?.path?.substring(image?.path?.lastIndexOf('/') + 1, image?.path?.length)
+    fileName = (prefixType == 'video' ? "VID-" : "IMG-") + dateFormat(date, "YYYYMMDD") + "-PG" + Date.now() + "" + random(111, 999) + image?.path?.substring(image?.path?.lastIndexOf('.'));
     const file = {
         uri: image?.path,
         name: fileName,
-        type: image?.mime ?? fileName?.toLowerCase().endsWith("png") ? 'image/jpeg' : 'image/png'
+        type: image?.mime ?? (prefixType != 'video' ? (fileName?.toLowerCase().endsWith("png") ? 'image/png' : 'image/jpeg') : "*/*")
     }
     yield put(setLoadingAction(true))
     try {
