@@ -27,6 +27,7 @@ const insertAtIndex = (text: string, i: number, add: number = 0) => {
 }
 
 interface IChatItem {
+    created_by: any
     contacts: Array<Contact>
     _id: string
     isAdmin: any,
@@ -94,7 +95,7 @@ const ChatItem = (props: IChatItem) => {
         }
 
         return <TouchableOpacity activeOpacity={0.8} onPress={() => {
-            launchMap({ lat: props?.coordinates?.lat, long: props?.coordinates?.lng })
+            launchMap({ lat: parseFloat(props?.coordinates?.lat), long: parseFloat(props?.coordinates?.lng) })
         }} style={{
             borderRadius: scaler(15), overflow: 'hidden',
             padding: scaler(5),
@@ -251,6 +252,7 @@ const ChatItem = (props: IChatItem) => {
         }
         Clipboard.setString(message?.trim());
         // console.log("e", e, ((height - scaler(80)) / 3));
+        //@ts-ignore
         _showToast("Copied", 'SHORT', gravity);
     }, [])
 
@@ -300,6 +302,7 @@ const ChatItem = (props: IChatItem) => {
             <ImageLoader
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
+                resizeMode={'cover'}
                 source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             {isMuted ?
@@ -357,7 +360,8 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (message_type == 'contact') {
-        const c: Contact = props?.contacts?.[0]
+        const c: Contact = { ...props?.contacts?.[0] }
+        if (!c.company) c.company = ""
         const map = <TouchableOpacity activeOpacity={0.8} onPress={() => {
             Contacts.openContactForm(c).then(v => {
                 console.log("v", v);

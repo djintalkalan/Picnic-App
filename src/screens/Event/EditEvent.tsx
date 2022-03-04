@@ -542,7 +542,7 @@ const EditEvent: FC<any> = props => {
                                         return Language.event_max_price
                                     }
                                     try {
-                                        if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || ("1" + v.split(".")?.[1] > 199))) {
+                                        if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                             return Language.invalid_ticket_price
                                         }
                                     }

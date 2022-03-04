@@ -1,7 +1,7 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { setLoadingAction, tokenExpired } from 'app-store/actions';
+import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { DeviceEventEmitter, LogBox } from 'react-native';
@@ -45,6 +45,7 @@ import SelectLocation from 'screens/SelectLocation';
 import Subscription from 'screens/Subscription/Subscription';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
+import { useLanguage } from 'src/language/Language';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService } from 'utils';
@@ -102,7 +103,7 @@ const MyNavigationContainer = () => {
   // const { isConnected, isInternetReachable } = useNetInfo()
 
   const [isLogin] = useDatabase<boolean>('isLogin', false);
-  // const language = useLanguage();
+  const language = useLanguage();
   // console.log("language", language)
   useEffect(() => {
     LogBox.ignoreAllLogs();
@@ -121,13 +122,14 @@ const MyNavigationContainer = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(refreshLanguage())
     if (isLogin) {
       SocketService.init(dispatch);
     }
     return () => {
       SocketService.closeSocket();
     }
-  }, [isLogin])
+  }, [isLogin, language])
 
   const stopLoader = useCallback(() => {
     dispatch(setLoadingAction(false));
