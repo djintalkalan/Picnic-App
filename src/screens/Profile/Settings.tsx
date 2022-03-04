@@ -176,7 +176,7 @@ const Settings: FC<any> = (props) => {
 
 
                     <SettingButton
-                        containerStyle={{}}
+                        containerStyle={{ paddingTop: scaler(10) }}
                         onPress={() => {
                             _showPopUpAlert({
                                 message: Language.are_you_sure_delete_account,

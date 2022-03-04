@@ -9,7 +9,7 @@ import {
     TextInput
 } from 'custom-components';
 import Database, { ILocation, useDatabase } from 'database';
-import { isEqual } from 'lodash';
+import { isEqual, round } from 'lodash';
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -242,7 +242,7 @@ const EditEvent: FC<any> = props => {
             capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
             capacity: data?.capacity ?? 0,
             is_free_event: isFreeEvent ? '1' : '0',
-            event_fees: data?.ticketPrice ?? 0,
+            event_fees: data?.ticketPrice ? round(parseFloat(data?.ticketPrice), 2) : 0,
             event_date: dateFormat(eventDate, "YYYY-MM-DD"),
             event_start_time: dateFormat(startTime, "HH:mm:ss"),
             event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
@@ -543,7 +543,7 @@ const EditEvent: FC<any> = props => {
                                             return Language.event_max_price
                                         }
                                         try {
-                                            if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                            if (parseInt(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                                 return Language.invalid_ticket_price
                                             }
                                         }

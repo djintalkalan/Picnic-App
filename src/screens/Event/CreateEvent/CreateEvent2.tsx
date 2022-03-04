@@ -2,6 +2,7 @@ import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
 import Database, { useDatabase } from 'database';
+import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -124,7 +125,7 @@ const CreateEvent2: FC<any> = props => {
       capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
       capacity: data?.capacity,
       is_free_event: isFreeEvent ? '1' : '0',
-      event_fees: data?.ticketPrice,
+      event_fees: round(parseFloat(data?.ticketPrice), 2),
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_start_time: dateFormat(startTime, "HH:mm:ss"),
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
@@ -306,11 +307,12 @@ const CreateEvent2: FC<any> = props => {
                 icon={Images.ic_ticket}
                 rules={{
                   validate: (v: string) => {
+                    v = v?.trim()
                     if (parseFloat(v) > 99999.99) {
                       return Language.event_max_price
                     }
                     try {
-                      if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                      if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                         return Language.invalid_ticket_price
                       }
                     }
