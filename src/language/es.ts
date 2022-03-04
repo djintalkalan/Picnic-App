@@ -289,5 +289,5 @@ export const es = {
     contact: '',
     whatsapp: '',
     telegram: '',
-    swipe_left_to_more: '',
+    swipe_left_for_more: '',
 }

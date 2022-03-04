@@ -11,7 +11,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
-import { scaler, _showErrorMessage } from 'utils'
+import { scaler } from 'utils'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
 
@@ -57,7 +57,7 @@ export const GroupChats: FC<any> = (props) => {
             }
             flatListRef?.current?.scrollToPosition(0, 0, true);
         } else {
-            _showErrorMessage("Please enter message")
+            // _showErrorMessage("Please enter message")
         }
     }, [repliedMessage])
 
@@ -81,7 +81,7 @@ export const GroupChats: FC<any> = (props) => {
                         setRepliedMessage(null)
                     }
                 } else {
-                    _showErrorMessage("Please enter message")
+                    // _showErrorMessage("Please enter message")
                 }
             }
         }))
