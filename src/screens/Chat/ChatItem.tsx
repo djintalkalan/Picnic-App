@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast } from 'utils'
+import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
     if (i < 0) {
         return text
@@ -303,6 +303,7 @@ const ChatItem = (props: IChatItem) => {
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
                 resizeMode={'cover'}
+                onPress={() => _zoomImage(getImageUrl(message, { width: width, type: 'messages' }))}
                 source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             {isMuted ?

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, ColorValue, Image, ImageBackground, ImageResizeMode, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, ColorValue, GestureResponderEvent, Image, ImageBackground, ImageResizeMode, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import FastImage, { ImageStyle, Source } from 'react-native-fast-image';
 
 
@@ -16,6 +16,7 @@ interface IImageLoader {
     placeholderStyle?: ViewStyle
     customImagePlaceholderDefaultStyle?: any
     reload?: boolean
+    onPress?: (e?: GestureResponderEvent) => void
 }
 const ImageLoader = (props: IImageLoader) => {
     const { isShowActivity = true, source, resizeMode, borderRadius, backgroundColor, children,
@@ -66,7 +67,7 @@ const ImageLoader = (props: IImageLoader) => {
     }), [props?.style, borderRadius, backgroundColor, customImagePlaceholderDefaultStyle])
 
     return (
-        <>
+        <TouchableOpacity disabled={!props?.onPress} onPress={props?.onPress} activeOpacity={0.9} >
             <FastImage
                 key={currentRetry.current}
                 source={source}
@@ -92,7 +93,7 @@ const ImageLoader = (props: IImageLoader) => {
 
 
             </FastImage>
-        </>
+        </TouchableOpacity>
     );
 }
 

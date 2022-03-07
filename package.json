@@ -26,8 +26,8 @@
     "resetAndroid": "yarn env-s && cd android && ./gradlew clean && cd .. && yarn run android",
     "fix-sdk": "(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
     "postinstall": "yarn env-p && npx pod-install",
-    "w-tcp":"adb tcpip 5555",
-    "w-co":"adb connect "
+    "w-tcp": "adb tcpip 5555",
+    "w-co": "adb connect "
   },
   "dependencies": {
     "@notifee/react-native": "^4.0.1",
@@ -67,6 +67,7 @@
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-iap": "^7.5.4",
     "react-native-image-crop-picker": "^0.37.2",
+    "react-native-image-pan-zoom": "^2.1.12",
     "react-native-internet-connection-alert": "^0.1.6",
     "react-native-invoke-app": "^1.0.6",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",

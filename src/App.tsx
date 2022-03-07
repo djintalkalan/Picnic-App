@@ -2,6 +2,7 @@ import { persistor, store } from 'app-store/store';
 import { colors } from 'assets';
 import { Card, Loader, StatusBarProviderMemoized, Text } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
+import { ImageZoom, ImageZoomHolder } from 'custom-components/ImageZoom';
 import { KeyboardProvider } from 'custom-components/KeyboardService';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { PopupAlert } from 'custom-components/PopupAlert';
@@ -43,6 +44,7 @@ const App: FC = () => {
                 </Provider>
                 <PopupAlert ref={ref => PopupAlertHolder.setPopupAlert(ref)} />
                 <BottomMenu ref={ref => BottomMenuHolder.setBottomMenu(ref)} />
+                <ImageZoom ref={ref => ImageZoomHolder.setImageZoom(ref)} />
                 <DropdownAlertWithStatusBar />
             </VideoProvider>
         </LocationServiceProvider>

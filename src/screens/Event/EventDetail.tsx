@@ -3,6 +3,7 @@ import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
+import ImageLoader from 'custom-components/ImageLoader'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -12,7 +13,7 @@ import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -90,15 +91,15 @@ const EventDetail: FC<any> = (props) => {
     return (
         <SafeAreaView style={styles.container} edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                    <ImageLoader
+                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { width: width, type: 'events' }))}
+                        style={{ width: width, height: width, resizeMode: 'cover' }}
+                        placeholderSource={Images.ic_group_placeholder}
+                        placeholderStyle={{}}
+                        source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
+                </View>
 
-                {isDefault || !event?.image ?
-                    <View style={styles.placeholder}>
-                        <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
-                    </View>
-                    : <Image onError={() => {
-                        setDefault(true)
-                    }} source={event?.image ? { uri: getImageUrl(event?.image, { width: width, type: 'events' }) } : Images.ic_group_placeholder}
-                        style={{ width: width, height: width, resizeMode: 'cover' }} />}
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
                 <View style={styles.subHeading} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >

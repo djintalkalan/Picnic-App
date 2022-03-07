@@ -18,7 +18,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -317,6 +317,7 @@ const GroupDetail: FC<any> = (props) => {
 
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
+                        onPress={() => group?.image && _zoomImage(getImageUrl(group?.image, { width: width, type: 'groups' }))}
                         style={{ width: width, height: width, resizeMode: 'cover' }}
                         placeholderSource={Images.ic_group_placeholder}
                         placeholderStyle={{}}

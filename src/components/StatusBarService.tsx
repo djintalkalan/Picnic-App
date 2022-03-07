@@ -51,6 +51,7 @@ export const StatusBarProvider: FC<StatusBarProviderProps> = ({ children, initia
         {!currentStyle.translucent && <SafeAreaView edges={['top']} style={{ backgroundColor: currentStyle?.backgroundColor }} />}
         {children}
     </StatusBarContext.Provider>
+
 }
 
 export const useStatusBar = (): IStatusBarContext => useContext(StatusBarContext)

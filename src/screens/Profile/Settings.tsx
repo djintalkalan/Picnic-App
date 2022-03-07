@@ -2,15 +2,16 @@ import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
+import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Dimensions, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 
@@ -79,10 +80,9 @@ const Settings: FC<any> = (props) => {
             <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >
-                    <TouchableOpacity onPress={() => NavigationService.navigate("ProfileScreen")}>
-                        <Image onError={(err) => setProfileImage(Images.ic_home_profile)} style={{ height: scaler(60), width: scaler(60), borderRadius: scaler(30) }}
-                            source={profileImage ?? userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
-                                Images.ic_home_profile} />
+                    <TouchableOpacity onPress={() => _zoomImage(userData?.image ? getImageUrl(userData?.image, { type: 'users', width: Dimensions.get("screen").width }) : "")}>
+                        <ImageLoader placeholderSource={Images.ic_home_profile} style={{ height: scaler(60), width: scaler(60), borderRadius: scaler(30) }}
+                            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } : null} />
                     </TouchableOpacity>
                     <View style={{ marginLeft: scaler(10) }} >
                         <Text onPress={() => NavigationService.navigate("ProfileScreen")} style={{ color: colors.colorBlackText, fontWeight: '600', fontSize: scaler(16) }} >{userData?.first_name} {userData?.last_name}</Text>

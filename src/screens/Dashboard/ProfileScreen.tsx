@@ -2,11 +2,12 @@ import { getProfile, updateProfile, uploadFile } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
 import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
+import ImageLoader from 'custom-components/ImageLoader'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
 import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
@@ -14,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, stringToDate } from 'utils'
+import { dateFormat, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, stringToDate, _zoomImage } from 'utils'
 
 type FormType = {
     about: string
@@ -141,6 +142,10 @@ const ProfileScreen: FC<any> = (props) => {
         }))
     }, [])
 
+    const profilePath = profileImage?.path ? { uri: profileImage?.path } :
+        userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
+            null
+
     return (
         <SafeAreaView style={styles.container} >
 
@@ -163,13 +168,15 @@ const ProfileScreen: FC<any> = (props) => {
 
                 <View>
                     <View style={styles.imageContainer} >
-                        <Image onError={(err) => {
-                            setProfileImage(Images.ic_home_profile)
-                        }} style={styles.image} source={
-                            profileImage ? profileImage?.path ? { uri: profileImage?.path } : profileImage :
-                                userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
-                                    Images.ic_home_profile
-                        } />
+                        <ImageLoader onPress={() => _zoomImage(profileImage?.path || (userData?.image && getImageUrl(userData?.image, { type: 'users', width: Dimensions.get('screen').width })) || "")}
+                            style={styles.image}
+                            source={
+                                profileImage?.path ? { uri: profileImage?.path } :
+                                    userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
+                                        null
+                            }
+                            placeholderSource={Images.ic_home_profile}
+                        />
                     </View>
                     {isEditEnabled ? <TouchableOpacity onPress={pickImage} style={styles.cameraButton} >
                         <Image style={styles.image} source={Images.ic_camera} />

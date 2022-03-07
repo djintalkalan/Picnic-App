@@ -4,6 +4,7 @@ import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
+import { ImageZoomHolder } from 'custom-components/ImageZoom';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
@@ -245,6 +246,19 @@ export const _showBottomMenu = (data: IBottomMenu) => {
     setTimeout(() => {
         BottomMenuHolder.show(data)
     }, 0);
+}
+
+export const _zoomImage = (imageUrl: string) => {
+    console.log("Showing", imageUrl);
+
+    Keyboard.dismiss()
+    setTimeout(() => {
+        ImageZoomHolder.showImage(imageUrl)
+    }, 0);
+}
+
+export const _cancelZoom = () => {
+    PopupAlertHolder.hide()
 }
 
 
