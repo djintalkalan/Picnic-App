@@ -77,8 +77,8 @@ const ImageLoader = (props: IImageLoader) => {
                 resizeMode={resizeMode}
                 borderRadius={borderRadius}
             >
-                {isLoaded && !isError ? null : <View style={styles.viewImageStyles} >
-                    {!isLoaded && <ActivityIndicator
+                {(isLoaded && !isError) ? null : <View style={styles.viewImageStyles} >
+                    {!isLoaded && source && <ActivityIndicator
                         style={styles.activityIndicator}
                         size={loadingStyle ? loadingStyle.size : 'small'}
                         color={loadingStyle ? loadingStyle.color : 'gray'}
