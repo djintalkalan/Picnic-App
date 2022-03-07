@@ -26,6 +26,8 @@ const EventDetail: FC<any> = (props) => {
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
+    const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
+
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
             const index = event?.my_tickets?.findIndex(_ => _.status == 1) ?? -1
@@ -104,7 +106,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() ?
+                    {eventDate >= new Date() ?
                         <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -290,46 +292,45 @@ const EventDetail: FC<any> = (props) => {
             </ScrollView>
             {(event?.is_admin || event?.is_event_member) ?
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                    <View style={{ flex: 1 }}>
-                        <Button onPress={() => {
-                            try {
-                                const startDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-').toISOString()
-                                const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : undefined// add(startDate, { hours: 1 })
+                    {eventDate >= new Date() ?
+                        <View style={{ flex: 1 }}>
+                            <Button onPress={() => {
+                                try {
+                                    const startDate = eventDate?.toISOString()
+                                    const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : undefined// add(startDate, { hours: 1 })
+                                    presentEventCreatingDialog({
+                                        startDate,
+                                        endDate,
+                                        allDay: false,
+                                        title: '"' + event?.name + '" event from Picnic Groups',
+                                        notes: event?.name
+                                    }).then(res => {
+                                        console.log("Res", res);
 
+                                    }).catch(e => {
+                                        console.log("E", e);
 
-                                presentEventCreatingDialog({
-                                    startDate,
-                                    endDate,
-                                    allDay: false,
-                                    title: '"' + event?.name + '" event from Picnic Groups',
-                                    notes: event?.name
-                                }).then(res => {
-                                    console.log("Res", res);
+                                    })
+                                }
+                                catch (e) {
+                                    console.log("Error", e);
 
-                                }).catch(e => {
-                                    console.log("E", e);
-
-                                })
-                            }
-                            catch (e) {
-                                console.log("Error", e);
-
-                            }
-                        }} title={Language.add_to_calender} />
-                    </View>
+                                }
+                            }} title={Language.add_to_calender} />
+                        </View> : undefined}
                     <View style={{ flex: 1 }}>
                         <Button title={Language.start_chat}
                             onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                            fontColor={'black'}
-                            backgroundColor={'white'}
+                            fontColor={eventDate >= new Date() ? 'black' : 'white'}
+                            backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
                             buttonStyle={{
                                 borderColor: 'black',
-                                borderWidth: scaler(1)
+                                borderWidth: eventDate >= new Date() ? scaler(1) : 0
                             }}
                             textStyle={{ fontWeight: '400' }} />
                     </View>
                 </View> :
-                (stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-') >= new Date() &&
+                (eventDate >= new Date() &&
                     (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                     <View style={{ marginHorizontal: scaler(10) }}>
                         <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}

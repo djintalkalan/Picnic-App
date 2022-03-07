@@ -19,6 +19,7 @@ export const EventMemberList: FC<any> = (props) => {
     }))
 
     const getButtons = useCallback((item: any) => {
+        console.log('items', item)
         const buttons: Array<IBottomMenuButton> = []
         // buttons.push({
         //     title: Language.block_from_chat, onPress: () => {
@@ -69,9 +70,11 @@ export const EventMemberList: FC<any> = (props) => {
     const _renderEventMembers = useCallback(({ item, index }) => {
         return (
             <MemberListItem
-                onLongPress={() => _showBottomMenu({
-                    buttons: getButtons(item)
-                })}
+                onLongPress={() => {
+                    !item?.is_creator ? _showBottomMenu({
+                        buttons: getButtons(item)
+                    }) : undefined
+                }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
                 // customRightText={item?.is_admin ? Language?.admin : ""}
