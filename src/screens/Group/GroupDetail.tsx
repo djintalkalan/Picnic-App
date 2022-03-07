@@ -247,7 +247,7 @@ const GroupDetail: FC<any> = (props) => {
                 <TouchableOpacity disabled activeOpacity={1} onPress={() => { }}
                     style={[styles.buttonContainer, { borderBottomColor: "#DBDBDB", borderBottomWidth: scaler(1) }]} >
                     {/* <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} /> */}
-                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{Language.swipe_left_to_more}</Text>
+                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{Language.swipe_left_for_more}</Text>
                     {/* <Image style={{ height: scaler(15), width: scaler(7), resizeMode: 'contain' }} source={Images.ic_right} /> */}
 
                 </TouchableOpacity>
