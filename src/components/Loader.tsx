@@ -1,4 +1,5 @@
 import { RootState } from 'app-store';
+import { cancelUpload } from 'app-store/actions';
 import { colors } from 'assets';
 import { isEqual, round, toNumber } from 'lodash';
 import React, { FC } from 'react';
@@ -6,8 +7,9 @@ import { Dimensions, Platform, View } from 'react-native';
 import { Progress as S3Progress } from 'react-native-aws3';
 import Spinner from "react-native-loading-spinner-overlay";
 import * as Progress from 'react-native-progress';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { scaler } from 'utils';
+import Button from './Button';
 import { Text } from './Text';
 
 const { width } = Dimensions.get("window")
@@ -31,14 +33,18 @@ export const Loader: FC<LoaderProps> = (props) => {
     if (props?.loading || isLoading)
         return (
             <Spinner
+
                 visible={props?.loading || isLoading}
                 // visible
                 size={size}
                 color={colors.colorPrimary}
                 overlayColor={'rgba(0, 0, 0, 0.7)'}
-                customIndicator={
+                children={
                     type == 'progress' ?
-                        <ProgressIndicator progress={JSON.parse(loadingMsg)} /> : null
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                            <ProgressIndicator progress={JSON.parse(loadingMsg)} />
+                        </View>
+                        : undefined
                 }
             />
         )
@@ -60,6 +66,7 @@ const ProgressIndicator = ({ progress: { loaded, total, percent } }: { progress:
         divider = 1000
     }
     console.log("divider", divider);
+    const dispatch = useDispatch()
 
     return <>
         <View style={{ alignItems: 'center', flexDirection: 'row', width: width / 1.5, paddingHorizontal: scaler(5), justifyContent: 'space-between' }} >
@@ -80,6 +87,9 @@ const ProgressIndicator = ({ progress: { loaded, total, percent } }: { progress:
         <Text style={{ fontSize: scaler(14), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
             toNumber(percent) < 10 ? "Starting upload" : toNumber(percent) == 100 ? "Finalizing upload" : "Uploading file"
         }</Text>
+        <Button containerStyle={{ marginTop: scaler(20) }} textStyle={{ fontWeight: '400' }} paddingVertical={scaler(5)} paddingHorizontal={scaler(10)} fontSize={scaler(12)}
+            onPress={() => dispatch(cancelUpload())}
+            title='Cancel Upload' />
     </>
 }
 

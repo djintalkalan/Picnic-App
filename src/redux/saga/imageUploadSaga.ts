@@ -48,6 +48,8 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true))
     try {
         let res = yield call(ApiProvider.uploadFileAWS, file, prefixType, uploadProgress);
+        console.log("Upload", res);
+
         if (res && res.status == 201) {
             let location: string = res?.body?.postResponse?.location ?? res?.headers?.Location
             if (location) {
@@ -73,10 +75,20 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     }
 
 };
+
+function* cancelUpload({ type, payload }: action): Generator<any, any, any> {
+    ApiProvider._cancelUpload()
+    yield put(setLoadingAction(false))
+}
+
+
+
 const uploadProgress = async (progress: Progress, id: string) => {
     console.log("Progress", progress);
     await showNotification(id, progress)
 }
+
+
 
 const showNotification = async (id: string, p: Progress) => {
     let title = "Uploading file"
@@ -143,4 +155,5 @@ const transcodeVideo = async (key: string, callback: (obj: any) => void) => {
 export default function* watchUploadSaga() {
     // Take Last Action Only
     yield takeLatest(ActionTypes.UPLOAD_FILE, uploadImage);
+    yield takeLatest(ActionTypes.CANCEL_UPLOAD, cancelUpload);
 };

@@ -23,6 +23,10 @@ export const uploadFile = (payload: { image: any, onSuccess?: (url: string, thum
   payload
 })
 
+export const cancelUpload = (): action => ({
+  type: ActionTypes.CANCEL_UPLOAD
+})
+
 export const refreshLanguage = (payload?: any): action => ({
   type: ActionTypes.REFRESH_LANGUAGE,
   payload

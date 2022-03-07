@@ -96,8 +96,17 @@ export const userEventGroupReducer = (state: IUserEventsGroups = initialUserEven
     switch (action.type) {
         case ActionTypes.SET_USER_GROUPS:
             return { ...state, groups: action?.payload }
+        case ActionTypes.DELETE_GROUP_SUCCESS:
+            return { ...state, groups: state?.groups.filter(_ => _._id != action?.payload) }
         case ActionTypes.SET_USER_UPCOMING_PAST_EVENTS:
             return { ...state, [action?.payload?.type]: action?.payload?.data }
+        case ActionTypes.DELETE_EVENT_SUCCESS:
+            return {
+                ...state,
+                upcoming: state?.upcoming.filter(_ => _._id != action?.payload),
+                past: state?.upcoming.filter(_ => _._id != action?.payload),
+            }
+
         default:
             return state
     }

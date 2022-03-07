@@ -3,7 +3,7 @@ import { store } from 'app-store';
 import { setLoadingAction } from 'app-store/actions';
 import axios, { CancelToken, Method } from 'axios';
 import { DeviceEventEmitter } from 'react-native';
-import { Progress, RNS3 } from 'react-native-aws3';
+import { Progress, Request, RNS3 } from 'react-native-aws3';
 import { CANCEL } from 'redux-saga';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
@@ -16,6 +16,8 @@ interface header {
     "X-Platform-Type": string;
     "Accept-Language"?: LanguageType
 }
+
+let uploadRequest: Request
 
 const CancelTokenConstructor = axios.CancelToken;
 async function callApi(urlString: string, header: header, body: any, methodType: Method, cancelToken?: CancelToken) {
@@ -105,6 +107,10 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
     }
 }
 
+export const _cancelUpload = () => {
+    return uploadRequest?.abort();
+}
+
 const callUploadFileAWS = async (file: { uri: string, name: string, type: any, }, prefix: any, progressCallback: (progress: Progress, id: string) => any) => {
     console.log("Body S3", JSON.stringify(file))
     const options = {
@@ -115,15 +121,19 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any, }
         secretKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
         successActionStatus: 201
     }
-    return RNS3.put(file, options).progress((progress) => progressCallback(progress, file?.name.substring(0, file?.name?.indexOf(".")))).then((response) => {
+    uploadRequest = RNS3.put(file, options)
+    uploadRequest.progress((progress) => progressCallback(progress, file?.name.substring(0, file?.name?.indexOf(".")))).then((response) => {
         console.log("response", response)
         if (response.status !== 201)
             throw new Error("Failed to upload image to S3");
         // console.log("res" + response.body);
         return response
-    }).catch((error) => {
-        console.log("AWS ERROR ", JSON.stringify(error));
     })
+        .catch((error) => {
+            console.log("AWS ERROR ", JSON.stringify(error));
+        })
+    return uploadRequest
+
 }
 
 export const uploadFileAWS = async (body: any, prefix: any, progressCallback: (progress: Progress, id: string) => any) => {
