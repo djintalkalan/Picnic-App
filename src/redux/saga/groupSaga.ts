@@ -410,6 +410,15 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* _deleteGroupSuccess({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(deleteEventSuccess({ groupId: payload }))
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+    }
+}
+
 // Watcher: watch auth request
 export default function* watchGroups() {
     yield takeEvery(ActionTypes.GET_MUTED_RESOURCES, _getMutedResources);
@@ -426,6 +435,7 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.GET_MUTED_REPORTED_COUNT, _mutedBlockedReportedCount);
     yield takeLatest(ActionTypes.GET_BLOCKED_MEMBERS, _getBlockedMembers);
     yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
+    yield takeEvery(ActionTypes.DELETE_GROUP_SUCCESS, _deleteGroupSuccess);
     yield takeEvery(ActionTypes.GET_MY_EVENTS, _getMyEvents);
 
 };

@@ -25,6 +25,9 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
         case ActionTypes.SET_ALL_EVENTS:
             return { ...state, allEvents: action?.payload }
         case ActionTypes.DELETE_EVENT_SUCCESS:
+            if (action.payload?.groupId) {
+                return { ...state, allEvents: state?.allEvents.filter(_ => _.group_id != action.payload?.groupId) }
+            }
             return { ...state, allEvents: state?.allEvents.filter(_ => _._id != action?.payload) }
         case ActionTypes.JOIN_EVENT_SUCCESS:
             return { ...state, allEvents: state.allEvents.map(_ => (_._id == action?.payload ? { ..._, is_event_member: true } : _)) }

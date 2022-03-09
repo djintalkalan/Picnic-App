@@ -120,13 +120,14 @@ const Subscription: FC = (props: any) => {
 
             } catch (ackErr) {
                 console.log('ackErr IN-APP >>>>', ackErr);
+                dispatch(setLoadingAction(false))
             }
         }
     }, []
     )
 
     const handleError = useCallback((error: InAppPurchases.PurchaseError) => {
-        switch (error) {
+        switch (error?.code) {
             case InAppPurchases.IAPErrorCode.E_DEFERRED_PAYMENT:
                 console.log("User does not have permissions to buy but requested parental approval (iOS only)");
                 break;
@@ -145,6 +146,7 @@ const Subscription: FC = (props: any) => {
                 console.log("Email us! You found a mistake we did!");
                 break;
             case InAppPurchases.IAPErrorCode.E_ALREADY_OWNED:
+                continueToMemberShip(Language.you_are_already_a_member)
                 console.log("You're already a member!");
                 break;
             default:

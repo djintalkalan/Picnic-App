@@ -10,7 +10,7 @@ import { EMIT_JOIN, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, O
 class Service {
     static instance?: Service;
     private socket?: Socket;
-    private dispatch?: Dispatch<any>
+    private dispatch!: Dispatch<any>;
 
     static getInstance = () => {
         if (!this.instance) {
@@ -19,7 +19,7 @@ class Service {
         return this.instance;
     }
 
-    init = (dispatch?: Dispatch<any>, emitData?: { e: string, data: any }) => {
+    init = (dispatch: Dispatch<any>) => {
         this.dispatch = dispatch
         const isLogin = Database.getStoredValue('isLogin')
         if (!this.socket) {
@@ -109,7 +109,7 @@ class Service {
 
     private onLikeUnlike = (e: any) => {
         console.log("on Like Unlike", e)
-        if (this.dispatch && e?.data?.data?.length && Array.isArray(e?.data?.data)) {
+        if (e?.data?.data?.length && Array.isArray(e?.data?.data)) {
             const userId = Database.getStoredValue("userData")?._id
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
             e?.liked_by_users?.some((e: any, index: number) => {
@@ -135,7 +135,7 @@ class Service {
 
     private onGroupMessageDelete = (e: any) => {
         console.log("Group Message Delete", e)
-        if (this.dispatch && e?.data) {
+        if (e?.data) {
             if (e?.data?.message?.data?.length) {
                 const data = mergeMessageObjects(e?.data?.message?.data, e?.data?.message?.message_total_likes_count, e?.data?.message?.is_message_liked_by_me)
                 this.dispatch(updateChatInGroupSuccess({
@@ -157,11 +157,10 @@ class Service {
         console.log("Group Message received", e)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            this.dispatch &&
-                this.dispatch(setChatInGroup({
-                    groupId: data[0]?.resource_id,
-                    chats: data
-                }))
+            this.dispatch(setChatInGroup({
+                groupId: data[0]?.resource_id,
+                chats: data
+            }))
         }
 
     }
@@ -170,11 +169,10 @@ class Service {
         console.log("Group Messages received", e)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            this.dispatch &&
-                this.dispatch(setChatInGroup({
-                    groupId: data?.[0]?.resource_id,
-                    chats: data
-                }))
+            this.dispatch(setChatInGroup({
+                groupId: data?.[0]?.resource_id,
+                chats: data
+            }))
         }
     }
 
@@ -190,14 +188,13 @@ class Service {
                 _showErrorMessage(Language.getString("this_group_is_deleted"), 5000)
                 NavigationService.navigate("Home")
             }
-            this.dispatch &&
-                this.dispatch(deleteGroupSuccess(e?.data?.resource_id))
+            this.dispatch(deleteGroupSuccess(e?.data?.resource_id))
         }
     }
 
     private onGroupMemberDelete = (e: any) => {
         console.log("onGroupMemberDelete", e)
-        if (this.dispatch && e?.data) {
+        if (e?.data) {
             const id = Database.getStoredValue('userData')?._id
             if (id == e?.data?.user_id) {
                 console.log("SCREEN", NavigationService?.getCurrentScreen());
@@ -226,12 +223,11 @@ class Service {
         }
     }
 
-
     /************************************************   EVENTS   *********************************************/
 
     private onEventMessageDelete = (e: any) => {
         console.log("Event Message Delete", e)
-        if (this.dispatch && e?.data) {
+        if (e?.data) {
             if (e?.data?.message?.data?.length) {
                 const data = mergeMessageObjects(e?.data?.message?.data, e?.data?.message?.message_total_likes_count, e?.data?.message?.is_message_liked_by_me)
                 this.dispatch(updateChatInEventSuccess({
@@ -253,11 +249,10 @@ class Service {
         console.log("Event Message received", e)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            this.dispatch &&
-                this.dispatch(setChatInEvent({
-                    eventId: data?.[0]?.resource_id,
-                    chats: data
-                }))
+            this.dispatch(setChatInEvent({
+                eventId: data?.[0]?.resource_id,
+                chats: data
+            }))
         }
 
     }
@@ -266,12 +261,10 @@ class Service {
         console.log("Event Messages received", e)
         if (e?.data?.data?.length) {
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-
-            this.dispatch &&
-                this.dispatch(setChatInEvent({
-                    eventId: data?.[0]?.resource_id,
-                    chats: data
-                }))
+            this.dispatch(setChatInEvent({
+                eventId: data?.[0]?.resource_id,
+                chats: data
+            }))
         }
     }
 
@@ -287,14 +280,13 @@ class Service {
                 _showErrorMessage(Language.getString("this_event_is_deleted"), 5000)
                 NavigationService.navigate("Home")
             }
-            this.dispatch &&
-                this.dispatch(deleteEventSuccess(e?.data?.resource_id))
+            this.dispatch(deleteEventSuccess(e?.data?.resource_id))
         }
     }
 
     private onEventMemberDelete = (e: any) => {
         console.log("onEventMemberDelete", e)
-        if (this.dispatch && e?.data) {
+        if (e?.data) {
             const id = Database.getStoredValue('userData')?._id
             if (id == e?.data?.user_id) {
                 console.log("SCREEN", NavigationService?.getCurrentScreen());

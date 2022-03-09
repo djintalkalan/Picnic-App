@@ -4,6 +4,7 @@ import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportReso
 import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
+import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -298,7 +299,7 @@ const EventDetail: FC<any> = (props) => {
                             <Button onPress={() => {
                                 try {
                                     const startDate = eventDate?.toISOString()
-                                    const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : undefined// add(startDate, { hours: 1 })
+                                    const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : add(eventDate, { minutes: 1 }).toISOString()
                                     presentEventCreatingDialog({
                                         startDate,
                                         endDate,
