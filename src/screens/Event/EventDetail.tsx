@@ -55,6 +55,34 @@ const EventDetail: FC<any> = (props) => {
         return popStatusBarStyle
     }, []))
 
+    const _showCancellationPolicy = useCallback(() => {
+        _showPopUpAlert({
+            message: Language.are_you_sure_cancel_reservation + '?',
+            customView: () => <TouchableOpacity
+                onPress={() => {
+                    // !event?.event_refund_policy ?
+                    _showPopUpAlert({
+                        message: event?.event_refund_policy,
+                        // cancelButtonText: null,
+                        // onPressButton: () => {
+                        //     _showCancellationPolicy()
+                        // },
+                        // buttonStyle: { backgroundColor: colors.colorErrorRed },
+                        // buttonText: Language.close,
+
+                    })
+                    // : _showErrorMessage(Language.refund_policy_required)
+                }}>
+                <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
+            </TouchableOpacity>,
+            onPressButton: () => {
+                dispatch(leaveEvent(event?._id))
+                _hidePopUpAlert()
+            },
+            buttonText: Language.yes_cancel,
+        })
+    }, [])
+
 
 
     // const _renderGroupMembers = useCallback(({ item, index }) => {
@@ -175,19 +203,7 @@ const EventDetail: FC<any> = (props) => {
                                     }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
-                                            _showPopUpAlert({
-                                                message: Language.are_you_sure_cancel_reservation + '?',
-                                                customView: () => <TouchableOpacity
-                                                    onPress={() => { _showPopUpAlert({ message: event?.event_refund_policy }) }}>
-                                                    <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
-                                                </TouchableOpacity>,
-                                                onPressButton: () => {
-                                                    dispatch(leaveEvent(event?._id))
-                                                    _hidePopUpAlert()
-                                                },
-                                                buttonText: Language.yes_cancel,
-                                                // cancelButtonText: Language.cancel
-                                            })
+                                            _showCancellationPolicy()
                                             setEditButtonOpened(false)
                                         }} hideBorder /> : undefined}
                                 </>

@@ -13,7 +13,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
-            _showSuccessMessage(res.message);
+            // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
             Database.setMultipleValues({
                 authToken: access_token,

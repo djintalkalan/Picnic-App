@@ -82,6 +82,7 @@ const Scanner: FC<any> = (props) => {
                     reactivate
                     reactivateTimeout={2000}
                     vibrate={true}
+                    //@ts-ignore
                     flashMode={RNCamera.Constants.FlashMode.auto}
                 />}
             <ScannerUi setQrScanning={setQrScanning} isQrScanning={isQrScanning} />

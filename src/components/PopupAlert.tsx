@@ -1,7 +1,7 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component, FC } from "react";
-import { GestureResponderEvent, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { BackHandler, GestureResponderEvent, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -18,7 +18,7 @@ export interface IAlertType {
     message?: string
     buttonText?: string
     buttonStyle?: StyleProp<ViewStyle>
-    cancelButtonText?: string
+    cancelButtonText?: string | null
     onPressCancel?: () => void
 }
 
@@ -28,6 +28,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         this.state = {
             alertVisible: false,
         }
+        this.onBackPress = this.onBackPress.bind(this)
     }
 
     title: string = "Confirm payment method"
@@ -44,13 +45,14 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         this.message = message || ""
         this.buttonText = buttonText || ""
         this.buttonStyle = StyleSheet.flatten(buttonStyle) || {}
-        this.cancelButtonText = cancelButtonText || Language.close
+        this.cancelButtonText = cancelButtonText === null ? "" : (cancelButtonText || Language.close)
         this.customView = customView
         this.onPressCancel = () => {
             onPressCancel && onPressCancel()
             this.hideAlert()
         }
         this.onPressButton = onPressButton
+        //@ts-ignore
         this.state.alertVisible = true
         this.forceUpdate()
     }
@@ -60,7 +62,17 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     }
 
     shouldComponentUpdate = (nextProps: Readonly<PopupAlertProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
+        if (nextState?.alertVisible && this.state.alertVisible != nextState.alertVisible) {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+        } else {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
+        }
         return this.state.alertVisible != nextState.alertVisible
+    }
+
+    onBackPress = () => {
+        this.setState({ alertVisible: false })
+        return true
     }
 
     render() {

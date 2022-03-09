@@ -45,7 +45,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
     }
 
     onBackPress = () => {
-        this.setState({ alertVisible: false })
+        // this.setState({ alertVisible: false })
         return true
     }
 
