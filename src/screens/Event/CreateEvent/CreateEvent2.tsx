@@ -1,7 +1,7 @@
 import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
-import Database, { useDatabase } from 'database';
+import Database, { ILocation, useDatabase } from 'database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -139,9 +139,7 @@ const CreateEvent2: FC<any> = props => {
       createEvent({
         data: payload,
         onSuccess: () => {
-          Database.setSelectedLocation(
-            Database.getStoredValue('selectedLocation'),
-          );
+          Database.setSelectedLocation(Database.getStoredValue<ILocation>('selectedLocation'));
         },
       }),
     );

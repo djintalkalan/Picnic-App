@@ -143,7 +143,7 @@ class Database {
     }
 
     public addInRecentSearches = (data: IRecentSearches) => {
-        const oldData = (Database.phoneStorage.getArray("recentSearches") ?? []).filter((_) => !isEqual(_?.data?.place_id, data?.data?.place_id))
+        const oldData = (Database.phoneStorage.getArray("recentSearches") ?? []).filter((_: any) => !isEqual(_?.data?.place_id, data?.data?.place_id))
         Database.phoneStorage.setArray('recentSearches', [data, ...oldData])
     }
 
@@ -179,7 +179,8 @@ class Database {
         return Database.phoneStorage.getString(key) ?? ""
     }
 
-    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T | undefined => {
+    //@ts-ignore
+    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T => {
         switch (key) {
             case 'authToken':
             case 'firebaseToken':
