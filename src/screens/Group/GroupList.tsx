@@ -6,7 +6,7 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, InteractionManager, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Bar } from 'react-native-progress';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -143,7 +143,11 @@ const GroupList: FC<any> = (props) => {
         )
     }, [])
 
-    const { bottom } = useSafeAreaInsets()
+    const insets = useSafeAreaInsets()
+
+    const bottom = useMemo(() => {
+        return insets.bottom
+    }, [])
 
     const _renderHiddenItem = useCallback(({ item }, rowMap) => {
         const { is_group_member } = item

@@ -7,7 +7,7 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { EventItem } from 'custom-components/ListItem/EventItem';
 import { TicketView } from 'custom-components/ListItem/ListItem';
 import { isEqual } from 'lodash';
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Bar } from 'react-native-progress';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,7 +22,11 @@ const ITEM_HEIGHT = scaler(120)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
 const EventList: FC<any> = (props) => {
-    const { bottom } = useSafeAreaInsets()
+    const insets = useSafeAreaInsets()
+
+    const bottom = useMemo(() => {
+        return insets.bottom
+    }, [])
 
     const getButtons = useCallback((item: any) => {
         const { is_event_member, _id, is_event_admin } = item
