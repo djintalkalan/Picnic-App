@@ -71,8 +71,11 @@ const Home: FC = () => {
       dispatch(getAllCurrencies())
     })
   }, [])
+  const insets = useSafeAreaInsets()
 
-  const { bottom } = useSafeAreaInsets()
+  const bottom = useMemo(() => {
+    return insets.bottom
+  }, [])
 
   const onPressSetting = useCallback(() => {
     NavigationService.navigate("Settings")
