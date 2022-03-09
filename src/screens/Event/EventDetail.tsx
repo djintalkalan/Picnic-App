@@ -32,7 +32,7 @@ const EventDetail: FC<any> = (props) => {
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
-            const index = event?.my_tickets?.findIndex(_ => _.status == 1) ?? -1
+            const index = event?.my_tickets?.findIndex((_: any) => _.status == 1) ?? -1
             return {
                 isCancelledByMember: (!event?.my_tickets?.length || index > -1) ? false : true,
                 activeTicket: index > -1 ? event?.my_tickets[index] : null
@@ -125,6 +125,7 @@ const EventDetail: FC<any> = (props) => {
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
                         onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { width: width, type: 'events' }))}
+                        //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
                         placeholderSource={Images.ic_group_placeholder}
                         placeholderStyle={{}}
