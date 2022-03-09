@@ -32,7 +32,7 @@ const Subscription: FC = (props: any) => {
     const dispatch = useDispatch();
 
     // const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
-    const [products, setProducts] = useState<Array<InAppPurchases.Product>>([])
+    const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
     const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
     const initializeIAPConnection = useCallback(async () => {
@@ -67,6 +67,8 @@ const Subscription: FC = (props: any) => {
             console.log('ALL PRODUCTS ', products);
             if (products?.length) {
                 setProducts(products)
+            } else {
+                setProducts([])
             }
         } catch (err) {
             console.log("IAP error", err);
@@ -251,10 +253,16 @@ const Subscription: FC = (props: any) => {
                     <Button title='Subscribe now' onPress={() => requestSubscription(subscription?.productId, true)} />
                 </View>
             })} */}
-                <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
-                    <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
-                    <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
-                </View>
+                {products?.length ? <>
+                    <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
+                        <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
+                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
+                    </View>
+                </> :
+                    products && <View style={{ flex: 1 }} >
+                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{"In-App purchases are not available at this moment"}</Text>
+                    </View>
+                }
                 <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
                     restorePurchase()
                 }} />

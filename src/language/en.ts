@@ -290,5 +290,6 @@ export const en = {
   whatsapp: 'Whatsapp',
   telegram: 'Telegram',
   swipe_left_for_more: 'Swipe left for more',
+  in_app_unavailable: "In-App purchases not available",
 
 }
