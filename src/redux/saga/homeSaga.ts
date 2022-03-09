@@ -4,7 +4,7 @@ import { setSearchedData } from "app-store/actions";
 import { defaultLocation } from "custom-components";
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from "src/database/Database";
-import Language from "src/language/Language";
+import Language, { DefaultLanguages } from "src/language/Language";
 import { _showErrorMessage } from "utils";
 
 
@@ -34,9 +34,16 @@ function* _refreshLanguage({ type, payload, }: action): Generator<any, any, any>
         let res = yield call(ApiProvider._refreshLanguage);
         if (res.status == 200) {
             const currentLanguage = Database?.getStoredValue("selectedLanguage") ?? "en"
-            const languages = res?.data
-            Database.setAllLanguages(languages)
-            Language.setContent(languages)
+            const allLanguages = DefaultLanguages
+            const newLanguages = res?.data
+            Object.keys(allLanguages).forEach((l: string) => {
+                Object.keys(allLanguages[l]).forEach((k: string) => {
+                    // @ts-ignore
+                    allLanguages[l][k] = newLanguages?.[l]?.[k] || allLanguages[l][k] || allLanguages['en'][k]
+                })
+            })
+            Database.setAllLanguages(allLanguages)
+            Language.setContent(allLanguages)
             Language.setLanguage(currentLanguage);
             Database.setSelectedLanguage(currentLanguage);
             // Database.setSelectedLanguage()

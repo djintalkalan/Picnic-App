@@ -5,17 +5,14 @@ import { en } from './en';
 import { es } from './es';
 
 export type LanguageType = 'en' | 'es';
-export interface ILanguages {
-  en: typeof en
-  es: typeof es
-}
+export type ILanguages = GlobalStrings<typeof en>
 
 const DefaultLanguage: LanguageType = 'en';
-const allLanguages = Database?.getStoredValue<GlobalStrings<typeof en>>("allLanguages") ?? {
+export const DefaultLanguages: ILanguages = {
   en,
   es
 }
-
+const allLanguages = Database?.getStoredValue<ILanguages>("allLanguages") ?? DefaultLanguages
 const Language = new LocalizedStrings(allLanguages);
 Language.setLanguage(
   Database.getStoredValue('selectedLanguage')?.toString() || DefaultLanguage,

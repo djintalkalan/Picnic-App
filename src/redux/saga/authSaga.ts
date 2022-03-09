@@ -21,11 +21,6 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 isLogin: true
             })
         } else if (res.status == 400) {
-            Database.setMultipleValues({
-                authToken: "abc",
-                userData: { _id: "As" },
-                isLogin: true
-            })
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -64,7 +59,6 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
 
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-
     try {
         let res = yield call(ApiProvider._verifyOtp, payload);
         if (res.status == 200) {

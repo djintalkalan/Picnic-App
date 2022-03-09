@@ -304,6 +304,7 @@ const EventDetail: FC<any> = (props) => {
                                         startDate,
                                         endDate,
                                         allDay: false,
+                                        location: event?.address,
                                         title: '"' + event?.name + '" event from Picnic Groups',
                                         notes: event?.name
                                     }).then(res => {

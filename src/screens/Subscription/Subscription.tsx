@@ -260,7 +260,7 @@ const Subscription: FC = (props: any) => {
                     </View>
                 </> :
                     products && <View style={{ flex: 1 }} >
-                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{"In-App purchases are not available at this moment"}</Text>
+                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
                     </View>
                 }
                 <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
