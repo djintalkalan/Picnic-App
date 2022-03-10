@@ -154,6 +154,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     <TextInput
                         ref={ref}
                         value={value}
+                        spellCheck={true}
                         onChangeText={onChangeText}
                         inputAccessoryViewID={'done'}
                         numberOfLines={1}

@@ -123,8 +123,9 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 allowFontScaling={false}
                                 value={value}
                                 multiline={multiline}
+                                autoCorrect={props?.autoCorrect ?? false}
+                                spellCheck={props?.autoCorrect ?? false}
                                 inputAccessoryViewID={multiline ? name : undefined}
-                                autoCorrect={false}
                                 maxLength={limit ?? props?.maxLength}
                                 onFocus={(e) => {
                                     (multiline && Platform.OS == 'android') && openKeyboardAccessory(

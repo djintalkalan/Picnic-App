@@ -395,7 +395,7 @@ const GroupDetail: FC<any> = (props) => {
                                     {_renderGroupMembers({ item, index })}
                                 </Fragment>
                             })}
-                            {/* <FlatList
+                            {/* <FlatList 
                         scrollEnabled={false}
                         // onLayout={(e) => {
                         //     const height = e.nativeEvent.layout.height
