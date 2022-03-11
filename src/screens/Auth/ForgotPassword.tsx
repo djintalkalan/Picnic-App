@@ -3,11 +3,11 @@ import { forgotPassword } from 'app-store/actions'
 import { colors } from 'assets'
 import { Button, Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
@@ -27,19 +27,6 @@ const ForgotPassword: FC = () => {
 
     const dispatch = useDispatch();
 
-    // const { pushStatusBarStyle, popStatusBarStyle, currentStyle } = useStatusBar()
-
-    // useFocusEffect(useCallback(() => {
-    //     pushStatusBarStyle({
-    //         backgroundColor: 'red',
-    //         barStyle: 'light-content'
-    //     })
-
-    //     return () => {
-    //         popStatusBarStyle()
-    //     }
-    // }, []))
-
     const onSubmit = useCallback(() => handleSubmit(data => {
         dispatch(forgotPassword(data))
 
@@ -55,7 +42,7 @@ const ForgotPassword: FC = () => {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
 
             <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(0) }} >
@@ -83,7 +70,7 @@ const ForgotPassword: FC = () => {
 
             </View>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

@@ -1,6 +1,7 @@
 import { checkEmail } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import {
   ConfirmPasswordValidations,
   EmailValidations,
@@ -11,7 +12,6 @@ import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { NavigationService, scaler, _showErrorMessage } from 'utils';
@@ -88,7 +88,7 @@ const SignUp1: FC = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewWithStatusBar style={styles.container}>
       <Stepper step={1} totalSteps={3} />
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View
@@ -183,7 +183,7 @@ const SignUp1: FC = () => {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

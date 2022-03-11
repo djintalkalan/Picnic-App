@@ -3,10 +3,10 @@ import { RootState } from 'app-store'
 import { getMutedReportedCount } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useState } from 'react'
 import { Image, ImageSourcePropType, InteractionManager, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
@@ -33,7 +33,7 @@ const PrivacyScreen: FC<any> = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
 
             <MyHeader title={Language.review} />
 
@@ -72,7 +72,7 @@ const PrivacyScreen: FC<any> = (props) => {
                 </View>
             </View>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

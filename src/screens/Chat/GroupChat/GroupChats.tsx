@@ -27,8 +27,8 @@ export const GroupChats: FC<any> = (props) => {
     const { bottom } = useSafeAreaInsets()
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
-    const { keyboardHeight, isKeyboard } = useKeyboardService();
     const isFocused = useIsFocused()
+    const { keyboardHeight, isKeyboard } = useKeyboardService(isFocused);
 
     useEffect(() => {
         if (repliedMessage) {

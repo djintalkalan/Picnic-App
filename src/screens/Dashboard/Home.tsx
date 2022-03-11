@@ -2,6 +2,7 @@ import { RootState } from 'app-store'
 import { getAllCurrencies, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
@@ -71,8 +72,8 @@ const Home: FC = () => {
       dispatch(getAllCurrencies())
     })
   }, [])
-  const insets = useSafeAreaInsets()
 
+  const insets = useSafeAreaInsets()
   const bottom = useMemo(() => {
     return insets.bottom
   }, [])
@@ -83,10 +84,8 @@ const Home: FC = () => {
   }, [])
 
   return (
-    <View style={styles.container} >
-
+    <SafeAreaViewWithStatusBar edges={['top']} >
       <View style={styles.headerContainer} >
-
         <TouchableOpacity
           onPress={() => {
             NavigationService.navigate("SelectLocation")
@@ -209,7 +208,7 @@ const Home: FC = () => {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

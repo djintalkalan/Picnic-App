@@ -206,8 +206,10 @@ android {
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-                variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
-                output.outputFileName = outputFileName+"_"+abi+".apk"
+                        if(variant.buildType.name.equals("release")){
+                        variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
+                        output.outputFileName = outputFileName+"_"+abi+".apk"
+                        }
             } else if (variant.buildType.name.equals("release")) {
                 variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
                 output.outputFileName = outputFileName+".apk"

@@ -1,11 +1,20 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
+import { colors } from 'assets';
+import { Card, PopupAlert } from 'custom-components';
+import { BottomMenu } from 'custom-components/BottomMenu';
+import { ImageZoom } from 'custom-components/ImageZoom';
+import DropdownAlert from 'dj-react-native-dropdown-alert';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
-import { DeviceEventEmitter, LogBox } from 'react-native';
+import { DeviceEventEmitter, LogBox, Text, View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
@@ -48,9 +57,12 @@ import { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
-import { NavigationService } from 'utils';
+import { NavigationService, scaler } from 'utils';
+import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
+
+
 export let TOKEN_EXPIRED = false;
-const Stack = createStackNavigator();
+const NativeStack = createNativeStackNavigator();
 
 const commonScreens = {};
 
@@ -147,12 +159,13 @@ const MyNavigationContainer = () => {
   }, []);
 
   return (
-    <NavigationContainer
-      ref={NavigationService.setNavigationRef}
-      onReady={() => setTimeout(() => {
-        RNBootSplash.hide({ fade: true })
-      }, 1000)}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <SafeAreaProvider>
+      <NavigationContainer
+        ref={NavigationService.setNavigationRef}
+        onReady={() => setTimeout(() => {
+          RNBootSplash.hide({ fade: true })
+        }, 1000)}>
+        {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Object.entries({
           // Use some screens conditionally based on some condition
           ...(isLogin ? dashboardScreens : authScreens),
@@ -161,9 +174,64 @@ const MyNavigationContainer = () => {
         }).map(([name, component]) => (
           <Stack.Screen key={name} name={name} component={component} />
         ))}
-      </Stack.Navigator>
-    </NavigationContainer>
+      </Stack.Navigator> */}
+
+
+        <NativeStack.Navigator screenOptions={{ headerShown: false }}>
+          {Object.entries({
+            // Use some screens conditionally based on some condition
+            ...(isLogin ? dashboardScreens : authScreens),
+            // Use the screens normally
+            ...commonScreens,
+          }).map(([name, component]) => (
+            <NativeStack.Screen key={name} name={name} component={component} />
+          ))}
+        </NativeStack.Navigator>
+        <ImageZoom ref={ref => StaticHolder.setImageZoom(ref)} />
+        <PopupAlert ref={ref => StaticHolder.setPopupAlert(ref)} />
+        <BottomMenu ref={ref => StaticHolder.setBottomMenu(ref)} />
+        <KeyboardAccessoryView ref={ref => StaticHolder.setKeyboardAccessoryView(ref)} />
+        <DropdownAlertWithStatusBar />
+      </NavigationContainer>
+    </SafeAreaProvider>
+
   );
 };
+
+const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
+
+const DropdownAlertWithStatusBar = () => {
+  return <DropdownAlert
+    successImageSrc={successImageSrc}
+    updateStatusBar={false}
+    customAlert={(data) => {
+      // console.log("data", data)
+      let IconComponent = <Feather color={colors.colorWhite} size={scaler(22)} name={'check'} />
+      let iconBackgroundColor = colors.colorPrimary
+
+      switch (data?.type) {
+        case "error":
+          IconComponent = <AntDesign color={colors.colorWhite} size={scaler(22)} name={'close'} />
+          iconBackgroundColor = "#cc3232"
+          break;
+
+        case "info":
+        case "warn":
+          IconComponent = <Ionicons color={colors.colorWhite} size={scaler(22)} name={'information'} />
+          iconBackgroundColor = "#cd853f"
+          break;
+      }
+      return (
+        <Card cornerRadius={scaler(40)} cardElevation={3} style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(4), borderRadius: scaler(40), backgroundColor: 'white', width: '90%', marginHorizontal: '5%' }} >
+          <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: scaler(20), height: scaler(40), width: scaler(40), backgroundColor: iconBackgroundColor }}>
+            {IconComponent}
+          </View>
+          <Text style={{ flex: 1, fontWeight: '500', fontSize: scaler(14), paddingHorizontal: scaler(10), color: '#061D32' }} >{data?.message}</Text>
+        </Card>
+      )
+    }}
+    ref={ref => StaticHolder.setDropDown(ref)} />
+}
+
 
 export default MyNavigationContainer;

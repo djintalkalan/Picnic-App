@@ -2,9 +2,9 @@ import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component } from "react";
 import { BackHandler, FlatList, GestureResponderEvent, Image, ImageSourcePropType, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
+import { SafeAreaViewWithStatusBar } from "./FocusAwareStatusBar";
 
 interface BottomMenuProps {
 
@@ -86,7 +86,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
     render() {
         if (this.state.alertVisible && this.buttons?.length)
             return (
-                <SafeAreaView style={styles.absolute}  >
+                <SafeAreaViewWithStatusBar translucent style={styles.absolute}  >
                     <View style={styles.alertContainer} >
                         <FlatList
                             style={{ width: '100%' }}
@@ -99,7 +99,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
                         <Text style={[styles.title, this.cancelTextStyle]} >{this.cancelButtonText}</Text>
                     </TouchableOpacity>
 
-                </SafeAreaView>
+                </SafeAreaViewWithStatusBar>
             )
         return null
     }

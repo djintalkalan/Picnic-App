@@ -6,8 +6,10 @@ import {
     CheckBox,
     FixedDropdown,
     MyHeader, Text,
-    TextInput
+    TextInput,
+    useKeyboardService
 } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database, { ILocation, useDatabase } from 'database';
 import { isEqual, round } from 'lodash';
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -23,7 +25,6 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
@@ -270,6 +271,9 @@ const EditEvent: FC<any> = props => {
         setDatePickerVisibility(true);
     }, []);
 
+    const keyboardValues = useKeyboardService()
+
+
     const getMinDate = useCallback(() => {
         const { startTime, endTime, eventDate, selectedType } = eventDateTime.current
         switch (selectedType) {
@@ -317,7 +321,7 @@ const EditEvent: FC<any> = props => {
 
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.edit_event} />
             <ScrollView
                 nestedScrollEnabled
@@ -433,6 +437,7 @@ const EditEvent: FC<any> = props => {
                             name={'aboutEvent'}
                             limit={400}
                             multiline
+                            keyboardValues={keyboardValues}
                             style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
                             borderColor={colors.colorTextInputBackground}
                             backgroundColor={colors.colorTextInputBackground}
@@ -605,6 +610,7 @@ const EditEvent: FC<any> = props => {
                             placeholder={Language.write_additional_information_about_event}
                             name={'additionalInfo'}
                             multiline
+                            keyboardValues={keyboardValues}
                             style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
                             borderColor={colors.colorTextInputBackground}
                             backgroundColor={colors.colorTextInputBackground}
@@ -648,6 +654,7 @@ const EditEvent: FC<any> = props => {
                                             placeholder={Language.write_refund_policy}
                                             name={'policy'}
                                             multiline
+                                            keyboardValues={keyboardValues}
                                             style={{ minHeight: scaler(150), textAlignVertical: 'top' }}
                                             limit={1000}
                                             borderColor={colors.colorTextInputBackground}
@@ -735,7 +742,7 @@ const EditEvent: FC<any> = props => {
                     </View>
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     );
 };
 

@@ -1,4 +1,4 @@
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootState } from 'app-store'
 import { getMyEvents, setActiveEvent } from 'app-store/actions'
 import { colors } from 'assets/Colors'
@@ -13,7 +13,7 @@ import { RootParams } from 'src/routes/Routes'
 import { dateStringFormat, getImageUrl, NavigationService, scaler } from 'utils'
 
 
-const UpcomingPastEvents: FC<StackScreenProps<RootParams, 'UpcomingPastEvents'>> = ({ route, navigation }) => {
+const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEvents'>> = ({ route, navigation }) => {
     const dispatch = useDispatch()
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {

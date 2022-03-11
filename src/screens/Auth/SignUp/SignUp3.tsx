@@ -9,11 +9,11 @@ import {
   Text,
   TextInput
 } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, Linking, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
@@ -78,7 +78,7 @@ const SignUp3: FC<any> = props => {
   }, [errors, isTerms]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewWithStatusBar style={styles.container}>
       <Stepper isBackButton step={3} totalSteps={3} />
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View
@@ -153,7 +153,7 @@ const SignUp3: FC<any> = props => {
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

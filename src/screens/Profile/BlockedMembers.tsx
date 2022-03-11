@@ -2,11 +2,11 @@ import { RootState } from 'app-store'
 import { blockUnblockResource, getBlockedMembers, IPaginationState } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItemSeparator, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef } from 'react'
 import { InteractionManager, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -88,7 +88,7 @@ const BlockedMembers: FC<any> = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
 
             <MyHeader title={Language.blocked_members} />
 
@@ -117,7 +117,7 @@ const BlockedMembers: FC<any> = (props) => {
                 />
             </View>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

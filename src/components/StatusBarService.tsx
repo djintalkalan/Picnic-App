@@ -1,4 +1,4 @@
-import React, { createContext, FC, useCallback, useContext, useRef, useState } from "react";
+import React, { createContext, FC, useCallback, useRef, useState } from "react";
 import { ColorValue, StatusBar as RNStatusBar, StatusBarProps as RNStatusBarProps, StatusBarStyle } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 interface StatusBarProviderProps extends RNStatusBarProps {
@@ -54,7 +54,12 @@ export const StatusBarProvider: FC<StatusBarProviderProps> = ({ children, initia
 
 }
 
-export const useStatusBar = (): IStatusBarContext => useContext(StatusBarContext)
+export const useStatusBar = (): IStatusBarContext => ({
+    pushStatusBarStyle: (props: RNStatusBarProps, addInPrevious?: boolean) => (0),
+    popStatusBarStyle: (index?: number) => { },
+    statusBarStyleStack: [],
+    currentStyle: undefined
+})// useContext(StatusBarContext)
 
 export const withStatusBar = (Component: any) => {
     return (props: any) => {

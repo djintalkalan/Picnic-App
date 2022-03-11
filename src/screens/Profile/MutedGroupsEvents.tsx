@@ -1,9 +1,9 @@
 import { colors } from 'assets'
 import { MyHeader } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC } from 'react'
 import { StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import Language from 'src/language/Language'
 import MutedResources from './MutedResources'
 
@@ -26,12 +26,12 @@ const tabs: TabProps[] = [
 
 const MutedGroupsEvents: FC<any> = () => {
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.muted} />
 
             <TopTab activeTitleColor={colors.colorPrimary}
                 disableTitleColor={'rgba(6, 29, 50, 0.5)'} swipeEnabled={false} tabs={tabs} />
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

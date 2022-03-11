@@ -4,10 +4,11 @@ import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, KeyboardHideView, MyHeader, TextInput } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { isEqual } from 'lodash';
 import React, { FC, Fragment, useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
@@ -81,7 +82,7 @@ const BookEvent: FC = (props: any) => {
     }, [noOfTickets])
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
 
             <View style={{ margin: scaler(20), flex: 1 }}>
@@ -166,7 +167,7 @@ const BookEvent: FC = (props: any) => {
                     }
                 </View>
             </KeyboardHideView>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

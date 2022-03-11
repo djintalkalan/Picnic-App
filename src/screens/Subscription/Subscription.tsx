@@ -3,10 +3,11 @@ import { _authorizeMembership, _captureMembership, _getActiveMembership } from '
 import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text, useStatusBar } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { EmitterSubscription, Image, ImageBackground, Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
 import { requestPurchase } from 'react-native-iap';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -221,7 +222,7 @@ const Subscription: FC = (props: any) => {
     }, [])
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaViewWithStatusBar style={styles.container}>
             <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }} >
                 <View style={{ flex: 1, marginHorizontal: scaler(16), marginVertical: scaler(20) }} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()}>
@@ -269,7 +270,7 @@ const Subscription: FC = (props: any) => {
 
             </KeyboardAwareScrollView>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     );
 }
 

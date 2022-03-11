@@ -1,12 +1,12 @@
 import { colors, Images } from 'assets'
 import { Button, Stepper, Text, TextInput } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { sub } from 'date-fns'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
-import { SafeAreaView } from 'react-native-safe-area-context'
 import Language from 'src/language/Language'
 import { dateFormat, NavigationService, scaler } from 'utils'
 
@@ -50,7 +50,7 @@ const SignUp2: FC<any> = (props) => {
     }, [errors])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
 
             <Stepper isBackButton step={2} totalSteps={3} />
 
@@ -145,7 +145,7 @@ const SignUp2: FC<any> = (props) => {
                     setDatePickerVisibility(false);
                 }}
             />
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

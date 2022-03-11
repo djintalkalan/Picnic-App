@@ -1,11 +1,9 @@
-import { useFocusEffect } from '@react-navigation/native'
 import { verifyQrCode } from 'app-store/actions'
-import { useStatusBar } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, InteractionManager, StyleSheet } from 'react-native'
 import { RNCamera } from 'react-native-camera'
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import { NavigationService, _showWarningMessage } from 'utils'
 import ScannerUi from './ScannerUi'
@@ -63,15 +61,9 @@ const Scanner: FC<any> = (props) => {
         })
     }, [])
 
-    const { popStatusBarStyle, pushStatusBarStyle } = useStatusBar()
-
-    useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ backgroundColor: 'rgba(6,29,50,0.7)', barStyle: 'light-content' })
-        return popStatusBarStyle
-    }, []))
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar backgroundColor={'rgba(6,29,50,0.7)'} barStyle={'light-content'} style={styles.container} >
             {isCameraShow &&
                 <QRCodeScanner
                     ref={scannerRef}
@@ -86,7 +78,7 @@ const Scanner: FC<any> = (props) => {
                     flashMode={RNCamera.Constants.FlashMode.auto}
                 />}
             <ScannerUi setQrScanning={setQrScanning} isQrScanning={isQrScanning} />
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

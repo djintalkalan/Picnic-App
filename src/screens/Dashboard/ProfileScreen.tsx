@@ -1,7 +1,8 @@
 import { getProfile, updateProfile, uploadFile } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
-import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput } from 'custom-components'
+import { Button, KeyboardHideView, MyHeader, PhoneInput, Text, TextInput, useKeyboardService } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
@@ -11,7 +12,6 @@ import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpaci
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
@@ -63,6 +63,8 @@ const ProfileScreen: FC<any> = (props) => {
         },
         mode: 'onChange'
     })
+
+    const keyboardValues = useKeyboardService()
 
 
     useLayoutEffect(() => {
@@ -147,7 +149,7 @@ const ProfileScreen: FC<any> = (props) => {
             null
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
 
 
             <MyHeader
@@ -298,6 +300,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.tell_us_about}
                         name={'about'}
                         multiline
+                        keyboardValues={keyboardValues}
                         limit={400}
                         style={{ minHeight: scaler(80), maxHeight: scaler(160), textAlignVertical: 'top' }}
                         borderColor={colors.colorTextInputBackground}
@@ -363,7 +366,7 @@ const ProfileScreen: FC<any> = (props) => {
                 {/* <CardContent title={Language.phoneNumber} content="+1 234 543 657" /> */}
             </KeyboardHideView>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

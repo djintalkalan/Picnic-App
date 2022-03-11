@@ -2,10 +2,10 @@ import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Dimensions, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
@@ -74,7 +74,7 @@ const Settings: FC<any> = (props) => {
     }), [updateLanguage, selectedLanguage])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
 
             <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
@@ -229,7 +229,7 @@ const Settings: FC<any> = (props) => {
 
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

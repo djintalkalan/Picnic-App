@@ -1,11 +1,11 @@
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootState } from 'app-store'
 import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
 import Language, { useLanguage } from 'src/language/Language'
@@ -16,7 +16,7 @@ import { GroupChats } from './GroupChats'
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 const { height, width } = Dimensions.get('screen')
 
-const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) => {
+const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (props) => {
     const currentIndexRef = useRef(0);
 
     const { groupDetail, activeGroup } = useSelector((state: RootState) => {
@@ -93,7 +93,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
     }
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <ChatHeader
                 title={name}
                 onPress={() => {
@@ -137,7 +137,7 @@ const GroupChatScreen: FC<StackScreenProps<any, 'GroupChatScreen'>> = (props) =>
 
 
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

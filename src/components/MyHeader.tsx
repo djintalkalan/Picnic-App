@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { colors } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
@@ -13,7 +14,8 @@ interface MyHeaderProps {
 }
 
 export const MyHeader: FC<MyHeaderProps> = (props) => {
-    const { isKeyboard, dismissKeyboard } = useKeyboardService()
+    const isFocused = useIsFocused()
+    const { isKeyboard, dismissKeyboard } = useKeyboardService(isFocused)
 
     const onPressDefault = useCallback(
         () => {

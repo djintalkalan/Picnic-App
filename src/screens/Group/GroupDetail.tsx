@@ -1,18 +1,17 @@
-import { useFocusEffect } from '@react-navigation/native'
 import { _whatsappImport } from 'api'
 import { RootState } from 'app-store'
 import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Card, Text, useStatusBar } from 'custom-components'
+import { Card, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { SwipeRow } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -94,7 +93,6 @@ const GroupDetail: FC<any> = (props) => {
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
     const flatListHeightRef = useRef(0)
     const dispatch = useDispatch()
-    const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
     const { group, groupMembers, } = useSelector((state: RootState) => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
@@ -103,18 +101,10 @@ const GroupDetail: FC<any> = (props) => {
 
 
     useLayoutEffect(() => {
-        // console.log("payload", props)
-        InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
             dispatch(getGroupDetail(props?.route?.params?.id))
-        })
+        }, 200)
     }, [])
-
-    useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent', barStyle: 'light-content' })
-        return () => {
-            popStatusBarStyle()
-        }
-    }, []))
 
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
@@ -312,12 +302,13 @@ const GroupDetail: FC<any> = (props) => {
         </View>
     }
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']} >
+        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
                         onPress={() => group?.image && _zoomImage(getImageUrl(group?.image, { width: width, type: 'groups' }))}
+                        //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
                         placeholderSource={Images.ic_group_placeholder}
                         placeholderStyle={{}}
@@ -425,7 +416,7 @@ const GroupDetail: FC<any> = (props) => {
 
             </ScrollView>
             {group?.is_admin ? null : renderBottomActionButtons()}
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
     return null
 }

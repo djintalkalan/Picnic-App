@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/core'
 import { colors, Images, MapStyle } from 'assets'
 import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
+import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, InteractionManager, Platform, StyleSheet, TextInput, TouchableOpacity as RTO, View } from 'react-native'
@@ -87,6 +88,7 @@ const SelectLocation: FC<any> = (props) => {
 
     return (
         <View style={styles.container} >
+            <FocusAwareStatusBar translucent backgroundColor={'transparent'} />
             <View style={styles.map} >
                 {focused ?
                     <View style={styles.map}

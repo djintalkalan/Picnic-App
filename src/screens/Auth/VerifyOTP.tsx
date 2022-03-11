@@ -2,11 +2,11 @@ import OtpInputs from '@twotalltotems/react-native-otp-input'
 import { verifyOtp } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { BackButton, Button, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { validateNumber } from 'custom-components/TextInput/rules'
 import React, { FC, useState } from 'react'
 import { Dimensions, Image, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler, _showErrorMessage } from 'utils'
@@ -16,7 +16,7 @@ const VerifyOTP: FC<any> = (props) => {
 
     const disabled = !(otp?.trim()?.length == 4 && validateNumber(otp?.trim()))
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
             <ScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: scaler(20) }} >
 
@@ -63,7 +63,7 @@ const VerifyOTP: FC<any> = (props) => {
                     NavigationService.goBack()
                 }} style={[styles.didYouNot, { color: colors.colorPrimary }]} > {Language.try_another_email}</Text></Text>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

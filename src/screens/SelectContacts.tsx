@@ -1,12 +1,12 @@
 import { setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, FlatList, InteractionManager, Platform, StyleSheet, Text, View } from 'react-native'
 import Contacts, { Contact, PhoneNumber } from 'react-native-contacts'
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
@@ -162,7 +162,7 @@ const SelectContacts: FC<any> = (props) => {
     }, [isContactPermission])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.select_contact} />
             <FlatList
                 style={{ flex: 1 }}
@@ -180,7 +180,7 @@ const SelectContacts: FC<any> = (props) => {
                 ItemSeparatorComponent={ListItemSeparator}
 
             />
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

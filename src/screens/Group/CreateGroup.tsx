@@ -1,13 +1,13 @@
 import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, FixedDropdown, MyHeader, TextInput } from 'custom-components'
+import { Button, defaultLocation, FixedDropdown, MyHeader, TextInput, useKeyboardService } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { capitalize } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, Keyboard, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
@@ -28,17 +28,18 @@ const CreateGroup: FC<any> = (props) => {
   const uploadedImage = useRef("")
   const dispatch = useDispatch()
   const [profileImage, setProfileImage] = useState<any>()
-  const locationRef = useRef<ILocation>();
+  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
   const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
-    defaultValues: {
-      // email: "deepakq@testings.com",
-      // password: "Dj@123456",
-      // confirmPassword: "Dj@123456"
-    },
+    defaultValues: __DEV__ ? {
+      name: "Test Group",
+      purpose: "Personal",
+      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+    } : {},
     mode: 'onChange'
   })
+  const keyboardValues = useKeyboardService()
 
   const onSubmit = useCallback(() => handleSubmit(data => {
     if (!uploadedImage.current && profileImage?.path) {
@@ -133,7 +134,7 @@ const CreateGroup: FC<any> = (props) => {
   }, [])
 
   return (
-    <SafeAreaView style={styles.container} >
+    <SafeAreaViewWithStatusBar style={styles.container} >
 
       <MyHeader title={group ? Language.update_group : Language.create_group} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
@@ -234,6 +235,7 @@ const CreateGroup: FC<any> = (props) => {
               placeholder={Language.write_something_about_group}
               name={'about'}
               multiline
+              keyboardValues={keyboardValues}
               limit={400}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
@@ -249,7 +251,7 @@ const CreateGroup: FC<any> = (props) => {
 
         </View>
       </ScrollView>
-    </SafeAreaView >
+    </SafeAreaViewWithStatusBar >
   )
 }
 

@@ -1,10 +1,10 @@
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { colors } from 'assets/Colors'
 import { MyHeader } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useCallback } from 'react'
 import { StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
 import { RootParams } from 'src/routes/Routes'
@@ -13,7 +13,7 @@ import UpcomingPastEvents from './UpcomingPastEvents'
 
 
 
-const Events: FC<StackScreenProps<RootParams, 'Events'>> = ({ route, navigation }) => {
+const Events: FC<NativeStackScreenProps<RootParams, 'Events'>> = ({ route, navigation }) => {
     const dispatch = useDispatch()
 
     const getTabs = useCallback((): TabProps[] => {
@@ -35,12 +35,10 @@ const Events: FC<StackScreenProps<RootParams, 'Events'>> = ({ route, navigation 
     }, [useLanguage()])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.events} />
             <TopTab tabs={getTabs()} />
-
-
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

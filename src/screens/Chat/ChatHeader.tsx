@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { colors, Images } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -14,8 +15,8 @@ interface IChatHeader {
     containerStyle?: StyleProp<ViewStyle>
 }
 export const ChatHeader: FC<IChatHeader> = (props) => {
-
-    const { isKeyboard, dismissKeyboard } = useKeyboardService()
+    const isFocused = useIsFocused()
+    const { isKeyboard, dismissKeyboard } = useKeyboardService(isFocused)
 
     const { defaultIcon, subtitle, title, containerStyle, icon, onPress, rightView: RightView, } = props
     const styles = useMemo(() => StyleSheet.create({

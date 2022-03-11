@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { colors } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
@@ -11,7 +12,8 @@ interface BackButtonProps {
 
 
 export const BackButton: FC<BackButtonProps> = (props) => {
-    const { isKeyboard, dismissKeyboard } = useKeyboardService()
+    const isFocused = useIsFocused()
+    const { isKeyboard, dismissKeyboard } = useKeyboardService(isFocused)
 
     const onPressDefault = useCallback(
         () => {

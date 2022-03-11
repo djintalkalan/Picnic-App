@@ -2,10 +2,10 @@ import { RootState } from 'app-store'
 import { getMutedResources, IPaginationState, IResourceType, muteUnmuteResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -115,7 +115,7 @@ const MutedResources: FC<any> = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
 
             <View style={{ flex: 1, width: '100%', paddingVertical: scaler(5) }} >
 
@@ -140,7 +140,7 @@ const MutedResources: FC<any> = (props) => {
                 />
             </View>
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

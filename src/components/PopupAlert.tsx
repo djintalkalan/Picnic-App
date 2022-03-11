@@ -2,10 +2,10 @@ import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component, FC } from "react";
 import { BackHandler, GestureResponderEvent, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import Button from "./Button";
+import { SafeAreaViewWithStatusBar } from "./FocusAwareStatusBar";
 
 interface PopupAlertProps {
 
@@ -78,7 +78,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     render() {
         if (this.state.alertVisible)
             return (
-                <SafeAreaView style={styles.absolute}  >
+                <SafeAreaViewWithStatusBar translucent style={styles.absolute}  >
                     <View style={styles.alertContainer} >
 
 
@@ -100,7 +100,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
                         {this.cancelButtonText ?
                             <Text onPress={this.onPressCancel} style={styles.cancelText} >{this.cancelButtonText}</Text> : null}
                     </View>
-                </SafeAreaView>
+                </SafeAreaViewWithStatusBar>
             )
         return null
     }

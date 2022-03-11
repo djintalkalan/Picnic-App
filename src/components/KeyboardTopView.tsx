@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { FC, useMemo } from 'react';
 import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { scaler } from 'utils';
@@ -8,7 +9,8 @@ interface KeyboardTopViewProps {
 }
 
 export const KeyboardTopView: FC<KeyboardTopViewProps> = (props) => {
-    const { isKeyboard, keyboardHeight } = useKeyboardService()
+    const isFocused = useIsFocused()
+    const { isKeyboard, keyboardHeight } = useKeyboardService(isFocused)
     const styles = useMemo(() => StyleSheet.create({
         container: {
             width: '100%',
@@ -27,7 +29,8 @@ export const KeyboardTopView: FC<KeyboardTopViewProps> = (props) => {
 }
 
 export const KeyboardHideView: FC<KeyboardTopViewProps> = (props) => {
-    const { isKeyboard, } = useKeyboardService()
+    const isFocused = useIsFocused()
+    const { isKeyboard, } = useKeyboardService(isFocused)
     const styles = useMemo(() => StyleSheet.create({
         container: {
             width: '100%',

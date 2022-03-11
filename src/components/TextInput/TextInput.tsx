@@ -1,5 +1,5 @@
 import { colors, Fonts } from "assets";
-import { useKeyboardService } from "custom-components";
+import { KeyboardValues } from "custom-components/KeyboardService";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
 import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
@@ -29,6 +29,7 @@ interface TextInputProps extends RNTextInputProps {
     limit?: number
     borderColor?: ColorValue
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
+    keyboardValues?: KeyboardValues,
 }
 
 
@@ -36,8 +37,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
 
     const [isFocused, setFocused] = useState(false)
     const { iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
-
-    const { openKeyboardAccessory } = useKeyboardService()
+    const openKeyboardAccessory = props?.keyboardValues?.openKeyboardAccessory
     const styles = useMemo(() => {
 
         return StyleSheet.create({
@@ -128,7 +128,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 inputAccessoryViewID={multiline ? name : undefined}
                                 maxLength={limit ?? props?.maxLength}
                                 onFocus={(e) => {
-                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory(
+                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(
                                         <View style={styles.accessory}>
                                             <TouchableOpacity onPress={() => {
                                                 Keyboard.dismiss()
@@ -141,7 +141,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     onFocus && onFocus(e)
                                 }}
                                 onBlur={(e) => {
-                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory(null)
+                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null)
                                     setFocused(false)
                                     onBlurC()
                                     onBlur && onBlur(e)
@@ -182,7 +182,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                             inputAccessoryViewID={multiline ? name : undefined}
                             // placeholder={!isFocused ? placeholder : ""}
                             onFocus={(e) => {
-                                (multiline && Platform.OS == 'android') && openKeyboardAccessory(
+                                (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(
                                     <View style={styles.accessory}>
                                         <TouchableOpacity style={{ padding: scaler(10) }} >
                                             <Text>{Language.done}</Text>
@@ -193,7 +193,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 onFocus && onFocus(e)
                             }}
                             onBlur={(e) => {
-                                (multiline && Platform.OS == 'android') && openKeyboardAccessory(null)
+                                (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null)
                                 setFocused(false)
                                 onBlur && onBlur(e)
                             }}

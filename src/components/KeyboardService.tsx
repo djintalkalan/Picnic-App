@@ -1,85 +1,94 @@
-import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useIsFocused } from '@react-navigation/native'
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { EmitterSubscription, Keyboard, Platform } from 'react-native'
+import { StaticHolder } from 'utils/StaticHolder'
 
-type KeyboardValues = {
+export type KeyboardValues = {
     isKeyboard: boolean
     dismissKeyboard: () => void
     openKeyboardAccessory: (v: ReactNode) => void
     keyboardHeight: number
 }
-const KeyboardContext = createContext<KeyboardValues>({
+const defaultContextValues = {
     isKeyboard: false,
     dismissKeyboard: () => {
 
     },
     openKeyboardAccessory: () => { },
     keyboardHeight: 0
-})
+}
 
-export const KeyboardProvider: FC<any> = ({ children }) => {
+const KeyboardContext = createContext<KeyboardValues>(defaultContextValues)
+
+
+
+export const useKeyboardServiceOld = (isFocused: boolean = true): KeyboardValues => {
+    const returnValue = useContext(KeyboardContext)
+    return isFocused ? returnValue : defaultContextValues
+}
+
+export const useKeyboardService = (): KeyboardValues => {
+    const isFocused = useIsFocused()
     const [isKeyboard, setKeyboard] = useState(false)
-    const [toggle, setToggle] = useState(false)
     const keyboardHeight = useRef(0);
     const dismissKeyboard = useCallback(() => {
         Keyboard.dismiss()
     }, [])
 
-    let accessoryView = useRef<ReactNode>(null)
-
     const openKeyboardAccessory = useCallback((MyView: ReactNode) => {
-        console.log("opening", MyView)
-        accessoryView.current = MyView
-        setToggle(_ => !_)
+        StaticHolder.showAccessoryView(MyView)
     }, [])
 
-    useEffect(() => {
-        let willChange: EmitterSubscription;
-        if (Platform.OS == 'ios') {
-            willChange = Keyboard.addListener("keyboardDidShow", (e) => {
+    // useEffect(() => {
+    //     let willChange: EmitterSubscription;
+    //     if (Platform.OS == 'ios' && isKeyboard && isFocused) {
+    //         willChange = Keyboard.addListener("keyboardDidShow", (e) => {
+    //             if (isKeyboard) {
+    //                 setTimeout(() => {
+    //                     keyboardHeight.current = e.endCoordinates.height
+    //                     setToggle(_ => !_)
+    //                 }, 200);
+    //             }
+    //         })
+    //     }
+    //     return () => {
+    //         willChange?.remove()
+    //     }
+    // }, [isKeyboard, isFocused])
 
-                if (isKeyboard) {
+
+    useEffect(() => {
+        let willShow: EmitterSubscription;
+        let willHide: EmitterSubscription;
+        if (isFocused) {
+            willShow = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardDidShow' : "keyboardDidShow", (e) => {
+                if (Platform.OS == 'ios' && isFocused) {
                     setTimeout(() => {
                         keyboardHeight.current = e.endCoordinates.height
-                        setToggle(_ => !_)
                     }, 200);
                 }
+                setKeyboard(true)
 
+            })
+            willHide = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardDidHide' : 'keyboardDidHide', () => {
+                keyboardHeight.current = 0
+                StaticHolder.hideAccessoryView()
+                setKeyboard(false)
             })
         }
         return () => {
-            willChange?.remove()
+            willShow?.remove()
+            willHide?.remove()
         }
-    }, [isKeyboard])
+    }, [isFocused])
 
-
-    useEffect(() => {
-        const willShow = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardWillShow' : "keyboardDidShow", (e) => {
-            setKeyboard(true)
-        })
-        const willHide = Keyboard.addListener(Platform.OS == 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
-            // if (accessoryView.current) {
-            //     accessoryView.current = null
-            // }
-            keyboardHeight.current = 0
-            setKeyboard(false)
-        })
-
-        return () => {
-            willShow.remove()
-            willHide.remove()
-        }
-    }, [])
-
-    // console.log(accessoryView)
-
-    return (
-        <KeyboardContext.Provider value={{ openKeyboardAccessory, isKeyboard, dismissKeyboard, keyboardHeight: keyboardHeight.current }}  >
-            {children}
-            {isKeyboard && Platform.OS == 'android' && accessoryView.current}
-        </KeyboardContext.Provider>)
+    return {
+        openKeyboardAccessory,
+        isKeyboard,
+        dismissKeyboard,
+        keyboardHeight: keyboardHeight.current
+    }
 }
-
-export const useKeyboardService = (): KeyboardValues => useContext(KeyboardContext)
 
 export const withKeyboardService = (Component: any) => {
     return (props: any) => {

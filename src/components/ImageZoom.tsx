@@ -4,6 +4,7 @@ import { BackHandler, Dimensions, Image, StyleSheet, TouchableOpacity, View } fr
 import Zoom from 'react-native-image-pan-zoom';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { scaler } from 'utils';
+import { SafeAreaViewWithStatusBar } from './FocusAwareStatusBar';
 import ImageLoader from './ImageLoader';
 
 const { width, height } = Dimensions.get('window')
@@ -43,7 +44,7 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
     render() {
         if (!this.state.imageUrl) return null
         const { h = 0, w = 0 } = this?.insets
-        return <SafeAreaView style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: colors.colorWhite }} >
+        return <SafeAreaViewWithStatusBar style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: colors.colorWhite }} >
             <View onLayout={(e) => {
                 if (!this?.insets?.w) {
                     this.insets = {
@@ -69,7 +70,7 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
                     <Image style={styles.imgBack} source={Images.ic_back_group} />
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
 
         const { top = 0, bottom = 0, left = 0, right = 0 } = this.props?.insets
         return (
@@ -95,24 +96,6 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
     }
 }
 
-export class ImageZoomHolder {
-    static imageZoom: (ImageZoom) | null | undefined;
-    static setImageZoom(imageZoom: (ImageZoom) | null | undefined) {
-        this.imageZoom = imageZoom;
-    }
-
-    static getBottomMenu() {
-        return this.imageZoom;
-    }
-
-    static showImage(imageUrl: string) {
-        this.imageZoom?.showImage(imageUrl)
-    }
-
-    static hideImage() {
-        this.imageZoom?.showImage("")
-    }
-}
 const styles = StyleSheet.create({
     backButton: {
         position: 'absolute',

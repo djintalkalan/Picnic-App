@@ -3,11 +3,11 @@ import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import Button from 'custom-components/Button'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ConfirmPasswordValidations, PasswordValidations } from 'custom-components/TextInput/rules'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
@@ -44,7 +44,7 @@ const CreateNewPassword: FC<any> = (props) => {
     }, [errors])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
 
 
@@ -91,7 +91,7 @@ const CreateNewPassword: FC<any> = (props) => {
                 <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(25) }} textStyle={{ textTransform: 'capitalize' }} title={Language.reset_password} onPress={onSubmit} />
 
             </View>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

@@ -4,7 +4,6 @@ import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';
 import { IBottomMenu } from 'custom-components/BottomMenu';
-import { ImageZoomHolder } from 'custom-components/ImageZoom';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
@@ -13,9 +12,7 @@ import Geocoder from 'react-native-geocoding';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
-import { BottomMenuHolder } from './BottomMenuHolder';
-import { DropDownHolder } from './DropdownHolder';
-import { PopupAlertHolder } from './PopupAlertHolder';
+import { StaticHolder } from './StaticHolder';
 
 const LaunchNavigator: LType = LaunchNVG
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
@@ -217,34 +214,34 @@ function getAge(dob: Date) {
 
 export const _showErrorMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    DropDownHolder.alert('error', "Error", msg, time)
+    StaticHolder.dropDownAlert('error', "Error", msg, time)
 }
 
 export const _showWarningMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    DropDownHolder.alert('warn', "Warning", msg, time)
+    StaticHolder.dropDownAlert('warn', "Warning", msg, time)
 }
 
 export const _showSuccessMessage = async (msg: string, time?: number) => {
     if (!msg || !msg.trim()) return
-    DropDownHolder.alert('success', "Success", msg, time)
+    StaticHolder.dropDownAlert('success', "Success", msg, time)
 }
 
 export const _showPopUpAlert = (data: IAlertType) => {
     Keyboard.dismiss()
     setTimeout(() => {
-        PopupAlertHolder.alert(data)
+        StaticHolder.alert(data)
     }, 0);
 }
 
 export const _hidePopUpAlert = () => {
-    PopupAlertHolder.hide()
+    StaticHolder.hide()
 }
 
 export const _showBottomMenu = (data: IBottomMenu) => {
     Keyboard.dismiss()
     setTimeout(() => {
-        BottomMenuHolder.show(data)
+        StaticHolder.showBottomMenu(data)
     }, 0);
 }
 
@@ -253,12 +250,12 @@ export const _zoomImage = (imageUrl: string) => {
 
     Keyboard.dismiss()
     setTimeout(() => {
-        ImageZoomHolder.showImage(imageUrl)
+        StaticHolder.showImage(imageUrl)
     }, 0);
 }
 
 export const _cancelZoom = () => {
-    PopupAlertHolder.hide()
+    StaticHolder.hideImage()
 }
 
 

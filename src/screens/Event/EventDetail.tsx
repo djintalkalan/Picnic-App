@@ -1,17 +1,16 @@
-import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Card, Text, useStatusBar } from 'custom-components'
+import { Button, Card, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
@@ -22,11 +21,12 @@ const EventDetail: FC<any> = (props) => {
 
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
     const dispatch = useDispatch()
-    const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
+
+
 
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
 
@@ -45,15 +45,11 @@ const EventDetail: FC<any> = (props) => {
     }, [event?.my_tickets])
 
     useLayoutEffect(() => {
-        InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
             dispatch(getEventDetail(props?.route?.params?.id))
-        })
-    }, [])
 
-    useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent', barStyle: 'light-content' })
-        return popStatusBarStyle
-    }, []))
+        }, 200);
+    }, [])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
@@ -81,28 +77,7 @@ const EventDetail: FC<any> = (props) => {
             },
             buttonText: Language.yes_cancel,
         })
-    }, [])
-
-
-
-    // const _renderGroupMembers = useCallback(({ item, index }) => {
-    //     return (
-    //         <MemberListItem
-    //             onLongPress={item?.is_admin ? undefined : () => {
-    //                 _showBottomMenu({
-    //                     buttons: getBottomMenuButtons(item)
-    //                 })
-    //             }}
-    //             containerStyle={{ paddingHorizontal: scaler(0) }}
-    //             title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-    //             customRightText={item?.is_admin ? Language?.admin : ""}
-    //             icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
-    //             defaultIcon={Images.ic_home_profile}
-    //         />
-    //     )
-    // }, [])
-
-    const [isDefault, setDefault] = useState<boolean>(false)
+    }, [event])
 
     const shareEvent = useCallback(() => {
         shareDynamicLink(event?.name, {
@@ -120,7 +95,7 @@ const EventDetail: FC<any> = (props) => {
         </View>
     }
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']} >
+        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
@@ -360,16 +335,17 @@ const EventDetail: FC<any> = (props) => {
                                 })} />
                     </View> : null
             }
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
-    return null
 }
+
 interface IBottomButton {
     title: string
     icon: ImageSourcePropType
     visibility?: boolean
     onPress?: (e?: GestureResponderEvent) => void
 }
+
 const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress }) => {
 
     return visibility ? (

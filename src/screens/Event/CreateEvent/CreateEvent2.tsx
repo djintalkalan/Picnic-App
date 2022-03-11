@@ -1,6 +1,7 @@
 import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
-import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database, { ILocation, useDatabase } from 'database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -12,7 +13,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
@@ -42,6 +42,8 @@ const CreateEvent2: FC<any> = props => {
   const uploadedImage = useRef('');
   const [isDropdown, setDropdown] = useState(false);
   const dispatch = useDispatch();
+  const keyboardValues = useKeyboardService()
+
   const eventDateTime = useRef<IEventDateTime>({
     selectedType: 'eventDate',
     eventDate: new Date(),
@@ -190,7 +192,7 @@ const CreateEvent2: FC<any> = props => {
   }, [])
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
@@ -369,6 +371,7 @@ const CreateEvent2: FC<any> = props => {
               placeholder={Language.write_additional_information_about_event}
               name={'additionalInfo'}
               multiline
+              keyboardValues={keyboardValues}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
@@ -485,7 +488,7 @@ const CreateEvent2: FC<any> = props => {
           }}
         />
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

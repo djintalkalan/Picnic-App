@@ -3,10 +3,11 @@ import { getEventMembers } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { MyHeader } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import TopTab from 'custom-components/TopTab';
 import { isEqual } from 'lodash';
 import React, { FC, useEffect, useMemo } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import { NavigationService } from 'utils';
@@ -42,7 +43,7 @@ const EventMembers: FC<any> = (props) => {
     }, [])
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.members}
                 backEnabled
                 rightIcon={Images.ic_scan}
@@ -50,7 +51,7 @@ const EventMembers: FC<any> = (props) => {
             />
             <TopTab tabs={tabs} activeTitleColor={colors.colorPrimary}
                 disableTitleColor={'rgba(6, 29, 50, 0.5)'} swipeEnabled={false} />
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     );
 }
 

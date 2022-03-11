@@ -32,8 +32,8 @@ export const TopTab = (props: TopTabProps) => {
             tabBar={(tabBarProps: any) => <MyTabBar {...tabBarProps} onChangeIndex={props?.onChangeIndex} />}
             screenOptions={{ tabBarAllowFontScaling: false, swipeEnabled }} >
             {tabs && tabs.map((tab, index) => {
-                const { title, name, screen, initialParams, ...rest } = tab
-                return <Tab.Screen key={index} options={{ title, activeTitleColor, iconPosition, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={screen} />
+                const { title, name, screen: Screen, initialParams, ...rest } = tab
+                return <Tab.Screen key={index} options={{ title, activeTitleColor, iconPosition, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={Screen} />
             })}
         </Tab.Navigator>
     )

@@ -2,13 +2,13 @@ import { config } from 'api'
 import { doLogin } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, CheckBox, Text, TextInput } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, Linking, Platform, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
@@ -65,7 +65,7 @@ const Login: FC = () => {
     }, [errors, isTerms])
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <ScrollView contentContainerStyle={{ flex: 1 }} keyboardShouldPersistTaps={'handled'} >
 
                 <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(20) }} >
@@ -150,7 +150,7 @@ const Login: FC = () => {
                 </View>
 
             </ScrollView>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

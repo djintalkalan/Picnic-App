@@ -1,11 +1,11 @@
 import { config } from 'api'
 import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import { Dimensions, FlatList, Image, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, IRecentSearches, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
@@ -71,7 +71,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
         }
     }, [])
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }} >
+        <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <TouchableOpacity style={{ flex: 1, paddingTop: scaler(10) }} disabled >
 
                 <GooglePlacesAutocomplete
@@ -179,7 +179,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                     placeholderTextColor={colors.colorGreyInactive}
                 />
                 <Image style={styles.imagePlaceholder} source={Images.ic_lens} /> */}
-        </SafeAreaView >
+        </SafeAreaViewWithStatusBar >
     )
 }
 

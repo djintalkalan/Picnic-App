@@ -1,9 +1,7 @@
 import DropdownAlert from 'dj-react-native-dropdown-alert'
 import React, { FC, useEffect, useRef } from 'react'
 import { Modal as RNModal, ModalProps, View } from 'react-native'
-import { BottomMenuHolder } from 'utils/BottomMenuHolder'
-import { DropDownHolder } from 'utils/DropdownHolder'
-import { PopupAlertHolder } from 'utils/PopupAlertHolder'
+import { StaticHolder } from 'utils/StaticHolder'
 import { BottomMenu } from './BottomMenu'
 import { PopupAlert } from './PopupAlert'
 export const Modal: FC<ModalProps> = (props) => {
@@ -13,15 +11,15 @@ export const Modal: FC<ModalProps> = (props) => {
     useEffect(() => {
         if (props?.visible) {
             setTimeout(() => {
-                DropDownHolder.setModalDropDown(dropDownRef.current);
-                PopupAlertHolder.setModalPopupAlert(modelAlertRef.current);
-                BottomMenuHolder.setModalBottomMenu(bottomMenuRef.current);
+                StaticHolder.setModalDropDown(dropDownRef.current);
+                StaticHolder.setModalPopupAlert(modelAlertRef.current);
+                StaticHolder.setModalBottomMenu(bottomMenuRef.current);
             }, 0);
         }
         return () => {
-            DropDownHolder.setModalDropDown(null);
-            PopupAlertHolder.setModalPopupAlert(null);
-            BottomMenuHolder.setModalBottomMenu(null);
+            StaticHolder.setModalDropDown(null);
+            StaticHolder.setModalPopupAlert(null);
+            StaticHolder.setModalBottomMenu(null);
         }
     }, [props?.visible])
 

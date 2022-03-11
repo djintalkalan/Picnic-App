@@ -1,6 +1,7 @@
 import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
-import { Button, MyHeader, Stepper, Text, TextInput } from 'custom-components';
+import { Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -11,7 +12,6 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
@@ -35,6 +35,8 @@ const CreateEvent3: FC<any> = props => {
     mode: 'onChange',
   });
   const eventDetail = props?.route?.params?.data;
+  const keyboardValues = useKeyboardService()
+
 
 
   const onSubmit = useCallback(
@@ -113,7 +115,7 @@ const CreateEvent3: FC<any> = props => {
   }, [isPayByPaypal, isPayByCash]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
@@ -159,6 +161,7 @@ const CreateEvent3: FC<any> = props => {
               placeholder={Language.write_refund_policy}
               name={'policy'}
               multiline
+              keyboardValues={keyboardValues}
               style={{ minHeight: scaler(200), textAlignVertical: 'top' }}
               limit={1000}
               required={Language.refund_policy_required}
@@ -177,7 +180,7 @@ const CreateEvent3: FC<any> = props => {
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

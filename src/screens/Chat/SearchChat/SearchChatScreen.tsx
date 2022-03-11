@@ -2,11 +2,11 @@ import { _getMyEvents, _searchChat } from 'api'
 import { RootState } from 'app-store'
 import { setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _ from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
@@ -87,7 +87,7 @@ const SearchChatScreen: FC<any> = (props) => {
     }, [currentTabIndex, searchedText])
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaViewWithStatusBar style={styles.container}>
             <View style={{
                 paddingVertical: scaler(20),
                 borderBottomColor: 'rgba(0, 0, 0, 0.04)',
@@ -116,7 +116,7 @@ const SearchChatScreen: FC<any> = (props) => {
                 :
                 <ChatSearch />
             }
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

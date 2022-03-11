@@ -4,12 +4,15 @@ import { colors, Images } from 'assets';
 import {
   Button,
   CheckBox,
+  defaultLocation,
   FixedDropdown,
   MyHeader,
   Stepper,
   Text,
-  TextInput
+  TextInput,
+  useKeyboardService
 } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ILocation } from 'database';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,7 +25,6 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
@@ -43,11 +45,12 @@ type FormType = {
 const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
   const [eventImage, setEventImage] = useState<any>();
-  const locationRef = useRef<ILocation>();
+  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
+  const keyboardValues = useKeyboardService()
 
   const { myGroups } = useSelector((state: RootState) => ({
     myGroups: state?.group?.myGroups
@@ -62,6 +65,10 @@ const CreateEvent1: FC<any> = props => {
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
+    defaultValues: __DEV__ ? {
+      eventName: "Test Event",
+      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+    } : {}
   });
 
 
@@ -95,7 +102,7 @@ const CreateEvent1: FC<any> = props => {
   }, [])
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView
         nestedScrollEnabled
@@ -211,6 +218,7 @@ const CreateEvent1: FC<any> = props => {
               name={'aboutEvent'}
               limit={400}
               multiline
+              keyboardValues={keyboardValues}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
@@ -233,7 +241,7 @@ const CreateEvent1: FC<any> = props => {
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewWithStatusBar>
   );
 };
 

@@ -3,8 +3,9 @@ import { getMutedResources, IPaginationState } from 'app-store/actions';
 import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { FlatList, RefreshControl, SafeAreaView, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ChatItem from 'screens/Chat/ChatItem';
 import Language from 'src/language/Language';
@@ -55,7 +56,7 @@ const HiddenPosts: FC = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }}>
+        <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }}>
             <MyHeader title={Language.hidden_posts} backEnabled />
             <View style={styles.container}>
                 <View style={{ flexShrink: 1 }}>
@@ -84,7 +85,7 @@ const HiddenPosts: FC = () => {
                     />
                 </View>
             </View>
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

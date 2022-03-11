@@ -2,10 +2,10 @@ import { getUserGroups, IPaginationState, setActiveGroup } from 'app-store/actio
 import { RootState } from 'app-store/store'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useLayoutEffect, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
@@ -64,7 +64,7 @@ const ProfileGroups: FC<any> = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader backEnabled title={Language.groups} />
             <FlatList
                 data={userGroups}
@@ -81,7 +81,7 @@ const ProfileGroups: FC<any> = (props) => {
 
                 renderItem={_renderEventMembers} />
 
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

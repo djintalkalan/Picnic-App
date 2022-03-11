@@ -2,16 +2,17 @@ import { RootState } from 'app-store'
 import { getUserUpcomingPastEvents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
 
 const ProfileEvents: FC<any> = (props) => {
+    const language = useLanguage()
     const tabs = useMemo<Array<TabProps>>(() => [
         {
             name: "ProfileUpcomingEvents",
@@ -25,14 +26,12 @@ const ProfileEvents: FC<any> = (props) => {
             title: Language.history,
             initialParams: { type: 'past' }
         },
-    ], [useLanguage()])
+    ], [language])
     return (
-        <SafeAreaView style={styles.container} >
+        <SafeAreaViewWithStatusBar>
             <MyHeader backEnabled title={Language.events} />
-
             <TopTab activeTitleColor={colors.colorPrimary} tabs={tabs} swipeEnabled={false} />
-
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

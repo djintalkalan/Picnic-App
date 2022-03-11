@@ -3,12 +3,13 @@ import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ILocation, useDatabase } from 'database/Database'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
 import { Bar } from 'react-native-progress'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
 import { getImageUrl, NavigationService, scaler, shareDynamicLink, _showErrorMessage } from 'utils'
@@ -29,8 +30,8 @@ const EventChats: FC<any> = (props) => {
     const { bottom } = useSafeAreaInsets()
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
-    const { keyboardHeight, isKeyboard } = useKeyboardService();
     const isFocused = useIsFocused()
+    const { keyboardHeight, isKeyboard } = useKeyboardService(isFocused);
 
     useEffect(() => {
         if (repliedMessage) {
@@ -186,7 +187,7 @@ const EventChats: FC<any> = (props) => {
     }, [eventDetail])
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }} >
+        <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
                 title={name}
                 onPress={() => {
@@ -268,7 +269,7 @@ const EventChats: FC<any> = (props) => {
                 </View> : null}
 
             </View >
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     )
 }
 

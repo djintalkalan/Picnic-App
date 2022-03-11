@@ -1,9 +1,9 @@
 import { capturePayment, setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
 import { NavigationService, _showErrorMessage } from 'utils';
@@ -38,7 +38,7 @@ const Payment: FC<any> = (props) => {
     }, [])
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colors.colorWhite }} >
+        <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <MyHeader title='Payment' />
             {!paymentClosed ? <WebView
                 javaScriptEnabled
@@ -46,7 +46,7 @@ const Payment: FC<any> = (props) => {
                 onNavigationStateChange={onNavigationStateChange}
                 source={{ uri: url }}
                 scalesPageToFit={Platform.OS === 'ios'} /> : null}
-        </SafeAreaView>
+        </SafeAreaViewWithStatusBar>
     );
 };
 
