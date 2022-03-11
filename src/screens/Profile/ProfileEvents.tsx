@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { getUserUpcomingPastEvents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -11,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
 
+let loadMore = false
 const ProfileEvents: FC<any> = (props) => {
     const tabs = useMemo<Array<TabProps>>(() => [
         {
@@ -36,8 +38,8 @@ const ProfileEvents: FC<any> = (props) => {
     )
 }
 
-
 const ProfileEventsList: FC<any> = (props) => {
+    const isFocused = useIsFocused()
     const type: 'upcoming' | 'past' = props?.route?.params?.type
     const { isLoading, userEvents } = useSelector((state: RootState) => ({
         isLoading: state.isLoading,
@@ -51,6 +53,10 @@ const ProfileEventsList: FC<any> = (props) => {
     useLayoutEffect(() => {
         paginationState.current = InitialPaginationState
         fetchEventList()
+        setTimeout(() => {
+            loadMore = true
+        }, 200);
+        return () => { loadMore = false }
     }, [])
 
     const fetchEventList = useCallback(() => {
@@ -59,6 +65,8 @@ const ProfileEventsList: FC<any> = (props) => {
         }
         let page = (paginationState?.current?.currentPage) + 1
         {
+
+
             dispatch(getUserUpcomingPastEvents({ event_filter_type: type, body: { page, onSuccess: onSuccess } }))
         }
     }, [])
@@ -120,8 +128,12 @@ const ProfileEventsList: FC<any> = (props) => {
                 ref={flatListRef}
                 keyExtractor={(_, i) => i.toString()}
                 onEndReached={() => {
-                    if (!isLoading && paginationState.current?.currentPage != 0) {
+                    if (loadMore && !isLoading && paginationState.current?.currentPage != 0 && isFocused) {
+                        loadMore = false
                         fetchEventList()
+                        setTimeout(() => {
+                            loadMore = true
+                        }, 2000);
                     }
                 }}
             />

@@ -4,6 +4,7 @@ import { colors, Images } from 'assets';
 import {
   Button,
   CheckBox,
+  defaultLocation,
   FixedDropdown,
   MyHeader,
   Stepper,
@@ -43,7 +44,7 @@ type FormType = {
 const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
   const [eventImage, setEventImage] = useState<any>();
-  const locationRef = useRef<ILocation>();
+  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
@@ -62,6 +63,10 @@ const CreateEvent1: FC<any> = props => {
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
+    defaultValues: __DEV__ ? {
+      eventName: "Test Event",
+      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+    } : {}
   });
 
 

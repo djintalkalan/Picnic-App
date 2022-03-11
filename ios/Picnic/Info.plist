@@ -48,8 +48,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>${APP_NAME} requires access to your calender to let you add events in calender.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>${APP_NAME} would like access to your camera to scan the QR code to complete ticket booking flow.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>${APP_NAME} requires access to your contacts to let you choose contact for sharing in groups and events.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>${APP_NAME} requires your location to improve your app experience by fetching nearby groups and events for you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -58,10 +62,6 @@
 	<string>${APP_NAME} would like to save photos to your photo gallery.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>${APP_NAME} requires access to your photo gallery to let you choose photos for your profile picture as well as for groups and events.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>${APP_NAME} requires access to your contacts to let you choose contact for sharing in groups and events.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>${APP_NAME} requires access to your calender to let you add events in calender.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -104,13 +104,15 @@
 		<string>fetch</string>
 		<string>processing</string>
 		<string>remote-notification</string>
-	</array>	
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>

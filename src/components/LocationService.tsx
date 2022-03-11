@@ -17,11 +17,11 @@ export const defaultLocation: ILocation = {
     //     country: "USA"
     // }
 
-    latitude: 30.714832,
-    longitude: 76.704759,
-    address: { main_text: "Mohali, Punjab", secondary_text: "" },
+    latitude: 30.7260915,
+    longitude: 76.683011,
+    address: { main_text: "Block-520, Tdi Taj Plaza, Sector 118", secondary_text: "Sahibzada Ajit Singh Nagar, Sahibzada Ajit Singh Nagar, Punjab, India" },
     otherData: {
-        city: "Mohali",
+        city: "Sahibzada Ajit Singh Nagar",
         state: "Punjab",
         country: "India"
     }
