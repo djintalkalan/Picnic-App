@@ -25,7 +25,7 @@
     "resetIos": "yarn env-s && cd ios && pod deintegrate && rm -rf Podfile.lock && rm -rf Pods && pod install && cd .. && yarn run ios",
     "resetAndroid": "yarn env-s && cd android && ./gradlew clean && cd .. && yarn run android",
     "fix-sdk": "(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
-    "postinstall": "yarn env-p && npx pod-install",
+    "postinstall": "yarn env-s && npx pod-install",
     "w-tcp": "adb tcpip 5555",
     "w-co": "adb connect "
   },

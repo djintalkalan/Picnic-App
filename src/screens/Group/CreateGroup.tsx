@@ -1,6 +1,6 @@
 import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, FixedDropdown, MyHeader, TextInput } from 'custom-components'
+import { Button, defaultLocation, FixedDropdown, MyHeader, TextInput } from 'custom-components'
 import { capitalize } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,15 +28,15 @@ const CreateGroup: FC<any> = (props) => {
   const uploadedImage = useRef("")
   const dispatch = useDispatch()
   const [profileImage, setProfileImage] = useState<any>()
-  const locationRef = useRef<ILocation>();
+  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
   const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
-    defaultValues: {
-      // email: "deepakq@testings.com",
-      // password: "Dj@123456",
-      // confirmPassword: "Dj@123456"
-    },
+    defaultValues: __DEV__ ? {
+      name: "Test Group",
+      purpose: "Personal",
+      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+    } : {},
     mode: 'onChange'
   })
 

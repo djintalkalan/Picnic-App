@@ -81,7 +81,7 @@ const EventDetail: FC<any> = (props) => {
             },
             buttonText: Language.yes_cancel,
         })
-    }, [])
+    }, [event])
 
 
 
