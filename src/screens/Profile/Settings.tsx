@@ -72,6 +72,7 @@ const Settings: FC<any> = (props) => {
         <SafeAreaView style={styles.container} >
             <BackButton />
 
+
             <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >

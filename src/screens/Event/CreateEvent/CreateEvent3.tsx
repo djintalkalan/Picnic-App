@@ -80,7 +80,7 @@ const CreateEvent3: FC<any> = props => {
       capacity_type: eventDetail?.isUnlimitedCapacity ? 'unlimited' : 'limited',
       capacity: eventDetail?.capacity,
       is_free_event: '0',
-      event_fees: eventDetail?.ticketPrice,
+      event_fees: eventDetail?.ticketPrice?.toString(),
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_start_time: dateFormat(startTime, "HH:mm:ss"),
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
@@ -116,7 +116,7 @@ const CreateEvent3: FC<any> = props => {
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-        <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <Stepper step={3} totalSteps={3} paddingHorizontal={scaler(20)} />
 
         <View style={styles.eventView}>
           <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
@@ -172,7 +172,7 @@ const CreateEvent3: FC<any> = props => {
           <Button
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
-            title={Language.next}
+            title={Language.finish}
             onPress={handleSubmit((data) => onSubmit(data))}
           />
         </View>
