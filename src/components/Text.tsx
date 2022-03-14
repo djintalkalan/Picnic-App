@@ -1,14 +1,38 @@
+import { colors } from "assets";
 import { Fonts } from "assets/Fonts";
-import React, { FC, Fragment, useMemo } from "react";
+import React, { FC, Fragment, isValidElement, useMemo } from "react";
 import { Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
+import Autolink, { AutolinkProps } from 'react-native-autolink';
 
 interface TextProps extends RNTextProps {
-    type?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic"
+    type?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic",
+    autoLink?: boolean,
+    autoLinkProps?: AutolinkProps,
+}
+
+const getChildren = (children: React.ReactNode) => {
+    let text = "";
+    if (typeof children == 'string') {
+        text = children
+    } else if (Array.isArray(children)) {
+        text = ""
+        children?.forEach(_ => {
+            // console.log("typeof _", typeof _);
+            // console.log("isValidElement(_)", isValidElement(_));
+            if (typeof _ == 'string') {
+                text += _
+                //@ts-ignore
+            } else if (isValidElement(_) && _?.props?.children) {
+                //@ts-ignore
+                text += getChildren(_?.props?.children)
+            }
+        })
+    }
+    return text
 }
 
 export const Text: FC<TextProps> = (props) => {
-
-    const { style, type = "regular", ...rest } = props
+    const { style, type = "regular", autoLink = false, autoLinkProps, ...rest } = props
     const styles = useMemo(() => {
         const styles = StyleSheet.flatten(style)
         let fontType = type;
@@ -41,14 +65,37 @@ export const Text: FC<TextProps> = (props) => {
         })
     }, [style, type])
 
+    if (props?.autoLink) {
+        // console.log("rest?.children", rest?.children);
+        let text = "";
+        try {
+            text = useMemo(() => {
+                return getChildren(rest?.children)
+            }, [rest?.children])
+        }
+        catch (e) {
+            console.log("E", e)
+        }
+
+        return <Autolink
+            email
+            hashtag="instagram"
+            mention="twitter"
+            phone="text"
+            textProps={{ style: styles.textStyle }}
+            url
+            linkStyle={{ color: colors.colorPrimary }}
+            {...autoLinkProps}
+            text={(typeof text == 'string') ? text : "Please remove nested Texts"}
+        />
+    }
+
     return (
         <RNText {...rest}
             style={styles.textStyle}
             allowFontScaling={false}
             suppressHighlighting={true}
-        >
-            {props.children}
-        </RNText>
+        />
     )
 }
 
@@ -83,7 +130,6 @@ export const InnerBoldText = ({ text: IText, style, fontWeight = "500" }: { text
 };
 
 export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
-
     let startBoldIndex = IText?.indexOf("**")
     let endBoldIndex = IText?.lastIndexOf("**")
     return <Text style={style} >

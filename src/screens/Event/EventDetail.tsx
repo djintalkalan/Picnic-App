@@ -1,21 +1,29 @@
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource } from 'app-store/actions'
-import { colors, Images } from 'assets'
+import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions'
+import { colors, Images, MapStyle } from 'assets'
 import { Button, Card, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
+import { ListItem } from 'custom-components/ListItem/ListItem'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
+import MapView, { Marker } from 'react-native-maps'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
+
+const ASPECT_RATIO = width / height;
+const DefaultDelta = {
+    latitudeDelta: 0.3,
+    longitudeDelta: 0.3 * ASPECT_RATIO,
+}
 
 const EventDetail: FC<any> = (props) => {
 
@@ -78,6 +86,32 @@ const EventDetail: FC<any> = (props) => {
             buttonText: Language.yes_cancel,
         })
     }, [event])
+
+
+
+    // const _renderGroupMembers = useCallback(({ item, index }) => {
+    //     return (
+    //         <MemberListItem
+    //             onLongPress={item?.is_admin ? undefined : () => {
+    //                 _showBottomMenu({
+    //                     buttons: getBottomMenuButtons(item)
+    //                 })
+    //             }}
+    //             containerStyle={{ paddingHorizontal: scaler(0) }}
+    //             title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
+    //             customRightText={item?.is_admin ? Language?.admin : ""}
+    //             icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
+    //             defaultIcon={Images.ic_home_profile}
+    //         />
+    //     )
+    // }, [])
+
+    const region = useMemo(() => ({
+        latitude: parseFloat(event?.location?.coordinates?.[1] ?? 0),
+        longitude: parseFloat(event?.location?.coordinates?.[0] ?? 0),
+        ...DefaultDelta
+    }), [event])
+
 
     const shareEvent = useCallback(() => {
         shareDynamicLink(event?.name, {
@@ -193,16 +227,17 @@ const EventDetail: FC<any> = (props) => {
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
                             <Text style={styles.name} >{event?.name}</Text>
-                            <Text style={styles.address} >
-                                {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
-                            </Text>
+                            <View style={{ alignItems: 'center', flexDirection: 'row' }} >
+                                <Text style={styles.address} >
+                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                </Text>
+                            </View>
                         </View>
                         <View >
                             <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                 {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
                             </Text>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
-
                         </View>
                     </View>
 
@@ -222,14 +257,9 @@ const EventDetail: FC<any> = (props) => {
                                     {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
                                 </Text>
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                                    source={Images.ic_event_location} />
-                                <Text style={styles.events} >
-                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
-                                </Text>
-                            </View>
+
                         </View>
+
                         {activeTicket || isCancelledByMember ?
                             isCancelledByMember ?
                                 <Image style={{ resizeMode: 'contain', height: scaler(100), width: scaler(100) }} source={Images.ic_cancelled} />
@@ -243,35 +273,91 @@ const EventDetail: FC<any> = (props) => {
                                     <Text style={styles.ticketId} >{activeTicket?.ticket_id}</Text>
                                 </View> : null}
                     </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: scaler(10) }}>
+                        <View style={{ flex: 1 }} >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(10) }}>
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                    source={Images.ic_event_location} />
+                                <Text style={styles.events} >
+                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                </Text>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                            source={Images.ic_events_tickets} />
-                        <Text style={styles.events} >
-                            {event?.is_admin ?
-                                event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited'
-                                    ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
-                                    : Language.unlimited_entry}
-                        </Text>
-                    </View>
-                    {event?.details ?
-                        <View style={{ marginVertical: scaler(22) }}>
-                            <Text style={styles.about} >{event?.details} </Text>
-                        </View> : <View style={{ marginBottom: scaler(22) }} />
-                    }
-                    <View>
-                        <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                            <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) ?? Images.ic_image_placeholder }}
-                                style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10) }}>
-                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
-                            </Text>
+                            </View>
+
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                    source={Images.ic_events_tickets} />
+                                <Text style={styles.events} >
+                                    {event?.is_admin ?
+                                        event?.total_sold_tickets + ' ' + Language.participants : event?.capacity_type == 'limited'
+                                            ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
+                                            : Language.unlimited_entry}
+                                </Text>
+                            </View>
                         </View>
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                            launchMap({ lat: region?.latitude, long: region?.longitude })
+                        }} >
+                            <MapView
+                                pointerEvents='none'
+                                style={{ height: scaler(80), width: scaler(80), borderRadius: scaler(10), marginHorizontal: scaler(5) }}
+                                minZoomLevel={2}
+                                customMapStyle={MapStyle}
+                                provider={'google'}
+                                cacheEnabled
+                                showsMyLocationButton={false}
+                                initialRegion={region}
+                            >
+                                <Marker coordinate={region} >
+                                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                </Marker>
+
+                            </MapView>
+                        </TouchableOpacity>
                     </View>
                     {event?.short_description ?
+                        <View style={{ marginVertical: scaler(22) }}>
+                            <Text autoLink style={styles.about} >{event?.short_description}</Text>
+                        </View> : <View style={{ marginBottom: scaler(22) }} />
+                    }
+                    <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
+                        <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) ?? Images.ic_image_placeholder }}
+                            style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
+                        <Text style={{ marginLeft: scaler(10) }}>
+                            {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                        </Text>
+                    </View>
+
+                    {event?.event_group?.name ?
+                        <>
+                            <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.group}</Text>
+                            <ListItem
+                                textContainerStyle={{ justifyContent: 'center' }}
+                                containerStyle={{ paddingVertical: scaler(10), paddingHorizontal: 0 }}
+                                defaultIcon={Images.ic_group_placeholder}
+                                title={event?.event_group?.name}
+                                // highlight={}
+                                icon={event?.event_group?.image ? { uri: getImageUrl(event?.event_group?.image, { width: scaler(50), type: 'groups' }) } : undefined}
+                                subtitle={event?.event_group?.city + ", " + (event?.event_group?.state ? (event?.event_group?.state + ", ") : "") + event?.event_group?.country}
+                                // customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
+                                onPress={() => {
+                                    dispatch(setActiveGroup(event?.event_group))
+                                    NavigationService.navigate("GroupChatScreen", { id: event?.event_group?._id })
+                                }}
+                                onPressImage={() => {
+                                    dispatch(setActiveGroup(event?.event_group))
+                                    setTimeout(() => {
+                                        NavigationService.navigate("GroupDetail", { id: event?.event_group?._id })
+                                    }, 0);
+                                }}
+                            />
+                        </> : null}
+
+                    {event?.details ?
                         <><Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.about_event}</Text>
-                            <Text style={styles.about}>{event?.short_description}</Text></> : <View />
+                            <Text autoLink style={styles.about}>{event?.details}</Text>
+                        </> : <View />
                     }
                     {event?.is_admin ?
                         <TouchableOpacity style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}

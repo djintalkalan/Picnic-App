@@ -25,7 +25,7 @@ AWS.config.update({
             pipelineId: config.AWS3_PIPELINE_ID,
             outputKeyPrefix: '', // put the video into the transcoded folder
             presets: [ // Comes from AWS console
-                { presetId: '1351620000000-100080' }
+                { presetId: '1351620000001-000001' }
             ]
         }
     }
@@ -136,7 +136,7 @@ const transcodeVideo = async (key: string, callback: (obj: any) => void) => {
         Outputs: [{
             "Key": key,
             "Rotate": "0",
-            "PresetId": "1351620000000-100080",
+            "PresetId": "1351620000001-000001",
             "ThumbnailPattern": `${key.substring(0, key.lastIndexOf("."))}-{count}`
         }]
     };

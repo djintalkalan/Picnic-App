@@ -291,4 +291,6 @@ export const es = {
     telegram: '',
     swipe_left_for_more: '',
     in_app_unavailable: "",
+    event: "Evento",
+    group: "Grupo",
 }

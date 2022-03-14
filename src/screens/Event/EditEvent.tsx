@@ -118,11 +118,13 @@ const EditEvent: FC<any> = props => {
             !getValues('eventDate') ||
             !getValues('currency') ||
             !getValues('startTime') ||
+            (!isFreeEvent && ((!paymentMethods?.length))) ||
+
             (errors && (errors.eventName || errors.location || errors.eventDate || errors.ticketPrice || errors.currency || errors.startTime || errors.capacity))
         )
             return true;
         return false;
-    }, [errors]);
+    }, [errors, paymentMethods, isFreeEvent]);
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
@@ -225,7 +227,6 @@ const EditEvent: FC<any> = props => {
 
         const { startTime, endTime, eventDate } = eventDateTime.current
         let payload = {
-
             _id: props?.route?.params?.id,
             image: uploadedImage?.current || undefined,
             name: data?.eventName,
@@ -243,7 +244,7 @@ const EditEvent: FC<any> = props => {
             capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
             capacity: data?.capacity ?? 0,
             is_free_event: isFreeEvent ? '1' : '0',
-            event_fees: data?.ticketPrice ? round(parseFloat(data?.ticketPrice), 2) : 0,
+            event_fees: data?.ticketPrice ? round(parseFloat(data?.ticketPrice), 2)?.toString() : "0",
             event_date: dateFormat(eventDate, "YYYY-MM-DD"),
             event_start_time: dateFormat(startTime, "HH:mm:ss"),
             event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
@@ -655,6 +656,7 @@ const EditEvent: FC<any> = props => {
                                             name={'policy'}
                                             multiline
                                             keyboardValues={keyboardValues}
+                                            required={Language.refund_policy_required}
                                             style={{ minHeight: scaler(150), textAlignVertical: 'top' }}
                                             limit={1000}
                                             borderColor={colors.colorTextInputBackground}

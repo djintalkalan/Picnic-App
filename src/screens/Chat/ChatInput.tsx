@@ -109,6 +109,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <ImageLoader
                                 placeholderSource={Images.ic_image_placeholder}
+                                //@ts-ignore
                                 style={{ resizeMode: 'cover', borderRadius: scaler(10), height: scaler(60), width: width - scaler(30), marginTop: scaler(10) }}
                                 source={{
                                     uri: (repliedMessage?.message_type == 'file') ?

@@ -443,7 +443,8 @@ export const getSymbol = (currency: string) => {
     let symbol = '';
     currencies?.map((_: any, i: number) => {
         if (_?.value == currency) {
-            symbol = decode(_?.symbol);
+            symbol = _?.value == 'usd' ? decode(_?.symbol) : (decode(_?.key) + " ");
+            // symbol = decode(_?.symbol);
         }
     })
     return symbol;

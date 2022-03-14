@@ -8,6 +8,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   StyleSheet,
+  TextInput as RNInput,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -44,6 +45,9 @@ const CreateEvent2: FC<any> = props => {
   const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
 
+  const eventPriceInputRef = useRef<RNInput>(null)
+  const additionalInfoInputRef = useRef<RNInput>(null)
+  const capacityInputRef = useRef<RNInput>(null)
   const eventDateTime = useRef<IEventDateTime>({
     selectedType: 'eventDate',
     eventDate: new Date(),
@@ -163,6 +167,9 @@ const CreateEvent2: FC<any> = props => {
   const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {
     eventDateTime.current.selectedType = type
     setDatePickerVisibility(true);
+    eventPriceInputRef.current?.blur()
+    additionalInfoInputRef.current?.blur()
+    capacityInputRef.current?.blur()
   }, []);
 
   const getMinDate = useCallback(() => {
@@ -195,7 +202,7 @@ const CreateEvent2: FC<any> = props => {
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-        <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <Stepper step={2} totalSteps={3} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <TouchableOpacity onPress={() => {
             setIsUnlimitedCapacity((b) => {
@@ -245,6 +252,7 @@ const CreateEvent2: FC<any> = props => {
           <TextInput
             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
             placeholder={Language.capacity}
+            ref={capacityInputRef}
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
@@ -287,6 +295,7 @@ const CreateEvent2: FC<any> = props => {
                 placeholder={
                   Language.event_ticket_price + ' (' + Language.per_person + ')'
                 }
+                ref={eventPriceInputRef}
                 style={{ paddingLeft: scaler(20) }}
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
@@ -370,6 +379,7 @@ const CreateEvent2: FC<any> = props => {
             <TextInput
               placeholder={Language.write_additional_information_about_event}
               name={'additionalInfo'}
+              ref={additionalInfoInputRef}
               multiline
               keyboardValues={keyboardValues}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
@@ -480,6 +490,12 @@ const CreateEvent2: FC<any> = props => {
             } else {
               setValue('endTime', "");
               setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
+            }
+            if (getValues('endTime')) {
+              console.log('endtime selected')
+              setTimeout(() => {
+                additionalInfoInputRef.current?.focus()
+              }, 500);
             }
             setDatePickerVisibility(false);
           }}
