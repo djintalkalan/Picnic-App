@@ -291,5 +291,7 @@ export const en = {
   telegram: 'Telegram',
   swipe_left_for_more: 'Swipe left for more',
   in_app_unavailable: "In-App purchases are not available at this moment",
+  event: "Event",
+  group: "Group",
 
 }

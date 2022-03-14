@@ -372,7 +372,7 @@ const GroupDetail: FC<any> = (props) => {
                             <Text style={styles.groupType}>{group?.category}</Text>
                         </View>
                     </View>
-                    <Text style={styles.about} >{group?.details}</Text>
+                    <Text autoLink style={styles.about} >{group?.details}</Text>
                 </View>
                 <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                 {group?.is_admin ?

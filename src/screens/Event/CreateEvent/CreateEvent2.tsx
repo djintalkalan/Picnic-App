@@ -200,7 +200,7 @@ const CreateEvent2: FC<any> = props => {
     <SafeAreaView style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-        <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <Stepper step={2} totalSteps={3} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <TouchableOpacity onPress={() => {
             setIsUnlimitedCapacity((b) => {

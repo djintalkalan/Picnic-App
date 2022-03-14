@@ -75,6 +75,8 @@ const CreateEvent1: FC<any> = props => {
     if (
       !getValues('eventName') ||
       !getValues('location') ||
+      !getValues('selectGroup') ||
+      !selectedGroupRef.current ||
       (errors && (errors.eventName || errors.location))
     )
       return true;
@@ -106,7 +108,7 @@ const CreateEvent1: FC<any> = props => {
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
         contentContainerStyle={{ alignItems: 'center' }}>
-        <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <Stepper step={1} totalSteps={3} paddingHorizontal={scaler(20)} />
         <View>
           <View style={styles.imageContainer}>
             <Image
@@ -159,6 +161,7 @@ const CreateEvent1: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'selectGroup'}
+              required
               icon={Images.ic_arrow_dropdown}
               onPress={() => {
                 setDropdown(!isDropdown);
