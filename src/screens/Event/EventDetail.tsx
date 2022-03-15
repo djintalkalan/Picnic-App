@@ -15,7 +15,7 @@ import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -113,7 +113,7 @@ const EventDetail: FC<any> = (props) => {
         latitude: parseFloat(event?.location?.coordinates?.[1] ?? 0),
         longitude: parseFloat(event?.location?.coordinates?.[0] ?? 0),
         ...DefaultDelta
-    }))
+    }), [event])
 
 
     const shareEvent = useCallback(() => {
