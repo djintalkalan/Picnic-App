@@ -293,5 +293,7 @@ export const en = {
   in_app_unavailable: "In-App purchases are not available at this moment",
   event: "Event",
   group: "Group",
+  contact_support_dob: 'Contact support to change your date of birth',
+  contact_support_email: 'Contact support to change your email address',
 
 }

@@ -37,7 +37,7 @@ const Events: FC<StackScreenProps<RootParams, 'Events'>> = ({ route, navigation 
     return (
         <SafeAreaView style={styles.container} >
             <MyHeader title={Language.events} />
-            <TopTab tabs={getTabs()} />
+            <TopTab swipeEnabled={false} tabs={getTabs()} />
 
 
         </SafeAreaView>

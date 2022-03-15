@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions'
-import { colors, Images, MapStyle } from 'assets'
+import { colors, Images } from 'assets'
 import { Button, Card, Text, useStatusBar } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem } from 'custom-components/ListItem/ListItem'
@@ -11,12 +11,11 @@ import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'reac
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
-import MapView, { Marker } from 'react-native-maps'
 import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -140,7 +139,7 @@ const EventDetail: FC<any> = (props) => {
                         onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { width: width, type: 'events' }))}
                         //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
-                        placeholderSource={Images.ic_group_placeholder}
+                        placeholderSource={Images.ic_event_placeholder}
                         placeholderStyle={{}}
                         source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
                 </View>
@@ -282,8 +281,9 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(10) }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_event_location} />
-                                <Text style={styles.events} >
-                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                <Text style={[styles.events, { color: colors.colorLink, fontWeight: '400' }]} >
+                                    {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
+                                    {event?.address}
                                 </Text>
 
                             </View>
@@ -299,7 +299,7 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                        {/* <TouchableOpacity activeOpacity={0.8} onPress={() => {
                             launchMap({ lat: region?.latitude, long: region?.longitude })
                         }} >
                             <MapView
@@ -317,7 +317,7 @@ const EventDetail: FC<any> = (props) => {
                                 </Marker>
 
                             </MapView>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                     {event?.short_description ?
                         <View style={{ marginVertical: scaler(22) }}>

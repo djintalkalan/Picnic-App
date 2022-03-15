@@ -167,6 +167,10 @@ const EditEvent: FC<any> = props => {
                     country: event?.country
                 }
             }
+            console.log("event?.address", getShortAddress(event?.address, event?.state, event?.city));
+            console.log("event?.city", event?.city);
+
+            // return
             eventDateTime.current = {
                 eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
                 startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
@@ -182,8 +186,8 @@ const EditEvent: FC<any> = props => {
             setValue('location', event?.address)
             setValue('selectGroup', event?.event_group?.name)
             setValue('aboutEvent', event?.short_description)
-            setValue('capacity', event?.capacity?.toString())
-            setValue('ticketPrice', event?.event_fees?.toString())
+            setValue('capacity', (event?.capacity || "")?.toString())
+            setValue('ticketPrice', (event?.event_fees || "")?.toString())
             setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
             setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
             setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
@@ -232,7 +236,7 @@ const EditEvent: FC<any> = props => {
             group_id: selectedGroupRef.current?.id,
             is_online_event: isOnlineEvent ? '1' : '0',
             short_description: data?.aboutEvent,
-            address: address?.main_text + ', ' + address?.secondary_text,
+            address: (address?.main_text ? (address?.main_text + ', ') : "") + address?.secondary_text,
             city: otherData?.city,
             state: otherData?.state,
             country: otherData?.country,
@@ -380,7 +384,7 @@ const EditEvent: FC<any> = props => {
                             onPress={() => {
                                 setGroupDropdown(!isGroupDropdown);
                             }}
-                            // required={Language.group_purpose_required}
+                            required={Language.group_name_required}
                             control={control}
                             errors={errors}
                         />

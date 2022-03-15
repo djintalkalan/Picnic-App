@@ -84,7 +84,7 @@ export const Text: FC<TextProps> = (props) => {
             phone="text"
             textProps={{ style: styles.textStyle }}
             url
-            linkStyle={{ color: colors.colorPrimary }}
+            linkStyle={{ color: colors.colorLink, textDecorationLine: 'underline' }}
             {...autoLinkProps}
             text={(typeof text == 'string') ? text : "Please remove nested Texts"}
         />
