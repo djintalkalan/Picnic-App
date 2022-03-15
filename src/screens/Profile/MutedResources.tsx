@@ -39,7 +39,7 @@ const MutedResources: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    const swipeListRef = useRef<SwipeListView<any>>()
+    const swipeListRef = useRef<SwipeListView<any>>(null)
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => {
@@ -49,6 +49,7 @@ const MutedResources: FC<any> = (props) => {
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
                 title={name}
+                //@ts-ignore
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: (type + 's') }) } : undefined}
                 subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 // isSelected={is_group_member}
