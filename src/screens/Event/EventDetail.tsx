@@ -281,7 +281,9 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(10) }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_event_location} />
-                                <Text style={[styles.events, { color: colors.colorLink, fontWeight: '400' }]} >
+                                <Text onPress={() => {
+                                    launchMap({ lat: region?.latitude, long: region?.longitude })
+                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400' }]} >
                                     {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
                                     {event?.address}
                                 </Text>
