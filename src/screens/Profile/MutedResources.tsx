@@ -2,7 +2,6 @@ import { RootState } from 'app-store'
 import { getMutedResources, IPaginationState, IResourceType, muteUnmuteResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
-import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -115,10 +114,8 @@ const MutedResources: FC<any> = (props) => {
 
 
     return (
-        <SafeAreaViewWithStatusBar style={styles.container} >
-
-            <View style={{ flex: 1, width: '100%', paddingVertical: scaler(5) }} >
-
+        <View style={styles.container} >
+            <View style={{ flex: 1, width: '100%' }} >
                 <SwipeListView
                     ref={swipeListRef}
                     keyExtractor={(_, i) => i.toString()}
@@ -140,7 +137,7 @@ const MutedResources: FC<any> = (props) => {
                 />
             </View>
 
-        </SafeAreaViewWithStatusBar>
+        </View>
     )
 }
 
