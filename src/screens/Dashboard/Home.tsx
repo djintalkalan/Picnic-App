@@ -83,6 +83,9 @@ const Home: FC = () => {
     // _zoomImage("https://8f99j1irga.execute-api.us-west-2.amazonaws.com/production/media/messages/IMG-20220306-PG1646568517758795.jpg?width=390&height=")
   }, [])
 
+  // const a = "id1id1id1";
+  // const b = "id2id2id2";
+
   return (
     <SafeAreaViewWithStatusBar edges={['top']} >
       <View style={styles.headerContainer} >

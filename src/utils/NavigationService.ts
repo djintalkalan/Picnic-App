@@ -1,13 +1,13 @@
 import { NavigationContainerRef, Route, StackActions } from '@react-navigation/native';
 import * as React from 'react';
 
-const navigationRef: React.MutableRefObject<NavigationContainerRef | null> =
+const navigationRef: React.MutableRefObject<NavigationContainerRef<any> | null> =
   React.createRef();
 
 const setNavigationRef = (ref: any) => navigationRef.current = ref
 
-const navigate = (name: string, params: any = {}) => {
-  navigationRef?.current?.navigate(name, params);
+const navigate = (name: string, params: any = {}, merge: boolean = true) => {
+  navigationRef?.current?.navigate({ name, params, merge });
 };
 
 const push = (name: string, params: any = {}) => {

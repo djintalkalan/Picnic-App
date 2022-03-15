@@ -34,8 +34,6 @@ const EventDetail: FC<any> = (props) => {
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
-
-
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
@@ -54,6 +52,7 @@ const EventDetail: FC<any> = (props) => {
 
     useLayoutEffect(() => {
         setTimeout(() => {
+            // NavigationService.goBack()
             dispatch(getEventDetail(props?.route?.params?.id))
 
         }, 200);
@@ -136,7 +135,7 @@ const EventDetail: FC<any> = (props) => {
                         onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { width: width, type: 'events' }))}
                         //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
-                        placeholderSource={Images.ic_group_placeholder}
+                        placeholderSource={Images.ic_event_placeholder}
                         placeholderStyle={{}}
                         source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
                 </View>
@@ -278,7 +277,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(10) }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_event_location} />
-                                <Text style={styles.events} >
+                                <Text style={[styles.events, { color: colors.colorLink, fontWeight: '400', textDecorationLine: 'underline' }]} >
                                     {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
                                 </Text>
 
@@ -305,6 +304,7 @@ const EventDetail: FC<any> = (props) => {
                                 customMapStyle={MapStyle}
                                 provider={'google'}
                                 cacheEnabled
+                                loadingEnabled={false}
                                 showsMyLocationButton={false}
                                 initialRegion={region}
                             >
