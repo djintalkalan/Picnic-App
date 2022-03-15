@@ -274,11 +274,14 @@ const EventDetail: FC<any> = (props) => {
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: scaler(10) }}>
                         <View style={{ flex: 1 }} >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(10) }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: scaler(10) }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_event_location} />
-                                <Text style={[styles.events, { color: colors.colorLink, fontWeight: '400', textDecorationLine: 'underline' }]} >
-                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                <Text onPress={() => {
+                                    launchMap({ lat: region?.latitude, long: region?.longitude })
+                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400', textDecorationLine: undefined }]} >
+                                    {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
+                                    {event?.address}
                                 </Text>
 
                             </View>
@@ -294,7 +297,7 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                        {1 == 2 && <TouchableOpacity activeOpacity={0.8} onPress={() => {
                             launchMap({ lat: region?.latitude, long: region?.longitude })
                         }} >
                             <MapView
@@ -313,7 +316,7 @@ const EventDetail: FC<any> = (props) => {
                                 </Marker>
 
                             </MapView>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </View>
                     {event?.short_description ?
                         <View style={{ marginVertical: scaler(22) }}>

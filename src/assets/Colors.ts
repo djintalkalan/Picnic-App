@@ -15,6 +15,6 @@ export const colors = {
     colorGreyMore: "#A5A5A5",
     colorTextPlaceholder: '#9A9A9A',
     colorErrorRed: '#C93F34',
-    colorLink: 'blue',
+    colorLink: '#0e559c',
 
 }
