@@ -55,7 +55,7 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, ic
                 <View style={{ backgroundColor: "#DEDEDE" }} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
-                        source={icon ?? defaultIcon}
+                        source={icon}
                         style={styles.iconStyle} />
                 </View>
             </View>

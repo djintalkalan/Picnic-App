@@ -63,7 +63,9 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
     shouldComponentUpdate = (nextProps: Readonly<PopupAlertProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
         if (nextState?.alertVisible && this.state.alertVisible != nextState.alertVisible) {
-            BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+            setTimeout(() => {
+                BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+            }, 100);
         } else {
             BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
         }

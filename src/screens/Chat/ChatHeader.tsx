@@ -45,7 +45,7 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
             <TouchableHighlight style={{ alignSelf: 'center', paddingHorizontal: scaler(3) }} onPress={onPress} underlayColor={colors.colorWhite} >
                 <ImageLoader
                     placeholderSource={defaultIcon}
-                    source={icon ?? defaultIcon} style={styles.iconStyle} />
+                    source={icon} style={styles.iconStyle} />
             </TouchableHighlight>
             <TouchableOpacity onPress={onPress} style={{ paddingLeft: scaler(5), flexShrink: 1, }} >
                 <Text style={styles.title} >{title}</Text>

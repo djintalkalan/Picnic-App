@@ -22,7 +22,9 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
 
     shouldComponentUpdate = (nextProps: Readonly<any>, nextState: Readonly<{ imageUrl: string, toggle: boolean }>) => {
         if (nextState?.imageUrl && this.state.imageUrl !== nextState.imageUrl) {
-            BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+            setTimeout(() => {
+                BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
+            }, 100);
         } else {
             BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
         }
