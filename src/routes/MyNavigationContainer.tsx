@@ -106,6 +106,7 @@ const MyNavigationContainer = () => {
   const language = useLanguage();
   // console.log("language", language)
   useEffect(() => {
+
     LogBox.ignoreAllLogs();
     const loaderListener = DeviceEventEmitter.addListener(
       'STOP_LOADER_EVENT',
@@ -118,6 +119,7 @@ const MyNavigationContainer = () => {
     return () => {
       loaderListener.remove();
       tokenListener.remove();
+
     };
   }, []);
 

@@ -36,7 +36,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, s
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
-                        source={icon ?? defaultIcon}
+                        source={icon}
                         style={styles.iconStyle} />
                 </TouchableHighlight>
                 <View style={style.textContainer} >
@@ -70,7 +70,7 @@ export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, 
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
-                        source={icon ?? defaultIcon}
+                        source={icon}
                         style={[styles.iconStyle, {
                             height: scaler(40),
                             width: scaler(40),

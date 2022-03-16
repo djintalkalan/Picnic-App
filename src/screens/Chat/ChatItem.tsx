@@ -522,7 +522,7 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                     </View>
                     : null}
-                <Text
+                <Text autoLink
                     onLongPress={_onCopy}
                     style={[styles.myMessage, {}]} >{message?.trim()}</Text>
                 {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
@@ -610,7 +610,7 @@ const ChatItem = (props: IChatItem) => {
                                 </TouchableOpacity>
                             </View>
                             : null}
-                        <Text onLongPress={_onCopy}
+                        <Text autoLink onLongPress={_onCopy}
                             style={styles.message} >{message?.trim()}</Text>
                         {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
                             <TouchableOpacity onPress={() => {

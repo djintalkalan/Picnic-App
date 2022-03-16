@@ -10,6 +10,7 @@ import { VideoProvider } from 'custom-components/VideoProvider';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import React, { FC, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -22,6 +23,10 @@ import { PopupAlertHolder } from 'utils/PopupAlertHolder';
 import Database from './database/Database';
 import MyNavigationContainer from './routes/MyNavigationContainer';
 
+if (__DEV__) {
+    FastImage.clearMemoryCache()
+    FastImage.clearDiskCache()
+}
 
 const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
 const App: FC = () => {

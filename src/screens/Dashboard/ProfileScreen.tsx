@@ -143,10 +143,6 @@ const ProfileScreen: FC<any> = (props) => {
         }))
     }, [])
 
-    const profilePath = profileImage?.path ? { uri: profileImage?.path } :
-        userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
-            null
-
     return (
         <SafeAreaView style={styles.container} >
 
