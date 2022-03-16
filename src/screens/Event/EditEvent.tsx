@@ -549,7 +549,7 @@ const EditEvent: FC<any> = props => {
                                 iconSize={scaler(18)}
                                 rules={{
                                     validate: (v: string) => {
-                                        if (parseFloat(v) > 99999.99) {
+                                        if (parseFloat(v) > 9999.99) {
                                             return Language.event_max_price
                                         }
                                         try {
