@@ -37,8 +37,6 @@ const PrivacyScreen: FC<any> = (props) => {
 
             <MyHeader title={Language.review} />
 
-
-
             <View style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{}} >
@@ -85,8 +83,6 @@ const SettingButton = ({ divider = true, ...props }: { subtitle: string, divider
                 <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText }]} >{props?.title}</Text>
 
                 <Text style={{ color: colors.colorPlaceholder, fontSize: scaler(12) }} >{props?.subtitle}</Text>
-
-
                 <Image source={Images.ic_right} style={{ height: scaler(15), width: scaler(15), resizeMode: 'contain' }} />
 
             </TouchableOpacity>
