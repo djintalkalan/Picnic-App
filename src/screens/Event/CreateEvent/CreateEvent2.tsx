@@ -305,7 +305,7 @@ const CreateEvent2: FC<any> = props => {
                 rules={{
                   validate: (v: string) => {
                     v = v?.trim()
-                    if (parseFloat(v) > 99999.99) {
+                    if (parseFloat(v) > 9999.99) {
                       return Language.event_max_price
                     }
                     try {
