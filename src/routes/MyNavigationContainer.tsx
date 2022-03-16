@@ -16,6 +16,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
+import { RollBar } from 'rollbar-logger';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
@@ -135,6 +136,10 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
+    RollBar.init();
+    return () => {
+      RollBar.exit();
+    }
   }, [isLogin])
 
   useEffect(() => {

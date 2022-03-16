@@ -33,6 +33,7 @@
         "Passcode",
         "picnicapp",
         "qrcode",
-        "rnuc"
+        "rnuc",
+        "rollbar",
     ]
 }

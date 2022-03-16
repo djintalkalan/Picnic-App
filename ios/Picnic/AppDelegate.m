@@ -17,6 +17,9 @@
 #import <Firebase.h>
 #import "RNFBMessagingModule.h"
 
+//Rollbar
+#import <RollbarReactNative/RollbarReactNative.h>
+
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -41,6 +44,7 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+ [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN];
  [FIRApp configure];
  [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY]; // add this line using the api key obtained from Google Console
 
