@@ -90,6 +90,7 @@ const ProfileScreen: FC<any> = (props) => {
 
     const setProfileData = useCallback((userData: any) => {
         const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_number, dob, bio, location } = userData
+        console.log("userData", userData);
 
         locationRef.current = {
             latitude: location?.coordinates[1],
@@ -130,7 +131,7 @@ const ProfileScreen: FC<any> = (props) => {
             bio: data?.about,
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             image: imageFile,
-            address: address?.main_text + ", " + address?.secondary_text,
+            address: latitude ? (address?.main_text ? (address?.main_text + ", ") : "") + address?.secondary_text : "",
             city: otherData?.city,
             state: otherData?.state,
             country: otherData?.country,
@@ -229,7 +230,7 @@ const ProfileScreen: FC<any> = (props) => {
                         placeholder={Language.email}
                         name={'email'}
                         required={true}
-                        onPress={() => setError('email', { message: 'Contact support to change your email address' })}
+                        onPress={() => setError('email', { message: Language.contact_support_email })}
                         style={{ color: "rgba(6, 29, 50, 0.4)" }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
@@ -245,7 +246,7 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         name={'dob'}
-                        onPress={() => setError('dob', { message: 'Contact support to change your date of birth' })}
+                        onPress={() => setError('dob', { message: Language.contact_support_dob })}
                         style={{ color: "rgba(6, 29, 50, 0.4)" }}
 
                         required={true}
@@ -280,11 +281,13 @@ const ProfileScreen: FC<any> = (props) => {
 
                             })
                         }}
-                        required={Language.please_enter_default_location}
+                        // required={Language.please_enter_default_location}
                         control={control}
                         errors={errors}
                     />
-
+                    {
+                        console.log("Default", Database.DefaultCountry)
+                    }
                     <PhoneInput
                         name={'phone'}
                         placeholder={Language.phone}
@@ -292,7 +295,7 @@ const ProfileScreen: FC<any> = (props) => {
                         backgroundColor={colors.colorTextInputBackground}
                         controlObject={{ control, getValues, setValue, setError }}
                         defaultCountry={Database.DefaultCountry}
-                        required
+                        // required
                         errors={errors}
                     />
 

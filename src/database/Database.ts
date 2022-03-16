@@ -103,7 +103,7 @@ class Database {
 
     static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
 
-    DefaultCountry = RNLocalize.getCountry()
+    DefaultCountry = RNLocalize.getCountry() ?? 'US'
 
     public setLogin = (isLogin?: boolean) => {
         Database.phoneStorage.setBool('isLogin', isLogin ?? false)

@@ -163,7 +163,7 @@ const CreateEvent1: FC<any> = props => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'selectGroup'}
-              required
+              required={Language.group_name_required}
               icon={Images.ic_arrow_dropdown}
               onPress={() => {
                 setDropdown(!isDropdown);

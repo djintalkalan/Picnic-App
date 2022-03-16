@@ -432,8 +432,14 @@ export const InitialPaginationState: IPaginationState = {
 
 export const getShortAddress = (address: string, state: string, city?: string) => {
     try {
-        return address.substring(0, address?.indexOf(city ?? state) - 2) || address
+        let index = address?.indexOf(city ?? state) - 2
+        if (index < 0) {
+            index = 0
+        }
+        return address.substring(0, index)
     } catch (e) {
+        console.log("E", e);
+
         return address
     }
 }

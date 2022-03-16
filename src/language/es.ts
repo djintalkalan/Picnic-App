@@ -293,4 +293,6 @@ export const es = {
     in_app_unavailable: "",
     event: "Evento",
     group: "Grupo",
+    contact_support_dob: '',
+    contact_support_email: ''
 }

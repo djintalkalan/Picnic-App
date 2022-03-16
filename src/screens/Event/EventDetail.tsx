@@ -1,6 +1,6 @@
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions'
-import { colors, Images, MapStyle } from 'assets'
+import { colors, Images } from 'assets'
 import { Button, Card, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -11,7 +11,6 @@ import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'reac
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
-import MapView, { Marker } from 'react-native-maps'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
@@ -279,7 +278,7 @@ const EventDetail: FC<any> = (props) => {
                                     source={Images.ic_event_location} />
                                 <Text onPress={() => {
                                     launchMap({ lat: region?.latitude, long: region?.longitude })
-                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400', textDecorationLine: undefined }]} >
+                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400' }]} >
                                     {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
                                     {event?.address}
                                 </Text>
@@ -297,26 +296,6 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        {1 == 2 && <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                            launchMap({ lat: region?.latitude, long: region?.longitude })
-                        }} >
-                            <MapView
-                                pointerEvents='none'
-                                style={{ height: scaler(80), width: scaler(80), borderRadius: scaler(10), marginHorizontal: scaler(5) }}
-                                minZoomLevel={2}
-                                customMapStyle={MapStyle}
-                                provider={'google'}
-                                cacheEnabled
-                                loadingEnabled={false}
-                                showsMyLocationButton={false}
-                                initialRegion={region}
-                            >
-                                <Marker coordinate={region} >
-                                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
-                                </Marker>
-
-                            </MapView>
-                        </TouchableOpacity>}
                     </View>
                     {event?.short_description ?
                         <View style={{ marginVertical: scaler(22) }}>

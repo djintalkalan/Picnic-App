@@ -84,7 +84,7 @@ const ImageLoader = (props: IImageLoader) => {
                         color={loadingStyle ? loadingStyle.color : 'gray'}
                     />}
 
-                    {placeholderSource ?
+                    {placeholderSource && !(isLoaded && !isError) ?
                         <Image
                             style={placeholderStyle ?? styles?.mainStyle}
                             source={placeholderSource ?? null}

@@ -37,7 +37,7 @@ const Events: FC<NativeStackScreenProps<RootParams, 'Events'>> = ({ route, navig
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.events} />
-            <TopTab tabs={getTabs()} />
+            <TopTab swipeEnabled={false} tabs={getTabs()} />
         </SafeAreaViewWithStatusBar>
     )
 }

@@ -141,7 +141,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                             <IntlPhoneInput
                                 extraCountries={[{ ru: "Пуэрто-Рико", lt: "Puerto Rikas", tr: "Porto Riko", en: 'Puerto Rico', flag: '🇵🇷', code: 'PR', dialCode: '+1787', mask: '(999) 999-9999' }]}
                                 containerStyle={styles.phoneInputStyle}
-                                dialCode={(currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) ?? undefined}
+                                dialCode={(currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) || undefined}
                                 onChangeText={(data: IOnChangeText) => {
                                     const { dialCode, unmaskedPhoneNumber, phoneNumber, isVerified, selectedCountry } = data
                                     currentDataRef.current = data
@@ -160,7 +160,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     value: value,
                                     placeholder: props.placeholder
                                 }}
-                                defaultCountry={defaultCountry || "IN"}
+                                defaultCountry={defaultCountry}
                                 phoneInputStyle={{
                                     paddingVertical: 0, marginLeft: scaler(5),
                                     fontFamily: Fonts.regular, fontSize: scaler(13),

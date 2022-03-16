@@ -168,6 +168,10 @@ const EditEvent: FC<any> = props => {
                     country: event?.country
                 }
             }
+            console.log("event?.address", getShortAddress(event?.address, event?.state, event?.city));
+            console.log("event?.city", event?.city);
+
+            // return
             eventDateTime.current = {
                 eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
                 startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
@@ -233,7 +237,7 @@ const EditEvent: FC<any> = props => {
             group_id: selectedGroupRef.current?.id,
             is_online_event: isOnlineEvent ? '1' : '0',
             short_description: data?.aboutEvent,
-            address: address?.main_text + ', ' + address?.secondary_text,
+            address: (address?.main_text ? (address?.main_text + ', ') : "") + address?.secondary_text,
             city: otherData?.city,
             state: otherData?.state,
             country: otherData?.country,
@@ -384,7 +388,7 @@ const EditEvent: FC<any> = props => {
                             onPress={() => {
                                 setGroupDropdown(!isGroupDropdown);
                             }}
-                            // required={Language.group_purpose_required}
+                            required={Language.group_name_required}
                             control={control}
                             errors={errors}
                         />
