@@ -11,7 +11,9 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.reactnativeultimateconfig.UltimateConfigModule;
-import com.facebook.react.bridge.JSIModulePackage; // <-- ADD THIS
+import com.facebook.react.bridge.JSIModulePackage;
+import com.rollbar.RollbarReactNative;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -51,6 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, "production");
     SoLoader.init(this, /* native exopackage */ false);
     UltimateConfigModule.setBuildConfig(BuildConfig.class);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());

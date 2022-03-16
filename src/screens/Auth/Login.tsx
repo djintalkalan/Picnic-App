@@ -13,7 +13,6 @@ import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 
-
 type LoginFormType = {
     email: string
     password: string
@@ -54,7 +53,6 @@ const Login: FC = () => {
         //     // isCloseButton: true
         // })
         // loadVideo("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
-
         dispatch(doLogin(data))
     })(), []);
 

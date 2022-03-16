@@ -7,6 +7,7 @@ import { useCallback, useEffect } from 'react';
 import { DeviceEventEmitter, LogBox } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import { useDispatch } from 'react-redux';
+import { RollBar } from 'rollbar-logger';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
@@ -49,6 +50,7 @@ import { useLanguage } from 'src/language/Language';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService } from 'utils';
+
 export let TOKEN_EXPIRED = false;
 const Stack = createStackNavigator();
 
@@ -125,6 +127,10 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
+    RollBar.init();
+    return () => {
+      RollBar.exit();
+    }
   }, [isLogin])
 
   useEffect(() => {

@@ -79,7 +79,6 @@ const Home: FC = () => {
 
   const onPressSetting = useCallback(() => {
     NavigationService.navigate("Settings")
-    // _zoomImage("https://8f99j1irga.execute-api.us-west-2.amazonaws.com/production/media/messages/IMG-20220306-PG1646568517758795.jpg?width=390&height=")
   }, [])
 
   return (
