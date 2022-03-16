@@ -7,7 +7,7 @@ import { useCallback, useEffect } from 'react';
 import { DeviceEventEmitter, LogBox } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import { useDispatch } from 'react-redux';
-import { RollBar } from 'rollbar-logger';
+import { Rollbar } from 'rollbar-service';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
@@ -127,9 +127,9 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
-    RollBar.init();
+    Rollbar.init();
     return () => {
-      RollBar.exit();
+      Rollbar.exit();
     }
   }, [isLogin])
 

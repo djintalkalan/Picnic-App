@@ -4,13 +4,13 @@ import { Platform } from 'react-native';
 import { Client, Configuration } from 'rollbar-react-native';
 
 const isDev = __DEV__
-class RollBarService {
+class RollbarService {
     private rollbar?: Client
-    private static mInstance: RollBarService
+    private static mInstance: RollbarService
 
     static getInstance = () => {
         if (!this.mInstance) {
-            this.mInstance = new RollBarService()
+            this.mInstance = new RollbarService()
         }
         return this.mInstance
     }
@@ -61,4 +61,4 @@ class RollBarService {
     }
 }
 
-export const RollBar = RollBarService.getInstance()
+export const Rollbar = RollbarService.getInstance()

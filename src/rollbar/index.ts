@@ -1,2 +1,2 @@
-export * from './RollBarService';
+export * from './RollbarService';
 
