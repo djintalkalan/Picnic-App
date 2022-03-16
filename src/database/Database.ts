@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 import FastImage from "react-native-fast-image";
-import * as RNLocalize from "react-native-localize";
+// import * as RNLocalize from "react-native-localize";
 import MMKVStorage, { useMMKVStorage } from "react-native-mmkv-storage";
 import { ILanguages, LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
@@ -103,7 +103,7 @@ class Database {
 
     static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
 
-    DefaultCountry = RNLocalize.getCountry() ?? 'US'
+    DefaultCountry = 'US' // RNLocalize.getCountry() ?? 'US'
 
     public setLogin = (isLogin?: boolean) => {
         Database.phoneStorage.setBool('isLogin', isLogin ?? false)
