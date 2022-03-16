@@ -21,17 +21,12 @@ const Settings: FC<any> = (props) => {
     const selectedLanguage = useLanguage()
 
     const [userData] = useDatabase("userData")
+    console.log('userData', userData);
 
-    const [isLogoutAlert, setLogoutAlert] = useState(false)
 
     const dispatch = useDispatch()
 
     const passwordRef = useRef("")
-
-    const [isLanguageModal, setLanguageModal] = useState();
-
-
-    const [profileImage, setProfileImage] = useState()
 
     useEffect(() => {
         dispatch(getProfile())
