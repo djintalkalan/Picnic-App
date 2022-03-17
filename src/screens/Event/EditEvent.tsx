@@ -233,7 +233,7 @@ const EditEvent: FC<any> = props => {
             _id: props?.route?.params?.id,
             image: uploadedImage?.current || undefined,
             name: data?.eventName,
-            group_id: selectedGroupRef.current?.id,
+            group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
             is_online_event: isOnlineEvent ? '1' : '0',
             short_description: data?.aboutEvent,
             address: (address?.main_text ? (address?.main_text + ', ') : "") + address?.secondary_text,
