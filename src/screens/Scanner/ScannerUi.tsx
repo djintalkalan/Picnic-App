@@ -1,4 +1,5 @@
 import { colors, Images } from 'assets'
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import React, { memo, useLayoutEffect } from 'react'
 import { Animated, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
@@ -36,7 +37,7 @@ const ScannerUi = (props: { isQrScanning: boolean, setQrScanning: any }) => {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaViewWithStatusBar backgroundColor={'transparent'} style={styles.container}>
             <View style={[styles.background, { alignItems: 'flex-end', }]} >
 
                 <TouchableOpacity onPress={() => {
@@ -68,7 +69,7 @@ const ScannerUi = (props: { isQrScanning: boolean, setQrScanning: any }) => {
             <View style={styles.background} />
 
 
-        </View>
+        </SafeAreaViewWithStatusBar>
     )
 }
 
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         flex: 1, width: width,
         zIndex: 20, height: height,
+        backgroundColor: 'transparent'
     },
     linearGradient: {
         height: scaler(15),
