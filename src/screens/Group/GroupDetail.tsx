@@ -294,12 +294,12 @@ const GroupDetail: FC<any> = (props) => {
 
     // if (group)
     if (!group) {
-        return <View style={styles.container}>
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                 <Image source={Images.ic_group_placeholder} />
             </View>
             <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-        </View>
+        </SafeAreaViewWithStatusBar>
     }
     return (
         <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >

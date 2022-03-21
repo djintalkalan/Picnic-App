@@ -257,7 +257,7 @@ const Subscription: FC = (props: any) => {
                 {products?.length ? <>
                     <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
                         <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
-                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '700', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
+                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
                     </View>
                 </> :
                     products && <View style={{ flex: 1 }} >

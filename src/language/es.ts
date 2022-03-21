@@ -294,5 +294,6 @@ export const es = {
     event: "Evento",
     group: "Grupo",
     contact_support_dob: '',
-    contact_support_email: ''
+    contact_support_email: '',
+    refund_policy_not_available: "",
 }

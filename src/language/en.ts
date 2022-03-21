@@ -295,5 +295,6 @@ export const en = {
   group: "Group",
   contact_support_dob: 'Contact support to change your date of birth',
   contact_support_email: 'Contact support to change your email address',
+  refund_policy_not_available: "Refund policy not available",
 
 }

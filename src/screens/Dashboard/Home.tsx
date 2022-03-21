@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     padding: scaler(20),
   },
   locationText: {
-    fontWeight: '700',
+    fontWeight: '600',
     fontSize: scaler(15),
     color: '#292929',
     maxWidth: '80%',

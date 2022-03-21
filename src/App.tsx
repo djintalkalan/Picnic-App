@@ -4,8 +4,9 @@ import { Loader } from 'custom-components';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { VideoProvider } from 'custom-components/VideoProvider';
 import React, { FC, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Database from './database/Database';
@@ -26,7 +27,7 @@ const App: FC = () => {
         })
     }, [])
     return (
-        <View style={styles.container} >
+        <GestureHandlerRootView style={styles.container} >
             <LocationServiceProvider>
                 <VideoProvider>
                     <Provider store={store}>
@@ -37,7 +38,7 @@ const App: FC = () => {
                     </Provider>
                 </VideoProvider>
             </LocationServiceProvider>
-        </View>
+        </GestureHandlerRootView>
     )
 }
 

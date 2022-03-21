@@ -60,6 +60,7 @@ export const Text: FC<TextProps> = (props) => {
         return StyleSheet.create({
             textStyle: {
                 fontFamily: Fonts?.[Platform.OS == 'android' ? fontType : type],
+                fontWeight: Platform.OS == 'android' ? undefined : styles.fontWeight,
                 ...styles
             }
         })

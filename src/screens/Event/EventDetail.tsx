@@ -14,7 +14,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -62,18 +62,18 @@ const EventDetail: FC<any> = (props) => {
             message: Language.are_you_sure_cancel_reservation + '?',
             customView: () => <TouchableOpacity
                 onPress={() => {
-                    // !event?.event_refund_policy ?
-                    _showPopUpAlert({
-                        message: event?.event_refund_policy,
-                        // cancelButtonText: null,
-                        // onPressButton: () => {
-                        //     _showCancellationPolicy()
-                        // },
-                        // buttonStyle: { backgroundColor: colors.colorErrorRed },
-                        // buttonText: Language.close,
+                    event?.event_refund_policy ?
+                        _showPopUpAlert({
+                            message: event?.event_refund_policy,
+                            cancelButtonText: null,
+                            onPressButton: () => {
+                                _showCancellationPolicy()
+                            },
+                            buttonStyle: { backgroundColor: colors.colorErrorRed },
+                            buttonText: Language.close,
 
-                    })
-                    // : _showErrorMessage(Language.refund_policy_required)
+                        })
+                        : _showErrorMessage(Language.refund_policy_not_available)
                 }}>
                 <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
             </TouchableOpacity>,
@@ -119,12 +119,12 @@ const EventDetail: FC<any> = (props) => {
     }, [event])
 
     if (!event) {
-        return <View style={styles.container}>
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} style={styles.container}>
             <View style={styles.placeholder}>
                 <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
             </View>
             <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-        </View>
+        </SafeAreaViewWithStatusBar>
     }
     return (
         <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >
