@@ -36,7 +36,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
     }
 
     shouldComponentUpdate = (nextProps: Readonly<BottomMenuProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
-        if (nextState?.alertVisible && this.state.alertVisible != nextState.alertVisible) {
+        if (nextState?.alertVisible) {
             setTimeout(() => {
                 BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
             }, 200);
@@ -66,7 +66,10 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
             this.setState({ alertVisible: false })
             onPressCloseButton && onPressCloseButton()
         }
-        this.setState({ alertVisible: true })
+        if (!this.state?.alertVisible)
+            this.setState({ alertVisible: true })
+        else
+            this.forceUpdate()
     }
 
     _renderButtonItem = ({ item, index }: { item: IBottomMenuButton, index: number }) => {

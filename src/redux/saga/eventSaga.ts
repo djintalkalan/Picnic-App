@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getEventDetail, getEventMembers, joinEvent, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -330,8 +330,15 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._capturePayment, { _id: R?._id });
         if (res.status == 200) {
-            NavigationService.goBack()
-            yield put(joinEvent(rest));
+            // NavigationService.goBack()
+            // yield put(joinEvent(rest));
+            _showSuccessMessage(res?.message)
+            SocketService.emit(EMIT_JOIN_ROOM, {
+                resource_id: payload?.resource_id
+            })
+            yield put(joinEventSuccess(payload?.resource_id))
+            yield put(getEventDetail(payload?.resource_id))
+            NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

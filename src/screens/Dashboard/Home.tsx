@@ -17,8 +17,6 @@ import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
 
-
-
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
   const defaultLocation: ILocation = {

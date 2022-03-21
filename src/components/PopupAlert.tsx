@@ -53,8 +53,11 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         }
         this.onPressButton = onPressButton
         //@ts-ignore
-        this.state.alertVisible = true
-        this.forceUpdate()
+        // this.state.alertVisible = true
+        if (!this.state.alertVisible) {
+            this.setState({ alertVisible: true })
+        } else
+            this.forceUpdate()
     }
 
     hideAlert = () => {
@@ -62,18 +65,23 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     }
 
     shouldComponentUpdate = (nextProps: Readonly<PopupAlertProps>, nextState: Readonly<{ alertVisible: boolean }>) => {
-        if (nextState?.alertVisible && this.state.alertVisible != nextState.alertVisible) {
+        console.log("nextState", nextState);
+
+        if (nextState?.alertVisible) {
             setTimeout(() => {
+                console.log("Listner added");
+
                 BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
             }, 100);
         } else {
+            console.log("Listner removed");
             BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
         }
         return this.state.alertVisible != nextState.alertVisible
     }
 
     onBackPress = () => {
-        this.setState({ alertVisible: false })
+        // this.setState({ alertVisible: false })
         return true
     }
 
