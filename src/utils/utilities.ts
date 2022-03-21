@@ -328,7 +328,7 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 //     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
 // }
 
-export const getImageUrl = (url: string, options: { width: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
+export const getImageUrl = (url: string, options: { width?: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
     return config.IMAGE_URL + options?.type + "/" + url + "?width=" + (options?.width || "1000") + "&height=" + (options?.height || "")
 }
 
