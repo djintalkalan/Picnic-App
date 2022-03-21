@@ -329,7 +329,7 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 // }
 
 export const getImageUrl = (url: string, options: { width: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
-    return config.IMAGE_URL + options?.type + "/" + url + "?width=" + options?.width + "&height=" + (options?.height || "")
+    return config.IMAGE_URL + options?.type + "/" + url + "?width=" + (options?.width || "1000") + "&height=" + (options?.height || "")
 }
 
 
