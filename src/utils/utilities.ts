@@ -13,11 +13,12 @@ import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigat
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
 import { StaticHolder } from './StaticHolder';
-
+//@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
 try {
-    LaunchNVG.setGoogleApiKey(config.GOOGLE_MAP_API_KEY);
+    //@ts-ignore
+    LaunchNVG?.setGoogleApiKey(config.GOOGLE_MAP_API_KEY);
 } catch (e) {
 
 }
@@ -37,7 +38,7 @@ export const launchMap = async (address: string | { lat: number, long: number },
     if (address && typeof address === 'string') {
         LaunchNavigator.navigate(address, { app })
             .then(() => console.log('Launched navigator'))
-            .catch((err) => console.error('Error launching navigator: ', err));
+            .catch((err: any) => console.error('Error launching navigator: ', err));
     } else if (
         address &&
         typeof address === 'object' &&
@@ -327,17 +328,17 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
 //     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
 // }
 
-export const getImageUrl = (url: string, options: { width: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
-    return config.IMAGE_URL + options?.type + "/" + url + "?width=" + options?.width + "&height=" + (options?.height || "")
+export const getImageUrl = (url: string, options: { width?: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
+    return config.IMAGE_URL + options?.type + "/" + url + "?width=" + (options?.width || "1000") + "&height=" + (options?.height || "")
 }
 
 
 export const ProfileImagePickerOptions = {
-    width: 400,
-    height: 400,
-    compressImageQuality: 0.5,
-    compressImageMaxWidth: 400,
-    compressImageMaxHeight: 400,
+    width: 800,
+    height: 800,
+    compressImageQuality: 0.8,
+    compressImageMaxWidth: 800,
+    compressImageMaxHeight: 800,
     enableRotationGesture: true,
     cropping: true,
 }
@@ -469,6 +470,7 @@ type IDynamicType = "group-detail" | "event-detail"
 export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDynamicType } => {
     try {
         const arr = url?.split("/").reverse();
+        //@ts-ignore
         return { id: arr[0], type: arr[1] }
     }
     catch (e) {
