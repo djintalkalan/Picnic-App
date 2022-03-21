@@ -66,12 +66,12 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                 // width: 400,
                 // height: 400,
                 forceJpg: true,
-                freeStyleCropEnabled: true,
-                compressImageQuality: 0.5,
-                compressImageMaxWidth: 400,
+                // freeStyleCropEnabled: true,
+                compressImageQuality: 0.8,
+                // compressImageMaxWidth: 400,
                 // compressImageMaxHeight: 400,
                 enableRotationGesture: true,
-                cropping: mediaType == 'photo' ? true : undefined,
+                // cropping: mediaType == 'photo' ? true : undefined,
                 compressVideoPreset: mediaType == 'photo' ? undefined : "MediumQuality",
                 mediaType
             }).then((image) => {

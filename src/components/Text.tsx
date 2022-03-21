@@ -34,7 +34,7 @@ const getChildren = (children: React.ReactNode) => {
 export const Text: FC<TextProps> = (props) => {
     const { style, type = "regular", autoLink = false, autoLinkProps, ...rest } = props
     const styles = useMemo(() => {
-        const styles = StyleSheet.flatten(style)
+        const styles = StyleSheet.flatten(style ?? {})
         let fontType = type;
         if (styles?.fontWeight) {
             switch (styles?.fontWeight) {
@@ -60,7 +60,7 @@ export const Text: FC<TextProps> = (props) => {
         return StyleSheet.create({
             textStyle: {
                 fontFamily: Fonts?.[Platform.OS == 'android' ? fontType : type],
-                fontWeight: Platform.OS == 'android' ? undefined : styles.fontWeight,
+                fontWeight: Platform.OS == 'android' ? undefined : styles?.fontWeight,
                 ...styles
             }
         })
