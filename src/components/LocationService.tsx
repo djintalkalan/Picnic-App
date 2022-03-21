@@ -7,7 +7,7 @@ import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
 
-export const defaultLocation: ILocation = {
+export const defaultLocation: ILocation = __DEV__ ? {
     // latitude: 34.055101,//30.6984528
     // longitude: -118.244797, // 76.62734
     // address: { main_text: "Los Angeles, USA", secondary_text: "" }
@@ -25,6 +25,15 @@ export const defaultLocation: ILocation = {
         state: "Punjab",
         country: "India"
     }
+} : {
+    latitude: 39.744655,
+    longitude: -75.5483909,
+    address: { main_text: "Wilmington", secondary_text: "Delaware, USA" },
+    otherData: {
+        city: "Wilmington",
+        state: "Delaware",
+        country: "USA"
+    }
 }
 
 interface LocationServiceValues {
@@ -38,7 +47,7 @@ const LocationContext = createContext<LocationServiceValues>({
     currentLocation: undefined,
     askPermission: (async () => { })
 })
-
+//@ts-ignore
 navigator.geolocation = Geolocation
 
 export const LocationServiceProvider: FC<any> = ({ children }) => {
@@ -119,8 +128,8 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     }, [isLogin])
 
     useEffect(() => {
-        const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-        const currentLocation: ILocation = Database.getStoredValue<ILocation | null>("currentLocation")
+        const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+        const currentLocation = Database.getStoredValue<ILocation | null>("currentLocation")
         if (currentLocation && currentLocation?.address?.main_text) {
             if ((!selectedLocation || !selectedLocation?.address?.main_text))
                 Database.setSelectedLocation(currentLocation)
@@ -159,7 +168,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                 const { address, otherData } = await getAddressFromLocation(location)
                 if (address) {
                     Database.setCurrentLocation({ ...location, address, otherData })
-                    const selectedLocation: ILocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+                    const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
                     if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
                         Database.setSelectedLocation({ ...location, address, otherData })
                     }
