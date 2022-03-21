@@ -8,7 +8,7 @@ import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
 import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
@@ -167,7 +167,7 @@ const ProfileScreen: FC<any> = (props) => {
 
                 <View>
                     <View style={styles.imageContainer} >
-                        <ImageLoader onPress={() => _zoomImage(profileImage?.path || (userData?.image && getImageUrl(userData?.image, { type: 'users', width: Dimensions.get('screen').width })) || "")}
+                        <ImageLoader onPress={() => _zoomImage(profileImage?.path || (userData?.image && getImageUrl(userData?.image, { type: 'users' })) || "")}
                             style={styles.image}
                             source={
                                 profileImage?.path ? { uri: profileImage?.path } :

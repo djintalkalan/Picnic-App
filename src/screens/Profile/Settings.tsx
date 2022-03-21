@@ -5,7 +5,7 @@ import { BackButton } from 'custom-components/BackButton'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
@@ -76,7 +76,7 @@ const Settings: FC<any> = (props) => {
             <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >
-                    <TouchableOpacity onPress={() => _zoomImage(userData?.image ? getImageUrl(userData?.image, { type: 'users', width: Dimensions.get("screen").width }) : "")}>
+                    <TouchableOpacity onPress={() => _zoomImage(userData?.image ? getImageUrl(userData?.image, { type: 'users' }) : "")}>
                         <ImageLoader placeholderSource={Images.ic_home_profile} style={{ height: scaler(60), width: scaler(60), borderRadius: scaler(30) }}
                             source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } : null} />
                     </TouchableOpacity>

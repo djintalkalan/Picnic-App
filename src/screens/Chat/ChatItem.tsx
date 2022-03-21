@@ -303,8 +303,8 @@ const ChatItem = (props: IChatItem) => {
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
                 resizeMode={'cover'}
-                onPress={() => _zoomImage(getImageUrl(message, { width: width, type: 'messages' }))}
-                source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
+                onPress={() => _zoomImage(getImageUrl(message, { type: 'messages' }))}
+                source={{ uri: getImageUrl(message, { type: 'messages' }) }}
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             {isMuted ?
                 null :
