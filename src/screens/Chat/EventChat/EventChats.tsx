@@ -12,7 +12,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink, _showErrorMessage } from 'utils'
+import { getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
@@ -59,12 +59,10 @@ const EventChats: FC<any> = (props) => {
                 setRepliedMessage(null)
             }
             flatListRef?.current?.scrollToPosition(0, 0, true);
-        } else {
-            _showErrorMessage("Please enter message")
         }
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+    const _uploadImageOrVideo = useCallback((image, mediaType: 'photo' | 'video', text?: string) => {
         dispatch(uploadFile({
             prefixType: mediaType == 'video' ? 'video' : 'messages',
             image, onSuccess: (url, thumbnail) => {
@@ -74,6 +72,7 @@ const EventChats: FC<any> = (props) => {
                         resource_id: activeEvent?._id,
                         parent_id: repliedMessage?._id,
                         resource_type: "event",
+                        text,
                         message_type: mediaType == 'video' ? 'file' : "image",
                         // thumbnail,
                         message: url,
@@ -83,11 +82,17 @@ const EventChats: FC<any> = (props) => {
                     if (repliedMessage) {
                         setRepliedMessage(null)
                     }
-                } else {
-                    _showErrorMessage("Please enter message")
+
+                    if (NavigationService.getCurrentScreen()?.name == "ImagePreview") {
+                        NavigationService.goBack();
+                    }
                 }
             }
         }))
+    }, [repliedMessage])
+
+    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+        NavigationService.navigate("ImagePreview", { image, mediaType, repliedMessage, _uploadImageOrVideo, setRepliedMessage });
     }, [repliedMessage])
 
     const _onChooseContacts = useCallback((contacts: Array<any>) => {

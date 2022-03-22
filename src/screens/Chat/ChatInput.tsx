@@ -14,12 +14,13 @@ interface ChatInputProps {
     value?: string,
     onChangeText: any
     onPressSend: () => void
-    repliedMessage: any,
-    disableButton: boolean,
-    setRepliedMessage: (msg: any) => void | Dispatch<SetStateAction<null>>,
+    repliedMessage?: any,
+    disableButton?: boolean,
+    setRepliedMessage?: (msg: any) => void | Dispatch<SetStateAction<null>>,
     onChooseImage?: (image: ImageOrVideo, mediaType: 'photo' | 'video') => void,
-    onChooseLocation: (location: ILocation) => void,
-    onChooseContacts: (contacts: Array<any>) => void,
+    onChooseLocation?: (location: ILocation) => void,
+    onChooseContacts?: (contacts: Array<any>) => void,
+    placeholder?: string
 }
 const { height, width } = Dimensions.get('screen')
 
@@ -30,7 +31,7 @@ const DefaultDelta = {
 }
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
-    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
+    const { repliedMessage, placeholder = Language.type_a_message, disableButton = false, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
@@ -41,7 +42,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     title: Language.contact, onPress: () => {
                         NavigationService.navigate("SelectContacts", {
                             onChooseContacts: (contacts: Array<any>) => {
-                                onChooseContacts(contacts)
+                                onChooseContacts && onChooseContacts(contacts)
                                 NavigationService.goBack()
                             }
                         })
@@ -68,6 +69,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                 forceJpg: true,
                 // freeStyleCropEnabled: true,
                 compressImageQuality: 0.8,
+                loadingLabelText: Language.processing,
                 // compressImageMaxWidth: 400,
                 // compressImageMaxHeight: 400,
                 enableRotationGesture: true,
@@ -146,7 +148,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                                 : <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>}
 
                 </View>
-                <TouchableOpacity onPress={() => setRepliedMessage(null)} >
+                <TouchableOpacity onPress={() => setRepliedMessage && setRepliedMessage(null)} >
                     <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24), paddingVertical: scaler(5) }} />
                 </TouchableOpacity>
             </View> : null}
@@ -161,7 +163,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                         numberOfLines={1}
                         multiline={true}
                         style={styles.input}
-                        placeholder={Language.type_a_message}
+                        placeholder={placeholder}
                         placeholderTextColor={colors.colorGreyInactive}
                     />
 
@@ -170,9 +172,9 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     <TouchableOpacity onPress={onPressSend} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
                         <Image source={Images.ic_send} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={chooseMediaType} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
+                    {onChooseImage ? <TouchableOpacity onPress={chooseMediaType} style={{ height: scaler(40), width: scaler(34), alignItems: 'center', justifyContent: 'center' }} >
                         <Image source={Images.ic_add_circle} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: disableButton ? colors.colorGreyInactive : undefined }} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> : null}
                 </View>
             </View>
         </>

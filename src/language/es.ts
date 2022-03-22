@@ -296,4 +296,10 @@ export const es = {
     contact_support_dob: '',
     contact_support_email: '',
     refund_policy_not_available: "",
+    add_caption_here: "",
+    processing: "",
+    loading: "",
+
+
+
 }

@@ -11,7 +11,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
-import { scaler } from 'utils'
+import { NavigationService, scaler } from 'utils'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
 
@@ -56,12 +56,12 @@ export const GroupChats: FC<any> = (props) => {
                 setRepliedMessage(null)
             }
             flatListRef?.current?.scrollToPosition(0, 0, true);
-        } else {
-            // _showErrorMessage("Please enter message")
         }
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+
+    const _uploadImageOrVideo = useCallback((image, mediaType: 'photo' | 'video', text?: string) => {
+
         dispatch(uploadFile({
             prefixType: mediaType == 'video' ? 'video' : 'messages',
             image, onSuccess: (url, thumbnail) => {
@@ -80,11 +80,16 @@ export const GroupChats: FC<any> = (props) => {
                     if (repliedMessage) {
                         setRepliedMessage(null)
                     }
-                } else {
-                    // _showErrorMessage("Please enter message")
+                    if (NavigationService.getCurrentScreen()?.name == "ImagePreview") {
+                        NavigationService.goBack();
+                    }
                 }
             }
         }))
+    }, [repliedMessage])
+
+    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+        NavigationService.navigate("ImagePreview", { image, mediaType, repliedMessage, _uploadImageOrVideo, setRepliedMessage });
     }, [repliedMessage])
 
     const _onChooseContacts = useCallback((contacts: Array<any>) => {
