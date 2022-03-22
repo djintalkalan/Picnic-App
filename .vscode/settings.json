@@ -28,12 +28,14 @@
         "bootsplash",
         "codegen",
         "gradlew",
+        "linkify",
+        "linkifyjs",
         "netinfo",
         "notifee",
         "Passcode",
         "picnicapp",
         "qrcode",
         "rnuc",
-        "rollbar",
+        "rollbar"
     ]
 }

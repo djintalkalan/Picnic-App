@@ -5,6 +5,8 @@ import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ILocation, useDatabase } from 'database/Database'
+import { find as findUrl } from 'linkifyjs'
+import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
@@ -20,7 +22,6 @@ import ChatItem from '../ChatItem'
 let loadMore = false
 const { width } = Dimensions.get("screen")
 
-
 const EventChats: FC<any> = (props) => {
 
     const flatListRef = useRef<FlatList>(null);
@@ -31,7 +32,24 @@ const EventChats: FC<any> = (props) => {
     const textMessageRef = useRef("")
     const [repliedMessage, setRepliedMessage] = useState<any>(null);
     const isFocused = useIsFocused()
-    const { keyboardHeight, isKeyboard } = useKeyboardService(isFocused);
+    const { keyboardHeight, isKeyboard } = useKeyboardService();
+    const [link, setLink] = useState("");
+    const debounceLink = useCallback(debounce((text: string) => {
+        let matches = findUrl(text)
+        console.log("text", matches)
+        let found = false
+        matches?.some((link) => {
+            if (link?.type == 'url' && link?.isLink && link?.href) {
+                setLink(link?.href)
+                found = true
+                return true
+            }
+        })
+        if (!found) {
+            setLink("")
+
+        }
+    }, 800), [])
 
     useEffect(() => {
         if (repliedMessage) {
@@ -55,6 +73,7 @@ const EventChats: FC<any> = (props) => {
             })
             textMessageRef.current = ""
             inputRef.current?.clear()
+            setLink(_ => _ ? "" : _)
             if (repliedMessage) {
                 setRepliedMessage(null)
             }
@@ -80,6 +99,7 @@ const EventChats: FC<any> = (props) => {
                         media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
                     })
                     inputRef.current?.clear()
+                    setLink(_ => _ ? "" : _)
                     if (repliedMessage) {
                         setRepliedMessage(null)
                     }
@@ -100,6 +120,7 @@ const EventChats: FC<any> = (props) => {
             contacts: contacts,
         })
         inputRef.current?.clear()
+        setLink(_ => _ ? "" : _)
         if (repliedMessage) {
             setRepliedMessage(null)
         }
@@ -118,6 +139,7 @@ const EventChats: FC<any> = (props) => {
             },
         })
         inputRef.current?.clear()
+        setLink(_ => _ ? "" : _)
         if (repliedMessage) {
             // setRepliedMessage(null)
         }
@@ -125,6 +147,10 @@ const EventChats: FC<any> = (props) => {
 
     const _updateTextMessage = useCallback((text: string) => {
         textMessageRef.current = text
+        if (text)
+            debounceLink(text)
+        else
+            setLink("")
     }, [])
 
     const { eventDetail, activeEvent } = useSelector((state: RootState) => ({
@@ -254,6 +280,7 @@ const EventChats: FC<any> = (props) => {
                     <ChatInput
                         // value={textMessage}
                         ref={inputRef}
+                        link={link}
                         disableButton={!socketConnected}
                         repliedMessage={repliedMessage}
                         setRepliedMessage={setRepliedMessage}

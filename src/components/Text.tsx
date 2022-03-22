@@ -83,6 +83,7 @@ export const Text: FC<TextProps> = (props) => {
             hashtag="instagram"
             mention="twitter"
             phone="text"
+            onLongPress={props?.onLongPress}
             textProps={{ style: styles.textStyle }}
             url
             linkStyle={{ color: colors.colorLink, textDecorationLine: 'underline' }}

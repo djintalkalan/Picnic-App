@@ -1,3 +1,4 @@
+import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
@@ -7,7 +8,8 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { useDatabase } from 'database'
-import React, { memo, useCallback, useMemo } from 'react'
+import { find as findUrl } from 'linkifyjs'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Contacts, { Contact } from 'react-native-contacts'
 import MapView, { Marker } from 'react-native-maps'
@@ -65,6 +67,10 @@ const DefaultDelta = {
 
 const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
+    const [showLink, setShowLink] = useState(true)
+    const [link, setLink] = useState("")
+
+
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
@@ -83,6 +89,25 @@ const ChatItem = (props: IChatItem) => {
     const is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
     // const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
+    useEffect(() => {
+        if (message_type == 'text') {
+            const matches = findUrl(message?.toLowerCase())
+            console.log(message, matches);
+
+            let found = false
+            matches?.some((link) => {
+                if (link?.type == 'url' && link?.isLink && link?.href) {
+                    found = true
+                    setLink(link?.href)
+                    return true
+                }
+            })
+            if (!found) {
+                setLink("")
+            }
+        }
+    }, [])
+
 
     const renderMap = useMemo(() => {
         if (!props?.coordinates?.lat || !props?.coordinates?.lng) {
@@ -240,17 +265,24 @@ const ChatItem = (props: IChatItem) => {
 
     const _onCopy = useCallback((e: GestureResponderEvent) => {
         let gravity = 'BOTTOM'
-        if (e.nativeEvent.pageY) {
-            const d = ((height) / 3)
-            // if (e.nativeEvent.pageY < d) {
-            //     gravity = "TOP"
-            // } else
-            if (e.nativeEvent.pageY < (2 * d)) {
-                gravity = "CENTER"
+        try {
+            if (e?.nativeEvent?.pageY) {
+                const d = ((height) / 3)
+                // if (e.nativeEvent.pageY < d) {
+                //     gravity = "TOP"
+                // } else
+                if (e?.nativeEvent?.pageY < (2 * d)) {
+                    gravity = "CENTER"
+                }
+
             }
+        }
+        catch (e) {
+            console.log("e", e);
 
         }
-        Clipboard.setString(message?.trim());
+
+        Clipboard?.setString(message?.trim());
         // console.log("e", e, ((height - scaler(80)) / 3));
         //@ts-ignore
         _showToast("Copied", 'SHORT', gravity);
@@ -305,6 +337,7 @@ const ChatItem = (props: IChatItem) => {
                 resizeMode={'cover'}
                 onPress={() => _zoomImage(getImageUrl(message, { width: width, type: 'messages' }))}
                 source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
+                //@ts-ignore
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             {isMuted ?
                 null :
@@ -449,6 +482,7 @@ const ChatItem = (props: IChatItem) => {
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
                 source={{ uri: config.VIDEO_URL + (message?.substring(0, message?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
+                //@ts-ignore
                 style={{ resizeMode: 'contain', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             <TouchableOpacity disabled={isMuted} onPress={() => {
                 loadVideo(config.VIDEO_URL + message)
@@ -480,162 +514,189 @@ const ChatItem = (props: IChatItem) => {
     }
 
     if (myMessage) {
-        return <View style={styles.myContainer} >
-            <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
-                {parent_message ?
-                    <View style={{ marginBottom: scaler(5) }} >
-                        <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
-                        <TouchableOpacity disabled style={[styles.messageContainer, {
-                            maxWidth: undefined, width: '100%',
-                            padding: parent_message?.message_type != "text" ? 0 : scaler(10),
-                        }]} >
-                            {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
-                                <ImageLoader
-                                    placeholderSource={Images.ic_image_placeholder}
-                                    style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
-                                    source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
-                                : parent_message?.message_type == 'contact' ?
-                                    <View style={{ flexDirection: 'row', width: width / 2, alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
-                                        <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
-                                            <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
+        return <>
+            <View style={styles.myContainer} >
+                <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
+                    {parent_message ?
+                        <View style={{ marginBottom: scaler(5) }} >
+                            <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
+                            <TouchableOpacity disabled style={[styles.messageContainer, {
+                                maxWidth: undefined, width: '100%',
+                                padding: parent_message?.message_type != "text" ? 0 : scaler(10),
+                            }]} >
+                                {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
+                                    <ImageLoader
+                                        placeholderSource={Images.ic_image_placeholder}
+                                        style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
+                                        source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                    : parent_message?.message_type == 'contact' ?
+                                        <View style={{ flexDirection: 'row', width: width / 2, alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
+                                            <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                                                <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
+                                            </View>
+                                            <Text style={{ flex: 1, marginRight: scaler(10) }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
                                         </View>
-                                        <Text style={{ flex: 1, marginRight: scaler(10) }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
-                                    </View>
-                                    : parent_message?.message_type == 'location' ?
-                                        <View pointerEvents='none' style={{ borderRadius: scaler(10), borderColor: colors.colorPrimary, borderWidth: scaler(0.5), overflow: 'hidden' }} >
-                                            <MapView
-                                                style={{ width: width / 2, height: scaler(80), overflow: 'hidden' }}
-                                                minZoomLevel={2}
-                                                customMapStyle={MapStyle}
-                                                provider={'google'}
-                                                cacheEnabled
-                                                showsMyLocationButton={false}
-                                                initialRegion={region} >
-                                                <Marker coordinate={region} >
-                                                    <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
-                                                </Marker>
+                                        : parent_message?.message_type == 'location' ?
+                                            <View pointerEvents='none' style={{ borderRadius: scaler(10), borderColor: colors.colorPrimary, borderWidth: scaler(0.5), overflow: 'hidden' }} >
+                                                <MapView
+                                                    style={{ width: width / 2, height: scaler(80), overflow: 'hidden' }}
+                                                    minZoomLevel={2}
+                                                    customMapStyle={MapStyle}
+                                                    provider={'google'}
+                                                    cacheEnabled
+                                                    showsMyLocationButton={false}
+                                                    initialRegion={region} >
+                                                    <Marker coordinate={region} >
+                                                        <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                                    </Marker>
 
-                                            </MapView>
-                                        </View>
-                                        : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
-                            }
+                                                </MapView>
+                                            </View>
+                                            : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                                }
+                            </TouchableOpacity>
+                        </View>
+                        : null}
+                    <Text autoLink
+                        onLongPress={_onCopy}
+                        style={[styles.myMessage, {}]} >{message?.trim()}</Text>
+                    {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                        <TouchableOpacity onPress={() => {
+                            SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                                message_id: _id,
+                                is_like: is_message_liked_by_me ? "0" : '1'
+                            })
+                        }} >
+                            <Image source={Images.ic_smiley} style={{
+                                resizeMode: 'contain',
+                                height: scaler(20), width: scaler(20), marginLeft: scaler(5),
+                                tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                            }} />
                         </TouchableOpacity>
-                    </View>
-                    : null}
-                <Text autoLink
-                    onLongPress={_onCopy}
-                    style={[styles.myMessage, {}]} >{message?.trim()}</Text>
-                {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                    <TouchableOpacity onPress={() => {
-                        SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                            message_id: _id,
-                            is_like: is_message_liked_by_me ? "0" : '1'
-                        })
-                    }} >
-                        <Image source={Images.ic_smiley} style={{
-                            resizeMode: 'contain',
-                            height: scaler(20), width: scaler(20), marginLeft: scaler(5),
-                            tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
-                        }} />
-                    </TouchableOpacity>
-                    {(is_message_liked_by_me || message_total_likes_count) ?
-                        <Text style={[styles.likeBy, { flex: 0, marginLeft: scaler(5) }]} >
-                            {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                        </Text> : null}
-                </View>}
+                        {(is_message_liked_by_me || message_total_likes_count) ?
+                            <Text style={[styles.likeBy, { flex: 0, marginLeft: scaler(5) }]} >
+                                {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                            </Text> : null}
+                    </View>}
+                </View>
+
+                <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
-                <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
-            </TouchableOpacity>
-        </View>
+            {showLink && link ? <LinkPreview
+                renderText={() => (null)}
+                containerStyle={{ backgroundColor: 'white' }}
+                // metadataContainerStyle={{ padding: 0, margin: 0 }}
+                onPreviewDataFetched={(data) => {
+                    console.log("data", data)
+                    if (!data?.image && !data?.description) {
+                        setShowLink(false)
+                    }
+                }}
+                text={link} /> : null}
+        </>
     }
 
     return (
-        <View style={styles.container} >
-            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
-                {/* <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2), marginTop: scaler(3) }} >
+        <>
+            <View style={styles.container} >
+                <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                    {/* <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2), marginTop: scaler(3) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> */}
-                <View style={{ flex: 1 }} >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
-                            <ImageLoader
-                                placeholderSource={Images.ic_home_profile}
-                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
-                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
-                        </View>
-                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
-                        <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                            <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
-                        </TouchableOpacity>
-                    </View>
-                    {/* <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text> */}
-                    <View style={styles.messageContainer} >
-                        {parent_message ?
-                            <View style={{ marginBottom: scaler(5), width: '100%' }} >
-                                <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
-                                <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
-                                    maxWidth: undefined, width: '100%',
-                                    padding: parent_message?.message_type != "text" ? 0 : scaler(10),
-                                }]} >
-                                    {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
-                                        <ImageLoader
-                                            placeholderSource={Images.ic_image_placeholder}
-                                            style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
-                                            source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
-                                        : parent_message?.message_type == 'contact' ?
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
-                                                <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
-                                                    <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
-                                                </View>
-                                                <Text style={{ marginRight: scaler(10), color: colors.colorBlack }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
-                                            </View>
-                                            : parent_message?.message_type == 'location' ?
-                                                <View pointerEvents='none' style={{ width: width / 2, height: scaler(80), borderRadius: scaler(10), overflow: 'hidden' }} >
-                                                    <MapView
-                                                        style={{ flex: 1, overflow: 'hidden' }}
-                                                        minZoomLevel={2}
-                                                        customMapStyle={MapStyle}
-                                                        provider={'google'}
-                                                        cacheEnabled
-                                                        showsMyLocationButton={false}
-                                                        initialRegion={region} >
-                                                        <Marker coordinate={region} >
-                                                            <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
-                                                        </Marker>
-                                                    </MapView>
-                                                </View>
-                                                : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
-                                    }
-                                </TouchableOpacity>
+                    <View style={{ flex: 1 }} >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                            <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                                <ImageLoader
+                                    placeholderSource={Images.ic_home_profile}
+                                    source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                    style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
                             </View>
-                            : null}
-                        <Text autoLink onLongPress={_onCopy}
-                            style={styles.message} >{message?.trim()}</Text>
-                        {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                            <TouchableOpacity onPress={() => {
-                                SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                                    message_id: _id,
-                                    is_like: is_message_liked_by_me ? "0" : '1'
-                                })
-                            }} >
-                                <Image source={Images.ic_smiley} style={{
-                                    resizeMode: 'contain',
-                                    height: scaler(20), width: scaler(20), marginRight: scaler(5),
-                                    tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
-                                }} />
+                            <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                            <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                                <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                             </TouchableOpacity>
-                            {(is_message_liked_by_me || message_total_likes_count) ?
-                                <Text style={[styles.likeBy, { flex: 0, color: colors.colorWhite }]} >
-                                    {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                                </Text> : null}
-                        </View>}
+                        </View>
+                        {/* <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text> */}
+                        <View style={styles.messageContainer} >
+                            {parent_message ?
+                                <View style={{ marginBottom: scaler(5), width: '100%' }} >
+                                    <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
+                                    <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
+                                        maxWidth: undefined, width: '100%',
+                                        padding: parent_message?.message_type != "text" ? 0 : scaler(10),
+                                    }]} >
+                                        {parent_message?.message_type == "image" || parent_message?.message_type == "file" ?
+                                            <ImageLoader
+                                                placeholderSource={Images.ic_image_placeholder}
+                                                style={{ borderRadius: scaler(10), height: scaler(60), width: width / 2 }}
+                                                source={{ uri: parent_message?.message_type == "file" ? config.VIDEO_URL + (parent_message?.message?.substring(0, parent_message?.message?.lastIndexOf("."))) + "-00001.png" : getImageUrl(parent_message?.message, { width: width / 2, height: scaler(60), type: 'messages' }) }} />
+                                            : parent_message?.message_type == 'contact' ?
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(5), paddingBottom: scaler(5), borderRadius: scaler(10), marginTop: scaler(5) }} >
+                                                    <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
+                                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{parent_message?.contacts?.[0]?.givenName?.[0]?.toUpperCase()}</Text>
+                                                    </View>
+                                                    <Text style={{ marginRight: scaler(10), color: colors.colorBlack }} >{parent_message?.contacts?.[0]?.givenName + (parent_message?.contacts?.[0]?.familyName ? (" " + parent_message?.contacts?.[0]?.familyName) : "")}</Text>
+                                                </View>
+                                                : parent_message?.message_type == 'location' ?
+                                                    <View pointerEvents='none' style={{ width: width / 2, height: scaler(80), borderRadius: scaler(10), overflow: 'hidden' }} >
+                                                        <MapView
+                                                            style={{ flex: 1, overflow: 'hidden' }}
+                                                            minZoomLevel={2}
+                                                            customMapStyle={MapStyle}
+                                                            provider={'google'}
+                                                            cacheEnabled
+                                                            showsMyLocationButton={false}
+                                                            initialRegion={region} >
+                                                            <Marker coordinate={region} >
+                                                                <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                                                            </Marker>
+                                                        </MapView>
+                                                    </View>
+                                                    : <Text type={parent_message?.message?.includes(DelText) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DelText) ? "Message Deleted" : parent_message?.message}</Text>
+                                        }
+                                    </TouchableOpacity>
+                                </View>
+                                : null}
+                            <Text autoLink onLongPress={_onCopy}
+                                style={styles.message} >{message?.trim()}</Text>
+                            {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                                <TouchableOpacity onPress={() => {
+                                    SocketService?.emit(EMIT_LIKE_UNLIKE, {
+                                        message_id: _id,
+                                        is_like: is_message_liked_by_me ? "0" : '1'
+                                    })
+                                }} >
+                                    <Image source={Images.ic_smiley} style={{
+                                        resizeMode: 'contain',
+                                        height: scaler(20), width: scaler(20), marginRight: scaler(5),
+                                        tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
+                                    }} />
+                                </TouchableOpacity>
+                                {(is_message_liked_by_me || message_total_likes_count) ?
+                                    <Text style={[styles.likeBy, { flex: 0, color: colors.colorWhite }]} >
+                                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                                    </Text> : null}
+                            </View>}
+                        </View>
                     </View>
+
                 </View>
 
             </View>
-
-        </View>
+            {showLink && link ? <LinkPreview
+                renderText={() => (null)}
+                containerStyle={{ backgroundColor: 'white' }}
+                // metadataContainerStyle={{ padding: 0, margin: 0 }}
+                onPreviewDataFetched={(data) => {
+                    console.log("data", data)
+                    if (!data?.image && !data?.description) {
+                        setShowLink(false)
+                    }
+                }}
+                text={link} /> : null}
+        </>
     )
 }
 

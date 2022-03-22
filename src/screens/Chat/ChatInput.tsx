@@ -1,19 +1,19 @@
+import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import { config } from 'api'
 import { colors, Fonts, Images, MapStyle } from 'assets'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import Database, { ILocation } from 'database/Database'
-import React, { Dispatch, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
+import React, { Dispatch, ForwardedRef, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu } from 'utils'
 
-// import { LinkPreview } from '@flyerhq/react-native-link-preview'
-
 interface ChatInputProps {
-    value?: string,
+    value?: string
+    link?: string
     onChangeText: any
     onPressSend: () => void
     repliedMessage: any,
@@ -31,8 +31,8 @@ const DefaultDelta = {
     longitudeDelta: 0.05 * ASPECT_RATIO,
 }
 
-const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
-    const { repliedMessage, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
+const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRef<TextInput>) => {
+    const { repliedMessage, link, disableButton, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
@@ -152,6 +152,11 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref) => {
                     <Image source={Images.ic_close} style={{ height: scaler(24), width: scaler(24), paddingVertical: scaler(5) }} />
                 </TouchableOpacity>
             </View> : null}
+            {link ?
+                <LinkPreview
+                    renderText={() => (null)}
+                    text={link} /> : null
+            }
             <View pointerEvents={disableButton ? 'none' : undefined} style={styles.inputContainer} >
                 <View style={styles.iContainer} >
                     <TextInput
