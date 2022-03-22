@@ -32,6 +32,7 @@
     "w-co": "adb connect "
   },
   "dependencies": {
+    "@flyerhq/react-native-link-preview": "^1.6.0",
     "@notifee/react-native": "^4.0.1",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",

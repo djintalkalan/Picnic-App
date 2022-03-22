@@ -10,6 +10,8 @@ import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu } from 'utils'
 
+// import { LinkPreview } from '@flyerhq/react-native-link-preview'
+
 interface ChatInputProps {
     value?: string,
     onChangeText: any
