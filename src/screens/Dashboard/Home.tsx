@@ -1,7 +1,7 @@
 import { RootState } from 'app-store'
 import { getAllCurrencies, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Card, Text } from 'custom-components'
+import { Card, defaultLocation, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
@@ -19,11 +19,6 @@ import { getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
-  const defaultLocation: ILocation = {
-    latitude: 34.055101,
-    longitude: -118.244797,
-    address: { main_text: "Los Angeles, USA", secondary_text: "" }
-  }
   const dispatch = useDispatch()
 
   const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
@@ -52,7 +47,7 @@ const Home: FC = () => {
   const inputRef = useRef<TextInput>(null);
   const [userData] = useDatabase("userData");
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
-  const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation)
+  const [selectedLocation] = useDatabase<ILocation | null>("selectedLocation", currentLocation)
 
   const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
 
@@ -98,6 +93,7 @@ const Home: FC = () => {
           NavigationService.navigate("ProfileScreen")
           // NavigationService.navigate("Scanner")
         }} >
+          {/*@ts-ignore*/}
           <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
             placeholderSource={Images.ic_home_profile}
             source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } : null}
