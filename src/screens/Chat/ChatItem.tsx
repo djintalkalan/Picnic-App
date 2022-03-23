@@ -612,7 +612,7 @@ const ChatItem = (props: IChatItem) => {
                             : null}
                         <Text autoLink onLongPress={_onCopy}
                             style={styles.message} >{message?.trim()}</Text>
-                        {isMuted ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                        {isMuted ? null : <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
                             <TouchableOpacity onPress={() => {
                                 SocketService?.emit(EMIT_LIKE_UNLIKE, {
                                     message_id: _id,
@@ -626,7 +626,7 @@ const ChatItem = (props: IChatItem) => {
                                 }} />
                             </TouchableOpacity>
                             {(is_message_liked_by_me || message_total_likes_count) ?
-                                <Text style={[styles.likeBy, { flex: 0, color: colors.colorWhite }]} >
+                                <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
                                     {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                                 </Text> : null}
                         </View>}
