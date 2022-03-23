@@ -1,13 +1,49 @@
 import { colors } from "assets";
 import { Fonts } from "assets/Fonts";
+import { Match } from 'autolinker/dist/es2015';
 import React, { FC, Fragment, isValidElement, useMemo } from "react";
-import { Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
+import { Linking, Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 import Autolink, { AutolinkProps } from 'react-native-autolink';
-
+import { openLink } from "utils";
 interface TextProps extends RNTextProps {
     type?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic",
     autoLink?: boolean,
     autoLinkProps?: AutolinkProps,
+}
+
+const _onAutoLinkPress = (url: string, match: Match) => {
+    const type = match.getType()
+    console.log(' match.getType()', match.getType())
+    switch (type) {
+        case 'phone':
+        case 'email':
+            Linking.openURL(url)
+            break;
+
+        default:
+            openLink(url, {
+                dismissButtonStyle: 'cancel',
+                preferredBarTintColor: 'white',
+                preferredControlTintColor: 'white',
+                readerMode: false,
+                animated: true,
+                modalPresentationStyle: 'fullScreen',
+                modalTransitionStyle: 'coverVertical',
+                modalEnabled: true,
+                enableBarCollapsing: false,
+                // Android Properties
+                showTitle: true,
+                toolbarColor: 'white',
+                secondaryToolbarColor: 'black',
+                navigationBarColor: 'black',
+                navigationBarDividerColor: 'white',
+                enableUrlBarHiding: true,
+                enableDefaultShare: true,
+                forceCloseOnRedirection: false,
+            })
+            break;
+    }
+
 }
 
 const getChildren = (children: React.ReactNode) => {
@@ -88,6 +124,7 @@ export const Text: FC<TextProps> = (props) => {
             linkStyle={{ color: colors.colorLink, textDecorationLine: 'underline' }}
             {...autoLinkProps}
             text={(typeof text == 'string') ? text : "Please remove nested Texts"}
+            onPress={_onAutoLinkPress}
         />
     }
 

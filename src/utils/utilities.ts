@@ -7,8 +7,9 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
-import { Keyboard, Platform, Share } from 'react-native';
+import { Keyboard, Linking, Platform, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
@@ -538,4 +539,47 @@ export const mergeMessageObjects = (chats: Array<any>, total_likes: Array<any>, 
 
 export const _showToast = (message: string, duration: 'SHORT' | 'LONG' = 'SHORT', gravity: 'TOP' | 'BOTTOM' | 'CENTER' = 'BOTTOM') => {
     Toast.showWithGravity(message, Toast?.[duration], Toast?.[gravity]);
+}
+
+export const openLink = async (url: string, options: any = {}) => {
+    try {
+        if (await InAppBrowser.isAvailable()) {
+            const result = await InAppBrowser.open(url, {
+                // iOS Properties
+                dismissButtonStyle: 'cancel',
+                preferredBarTintColor: 'white',
+                preferredControlTintColor: 'white',
+                readerMode: false,
+                animated: true,
+                modalPresentationStyle: 'fullScreen',
+                modalTransitionStyle: 'coverVertical',
+                modalEnabled: true,
+                enableBarCollapsing: false,
+                // Android Properties
+                showTitle: true,
+                toolbarColor: 'white',
+                secondaryToolbarColor: 'black',
+                navigationBarColor: 'black',
+                navigationBarDividerColor: 'white',
+                enableUrlBarHiding: true,
+                enableDefaultShare: true,
+                forceCloseOnRedirection: false,
+                // Specify full animation resource identifier(package:anim/name)
+                // or only resource name(in case of animation bundled with app).
+                animations: {
+                    startEnter: 'slide_in_right',
+                    startExit: 'slide_out_left',
+                    endEnter: 'slide_in_left',
+                    endExit: 'slide_out_right'
+                },
+                headers: {
+                    'my-custom-header': 'my custom header value'
+                },
+                ...options
+            })
+        }
+        else Linking.openURL(url)
+    } catch (error: any) {
+        _showErrorMessage(error?.message)
+    }
 }

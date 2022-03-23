@@ -71,6 +71,7 @@
     "react-native-iap": "^7.5.4",
     "react-native-image-crop-picker": "^0.37.2",
     "react-native-image-pan-zoom": "^2.1.12",
+    "react-native-inappbrowser-reborn": "^3.6.3",
     "react-native-internet-connection-alert": "^0.1.6",
     "react-native-invoke-app": "^1.0.6",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
