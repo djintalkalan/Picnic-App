@@ -90,6 +90,7 @@ export const GroupChats: FC<any> = (props) => {
                         resource_type: "group",
                         message_type: mediaType == 'video' ? 'file' : "image",
                         message: url,
+                        text,
                         // thumbnail,
                         media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
                     })
