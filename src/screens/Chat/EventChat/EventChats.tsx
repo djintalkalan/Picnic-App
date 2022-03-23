@@ -36,7 +36,7 @@ const EventChats: FC<any> = (props) => {
     const [link, setLink] = useState("");
     const debounceLink = useCallback(debounce((text: string) => {
         let matches = findUrl(text)
-        console.log("text", matches)
+        // console.log("text", matches)
         let found = false
         matches?.some((link) => {
             if (link?.type == 'url' && link?.isLink && link?.href) {

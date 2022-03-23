@@ -153,6 +153,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
             </View> : null}
             {link ?
                 <Preview
+                    changeableLink
                     text={link} /> : null
             }
             <View pointerEvents={disableButton ? 'none' : undefined} style={styles.inputContainer} >
