@@ -3,12 +3,14 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';
+import { colors } from 'assets';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
-import { Keyboard, Platform, Share } from 'react-native';
+import { Keyboard, Linking, Platform, Share } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
@@ -276,58 +278,6 @@ export const splitDate = (dateTimestr: string, onlyDay: any) => {
     return onlyDay ? day : month + ', ' + year
 }
 
-
-// export const openURL = async (url: string) => {
-//     try {
-//         if (await InAppBrowser.isAvailable()) {
-//             try {
-//                 InAppBrowser.close()
-//             } catch (e) {
-
-//             }
-//             const result = await InAppBrowser.open(url, {
-//                 // iOS Properties
-//                 dismissButtonStyle: 'cancel',
-//                 preferredBarTintColor: colors.colorsPrimary,
-//                 preferredControlTintColor: 'white',
-//                 readerMode: false,
-//                 animated: true,
-//                 modalPresentationStyle: 'fullScreen',
-//                 modalTransitionStyle: 'coverVertical',
-//                 modalEnabled: true,
-//                 enableBarCollapsing: false,
-//                 // Android Properties
-//                 showTitle: true,
-//                 toolbarColor: colors.colorsPrimary,
-//                 secondaryToolbarColor: 'white',
-//                 navigationBarColor: 'white',
-//                 navigationBarDividerColor: 'white',
-//                 enableUrlBarHiding: true,
-//                 enableDefaultShare: true,
-//                 forceCloseOnRedirection: false,
-//                 showInRecents: true,
-//                 // Specify full animation resource identifier(package:anim/name)
-//                 // or only resource name(in case of animation bundled with app).
-//                 animations: {
-//                     startEnter: 'slide_in_right',
-//                     startExit: 'slide_out_left',
-//                     endEnter: 'slide_in_left',
-//                     endExit: 'slide_out_right'
-//                 },
-//                 headers: {
-//                 }
-//             })
-//         }
-//         else Linking.openURL(url)
-//     } catch (error) {
-//         Alert.alert(error.message)
-//     }
-// }
-
-// export const getImageBaseUrl = (type: 'users' | 'events' | 'groups' | 'messages', height: number, width: number) => {
-//     return config.API_URL + "media/thumb/" + height + "/" + width + "/" + type + "/"
-// }
-
 export const getImageUrl = (url: string, options: { width?: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
     return config.IMAGE_URL + options?.type + "/" + url + "?width=" + (options?.width || "1000") + "&height=" + (options?.height || "")
 }
@@ -538,4 +488,53 @@ export const mergeMessageObjects = (chats: Array<any>, total_likes: Array<any>, 
 
 export const _showToast = (message: string, duration: 'SHORT' | 'LONG' = 'SHORT', gravity: 'TOP' | 'BOTTOM' | 'CENTER' = 'BOTTOM') => {
     Toast.showWithGravity(message, Toast?.[duration], Toast?.[gravity]);
+}
+
+export const openLink = async (url: string, options: any = {}) => {
+    try {
+        if (await InAppBrowser.isAvailable()) {
+            try {
+                InAppBrowser.close()
+            }
+            catch (e) {
+                console.log(e)
+            }
+            InAppBrowser.open(url, {
+                // iOS Properties
+                dismissButtonStyle: 'close',
+                preferredBarTintColor: 'white',
+                preferredControlTintColor: colors.colorBlackText,
+                readerMode: false,
+                animated: true,
+                modalPresentationStyle: 'fullScreen',
+                modalTransitionStyle: 'coverVertical',
+                modalEnabled: true,
+                enableBarCollapsing: false,
+                // Android Properties
+                showTitle: true,
+                toolbarColor: 'white',
+                secondaryToolbarColor: colors.colorBlackText,
+                hasBackButton: true,
+                navigationBarColor: colors.colorBlackText,
+                navigationBarDividerColor: 'white',
+                enableUrlBarHiding: true,
+                enableDefaultShare: true,
+                forceCloseOnRedirection: false,
+                showInRecents: true,
+                // Specify full animation resource identifier(package:anim/name)
+                // or only resource name(in case of animation bundled with app).
+                animations: {
+                    startEnter: 'slide_in_right',
+                    startExit: 'slide_out_left',
+                    endEnter: 'slide_in_left',
+                    endExit: 'slide_out_right'
+                },
+                headers: {},
+                ...options
+            })
+        }
+        else Linking.openURL(url)
+    } catch (error: any) {
+        _showErrorMessage(error?.message)
+    }
 }

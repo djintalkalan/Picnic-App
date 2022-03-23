@@ -544,6 +544,8 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
+  - RNInAppBrowser (3.6.3):
+    - React-Core
   - RNLaunchNavigator (1.0.8):
     - React
   - RNLocalize (2.2.0):
@@ -697,6 +699,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNIap (from `../node_modules/react-native-iap`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNLaunchNavigator (from `../node_modules/react-native-launch-navigator`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
@@ -875,6 +878,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-iap"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNLaunchNavigator:
     :path: "../node_modules/react-native-launch-navigator"
   RNLocalize:
@@ -990,6 +995,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 6e757e487a4834e7280e98e9bac66d2d9c575e9c
   RNIap: d248609d1b8937e63bd904e865c318e9b1457eff
   RNImageCropPicker: 44e2807bc410741f35d4c45b6586aedfe3da39d2
+  RNInAppBrowser: 3ff3a3b8f458aaf25aaee879d057352862edf357
   RNLaunchNavigator: 058ccdb86a80a9424d5e37f6ec54379e3018c52b
   RNLocalize: 6571ea792a7dcb6d217c98c14d9147e9417cef62
   RNNotifee: f1ba270897bd7491f889a1a257d0c038a43376f7
