@@ -12,38 +12,15 @@ interface TextProps extends RNTextProps {
 }
 
 const _onAutoLinkPress = (url: string, match: Match) => {
-    const type = match.getType()
-    console.log(' match.getType()', match.getType())
-    switch (type) {
+    switch (match.getType()) {
         case 'phone':
         case 'email':
             Linking.openURL(url)
             break;
-
         default:
-            openLink(url, {
-                dismissButtonStyle: 'cancel',
-                preferredBarTintColor: 'white',
-                preferredControlTintColor: 'white',
-                readerMode: false,
-                animated: true,
-                modalPresentationStyle: 'fullScreen',
-                modalTransitionStyle: 'coverVertical',
-                modalEnabled: true,
-                enableBarCollapsing: false,
-                // Android Properties
-                showTitle: true,
-                toolbarColor: 'white',
-                secondaryToolbarColor: 'black',
-                navigationBarColor: 'black',
-                navigationBarDividerColor: 'white',
-                enableUrlBarHiding: true,
-                enableDefaultShare: true,
-                forceCloseOnRedirection: false,
-            })
+            openLink(url)
             break;
     }
-
 }
 
 const getChildren = (children: React.ReactNode) => {
@@ -119,7 +96,7 @@ export const Text: FC<TextProps> = (props) => {
             hashtag="instagram"
             mention="twitter"
             phone="text"
-            textProps={{ style: styles.textStyle }}
+            textProps={{ style: styles.textStyle, onLongPress: rest?.onLongPress }}
             url
             linkStyle={{ color: colors.colorLink, textDecorationLine: 'underline' }}
             {...autoLinkProps}
