@@ -1,7 +1,6 @@
-import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import { config } from 'api'
 import { colors, Fonts, Images, MapStyle } from 'assets'
-import { Text } from 'custom-components'
+import { Preview, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import Database, { ILocation } from 'database/Database'
 import React, { Dispatch, ForwardedRef, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
@@ -153,8 +152,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
                 </TouchableOpacity>
             </View> : null}
             {link ?
-                <LinkPreview
-                    renderText={() => (null)}
+                <Preview
                     text={link} /> : null
             }
             <View pointerEvents={disableButton ? 'none' : undefined} style={styles.inputContainer} >
