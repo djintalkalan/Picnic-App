@@ -18,13 +18,13 @@ const ProfileEvents: FC<any> = (props) => {
     const tabs = useMemo<Array<TabProps>>(() => [
         {
             name: "ProfileUpcomingEvents",
-            screen: ProfileEventsList,
+            Screen: ProfileEventsList,
             title: Language.upcoming,
             initialParams: { type: 'upcoming' }
         },
         {
             name: "ProfilePastEvents",
-            screen: ProfileEventsList,
+            Screen: ProfileEventsList,
             title: Language.history,
             initialParams: { type: 'past' }
         },

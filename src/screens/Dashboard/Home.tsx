@@ -32,13 +32,13 @@ const Home: FC = () => {
       title: Language.groups,
       icon: Images.ic_group_icon,
       name: 'HomeGroupTab',
-      screen: GroupList,
+      Screen: GroupList,
     },
     {
       title: Language.events,
       icon: Images.ic_calender,
       name: 'HomeEventTab',
-      screen: EventList,
+      Screen: EventList,
     },
   ], [useLanguage()])
 

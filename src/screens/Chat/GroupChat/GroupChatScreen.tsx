@@ -38,14 +38,14 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
         {
             title: Language.chat,
             name: "Chats",
-            screen: GroupChats,
+            Screen: GroupChats,
             icon: Images.ic_chat_bubble,
             initialParams: { id: _id },
         },
         {
             title: Language.upcoming,
             name: "UpcomingEventsChat",
-            screen: UpcomingPastEvents,
+            Screen: UpcomingPastEvents,
             initialParams: { type: 'upcoming', id: _id, noLoader: true },
             icon: Images.ic_calender
         }
@@ -55,13 +55,13 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
         {
             title: Language.chat,
             name: "Chats",
-            screen: () => <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} />,
+            Screen: () => <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} />,
             icon: Images.ic_chat_bubble,
         },
         {
             title: Language.upcoming,
             name: "UpcomingEventsChat",
-            screen: () => <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} />,
+            Screen: () => <View style={{ flex: 1, backgroundColor: '#DFDFDF' }} />,
             initialParams: { type: 'upcoming', id: _id, noLoader: true },
         }
     ], [useLanguage()])

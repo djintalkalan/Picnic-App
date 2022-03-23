@@ -10,7 +10,7 @@ export interface TabProps {
     name: string,
     icon?: ImageSourcePropType,
     disable?: boolean,
-    screen: React.ComponentType<any>,
+    Screen: React.ComponentType<any>,
     initialParams?: any
 }
 
@@ -32,7 +32,7 @@ export const TopTab = (props: TopTabProps) => {
             tabBar={(tabBarProps: any) => <MyTabBar {...tabBarProps} onChangeIndex={props?.onChangeIndex} />}
             screenOptions={{ tabBarAllowFontScaling: false, swipeEnabled }} >
             {tabs && tabs.map((tab, index) => {
-                const { title, name, screen: Screen, initialParams, ...rest } = tab
+                const { title, name, Screen, initialParams, ...rest } = tab
                 return <Tab.Screen key={index} options={{ title, activeTitleColor, iconPosition, disableTitleColor, ...rest }} initialParams={initialParams} name={name} component={Screen} />
             })}
         </Tab.Navigator>

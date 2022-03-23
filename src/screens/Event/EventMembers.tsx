@@ -26,13 +26,13 @@ const EventMembers: FC<any> = (props) => {
         return [{
             title: Language.not_checked_in + (count1 ? "(" + count1 + ")" : ""),
             name: "NotCheckedIn",
-            screen: EventMemberList,
+            Screen: EventMemberList,
             initialParams: { isCheckedIn: false, id: props?.route?.params?.id }
         },
         {
             title: Language.checked_in + (count2 ? "(" + count2 + ")" : ""),
             name: "CheckedIn",
-            screen: EventMemberList,
+            Screen: EventMemberList,
             initialParams: { isCheckedIn: true, id: props?.route?.params?.id }
 
         }];

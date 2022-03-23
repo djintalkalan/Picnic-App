@@ -11,14 +11,14 @@ const tabs: TabProps[] = [
     {
         title: Language.mute_groups,
         name: "MuteGroupTab",
-        screen: MutedResources,
+        Screen: MutedResources,
         initialParams: { type: 'group' }
     },
     {
         title: Language.mute_events,
         name: "MuteEventTab",
         // screen: (() => <View />),
-        screen: MutedResources,
+        Screen: MutedResources,
         initialParams: { type: 'event' }
 
     }

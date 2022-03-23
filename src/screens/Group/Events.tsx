@@ -21,13 +21,13 @@ const Events: FC<NativeStackScreenProps<RootParams, 'Events'>> = ({ route, navig
             {
                 title: Language.upcoming_events,
                 name: 'UpcomingEventsTab',
-                screen: UpcomingPastEvents,
+                Screen: UpcomingPastEvents,
                 initialParams: { type: 'upcoming', id: route?.params.id }
             },
             {
                 title: Language.past_events,
                 name: 'PastEventsTab',
-                screen: UpcomingPastEvents,
+                Screen: UpcomingPastEvents,
                 // disable: true,
                 initialParams: { type: 'past', id: route?.params.id }
             },

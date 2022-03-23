@@ -32,14 +32,14 @@ const SearchChatScreen: FC<any> = (props) => {
         {
             title: Language.chat,
             name: "ChatSearch",
-            screen: ChatSearch,
+            Screen: ChatSearch,
             // icon: Images.ic_chat_bubble,
             initialParams: { type: props?.route?.params?.type },
         },
         {
             title: Language.upcoming,
             name: "SearchedEvents",
-            screen: SearchedEvents,
+            Screen: SearchedEvents,
             initialParams: { type: props?.route?.params?.type },
         }
     ], [])
