@@ -67,10 +67,7 @@ const DefaultDelta = {
 
 const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
-    const [showLink, setShowLink] = useState(true)
     const [link, setLink] = useState("")
-
-
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
@@ -93,8 +90,6 @@ const ChatItem = (props: IChatItem) => {
     useEffect(() => {
         if (message_type == 'text') {
             const matches = findUrl(message?.toLowerCase())
-            console.log(message, matches);
-
             let found = false
             matches?.some((link) => {
                 if (link?.type == 'url' && link?.isLink && link?.href) {
@@ -526,6 +521,8 @@ const ChatItem = (props: IChatItem) => {
 
     if (myMessage) {
         return <>
+            {isMuted && link ? <Preview
+                text={link} /> : null}
             <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
                     {parent_message ?
@@ -595,19 +592,15 @@ const ChatItem = (props: IChatItem) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View>
-            {showLink && link ? <Preview
-                onPreviewDataFetched={(data) => {
-                    console.log("data", data)
-                    if (!data?.image && !data?.description) {
-                        setShowLink(false)
-                    }
-                }}
+            {!isMuted && link ? <Preview
                 text={link} /> : null}
         </>
     }
 
     return (
         <>
+            {isMuted && link ? <Preview
+                text={link} /> : null}
             <View style={styles.container} >
                 <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                     {/* <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(2), marginTop: scaler(3) }} >
@@ -693,13 +686,7 @@ const ChatItem = (props: IChatItem) => {
                 </View>
 
             </View>
-            {showLink && link ? <Preview
-                onPreviewDataFetched={(data) => {
-                    console.log("data", data)
-                    if (!data?.image && !data?.description) {
-                        setShowLink(false)
-                    }
-                }}
+            {!isMuted && link ? <Preview
                 text={link} /> : null}
         </>
     )
