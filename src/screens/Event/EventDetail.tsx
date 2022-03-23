@@ -131,7 +131,7 @@ const EventDetail: FC<any> = (props) => {
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
-                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { width: width, type: 'events' }))}
+                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
                         //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
                         placeholderSource={Images.ic_event_placeholder}

@@ -53,6 +53,7 @@ interface IChatItem {
     message_deleted_by_user: any
     isMuted?: boolean
     coordinates: { lat: string, lng: string }
+    text: string
 }
 
 const DelText = "{{admin_name}} has deleted post from {{display_name}}"
@@ -75,6 +76,7 @@ const ChatItem = (props: IChatItem) => {
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
+        text,
         // is_message_sender_is_admin,
         // message_recently_liked_user_ids,
         // message_liked_by_user_name,
@@ -335,10 +337,15 @@ const ChatItem = (props: IChatItem) => {
                 placeholderSource={Images.ic_image_placeholder}
                 borderRadius={scaler(15)}
                 resizeMode={'cover'}
-                onPress={() => _zoomImage(getImageUrl(message, { width: width, type: 'messages' }))}
-                source={{ uri: getImageUrl(message, { width: width, type: 'messages' }) }}
+                onPress={() => _zoomImage(getImageUrl(message, { type: 'messages' }))}
+                source={{ uri: getImageUrl(message, { type: 'messages' }) }}
                 //@ts-ignore
                 style={{ resizeMode: 'cover', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
+            {text ? <View style={{ width: '100%', paddingHorizontal: scaler(15), paddingBottom: scaler(8), paddingTop: scaler(3) }} >
+                <Text autoLink onLongPress={_onCopy}
+                    style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
+            </View>
+                : null}
             {isMuted ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
@@ -491,6 +498,11 @@ const ChatItem = (props: IChatItem) => {
                 <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
                 {/* </View> */}
             </TouchableOpacity>
+            {text ? <View style={{ width: '100%', paddingHorizontal: scaler(15), paddingBottom: scaler(8), paddingTop: scaler(3) }} >
+                <Text autoLink onLongPress={_onCopy}
+                    style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
+            </View>
+                : null}
             {isMuted ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >

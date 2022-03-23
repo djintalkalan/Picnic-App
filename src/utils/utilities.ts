@@ -12,6 +12,7 @@ import Geocoder from 'react-native-geocoding';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
+import Language from 'src/language/Language';
 import { StaticHolder } from './StaticHolder';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
@@ -336,11 +337,14 @@ export const getImageUrl = (url: string, options: { width?: number, height?: num
 export const ProfileImagePickerOptions = {
     width: 800,
     height: 800,
-    compressImageQuality: 0.8,
+    compressImageQuality: 1,
     compressImageMaxWidth: 800,
     compressImageMaxHeight: 800,
     enableRotationGesture: true,
     cropping: true,
+    loadingLabelText: Language.getString("processing", Language.getLanguage()),
+    cropperCircleOverlay: true,
+
 }
 
 export const getAddressFromLocation = async (region: ILocation) => {

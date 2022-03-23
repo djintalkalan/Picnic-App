@@ -26,6 +26,7 @@ import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOTP from 'screens/Auth/VerifyOTP';
 import EventChats from 'screens/Chat/EventChat/EventChats';
 import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
+import ImagePreview from 'screens/Chat/ImagePreview';
 import SearchChatScreen from 'screens/Chat/SearchChat/SearchChatScreen';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
@@ -107,6 +108,7 @@ const dashboardScreens = {
   Payment: Payment,
   SearchChatScreen: SearchChatScreen,
   SelectContacts: SelectContacts,
+  ImagePreview: ImagePreview
 };
 
 const MyNavigationContainer = () => {

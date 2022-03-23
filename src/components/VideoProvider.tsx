@@ -1,5 +1,6 @@
 import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
+//@ts-ignore
 import Video from 'react-native-video-controls';
 import { NavigationService } from 'utils';
 

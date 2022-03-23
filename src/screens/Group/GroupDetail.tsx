@@ -307,7 +307,7 @@ const GroupDetail: FC<any> = (props) => {
 
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
-                        onPress={() => group?.image && _zoomImage(getImageUrl(group?.image, { width: width, type: 'groups' }))}
+                        onPress={() => group?.image && _zoomImage(getImageUrl(group?.image, { type: 'groups' }))}
                         //@ts-ignore
                         style={{ width: width, height: width, resizeMode: 'cover' }}
                         placeholderSource={Images.ic_group_placeholder}

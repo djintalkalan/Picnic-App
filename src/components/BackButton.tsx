@@ -1,19 +1,18 @@
-import { useIsFocused } from '@react-navigation/native'
 import { colors } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
-import { GestureResponderEvent, StyleSheet, TouchableOpacity } from 'react-native'
+import { ColorValue, GestureResponderEvent, StyleSheet, TouchableOpacity } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { NavigationService, scaler } from 'utils'
 interface BackButtonProps {
     onPress?: (e?: GestureResponderEvent) => void
     marginVertical?: number
+    backgroundColor?: ColorValue
 }
 
 
 export const BackButton: FC<BackButtonProps> = (props) => {
-    const isFocused = useIsFocused()
-    const { isKeyboard, dismissKeyboard } = useKeyboardService(isFocused)
+    const { isKeyboard, dismissKeyboard } = useKeyboardService()
 
     const onPressDefault = useCallback(
         () => {
@@ -25,7 +24,7 @@ export const BackButton: FC<BackButtonProps> = (props) => {
         [isKeyboard],
     )
 
-    const { onPress = onPressDefault, marginVertical } = props
+    const { onPress = onPressDefault, marginVertical, backgroundColor } = props
 
     // console.log("IsKeyboard", isKeyboard)
 
@@ -33,7 +32,7 @@ export const BackButton: FC<BackButtonProps> = (props) => {
     return (
         <TouchableOpacity onPress={onPress} style={[styles.button, {
             paddingVertical: marginVertical ?? scaler(10),
-
+            backgroundColor: backgroundColor
         }]} >
             <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
             {/* <Text style={styles.textStyle} >{Language.back}</Text> */}
