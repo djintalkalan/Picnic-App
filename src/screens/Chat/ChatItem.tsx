@@ -1,9 +1,8 @@
-import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
 import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
 import { colors, Images, MapStyle } from 'assets'
-import { MultiBoldText, Text } from 'custom-components'
+import { MultiBoldText, Preview, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
@@ -596,10 +595,7 @@ const ChatItem = (props: IChatItem) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View>
-            {showLink && link ? <LinkPreview
-                renderText={() => (null)}
-                containerStyle={{ backgroundColor: 'white' }}
-                // metadataContainerStyle={{ padding: 0, margin: 0 }}
+            {showLink && link ? <Preview
                 onPreviewDataFetched={(data) => {
                     console.log("data", data)
                     if (!data?.image && !data?.description) {
@@ -697,10 +693,7 @@ const ChatItem = (props: IChatItem) => {
                 </View>
 
             </View>
-            {showLink && link ? <LinkPreview
-                renderText={() => (null)}
-                containerStyle={{ backgroundColor: 'white' }}
-                // metadataContainerStyle={{ padding: 0, margin: 0 }}
+            {showLink && link ? <Preview
                 onPreviewDataFetched={(data) => {
                     console.log("data", data)
                     if (!data?.image && !data?.description) {

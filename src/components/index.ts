@@ -10,6 +10,7 @@ export * from './LocationService';
 export * from './Modal';
 export * from './MyHeader';
 export * from './PopupAlert';
+export * from './Preview';
 export * from './StatusBarService';
 export * from './Stepper';
 export * from './Text';
