@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, FC, useCallback, useContext, useEffect, useReducer, useRef } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 //@ts-ignore
 import Video from 'react-native-video-controls';
@@ -6,42 +6,64 @@ import { NavigationService } from 'utils';
 
 export const VideoContext = createContext<{
     videoUrl: string,
-    videoPlayerRef: React.MutableRefObject<undefined>,
-    loadVideo: React.Dispatch<React.SetStateAction<string>>
-}>({ videoUrl: "", videoPlayerRef: null, loadVideo: null });
+    videoPlayerRef?: React.MutableRefObject<any>,
+    loadVideo?: (url: string) => void
+}>({ videoUrl: "" });
 
+interface IState {
+    isLoading: boolean, videoUrl: string
+}
+const initialState: IState = {
+    isLoading: false,
+    videoUrl: ""
+}
+
+const actions = {
+    SET_VIDEO_URL: "SET_VIDEO_URL",
+    CLOSE_PLAYER: "CLOSE_PLAYER",
+    SET_LOADER: "SET_LOADER",
+}
+
+const reducer = (state: IState = initialState, { type, payload }: any): IState => {
+    switch (type) {
+        case actions?.SET_LOADER:
+            return { ...state, isLoading: payload }
+        case actions?.SET_VIDEO_URL:
+            return { videoUrl: payload, isLoading: false }
+            return { videoUrl: payload, isLoading: true }
+        case actions?.CLOSE_PLAYER:
+            return initialState
+
+    }
+    return state
+}
 export const VideoProvider: FC<any> = ({ children }) => {
-
-    const [videoUrl, loadVideo] = useState("")
-    const [isLoading, setLoader] = useState(false)
-    const videoPlayerRef = useRef()
-
-
-
+    const [{ videoUrl }, dispatch] = useReducer(reducer, initialState)
+    const videoPlayerRef = useRef(null)
     useEffect(() => {
-        loadVideo("")
+        dispatch({ type: actions.CLOSE_PLAYER })
         return () => {
-            loadVideo("")
+            dispatch({ type: actions.CLOSE_PLAYER })
         }
     }, [])
 
     useEffect(() => {
         const listener = BackHandler.addEventListener('hardwareBackPress', function () {
             if (videoUrl) {
-                loadVideo("")
+                dispatch({ type: actions.CLOSE_PLAYER })
                 return true
             } else {
                 return false
             }
         });
-        if (videoUrl) setLoader(true)
-
         return () => {
-            setLoader(false)
             listener.remove()
         }
     }, [videoUrl])
 
+    const loadVideo = useCallback((url) => {
+        dispatch({ type: actions.SET_VIDEO_URL, payload: url })
+    }, [])
 
     return (
         <VideoContext.Provider value={{ videoUrl, videoPlayerRef, loadVideo }}  >
@@ -51,23 +73,23 @@ export const VideoProvider: FC<any> = ({ children }) => {
                     <Video source={{ uri: videoUrl }}   // Can be a URL or a local file.
                         ref={videoPlayerRef}
                         resizeMode={'contain'}
-                        onBack={() => { loadVideo("") }}
+                        onBack={() => { dispatch({ type: actions.CLOSE_PLAYER }) }}
                         disableVolume
                         navigator={NavigationService.getNavigation()}
                         // isFullScreen={true}
                         // toggleResizeModeOnFullscreen={false}
                         // repeat
                         controls={false}// Store reference
-                        onBuffer={(d) => {
+                        onBuffer={(d: any) => {
                             // console.log("d", d)
                         }}                // Callback when remote video is buffering
-                        onLoad={() => {
-                            setLoader(false)
-                        }}
-                        onError={(e) => {
-                            // console.log(e, "e")
-                            setLoader(false)
-                        }}               // Callback when video cannot be loaded
+                        // onLoad={() => {
+                        //     dispatch({ type: actions.SET_LOADER, payload: false })
+                        // }}
+                        // onError={(e: any) => {
+                        //     // console.log(e, "e")
+                        //     dispatch({ type: actions.SET_LOADER, payload: false })
+                        // }}               // Callback when video cannot be loaded
                         style={styles.backgroundVideo} />
 
                     {/* <View style={{ position: 'absolute', zIndex: 11, top: 20, alignSelf: 'center' }} >
