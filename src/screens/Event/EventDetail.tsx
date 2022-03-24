@@ -14,7 +14,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -227,7 +227,8 @@ const EventDetail: FC<any> = (props) => {
                             <Text style={styles.name} >{event?.name}</Text>
                             <View style={{ alignItems: 'center', flexDirection: 'row' }} >
                                 <Text style={styles.address} >
-                                    {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country}
+                                    {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
+                                    {getCityOnly(event?.city, event?.state, event?.country)}
                                 </Text>
                             </View>
                         </View>
@@ -321,7 +322,8 @@ const EventDetail: FC<any> = (props) => {
                                 title={event?.event_group?.name}
                                 // highlight={}
                                 icon={event?.event_group?.image ? { uri: getImageUrl(event?.event_group?.image, { width: scaler(50), type: 'groups' }) } : undefined}
-                                subtitle={event?.event_group?.city + ", " + (event?.event_group?.state ? (event?.event_group?.state + ", ") : "") + event?.event_group?.country}
+                                // subtitle={event?.event_group?.city + ", " + (event?.event_group?.state ? (event?.event_group?.state + ", ") : "") + event?.event_group?.country}
+                                subtitle={getCityOnly(event?.event_group?.city, event?.event_group?.state, event?.event_group?.country)}
                                 // customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
                                 onPress={() => {
                                     dispatch(setActiveGroup(event?.event_group))

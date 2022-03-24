@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(120)
 const { width, height } = Dimensions.get('screen')
@@ -180,7 +180,8 @@ const EventList: FC<any> = (props) => {
                 title={item?.name}
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT, type: 'events' }) } : undefined}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={getCityOnly(city, state, country)}
+                // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView size='small' {...item} />}
                 onPress={() => {
                     dispatch(setActiveEvent(item));

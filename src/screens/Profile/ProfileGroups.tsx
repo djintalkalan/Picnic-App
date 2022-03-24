@@ -8,8 +8,7 @@ import React, { FC, useCallback, useLayoutEffect, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { NavigationService, scaler } from 'utils'
-import { getImageUrl, InitialPaginationState } from 'utils/utilities'
+import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
 
 const ProfileGroups: FC<any> = (props) => {
 
@@ -46,7 +45,8 @@ const ProfileGroups: FC<any> = (props) => {
                 title={item?.group?.name}
                 // highlight={}
                 icon={item?.group?.image ? { uri: getImageUrl(item?.group?.image, { type: 'groups', width: scaler(46) }) } : undefined}
-                subtitle={item?.group?.city + ", " + (item?.group?.state ? (item?.group?.state + ", ") : "") + item?.group?.country}
+                // subtitle={item?.group?.city + ", " + (item?.group?.state ? (item?.group?.state + ", ") : "") + item?.group?.country}
+                subtitle={getCityOnly(item?.group?.city, item?.group?.state, item?.group?.country)}
 
                 onPress={() => {
                     dispatch(setActiveGroup(item?.group))

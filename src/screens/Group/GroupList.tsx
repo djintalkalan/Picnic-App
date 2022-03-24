@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 const ITEM_HEIGHT = scaler(90)
 const { width, height } = Dimensions.get('screen')
 
@@ -127,7 +127,8 @@ const GroupList: FC<any> = (props) => {
                 title={item?.name}
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(50), type: 'groups' }) } : undefined}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={getCityOnly(city, state, country)}
                 customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
                 onPress={() => {
                     dispatch(setActiveGroup(item))

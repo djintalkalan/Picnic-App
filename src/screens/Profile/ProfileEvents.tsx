@@ -10,7 +10,7 @@ import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
+import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
 
 let loadMore = false
 const ProfileEvents: FC<any> = (props) => {
@@ -83,7 +83,8 @@ const ProfileEventsList: FC<any> = (props) => {
                 title={item?.event?.name}
                 // highlight={}
                 icon={item?.event?.image ? { uri: getImageUrl(item?.event?.image, { width: scaler(50), type: 'events' }) } : undefined}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={getCityOnly(city, state, country)}
                 customView={<TicketView {...item?.event} />}
                 onPress={() => {
                     dispatch(setActiveEvent(item?.event))

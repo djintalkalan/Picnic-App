@@ -9,7 +9,7 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import { GroupChats } from './GroupChats'
 
@@ -83,7 +83,8 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                     }, 0);
                 }}
                 title={name || ""}
-                subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                subtitle={getCityOnly(city, state, country)}
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'groups' }) } : undefined}
                 defaultIcon={Images.ic_group_placeholder}
             />
@@ -101,7 +102,8 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                         NavigationService.navigate("GroupDetail", { id: _id })
                     }, 0);
                 }}
-                subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                subtitle={getCityOnly(city, state, country)}
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'groups' }) } : undefined}
                 defaultIcon={Images.ic_group_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >

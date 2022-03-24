@@ -14,7 +14,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
-import { getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
@@ -226,7 +226,8 @@ const EventChats: FC<any> = (props) => {
                         NavigationService.navigate("EventDetail", { id: _id })
                     }, 0);
                 }}
-                subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
+                subtitle={getCityOnly(city, state, country)}
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >

@@ -10,7 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, scaler } from 'utils'
+import { getCityOnly, getImageUrl, scaler } from 'utils'
 
 const initialPaginationState: IPaginationState = {
     currentPage: 0,
@@ -51,7 +51,8 @@ const MutedResources: FC<any> = (props) => {
                 title={name}
                 //@ts-ignore
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: (type + 's') }) } : undefined}
-                subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
+                subtitle={getCityOnly(city, state, country)}
                 // isSelected={is_group_member}
                 onPress={() => {
 

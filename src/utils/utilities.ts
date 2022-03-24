@@ -542,3 +542,7 @@ export const openLink = async (url: string, options: any = {}) => {
         _showErrorMessage(error?.message)
     }
 }
+
+export const getCityOnly = (city: string, state: string, country: string) => {
+    return city?.trim() || state?.trim() || country?.trim()
+}

@@ -28,7 +28,7 @@ const CreateGroup: FC<any> = (props) => {
   const uploadedImage = useRef("")
   const dispatch = useDispatch()
   const [profileImage, setProfileImage] = useState<any>()
-  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
+  const locationRef = useRef<ILocation | null>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
   const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
