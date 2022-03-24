@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
-import { scaler } from 'utils';
 import { useKeyboardService } from './KeyboardService';
 
 interface KeyboardTopViewProps {
@@ -14,7 +13,7 @@ export const KeyboardTopView: FC<KeyboardTopViewProps> = (props) => {
             width: '100%',
             ...StyleSheet.flatten(props?.style ?? {}),
             position: isKeyboard ? 'absolute' : 'relative',
-            bottom: (Platform.OS == 'ios' ? keyboardHeight : 0) + scaler(0),
+            bottom: (Platform.OS == 'ios' ? keyboardHeight : 0),
             // backgroundColor: 'red'
         }
     }), [isKeyboard, props?.style])
