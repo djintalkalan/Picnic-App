@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_EVENT_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
-import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
@@ -15,6 +15,22 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getMyGroups);
         if (res.status == 200) {
+            if (!res?.data?.length) {
+                _showPopUpAlert({
+                    title: Language.group_not_available,
+                    message: Language.please_create_a_group,
+                    buttonText: Language.create_group,
+                    cancelButtonText: Language.go_to_home,
+                    onPressButton: () => {
+                        NavigationService.replace("CreateGroup")
+                        _hidePopUpAlert()
+                    },
+                    onPressCancel: () => {
+                        NavigationService.navigate("Home")
+                        _hidePopUpAlert()
+                    }
+                })
+            }
             yield put(setMyGroups(res.data))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

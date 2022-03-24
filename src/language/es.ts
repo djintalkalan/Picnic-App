@@ -299,7 +299,7 @@ export const es = {
     add_caption_here: "",
     processing: "",
     loading: "",
-
-
-
+    group_not_available: "",
+    please_create_a_group: "",
+    go_to_home: "",
 }

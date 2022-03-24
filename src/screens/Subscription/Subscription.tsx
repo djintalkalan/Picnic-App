@@ -195,7 +195,11 @@ const Subscription: FC = (props: any) => {
                 const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
                 const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
                 // if (expireAt >= new Date()) {
+                console.log("Calculating purchase");
+
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+                    console.log("Requesting purchase");
+
                     requestPurchase(productIds[i], false)
                 } else continueToMemberShip(Language.you_are_already_a_member)
 

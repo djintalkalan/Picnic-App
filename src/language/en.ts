@@ -299,5 +299,7 @@ export const en = {
   add_caption_here: "Add caption here",
   processing: "Processing",
   loading: "Loading",
-
+  group_not_available: "Groups not available",
+  please_create_a_group: "Please create a group before continuing",
+  go_to_home: "Go to Home",
 }
