@@ -326,18 +326,18 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
 
 function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { res: R, ...rest } = payload
+    const { res: { _id }, token, PayerID: payer_id, resource_id } = payload
     try {
-        let res = yield call(ApiProvider._capturePayment, { _id: R?._id });
+        let res = yield call(ApiProvider._capturePayment, { _id, token, payer_id });
         if (res.status == 200) {
             // NavigationService.goBack()
             // yield put(joinEvent(rest));
             _showSuccessMessage(res?.message)
             SocketService.emit(EMIT_JOIN_ROOM, {
-                resource_id: payload?.resource_id
+                resource_id: resource_id
             })
-            yield put(joinEventSuccess(payload?.resource_id))
-            yield put(getEventDetail(payload?.resource_id))
+            yield put(joinEventSuccess(resource_id))
+            yield put(getEventDetail(resource_id))
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
