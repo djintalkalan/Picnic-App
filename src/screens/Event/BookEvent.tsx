@@ -152,7 +152,17 @@ const BookEvent: FC = (props: any) => {
             <KeyboardHideView>
                 <View style={{ marginBottom: scaler(10), marginHorizontal: scaler(15) }}>
                     {!event?.is_free_event && event?.event_refund_policy ?
-                        <Text onPress={() => { _showPopUpAlert({ message: event?.event_refund_policy }) }} style={{ fontSize: scaler(15), fontWeight: '400', color: colors.colorPrimary, alignSelf: 'center', marginBottom: scaler(15) }}>
+                        <Text onPress={() => {
+                            _showPopUpAlert({
+                                message: event?.event_refund_policy,
+                                cancelButtonText: null,
+                                onPressButton: () => {
+                                    _hidePopUpAlert()
+                                },
+                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                buttonText: Language.close,
+                            })
+                        }} style={{ fontSize: scaler(15), fontWeight: '400', color: colors.colorPrimary, alignSelf: 'center', marginBottom: scaler(15) }}>
                             {Language.read_refund_policy}
                         </Text> : undefined
                     }
