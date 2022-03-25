@@ -25,6 +25,7 @@ try {
 } catch (e) {
 
 }
+const urlRegx = /[?&]([^=#]+)=([^&#]*)/g
 
 export const launchMap = async (address: string | { lat: number, long: number },) => {
     let app = null;
@@ -545,4 +546,17 @@ export const openLink = async (url: string, options: any = {}) => {
 
 export const getCityOnly = (city: string, state: string, country: string) => {
     return city?.trim() || state?.trim() || country?.trim()
+}
+
+export const getQueryVariables = (url: string) => {
+    let params: any = {}, match
+    try {
+        while (match = urlRegx.exec(url)) {
+            params[match[1]] = match[2];
+        }
+    }
+    catch (e) {
+        console.log("Regx error", e);
+    }
+    return params
 }

@@ -1,12 +1,13 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component, FC } from "react";
-import { BackHandler, GestureResponderEvent, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { BackHandler, Dimensions, GestureResponderEvent, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import Button from "./Button";
 import { SafeAreaViewWithStatusBar } from "./FocusAwareStatusBar";
 
+const { height, width } = Dimensions.get('screen')
 interface PopupAlertProps {
 
 }
@@ -39,6 +40,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     cancelButtonText = Language.close
     onPressCancel: any = null
     onPressButton: any = null
+    fullWidthMessage: boolean = false
 
     showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel }: IAlertType) => {
         this.title = title || ""
@@ -52,6 +54,9 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
             this.hideAlert()
         }
         this.onPressButton = onPressButton
+        if (this.message?.length > 70) {
+            this.fullWidthMessage = true
+        }
         //@ts-ignore
         // this.state.alertVisible = true
         if (!this.state.alertVisible) {
@@ -69,12 +74,9 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
         if (nextState?.alertVisible) {
             setTimeout(() => {
-                console.log("Listner added");
-
                 BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
             }, 100);
         } else {
-            console.log("Listner removed");
             BackHandler.removeEventListener('hardwareBackPress', this.onBackPress)
         }
         return this.state.alertVisible != nextState.alertVisible
@@ -93,7 +95,12 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
 
                         {this.title ? <Text style={[styles.title]} >{this.title}</Text> : null}
-                        {this.message ? <Text style={[styles.message]} >{this.message}</Text> : null}
+                        {this.message ?
+
+                            <ScrollView bounces={false} overScrollMode={'never'} contentContainerStyle={[styles.scrollViewContainerStyle, this?.fullWidthMessage ? { marginHorizontal: scaler(30) } : {}]} style={styles.scrollViewStyle} >
+                                <Text style={[styles.message]} >{this.message}</Text>
+                            </ScrollView>
+                            : null}
 
                         {this.customView ?
                             <this.customView />
@@ -125,6 +132,7 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: 'rgba(0,0,0,0.5)',
         paddingHorizontal: scaler(20),
+        paddingVertical: scaler(30),
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -132,6 +140,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorWhite,
         padding: scaler(30),
         width: '100%',
+        flexShrink: 1,
         elevation: 3,
         alignItems: 'center',
         borderRadius: scaler(20)
@@ -149,9 +158,25 @@ const styles = StyleSheet.create({
         fontSize: scaler(14),
         lineHeight: scaler(24),
         color: "#7D7F85",
-        marginBottom: scaler(10),
         textAlign: 'center',
-        maxWidth: '80%'
+        // flex: 1,
+    },
+
+    scrollViewContainerStyle: {
+        alignItems: 'center',
+        marginHorizontal: scaler(30) + (width / 10),
+        // maxWidth: width - scaler(60) - (width / 5),
+        // backgroundColor: 'yellow',
+        // flex: 1,
+    },
+    scrollViewStyle: {
+        marginBottom: scaler(10),
+
+        marginHorizontal: -scaler(30),
+
+        // maxWidth: '80%',
+        // backgroundColor: 'red',
+        // flex: 1,
     },
     button: {
         width: '70%',

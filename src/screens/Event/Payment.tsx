@@ -6,7 +6,7 @@ import React, { FC, useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
-import { NavigationService, _showErrorMessage } from 'utils';
+import { getQueryVariables, NavigationService, _showErrorMessage } from 'utils';
 
 const Payment: FC<any> = (props) => {
     console.log("props", props);
@@ -25,7 +25,7 @@ const Payment: FC<any> = (props) => {
             closed.current = true
             setPaymentClosed(true)
             if (e?.url?.includes("payment-success")) {
-                dispatch(capturePayment(props?.route?.params?.data))
+                dispatch(capturePayment({ ...props?.route?.params?.data, ...getQueryVariables(e?.url) }))
             } else {
                 NavigationService.goBack()
                 _showErrorMessage("Payment Unsuccessful. Please try again")
