@@ -45,7 +45,7 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
 
     render() {
         if (!this.state.imageUrl) return null
-        const { h = 0, w = 0 } = this?.insets
+        const { h = 0, w = 0 } = this?.insets ?? {}
         return <SafeAreaViewWithStatusBar style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: colors.colorWhite }} >
             <View onLayout={(e) => {
                 if (!this?.insets?.w) {
