@@ -305,8 +305,10 @@ const EventDetail: FC<any> = (props) => {
                     }
                     <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                        <Image source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: 46, type: 'users' }) ?? Images.ic_image_placeholder }}
-                            style={{ height: scaler(46), width: scaler(46), borderRadius: scaler(23) }} />
+                        <ImageLoader
+                            placeholderSource={Images.ic_home_profile}
+                            source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
+                            style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
                         <Text style={{ marginLeft: scaler(10) }}>
                             {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                         </Text>

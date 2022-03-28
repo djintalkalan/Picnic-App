@@ -40,7 +40,9 @@ const EventChats: FC<any> = (props) => {
         let found = false
         matches?.some((link) => {
             if (link?.type == 'url' && link?.isLink && link?.href) {
-                setLink(link?.href)
+                if (textMessageRef?.current?.trim()) {
+                    setLink(link?.href)
+                }
                 found = true
                 return true
             }

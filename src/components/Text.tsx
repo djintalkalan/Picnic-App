@@ -1,5 +1,4 @@
-import { colors } from "assets";
-import { Fonts } from "assets/Fonts";
+import { colors, Fonts } from "assets";
 import { Match } from 'autolinker/dist/es2015';
 import React, { FC, Fragment, isValidElement, useMemo } from "react";
 import { Linking, Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
@@ -18,7 +17,7 @@ const _onAutoLinkPress = (url: string, match: Match) => {
             Linking.openURL(url)
             break;
         default:
-            openLink(url)
+            openLink(url?.toLowerCase())
             break;
     }
 }
@@ -96,14 +95,14 @@ export const Text: FC<TextProps> = (props) => {
             hashtag="instagram"
             mention="twitter"
             phone="text"
-            //@ts-ignore
-            onLongPress={props?.onLongPress}
             textProps={{ style: styles.textStyle, onLongPress: rest?.onLongPress }}
             url
             linkStyle={{ color: colors.colorLink, textDecorationLine: 'underline' }}
             {...autoLinkProps}
             text={(typeof text == 'string') ? text : "Please remove nested Texts"}
             onPress={_onAutoLinkPress}
+            //@ts-ignore
+            onLongPress={props?.onLongPress}
         />
     }
 
