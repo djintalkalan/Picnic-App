@@ -27,6 +27,7 @@
         "authorise",
         "bootsplash",
         "codegen",
+        "datetime",
         "gradlew",
         "linkify",
         "linkifyjs",

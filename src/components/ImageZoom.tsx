@@ -68,8 +68,8 @@ export class ImageZoom extends Component<any, { imageUrl: string, toggle: boolea
                     }}
                         source={{ uri: this.state.imageUrl }} />
                 </Zoom>
-                <TouchableOpacity onPress={() => this.setState({ imageUrl: "" })} style={[styles.backButton, { top: scaler(10), left: scaler(10) }]} >
-                    <Image style={styles.imgBack} source={Images.ic_back_group} />
+                <TouchableOpacity onPress={() => this.setState({ imageUrl: "" })} style={[styles.backButton, { top: scaler(10), right: scaler(10) }]} >
+                    <Image style={styles.imgBack} source={Images.ic_close} />
                 </TouchableOpacity>
             </View>
         </SafeAreaViewWithStatusBar>

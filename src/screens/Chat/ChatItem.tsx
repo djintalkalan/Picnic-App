@@ -277,8 +277,7 @@ const ChatItem = (props: IChatItem) => {
             console.log("e", e);
 
         }
-
-        Clipboard?.setString(message?.trim());
+        Clipboard?.setString(message_type == 'file' || message_type == 'image' ? text?.trim() : message?.trim());
         // console.log("e", e, ((height - scaler(80)) / 3));
         //@ts-ignore
         _showToast("Copied", 'SHORT', gravity);
@@ -486,7 +485,7 @@ const ChatItem = (props: IChatItem) => {
                 //@ts-ignore
                 style={{ resizeMode: 'contain', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
             <TouchableOpacity disabled={isMuted} onPress={() => {
-                loadVideo(config.VIDEO_URL + message)
+                loadVideo && loadVideo(config.VIDEO_URL + message)
             }} style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: scaler(55), bottom: scaler(40), left: width / 3, right: width / 3, }} >
                 {/* <View style={{ backgroundColor: colors.colorWhite, borderRadius: scaler(30), height: scaler(60), width: scaler(60) }} > */}
                 <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
