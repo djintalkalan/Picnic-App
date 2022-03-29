@@ -315,9 +315,7 @@ export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
 
 export const useUserInfo = <T = any>(key: string, defaultValue?: T):
     [T | null, (value: T | ((prevValue: T) => T)) => void] => {
-    const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey("userStorage"), defaultValue);
-    return [value, setValue];
-    // return [value, setValue];
+    return useMMKVStorage<T>(key, Database.getInstance().getStorageForKey("userStorage"), defaultValue);
 }
 
 export const mergeStorageInPersistedReducer = (persistReducer: any, persistConfig: any, rootReducer: any) => {
