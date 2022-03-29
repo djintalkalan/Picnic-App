@@ -74,6 +74,18 @@ type DataBaseType = {
     allLanguages?: ILanguages
 }
 
+export interface IUserInfo {
+    _id: string
+    first_name: string
+    last_name: string
+    username?: string
+    image?: string
+    active: 1 | 0
+    account_deleted: 1 | 0
+    is_blocked_by_admin: 1 | 0
+    is_premium: 1 | 0
+}
+
 
 export interface ILocation {
     latitude: number
@@ -103,6 +115,8 @@ class Database {
 
 
     static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
+
+    private userStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("userStorage").initialize();
 
     private socketStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("socketStorage").initialize();
     private userDataStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("userDataStorage").initialize();
@@ -149,12 +163,28 @@ class Database {
         this.locationStorage.setMap('selectedLocation', location)
     }
 
+    public setUserInfo = (user: IUserInfo) => {
+        this.userStorage.setMap(user?._id, user)
+    }
+
+    public setUserInfoAsync = async (user: IUserInfo) => {
+        return await this.userStorage.setMapAsync(user?._id, user)
+    }
+
+    public getUserInfo = (id: string) => {
+        this.userStorage.getMap(id) ?? ""
+    }
+
+    public getUserInfoAsync = async (id: string) => {
+        return await this.userStorage.getMapAsync(id) ?? ""
+    }
+
     public addInRecentSearches = (data: IRecentSearches) => {
         const oldData = (this.otherDataStorage.getArray("recentSearches") ?? []).filter((_: any) => !isEqual(_?.data?.place_id, data?.data?.place_id))
         this.otherDataStorage.setArray('recentSearches', [data, ...oldData])
     }
 
-    getStorageForKey = (key?: StorageType): MMKVStorage.API => {
+    getStorageForKey = (key?: StorageType | 'userStorage'): MMKVStorage.API => {
         switch (key) {
             case 'allLanguages':
             case 'selectedLanguage':
@@ -177,6 +207,9 @@ class Database {
 
             case 'socketConnected':
                 return this.socketStorage
+
+            case 'userStorage':
+                return this.userStorage
             default:
                 break;
         }
@@ -277,6 +310,13 @@ export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
     }
     const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey(key), defaultValue);
     return [value, key == 'selectedLanguage' ? () => null : setValue];
+    // return [value, setValue];
+}
+
+export const useUserInfo = <T = any>(key: string, defaultValue?: T):
+    [T | null, (value: T | ((prevValue: T) => T)) => void] => {
+    const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey("userStorage"), defaultValue);
+    return [value, setValue];
     // return [value, setValue];
 }
 
