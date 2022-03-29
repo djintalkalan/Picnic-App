@@ -3,7 +3,7 @@ import { setAllEvents, setAllGroups, setLoadingAction, setLoadingMsg, tokenExpir
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { NavigationService, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
@@ -204,7 +204,11 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
         yield put(setAllGroups([]))
         yield put(setAllEvents([]))
 
+        yield call(WaitTill, 1000)
+
         Database.clearStorage()
+
+
 
 
 

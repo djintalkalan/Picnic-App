@@ -39,7 +39,7 @@ export const defaultLocation: ILocation = __DEV__ ? {
 interface LocationServiceValues {
     isLocationEnabled: boolean
     currentLocation?: ILocation
-    askPermission: () => Promise<void>
+    askPermission: () => Promise<any>
 }
 
 const LocationContext = createContext<LocationServiceValues>({
@@ -88,8 +88,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
             case RESULTS.GRANTED:
                 // console.log('The permission is limited: some actions are possible');
                 setLocationEnabled(true)
-                updateLocation()
-                return true
+                return updateLocation()
             // console.log('The permission is GRANTED: all actions are possible');
             // setLocationEnabled(true)
             // updateLocation()
@@ -128,19 +127,21 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     }, [isLogin])
 
     useEffect(() => {
-        const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-        const currentLocation = Database.getStoredValue<ILocation | null>("currentLocation")
-        if (currentLocation && currentLocation?.address?.main_text) {
-            if ((!selectedLocation || !selectedLocation?.address?.main_text))
-                Database.setSelectedLocation(currentLocation)
-        } else {
-            // console.log("currentLocation", currentLocation)
-            // console.log("selectedLocation", selectedLocation)
-            Database.setSelectedLocation(defaultLocation)
+        if (isLogin) {
+            const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+            const currentLocation = Database.getStoredValue<ILocation | null>("currentLocation")
+            if (currentLocation && currentLocation?.address?.main_text) {
+                if ((!selectedLocation || !selectedLocation?.address?.main_text))
+                    Database.setSelectedLocation(currentLocation)
+            } else {
+                // console.log("currentLocation", currentLocation)
+                // console.log("selectedLocation", selectedLocation)
+                Database.setSelectedLocation(defaultLocation)
+            }
+            InteractionManager.runAfterInteractions(async () => {
+                askForChecking()
+            })
         }
-        InteractionManager.runAfterInteractions(async () => {
-            askForChecking()
-        })
     }, [isLogin])
 
     const askForChecking = useCallback(() => {
@@ -154,33 +155,38 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     }, [isLogin])
 
     const startChecking = useCallback(async () => {
-        await checkLocationPermission()
+        return await checkLocationPermission()
     }, [isLogin])
 
-    const updateLocation = useCallback(() => {
-        Geolocation.getCurrentPosition(
-            async (position) => {
-                console.log(position);
-                const location = {
-                    latitude: position?.coords?.latitude,
-                    longitude: position?.coords?.longitude,
-                }
-                const { address, otherData } = await getAddressFromLocation(location)
-                if (address) {
-                    Database.setCurrentLocation({ ...location, address, otherData })
-                    const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
-                    if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
-                        Database.setSelectedLocation({ ...location, address, otherData })
+    const updateLocation = useCallback(async () => {
+        await new Promise((resolve, reject) => {
+            Geolocation.getCurrentPosition(
+                async (position) => {
+                    console.log(position);
+                    const location = {
+                        latitude: position?.coords?.latitude,
+                        longitude: position?.coords?.longitude,
                     }
-                }
+                    const { address, otherData } = await getAddressFromLocation(location)
+                    if (address) {
+                        Database.setCurrentLocation({ ...location, address, otherData })
+                        const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
+                        if (!selectedLocation || !selectedLocation?.address?.main_text || isEqual(selectedLocation, defaultLocation)) {
+                            Database.setSelectedLocation({ ...location, address, otherData })
+                        }
+                        resolve(true)
+                    }
+                },
+                (error) => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                    reject(error)
 
-            },
-            (error) => {
-                // See error code charts below.
-                console.log(error.code, error.message);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+
+        })
     }, [])
 
 

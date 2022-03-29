@@ -156,27 +156,15 @@ class Database {
     }
 
     public setCurrentLocation = (location: ILocation) => {
-        this.languageStorage.setMap('currentLocation', location)
+        this.locationStorage.setMap('currentLocation', location)
     }
 
     public setSelectedLocation = (location: ILocation) => {
         this.locationStorage.setMap('selectedLocation', location)
     }
 
-    public setUserInfo = (user: IUserInfo) => {
-        this.userStorage.setMap(user?._id, user)
-    }
-
-    public setUserInfoAsync = async (user: IUserInfo) => {
-        return await this.userStorage.setMapAsync(user?._id, user)
-    }
-
-    public getUserInfo = (id: string) => {
-        this.userStorage.getMap(id) ?? ""
-    }
-
-    public getUserInfoAsync = async (id: string) => {
-        return await this.userStorage.getMapAsync(id) ?? ""
+    public setAllUserInfoAsync = async (users: Array<IUserInfo>) => {
+        return await this.userStorage.setArrayAsync("allUsers", users)
     }
 
     public addInRecentSearches = (data: IRecentSearches) => {
