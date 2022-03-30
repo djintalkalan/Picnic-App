@@ -74,7 +74,6 @@ type DataBaseType = {
     allLanguages?: ILanguages
 }
 
-
 export interface ILocation {
     latitude: number
     longitude: number
@@ -101,50 +100,87 @@ class Database {
         return this.mInstance
     }
 
+
     static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
+
+    private socketStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("socketStorage").initialize();
+    private userDataStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("userDataStorage").initialize();
+    private otherDataStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("otherDataStorage").initialize();
+    private languageStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("languageStorage").initialize();
+    private locationStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("locationStorage").initialize();
 
     DefaultCountry = 'US' // RNLocalize.getCountry() ?? 'US'
 
     public setLogin = (isLogin?: boolean) => {
-        Database.phoneStorage.setBool('isLogin', isLogin ?? false)
+        this.userDataStorage.setBool('isLogin', isLogin ?? false)
     }
 
     public setSocketConnected = (c?: boolean) => {
-        Database.phoneStorage.setBool('socketConnected', c ?? false)
+        this.socketStorage.setBool('socketConnected', c ?? false)
     }
 
     public setUserData = (userData?: any) => {
-        Database.phoneStorage.setMap('userData', userData ?? null)
+        this.userDataStorage.setMap('userData', userData ?? null)
     }
 
     public setAllLanguages = (languages: ILanguages) => {
-        Database.phoneStorage.setMap('allLanguages', languages ?? null)
+        this.languageStorage.setMap('allLanguages', languages ?? null)
     }
 
 
     public setFirebaseToken = (token: string | null) => {
-        Database.phoneStorage.setString('firebaseToken', token ?? "")
+        this.userDataStorage.setString('firebaseToken', token ?? "")
     }
 
     public setAuthToken = (token: any) => {
-        Database.phoneStorage.setString('authToken', token ?? "")
+        this.userDataStorage.setString('authToken', token ?? "")
     }
 
     public setSelectedLanguage = (language: LanguageType) => {
-        Database.phoneStorage.setString('selectedLanguage', language)
+        this.languageStorage.setString('selectedLanguage', language)
     }
 
     public setCurrentLocation = (location: ILocation) => {
-        Database.phoneStorage.setMap('currentLocation', location)
+        this.locationStorage.setMap('currentLocation', location)
     }
 
     public setSelectedLocation = (location: ILocation) => {
-        Database.phoneStorage.setMap('selectedLocation', location)
+        this.locationStorage.setMap('selectedLocation', location)
     }
 
     public addInRecentSearches = (data: IRecentSearches) => {
-        const oldData = (Database.phoneStorage.getArray("recentSearches") ?? []).filter((_: any) => !isEqual(_?.data?.place_id, data?.data?.place_id))
-        Database.phoneStorage.setArray('recentSearches', [data, ...oldData])
+        const oldData = (this.otherDataStorage.getArray("recentSearches") ?? []).filter((_: any) => !isEqual(_?.data?.place_id, data?.data?.place_id))
+        this.otherDataStorage.setArray('recentSearches', [data, ...oldData])
+    }
+
+    getStorageForKey = (key?: StorageType): MMKVStorage.API => {
+        switch (key) {
+            case 'allLanguages':
+            case 'selectedLanguage':
+                return this.languageStorage
+
+            case 'currentLocation':
+            case 'selectedLocation':
+                return this.locationStorage
+
+            case 'authToken':
+            case 'isLogin':
+            case 'authToken':
+            case 'firebaseToken':
+                return this.userDataStorage
+
+            case 'currencies':
+            case 'recentSearches':
+            case 'searchHomeText':
+                return this.otherDataStorage
+
+            case 'socketConnected':
+                return this.socketStorage
+
+            default:
+                break;
+        }
+        return Database.phoneStorage
     }
 
     public setMultipleValues = (data: DataBaseType) => {
@@ -153,30 +189,30 @@ class Database {
                 case 'authToken':
                 case 'firebaseToken':
                 case 'selectedLanguage':
-                    return Database.phoneStorage.setString(key, data[key] ?? "")
+                    return this.getStorageForKey(key).setString(key, data[key] ?? "")
 
                 case 'isLogin':
                 case 'socketConnected':
-                    return Database.phoneStorage.setBool(key, data[key] ?? false)
+                    return this.getStorageForKey(key).setBool(key, data[key] ?? false)
 
                 case 'userData':
                 case 'currentLocation':
                 case 'selectedLocation':
                 case 'allLanguages':
-                    return Database.phoneStorage.setMap(key, data[key] ?? null)
+                    return this.getStorageForKey(key).setMap(key, data[key] ?? null)
 
                 case 'recentSearches':
-                    return Database.phoneStorage.setArray(key, data[key] ?? [])
+                    return this.getStorageForKey(key).setArray(key, data[key] ?? [])
             }
         })
     }
 
     public setOtherString = (key: string, value: string) => {
-        Database.phoneStorage.setString(key, value)
+        this.otherDataStorage.setString(key, value)
     }
 
     public getOtherString = (key: string) => {
-        return Database.phoneStorage.getString(key) ?? ""
+        return this.otherDataStorage.getString(key) ?? ""
     }
 
     //@ts-ignore
@@ -185,21 +221,21 @@ class Database {
             case 'authToken':
             case 'firebaseToken':
             case 'selectedLanguage':
-                return Database.phoneStorage.getString(key) || defaultValue
+                return this.getStorageForKey(key).getString(key) || defaultValue
 
             case 'isLogin':
             case 'socketConnected':
-                return Database.phoneStorage.getBool(key) || defaultValue
+                return this.getStorageForKey(key).getBool(key) || defaultValue
 
             case 'userData':
             case 'currentLocation':
             case 'selectedLocation':
             case 'allLanguages':
-                return Database.phoneStorage.getMap(key) || defaultValue
+                return this.getStorageForKey(key).getMap(key) || defaultValue
 
             case 'recentSearches':
             case 'currencies':
-                return Database.phoneStorage.getArray(key) || (defaultValue ?? [])
+                return this.getStorageForKey(key).getArray(key) || (defaultValue ?? [])
         }
     }
 
@@ -207,21 +243,21 @@ class Database {
         switch (key) {
             case 'authToken':
             case 'firebaseToken':
-                return Database.phoneStorage.setString(key, value ?? "")
+                return this.getStorageForKey(key).setString(key, value ?? "")
 
             case 'isLogin':
             case 'socketConnected':
-                return Database.phoneStorage.setBool(key, value ?? false)
+                return this.getStorageForKey(key).setBool(key, value ?? false)
 
             case 'userData':
             case 'currentLocation':
             case 'selectedLocation':
             case 'allLanguages':
-                return Database.phoneStorage.setMap(key, value ?? null)
+                return this.getStorageForKey(key).setMap(key, value ?? null)
 
             case 'recentSearches':
             case 'currencies':
-                return Database.phoneStorage.setArray(key, value ?? [])
+                return this.getStorageForKey(key).setArray(key, value ?? [])
         }
     }
 
@@ -239,7 +275,7 @@ export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
         _showErrorMessage("Wrong Key Used in UseDatabase")
         return [null, () => null]
     }
-    const [value, setValue] = useMMKVStorage<T>(key, Database.phoneStorage, defaultValue);
+    const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey(key), defaultValue);
     return [value, key == 'selectedLanguage' ? () => null : setValue];
     // return [value, setValue];
 }
@@ -250,7 +286,5 @@ export const mergeStorageInPersistedReducer = (persistReducer: any, persistConfi
         storage: Database.phoneStorage,
     }, rootReducer)
 }
-
-
 
 export default Database.getInstance()
