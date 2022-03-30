@@ -479,11 +479,12 @@ export const shareAppLink = async (name: string) => {
     share("Share " + name, link)
 }
 
-export const getDisplayName = (username: string, firstName: string, lastName: string) => {
+export const getDisplayName = (username: string, firstName: string, lastName?: string) => {
     return username || ((firstName || "") + (lastName ? (" " + lastName) : ""))
 }
 
 export const mergeMessageObjects = (chats: Array<any>, total_likes: Array<any>, like_by_me: Array<any>) => {
+    return chats;
     const map = new Map();
     chats.forEach(item => map.set(item._id, item));
     total_likes?.length && total_likes?.forEach(item => map.set(item._id, { ...map.get(item._id), message_total_likes_count: item?.total_likes }));

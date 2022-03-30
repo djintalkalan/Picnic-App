@@ -112,12 +112,17 @@ class Service {
         if (e?.data?.data?.length && Array.isArray(e?.data?.data)) {
             const userId = Database.getStoredValue("userData")?._id
             const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
-            e?.liked_by_users?.some((e: any, index: number) => {
-                if (e?.user_id == userId) {
-                    data[0].is_message_liked_by_me = true
-                    return true
-                }
-            });
+            if (e?.liked_by_users?.findIndex((e: any) => (e?.user_id == userId)) > -1) {
+                data[0].is_message_liked_by_me = true
+            } else {
+                data[0].is_message_liked_by_me = false
+            }
+            // e?.liked_by_users?.some((e: any, index: number) => {
+            //     if (e?.user_id == userId) {
+            //         data[0].is_message_liked_by_me = true
+            //         return true
+            //     }
+            // });
             if (data?.[0]?.group)
                 this.dispatch(updateChatInGroup({
                     groupId: data?.[0]?.resource_id,

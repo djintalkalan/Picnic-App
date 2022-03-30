@@ -140,7 +140,7 @@ const ChatItem = (props: IChatItem) => {
         </TouchableOpacity>
     }, [JSON.stringify(props?.coordinates)])
 
-    const remainingNames = message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName(_?.liked_by?.username, _?.liked_by?.first_name, _?.liked_by?.last_name))) ?? []
+    const remainingNames = message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName(_?.username, _?.name))) ?? []
 
     const myMessage = userId == userData?._id
 
