@@ -166,6 +166,7 @@ class Database {
             case 'authToken':
             case 'isLogin':
             case 'authToken':
+            case 'userData':
             case 'firebaseToken':
                 return this.userDataStorage
 
