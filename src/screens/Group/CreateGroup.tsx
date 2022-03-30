@@ -19,6 +19,7 @@ type FormType = {
   purpose: string
   location: string
   about: string
+  radio_frequency: string
 }
 
 const DropDownData = ["Personal", "Professional", "Charitable"]
@@ -76,6 +77,7 @@ const CreateGroup: FC<any> = (props) => {
       setValue('about', group?.details)
       setValue('location', group?.address)
       setValue('name', group?.name)
+      setValue('radio_frequency', group?.radio_frequency)
       setValue('purpose', capitalize(group?.category ?? ""))
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
@@ -93,6 +95,7 @@ const CreateGroup: FC<any> = (props) => {
       category: data?.purpose?.toLowerCase(),
       short_description: data?.about,
       details: data?.about,
+      radio_frequency: data?.radio_frequency,
       image: uploadedImage.current || undefined,
       address: address?.main_text + ", " + address?.secondary_text,
       city: otherData?.city,
@@ -172,6 +175,32 @@ const CreateGroup: FC<any> = (props) => {
             control={control}
             errors={errors}
           />
+
+          <TextInput
+            onFocus={() => setDropdown(false)}
+            containerStyle={{ flex: 1, marginEnd: scaler(4), }}
+            placeholder={Language.radio_freq}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            keyboardType={'decimal-pad'}
+            name={'radio_frequency'}
+            rules={{
+              validate: (v: string) => {
+                v = v?.trim()
+                try {
+                  if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                    return Language.invalid_radio_freq
+                  }
+                }
+                catch (e) {
+
+                }
+              }
+            }}
+            control={control}
+            errors={errors}
+          />
+
           <View style={{ flex: 1, width: '100%' }} >
             <TextInput
               onFocus={() => setDropdown(false)}

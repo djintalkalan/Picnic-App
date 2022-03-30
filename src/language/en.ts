@@ -305,4 +305,6 @@ export const en = {
   go_to_home: "Go to Home",
   username_required: "Username is required",
   file_to_large: "File too large. You can only upload files upto 25mb size",
+  radio_freq: "Radio frequency",
+  invalid_radio_freq: "Invalid radio frequency",
 }

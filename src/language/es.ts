@@ -304,4 +304,6 @@ export const es = {
     go_to_home: "",
     username_required: "",
     file_to_large: "",
+    radio_freq: "",
+    invalid_radio_freq: "",
 }
