@@ -6,7 +6,7 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import ImageLoader from 'custom-components/ImageLoader'
 import { EmailValidations } from 'custom-components/TextInput/rules'
 import { sub } from 'date-fns'
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
@@ -71,7 +71,7 @@ const ProfileScreen: FC<any> = (props) => {
         dispatch(getProfile())
     }, [])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setProfileData(userData)
     }, [userData])
 
