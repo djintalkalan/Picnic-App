@@ -355,7 +355,7 @@ const ChatItem = (props: IChatItem) => {
                         }} />
                     </TouchableOpacity>
                     <Text style={styles.likeBy} >
-                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                     </Text>
                 </View>}
         </View>
@@ -512,7 +512,7 @@ const ChatItem = (props: IChatItem) => {
                         }} />
                     </TouchableOpacity>
                     <Text style={styles.likeBy} >
-                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                     </Text>
                 </View>}
         </View>
@@ -582,7 +582,7 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                         {(is_message_liked_by_me || message_total_likes_count) ?
                             <Text style={[styles.likeBy, { flex: 0, marginLeft: scaler(5) }]} >
-                                {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                                {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                             </Text> : null}
                     </View>}
                 </View>
@@ -676,7 +676,7 @@ const ChatItem = (props: IChatItem) => {
                                 </TouchableOpacity>
                                 {(is_message_liked_by_me || message_total_likes_count) ?
                                     <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
-                                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(remainingNames?.length > 1 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
+                                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
                                     </Text> : null}
                             </View>}
                         </View>
