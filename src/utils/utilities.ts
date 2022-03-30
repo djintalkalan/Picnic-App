@@ -545,8 +545,8 @@ export const openLink = async (url: string, options: any = {}) => {
     }
 }
 
-export const getCityOnly = (city: string, state: string, country: string) => {
-    return city?.trim() || state?.trim() || country?.trim()
+export const getCityOnly = (city?: string, state?: string, country?: string) => {
+    return city?.trim() || state?.trim() || country?.trim() || ""
 }
 
 export const getQueryVariables = (url: string) => {

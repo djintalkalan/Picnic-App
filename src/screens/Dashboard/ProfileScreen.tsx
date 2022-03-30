@@ -126,6 +126,7 @@ const ProfileScreen: FC<any> = (props) => {
             first_name: data?.firstName,
             last_name: data?.lastName,
             username: data?.username,
+            // username:userData?.username?undefined: data?.username,
             dial_code: data?.phone_dialCode,
             phone_number: data?.phone,
             bio: data?.about,
@@ -217,6 +218,8 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         maxLength={30}
+                        onPress={userData?.username ? () => setError('username', { message: Language.contact_support_username }) : undefined}
+                        style={userData?.username ? { color: "rgba(6, 29, 50, 0.4)" } : undefined}
                         name={'username'}
                         control={control}
                         errors={errors}

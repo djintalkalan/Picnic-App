@@ -302,4 +302,6 @@ export const es = {
     group_not_available: "",
     please_create_a_group: "",
     go_to_home: "",
+    username_required: "",
+    file_to_large: "",
 }

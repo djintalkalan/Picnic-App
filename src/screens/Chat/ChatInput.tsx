@@ -8,7 +8,7 @@ import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, V
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu } from 'utils'
+import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu, _showErrorMessage } from 'utils'
 
 interface ChatInputProps {
     value?: string
@@ -78,7 +78,11 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
                 compressVideoPreset: mediaType == 'photo' ? undefined : "MediumQuality",
                 mediaType
             }).then((image) => {
-                onChooseImage && onChooseImage(image, mediaType)
+                if (image?.size && image.size < 25000000) {
+                    onChooseImage && onChooseImage(image, mediaType)
+                } else {
+                    _showErrorMessage(Language.file_to_large)
+                }
             }).catch(e => {
                 console.log(e)
             });

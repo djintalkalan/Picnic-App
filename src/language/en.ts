@@ -295,6 +295,7 @@ export const en = {
   group: "Group",
   contact_support_dob: 'Contact support to change your date of birth',
   contact_support_email: 'Contact support to change your email address',
+  contact_support_username: 'Contact support to change your username',
   refund_policy_not_available: "Refund policy not available",
   add_caption_here: "Add caption here",
   processing: "Processing",
@@ -302,4 +303,6 @@ export const en = {
   group_not_available: "Groups not available",
   please_create_a_group: "Please create a group before continuing",
   go_to_home: "Go to Home",
+  username_required: "Username is required",
+  file_to_large: "File too large. You can only upload files upto 25mb size",
 }

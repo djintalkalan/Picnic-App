@@ -96,6 +96,7 @@ const SignUp3: FC<any> = props => {
 
           <TextInput
             placeholder={Language.username}
+            required={Language.username_required}
             name={'username'}
             style={{ fontSize: scaler(13) }}
             control={control}

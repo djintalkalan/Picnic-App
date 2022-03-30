@@ -15,7 +15,7 @@ import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
@@ -86,7 +86,9 @@ const Home: FC = () => {
             NavigationService.navigate("SelectLocation")
           }}
           style={styles.settingButtonContainer} >
-          <Text numberOfLines={1} style={styles.locationText} >{selectedLocation?.otherData?.city} {selectedLocation?.otherData?.state ? (", " + selectedLocation?.otherData?.state) : ""}</Text>
+          <Text numberOfLines={1} style={styles.locationText} >
+            {getCityOnly(selectedLocation?.otherData?.city, selectedLocation?.otherData?.state, selectedLocation?.otherData?.country)}
+          </Text>
           <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
         </TouchableOpacity>
         <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {

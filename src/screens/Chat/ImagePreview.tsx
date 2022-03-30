@@ -77,7 +77,8 @@ const ImagePreview: FC<any> = (props) => {
                             // toggleResizeModeOnFullscreen={false}
                             // repeat
                             controls={false}// Store reference
-                            onBuffer={(d) => {
+                            showOnStart={false}
+                            onBuffer={(d: any) => {
                                 // console.log("d", d)
                             }}                // Callback when remote video is buffering
                             // Callback when video cannot be loaded
