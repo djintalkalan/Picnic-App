@@ -100,6 +100,7 @@ async function fetchApiData(urlString: string, body: any | null, methodType: Met
         }
         const source = CancelTokenConstructor.source();
         const promise = callApi(urlString, header, body, methodType, source.token)
+        //@ts-ignore
         promise[CANCEL] = () => source.cancel();
         return promise
     } catch (error: any) {

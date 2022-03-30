@@ -70,7 +70,9 @@ const SelectLocation: FC<any> = (props) => {
             setLocalLocation(currentLocation)
         } else {
             askPermission().then(() => {
-                setLocalLocation(Database.getStoredValue('currentLocation'))
+                setTimeout(() => {
+                    setLocalLocation(Database.getStoredValue('currentLocation'))
+                }, 0);
             })
         }
     }, [currentLocation, defaultLocation])
@@ -85,6 +87,7 @@ const SelectLocation: FC<any> = (props) => {
         const { coordinate } = e.nativeEvent
         setPosition(coordinate)
     }, [])
+    console.log("locallocation", localLocation);
 
     return (
         <View style={styles.container} >
