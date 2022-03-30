@@ -9,7 +9,7 @@ class RollbarService {
     private static mInstance: RollbarService
 
     static getInstance = () => {
-        if (!this.mInstance) {
+        if (!this.mInstance && !isDev) {
             this.mInstance = new RollbarService()
         }
         return this.mInstance

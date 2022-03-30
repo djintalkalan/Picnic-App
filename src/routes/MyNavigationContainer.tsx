@@ -138,9 +138,9 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
-    Rollbar.init();
+    Rollbar?.init();
     return () => {
-      Rollbar.exit();
+      Rollbar?.exit();
     }
   }, [isLogin])
 
