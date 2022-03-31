@@ -307,4 +307,12 @@ export const en = {
   file_to_large: "File too large. You can only upload files upto 25mb size",
   radio_freq: "Radio frequency",
   invalid_radio_freq: "Invalid radio frequency",
+  how_picnic_collects: "How Picnic collects and uses information",
+  version: "Version",
+  update_available: "Update Available",
+  must_update_app: "You must update application to continue",
+  update: "Update",
+  connection_error: "Connection Error",
+  internet_connection_seems_not: "Internet connection seems to be not working",
+  try_again: "Try again",
 }

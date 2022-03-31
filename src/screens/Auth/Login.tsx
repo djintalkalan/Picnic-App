@@ -7,11 +7,11 @@ import { EmailValidations } from 'custom-components/TextInput/rules'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, Linking, Platform, StyleSheet, View } from 'react-native'
+import { Image, Platform, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
-import { NavigationService, scaler } from 'utils'
+import { NavigationService, openLink, scaler } from 'utils'
 
 type LoginFormType = {
     email: string
@@ -123,7 +123,7 @@ const Login: FC = () => {
                             {Language.i_accept_the}
                             <Text
                                 onPress={() => {
-                                    Linking.openURL(config.TERMS_URL)
+                                    openLink(config.TERMS_URL)
                                 }}
                                 style={[styles.iAccept, { color: colors.colorPrimary }]}>
                                 {' '}
@@ -132,7 +132,7 @@ const Login: FC = () => {
                             {Language.and}{' '}
                             <Text
                                 onPress={() => {
-                                    Linking.openURL(config.PRIVACY_URL)
+                                    openLink(config.PRIVACY_URL)
                                 }}
                                 style={[styles.iAccept, { color: colors.colorPrimary }]}>
                                 {Language.privacy_policy}

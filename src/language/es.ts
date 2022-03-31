@@ -306,4 +306,12 @@ export const es = {
     file_to_large: "",
     radio_freq: "",
     invalid_radio_freq: "",
+    how_picnic_collects: "",
+    version: "",
+    update_available: "",
+    must_update_app: "",
+    update: "",
+    connection_error: "",
+    internet_connection_seems_not: "",
+    try_again: "",
 }
