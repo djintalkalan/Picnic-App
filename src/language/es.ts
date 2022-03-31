@@ -302,4 +302,12 @@ export const es = {
     group_not_available: "",
     please_create_a_group: "",
     go_to_home: "",
+    how_picnic_collects: "",
+    version: "",
+    update_available: "",
+    must_update_app: "",
+    update: "",
+    connection_error: "",
+    internet_connection_seems_not: "",
+    try_again: "",
 }

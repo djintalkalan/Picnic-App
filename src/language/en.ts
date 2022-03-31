@@ -302,4 +302,12 @@ export const en = {
   group_not_available: "Groups not available",
   please_create_a_group: "Please create a group before continuing",
   go_to_home: "Go to Home",
+  how_picnic_collects: "How Picnic collects and uses information",
+  version: "Version",
+  update_available: "Update Available",
+  must_update_app: "You must update application to continue",
+  update: "Update",
+  connection_error: "Connection Error",
+  internet_connection_seems_not: "Internet connection seems to be not working",
+  try_again: "Try again",
 }

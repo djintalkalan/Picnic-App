@@ -81,7 +81,8 @@ async function callApi(urlString: string, header: header, body: any, methodType:
             else {
                 DeviceEventEmitter.emit("STOP_LOADER_EVENT");
                 store.dispatch(setLoadingAction(false));
-                throw new Error("Request Failed");
+                // return e
+                throw e;
             }
         })
 }
@@ -435,4 +436,9 @@ export const _searchChat = async (body: any) => {
 export const _refreshLanguage = async (body?: any) => {
     console.log("---------- _refreshLanguage Api Call ---------------")
     return fetchApiData(config.API_URL + 'language/labels', null, "GET")
+}
+
+export const _getAppVersion = async () => {
+    console.log("---------- get app version Api Call ---------------")
+    return fetchApiData(config.API_URL + 'common/app-version', null, "GET")
 }

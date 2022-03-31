@@ -1,3 +1,4 @@
+import { config } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
@@ -5,13 +6,13 @@ import { BackButton } from 'custom-components/BackButton'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, InteractionManager, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
-import { getImageUrl, NavigationService, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 
@@ -160,6 +161,29 @@ const Settings: FC<any> = (props) => {
                         image={languageImageSource}
                         title={Language.change_language}
                     />
+                    <View style={{}} >
+                        <TouchableOpacity
+                            onPress={() => {
+                                openLink(config.PRIVACY_URL)
+                            }}
+                            style={[styles.buttonContainer, {}]} >
+                            <MaterialIcons color={colors.colorBlackText} size={scaler(25)} name={'policy'} />
+                            <View>
+                                <Text style={[styles.buttonText, { color: colors.colorBlackText, }]} >{Language.privacy_policy}</Text>
+                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Language.how_picnic_collects}</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity disabled
+                            style={[styles.buttonContainer, { paddingTop: 0 }]} >
+                            <MaterialIcons color={colors.colorBlackText} size={scaler(25)} name={'info-outline'} />
+                            <View>
+                                <Text style={[styles.buttonText, { color: colors.colorBlackText, }]} >{Language.version}</Text>
+                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
 
                     <SettingButton
                         onPress={() => {

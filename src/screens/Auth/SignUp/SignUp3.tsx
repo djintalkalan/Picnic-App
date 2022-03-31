@@ -12,12 +12,12 @@ import {
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, Linking, Platform, StyleSheet, View } from 'react-native';
+import { Image, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { scaler } from 'utils';
+import { openLink, scaler } from 'utils';
 
 type FormType = {
   username: string;
@@ -128,7 +128,7 @@ const SignUp3: FC<any> = props => {
               {Language.i_accept_the}
               <Text
                 onPress={() => {
-                  Linking.openURL(config.TERMS_URL)
+                  openLink(config.TERMS_URL)
                 }}
                 style={[styles.iAccept, { color: colors.colorPrimary }]}>
                 {' '}
@@ -137,7 +137,7 @@ const SignUp3: FC<any> = props => {
               {Language.and}{' '}
               <Text
                 onPress={() => {
-                  Linking.openURL(config.PRIVACY_URL)
+                  openLink(config.PRIVACY_URL)
                 }}
                 style={[styles.iAccept, { color: colors.colorPrimary }]}>
                 {Language.privacy_policy}
