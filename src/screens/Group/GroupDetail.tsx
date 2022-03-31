@@ -141,7 +141,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} />
 
-            <BottomButton
+            {/* <BottomButton
                 title={Language.leave_group}
                 icon={Images.ic_leave_group}
                 visibility={group?.is_group_member && !group?.is_admin}
@@ -163,7 +163,7 @@ const GroupDetail: FC<any> = (props) => {
                 visibility={!group?.is_group_member}
                 onPress={() => {
                     dispatch(joinGroup(group?._id))
-                }} />
+                }} /> */}
 
             {/* <BottomButton
                 title={Language.report_group}
@@ -186,7 +186,7 @@ const GroupDetail: FC<any> = (props) => {
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
                     <View style={{
                         alignItems: 'center',
-                        flex: 0.5,
+                        flex: 1,
                         backgroundColor: "#DFDFDF",
                         flexDirection: 'row',
                         justifyContent: 'flex-end'
@@ -234,13 +234,31 @@ const GroupDetail: FC<any> = (props) => {
                     </View>
                 </View>
 
-                <TouchableOpacity disabled activeOpacity={1} onPress={() => { }}
-                    style={[styles.buttonContainer, { borderBottomColor: "#DBDBDB", borderBottomWidth: scaler(1) }]} >
-                    {/* <Image style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} source={props?.image} /> */}
-                    <Text style={[styles.buttonText, { flex: 1, color: props?.titleColor ?? colors.colorBlackText, fontWeight: props?.fontWeight }]} >{Language.swipe_left_for_more}</Text>
-                    {/* <Image style={{ height: scaler(15), width: scaler(7), resizeMode: 'contain' }} source={Images.ic_right} /> */}
-
-                </TouchableOpacity>
+                {group?.is_group_member ? <BottomButton
+                    title={Language.leave_group}
+                    icon={Images.ic_leave_group}
+                    hideBottomBar
+                    visibility={group?.is_group_member && !group?.is_admin}
+                    onPress={() => {
+                        _showPopUpAlert({
+                            message: Language.are_you_sure_leave_group,
+                            onPressButton: () => {
+                                dispatch(leaveGroup(group?._id))
+                                _hidePopUpAlert()
+                            },
+                            buttonStyle: { backgroundColor: colors.colorRed },
+                            buttonText: Language.yes_leave
+                        })
+                    }} />
+                    :
+                    <BottomButton
+                        title={Language.join_now}
+                        icon={Images.ic_leave_group}
+                        hideBottomBar
+                        visibility={!group?.is_group_member}
+                        onPress={() => {
+                            dispatch(joinGroup(group?._id))
+                        }} />}
 
             </SwipeRow>}
         </View>
@@ -426,8 +444,9 @@ interface IBottomButton {
     icon: ImageSourcePropType
     visibility?: boolean
     onPress?: (e?: GestureResponderEvent) => void
+    hideBottomBar?: boolean
 }
-const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress }) => {
+const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false }) => {
 
     return visibility ? (
         <>
@@ -435,7 +454,7 @@ const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPre
                 <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
                 <Text style={{ color: colors.colorRed, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>
-            <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+            {!hideBottomBar && <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />}
         </>
     ) : null
 }
