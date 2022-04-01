@@ -5,7 +5,7 @@ import { Loader } from 'custom-components';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { VideoProvider } from 'custom-components/VideoProvider';
 import React, { FC, useCallback, useEffect } from 'react';
-import { Alert, Dimensions, Image, Linking, LogBox, Platform, StyleSheet, View } from 'react-native';
+import { Alert, Dimensions, Image, Linking, LogBox, Platform, StatusBar, StyleSheet, View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import FastImage from 'react-native-fast-image';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -85,7 +85,7 @@ const App: FC = () => {
     }, [])
 
     useEffect(() => {
-        RNBootSplash.hide();
+        RNBootSplash.hide({ fade: true });
         getVersion();
         setTimeout(() => {
             // setGif(false)
@@ -111,6 +111,7 @@ const App: FC = () => {
                 </VideoProvider>
             </LocationServiceProvider>
             {showGif ? <View style={{ flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: "#fbfbfb" }} >
+                <StatusBar backgroundColor={"#fbfbfb"} />
                 <Image style={{ height, width: width * 1.5, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_logo_gif} />
             </View> : null}
         </GestureHandlerRootView>

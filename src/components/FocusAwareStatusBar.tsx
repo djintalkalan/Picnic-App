@@ -1,5 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import { colors } from 'assets';
+import { useOtherValues } from 'database/Database';
 import * as React from 'react';
 import { ColorValue, StatusBar, StatusBarProps, StatusBarStyle, StyleSheet, View } from 'react-native';
 import { NativeSafeAreaViewProps, SafeAreaView } from 'react-native-safe-area-context';
@@ -14,8 +15,9 @@ interface SafeAreaViewWithStatusBarProps extends NativeSafeAreaViewProps {
 
 export const FocusAwareStatusBar: React.FC<StatusBarProps> = ({ backgroundColor = colors.colorWhite, barStyle = 'dark-content', ...rest }) => {
     const isFocused = useIsFocused();
+    const [showGif] = useOtherValues("showGif", false);
     return isFocused ? <StatusBar
-        backgroundColor={backgroundColor}
+        backgroundColor={showGif ? "#fbfbfb" : backgroundColor}
         barStyle={barStyle}
         {...rest} /> : null;
 }
