@@ -176,30 +176,7 @@ const CreateGroup: FC<any> = (props) => {
             errors={errors}
           />
 
-          <TextInput
-            onFocus={() => setDropdown(false)}
-            containerStyle={{ flex: 1, marginEnd: scaler(4), }}
-            placeholder={Language.radio_freq}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            keyboardType={'decimal-pad'}
-            name={'radio_frequency'}
-            rules={{
-              validate: (v: string) => {
-                v = v?.trim()
-                try {
-                  if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                    return Language.invalid_radio_freq
-                  }
-                }
-                catch (e) {
 
-                }
-              }
-            }}
-            control={control}
-            errors={errors}
-          />
 
           <View style={{ flex: 1, width: '100%' }} >
             <TextInput
@@ -255,6 +232,31 @@ const CreateGroup: FC<any> = (props) => {
                 setDropdown(false)
               }}
               required={Language.group_location_required}
+              control={control}
+              errors={errors}
+            />
+
+            <TextInput
+              onFocus={() => setDropdown(false)}
+              containerStyle={{ flex: 1, marginEnd: scaler(4), }}
+              placeholder={Language.radio_freq}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              keyboardType={'decimal-pad'}
+              name={'radio_frequency'}
+              rules={{
+                validate: (v: string) => {
+                  v = v?.trim()
+                  try {
+                    if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                      return Language.invalid_radio_freq
+                    }
+                  }
+                  catch (e) {
+
+                  }
+                }
+              }}
               control={control}
               errors={errors}
             />
