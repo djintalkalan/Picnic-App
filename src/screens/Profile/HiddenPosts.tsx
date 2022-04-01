@@ -56,7 +56,7 @@ const HiddenPosts: FC = () => {
 
 
     return (
-        <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }}>
+        <SafeAreaViewWithStatusBar edges={['top']} style={{ flex: 1, backgroundColor: colors.colorWhite }}>
             <MyHeader title={Language.hidden_posts} backEnabled />
             <View style={styles.container}>
                 <View style={{ flexShrink: 1 }}>
