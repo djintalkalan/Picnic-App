@@ -123,8 +123,8 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 allowFontScaling={false}
                                 value={value}
                                 multiline={multiline}
-                                autoCorrect={props?.autoCorrect ?? false}
-                                spellCheck={props?.autoCorrect ?? false}
+                                autoCorrect={multiline ? true : props?.autoCorrect ?? false}
+                                spellCheck={multiline ? true : props?.autoCorrect ?? props?.spellCheck ?? false}
                                 inputAccessoryViewID={multiline ? name : undefined}
                                 maxLength={limit ?? props?.maxLength}
                                 onFocus={(e) => {
@@ -201,6 +201,8 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                             onChangeText={text => {
                                 if (onChangeText) onChangeText(text);
                             }}
+                            autoCorrect={multiline ? true : props?.autoCorrect ?? false}
+                            spellCheck={multiline ? true : props?.autoCorrect ?? props?.spellCheck ?? false}
                         />
                         {icon && iconPosition == 'right' ?
                             <TouchableOpacity disabled={!onPressIcon} onPress={onPressIcon} activeOpacity={0.7} style={{ position: 'absolute', end: scaler(15), justifyContent: 'center' }} >
