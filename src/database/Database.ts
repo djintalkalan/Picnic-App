@@ -212,8 +212,17 @@ class Database {
         this.otherDataStorage.setString(key, value)
     }
 
+    public setOtherBool = (key: string, value: boolean) => {
+        this.otherDataStorage.setBool(key, value)
+    }
+
+
     public getOtherString = (key: string) => {
         return this.otherDataStorage.getString(key) ?? ""
+    }
+
+    public getOtherBool = (key: string) => {
+        return this.otherDataStorage.getBool(key) ?? ""
     }
 
     //@ts-ignore
@@ -278,6 +287,12 @@ export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
     }
     const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey(key), defaultValue);
     return [value, key == 'selectedLanguage' ? () => null : setValue];
+    // return [value, setValue];
+}
+
+export const useOtherValues = <T = any>(key: string, defaultValue?: T):
+    [T | null, (value: T | ((prevValue: T) => T)) => void] => {
+    return useMMKVStorage<T>(key, Database.getInstance().getStorageForKey("searchHomeText"), defaultValue);
     // return [value, setValue];
 }
 
