@@ -27,7 +27,7 @@
     "resetAndroid": "yarn env-s && cd android && ./gradlew clean && cd .. && yarn run android",
     "fix-sdk": "(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
     "postinstall": "node scripts/env-fix.js && yarn env-s && npx pod-install",
-    "kill-all": "pkill -f '.*GradleDaemon.*'",
+    "kill-all": "((pkill -f '.*GradleDaemon.*' ||./android/gradlew gradle --stop ) && (rm -rf ~/.gradle/daemon||true))",
     "w-tcp": "adb tcpip 5555",
     "w-co": "adb connect "
   },
