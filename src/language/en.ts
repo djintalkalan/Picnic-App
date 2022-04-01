@@ -315,4 +315,5 @@ export const en = {
   connection_error: "Connection Error",
   internet_connection_seems_not: "Internet connection seems to be not working",
   try_again: "Try again",
+  deleted_user: "Deleted user",
 }

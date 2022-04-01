@@ -80,8 +80,11 @@ const ChatItem = (props: IChatItem) => {
         message_liked_by_users,
         message_total_likes_count, isMuted } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
-    const { username, image: userImage, _id: userId, first_name, last_name } = user ?? {}
-    const display_name = getDisplayName(username, first_name, last_name)
+    const { display_name, userImage, userId } = useMemo(() => ({
+        display_name: getDisplayName(user),
+        userImage: user?.image,// user?.account_deleted == 1 ? null : user?.image,
+        userId: user?._id
+    }), [user])
     const [userData] = useDatabase<any>("userData");
 
     const is_message_liked_by_me = props?.is_message_liked_by_me || false
@@ -140,9 +143,12 @@ const ChatItem = (props: IChatItem) => {
         </TouchableOpacity>
     }, [JSON.stringify(props?.coordinates)])
 
-    const remainingNames = message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName(_?.username, _?.name)))?.reverse() ?? []
-
-    const myMessage = userId == userData?._id
+    const { remainingNames, myMessage } = useMemo(() => {
+        return {
+            myMessage: userId == userData?._id,
+            remainingNames: message_liked_by_users?.filter(_ => _?.user_id != userData?._id).map(_ => (getDisplayName({ ..._, first_name: _?.name })))?.reverse() ?? []
+        }
+    }, [message_liked_by_users, userData, userId])
 
     const _openChatActionMenu = useCallback(() => {
         let buttons: IBottomMenuButton[] = [{
@@ -257,8 +263,6 @@ const ChatItem = (props: IChatItem) => {
 
     const dispatch = useDispatch()
 
-    const { first_name: admin_f, last_name: admin_l, username: admin_u } = message_deleted_by_user || {}
-
     const _onCopy = useCallback((e: GestureResponderEvent) => {
         let gravity = 'BOTTOM'
         try {
@@ -298,7 +302,7 @@ const ChatItem = (props: IChatItem) => {
 
 
     if (is_system_message) {
-        const adminName = getDisplayName(admin_u, admin_f, admin_l)
+        const adminName = getDisplayName(message_deleted_by_user)
         let m = message
         m = insertAtIndex(m, m?.indexOf("{{display_name}}"))
         m = insertAtIndex(m, m?.indexOf("{{display_name}}"), "{{display_name}}"?.length)
@@ -526,7 +530,7 @@ const ChatItem = (props: IChatItem) => {
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
                     {parent_message ?
                         <View style={{ marginBottom: scaler(5) }} >
-                            <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
+                            <Text style={[styles.userName, { fontSize: scaler(12), color: "#656565", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator)}</Text>
                             <TouchableOpacity disabled style={[styles.messageContainer, {
                                 maxWidth: undefined, width: '100%',
                                 padding: parent_message?.message_type != "text" ? 0 : scaler(10),
@@ -622,7 +626,7 @@ const ChatItem = (props: IChatItem) => {
                         <View style={styles.messageContainer} >
                             {parent_message ?
                                 <View style={{ marginBottom: scaler(5), width: '100%' }} >
-                                    <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator?.username, parent_message?.parent_message_creator?.first_name, parent_message?.parent_message_creator?.last_name)}</Text>
+                                    <Text style={[styles.userName, { fontSize: scaler(12), color: "#fff", fontWeight: '400' }]} >{getDisplayName(parent_message?.parent_message_creator)}</Text>
                                     <TouchableOpacity disabled activeOpacity={1} onLongPress={_openChatActionMenu} style={[styles.myMessageContainer, {
                                         maxWidth: undefined, width: '100%',
                                         padding: parent_message?.message_type != "text" ? 0 : scaler(10),

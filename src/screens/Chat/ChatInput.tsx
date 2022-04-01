@@ -109,7 +109,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
             {repliedMessage ? <View style={[styles.inputContainer, { flexDirection: 'row', alignItems: 'flex-start' }]} >
                 <View style={{ flex: 1, paddingVertical: scaler(5) }} >
                     <Text style={styles.replied_to} >{Language.replied_to} <Text>
-                        {getDisplayName(repliedMessage?.user?.username, repliedMessage?.user?.first_name, repliedMessage?.user?.last_name)}
+                        {getDisplayName(repliedMessage?.user)}
                     </Text>
                     </Text>
                     {repliedMessage?.message_type == 'image' || repliedMessage?.message_type == 'file' ?

@@ -479,8 +479,18 @@ export const shareAppLink = async (name: string) => {
     share("Share " + name, link)
 }
 
-export const getDisplayName = (username: string, firstName: string, lastName?: string) => {
-    return username || ((firstName || "") + (lastName ? (" " + lastName) : ""))
+export const getDisplayName = (user: {
+    username: string,
+    first_name: string,
+    last_name: string,
+    account_deleted: number,
+    active: number,
+}, showRealName: boolean = false) => {
+    const { username, first_name, last_name, account_deleted = 0 } = user ?? {}
+    const realName = ((first_name || "") + (last_name ? (" " + last_name) : ""))
+    return (
+        // account_deleted ? Language?.getString("deleted_user") :
+        showRealName ? realName : (username || realName))
 }
 
 export const mergeMessageObjects = (chats: Array<any>, total_likes: Array<any>, like_by_me: Array<any>) => {

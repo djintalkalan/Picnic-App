@@ -10,7 +10,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { EMIT_EVENT_MEMBER_DELETE, SocketService } from 'socket';
 import Language, { useLanguage } from 'src/language/Language';
-import { getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { getDisplayName, getImageUrl, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 export const EventMemberList: FC<any> = (props) => {
     const dispatch = useDispatch();
@@ -76,7 +76,7 @@ export const EventMemberList: FC<any> = (props) => {
                     }) : undefined
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
-                title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
+                title={getDisplayName(item?.user, true)}
                 // customRightText={item?.is_admin ? Language?.admin : ""}
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_image_placeholder}

@@ -16,7 +16,6 @@ const insertAtIndex = (text: string, i: number) => {
 const ChatSearch: FC<any> = () => {
     const { chats, searchedText } = useSearchState()
     const _renderChatItem = useCallback(({ item, index }) => {
-        const { username, first_name, last_name } = item?.user
         // let regEx = new RegExp(searched?.trim(), "ig");
         // const message = item?.message.replace(regEx, ("**" + searched?.trim() + "**"))
         // item?.message?.toLowerCase()?.indexOf(searched);
@@ -26,7 +25,7 @@ const ChatSearch: FC<any> = () => {
 
         return (
             <View style={{ paddingHorizontal: scaler(24), paddingTop: scaler(17) }}>
-                <Text>{getDisplayName(username, first_name, last_name)}</Text>
+                <Text>{getDisplayName(item?.user)}</Text>
                 <View style={styles.msgContainer}>
                     <SingleBoldText fontWeight='600' style={{ fontSize: scaler(15), color: colors.colorWhite, fontWeight: '400' }} text={message} />
                 </View>

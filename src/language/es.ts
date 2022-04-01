@@ -314,4 +314,6 @@ export const es = {
     connection_error: "",
     internet_connection_seems_not: "",
     try_again: "",
+    deleted_user: "",
+
 }
