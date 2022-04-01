@@ -1,7 +1,6 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { config, _getAppVersion } from 'api';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
@@ -10,9 +9,7 @@ import { ImageZoom } from 'custom-components/ImageZoom';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
-import { Alert, DeviceEventEmitter, Linking, LogBox, Platform, Text, View } from 'react-native';
-import RNBootSplash from 'react-native-bootsplash';
-import RNExitApp from 'react-native-exit-app';
+import { DeviceEventEmitter, LogBox, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -56,10 +53,9 @@ import Scanner from 'screens/Scanner/Scanner';
 import SelectContacts from 'screens/SelectContacts';
 import SelectLocation from 'screens/SelectLocation';
 import Subscription from 'screens/Subscription/Subscription';
-import Semver from 'semver';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
-import Language, { useLanguage } from 'src/language/Language';
+import { useLanguage } from 'src/language/Language';
 import FirebaseNotification from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
@@ -167,58 +163,10 @@ const MyNavigationContainer = () => {
     }
   }, []);
 
-  const getVersion = useCallback(() => {
-    _getAppVersion().then(res => {
-      if (res && res.status == 200) {
-        const serverVersion = res?.data?.[Platform.OS]
-        const currentVersion = Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME
-        const isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
-        console.log("isUpdateAvailable", isUpdateAvailable);
-        if (isUpdateAvailable == 1) {
-          Alert.alert(Language.update_available, Language.must_update_app, [
-            {
-              text: Language.update, onPress: () => {
-                Platform.OS == 'android' ?
-                  Linking.openURL("http://play.google.com/store/apps/details?id=" + config.PACKAGE_NAME?.replace('test', 'app'))
-                  :
-                  Linking.openURL('itms-apps://apps.apple.com/us/app/picnic-groups/id1561013758')
-                RNExitApp.exitApp();
-              }
-            }
-          ], {
-            cancelable: false
-          }
-          )
-        }
-      }
-      RNBootSplash.hide()
-    }).catch((e: Error) => {
-      console.log("error", e);
-      if (e?.message?.includes("Network Error")) {
-        Alert.alert(Language.connection_error, Language.internet_connection_seems_not, [
-          {
-            text: Language.try_again, onPress: () => {
-              getVersion()
-            }
-          }
-        ], {
-          cancelable: false
-        }
-        )
-        return
-      }
-      RNBootSplash.hide()
-    })
-  }, [])
-
   return (
     <SafeAreaProvider>
       <NavigationContainer
         ref={NavigationService.setNavigationRef}
-        onReady={() => setTimeout(() => {
-          getVersion()
-          // RNBootSplash.hide({ fade: true })
-        }, 500)}
       >
         {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Object.entries({

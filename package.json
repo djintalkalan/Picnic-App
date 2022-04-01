@@ -104,7 +104,7 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.2.0",
     "react-native-video-controls": "^2.8.1",
-    "react-native-webview": "^11.17.0",
+    "react-native-webview": "11.17.2",
     "react-redux": "^7.2.4",
     "redux-persist": "^6.0.0",
     "redux-saga": "^1.1.3",

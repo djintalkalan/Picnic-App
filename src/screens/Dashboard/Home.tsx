@@ -79,7 +79,7 @@ const Home: FC = () => {
   // const b = "id2id2id2";
 
   return (
-    <SafeAreaViewWithStatusBar edges={['top']} >
+    <SafeAreaViewWithStatusBar translucent backgroundColor={'white'} edges={['top']} >
       <View style={styles.headerContainer} >
         <TouchableOpacity
           onPress={() => {

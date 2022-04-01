@@ -256,13 +256,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
 
     // Maps
-
     implementation(project(':react-native-maps')) {
         exclude group: 'com.google.android.gms', module: 'play-services-base'
         exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
     implementation 'com.google.android.gms:play-services-base:18.0.1'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
+
+    //gif
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
 
 
 }

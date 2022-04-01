@@ -3,7 +3,7 @@ import React, { createContext, FC, useCallback, useContext, useEffect, useRef, u
 import { Alert, InteractionManager, Platform } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
-import Database, { ILocation, useDatabase } from 'src/database/Database'
+import Database, { ILocation, useDatabase, useOtherValues } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
 
@@ -52,6 +52,8 @@ navigator.geolocation = Geolocation
 
 export const LocationServiceProvider: FC<any> = ({ children }) => {
     const [isLogin] = useDatabase<boolean>("isLogin")
+    const [showGif, setGif] = useOtherValues<boolean>("showGif", true);
+
     const askedForBlocked = useCallback(() => {
         Alert.alert(Language.permission_required, Language.app_needs_location_permission, [
             {
@@ -127,7 +129,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
     }, [isLogin])
 
     useEffect(() => {
-        if (isLogin) {
+        if (isLogin && !showGif) {
             const selectedLocation = Database.getStoredValue<ILocation | null>("selectedLocation")
             const currentLocation = Database.getStoredValue<ILocation | null>("currentLocation")
             if (currentLocation && currentLocation?.address?.main_text) {
@@ -142,7 +144,7 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                 askForChecking()
             })
         }
-    }, [isLogin])
+    }, [isLogin, showGif])
 
     const askForChecking = useCallback(() => {
         // const isLogin = Database.getStoredValue<boolean>("isLogin")
