@@ -5,6 +5,7 @@ import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actio
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
+import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ImageZoom } from 'custom-components/ImageZoom';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import * as React from 'react';
@@ -229,12 +230,14 @@ const DropdownAlertWithStatusBar = () => {
           break;
       }
       return (
-        <Card cornerRadius={scaler(40)} cardElevation={3} style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(4), borderRadius: scaler(40), backgroundColor: 'white', width: '90%', marginHorizontal: '5%' }} >
-          <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: scaler(20), height: scaler(40), width: scaler(40), backgroundColor: iconBackgroundColor }}>
-            {IconComponent}
-          </View>
-          <Text style={{ flex: 1, fontWeight: '500', fontSize: scaler(14), paddingHorizontal: scaler(10), color: '#061D32' }} >{data?.message}</Text>
-        </Card>
+        <SafeAreaViewWithStatusBar style={{ backgroundColor: 'transparent' }} translucent   >
+          <Card cornerRadius={scaler(40)} cardElevation={3} style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(4), borderRadius: scaler(40), backgroundColor: 'white', width: '90%', marginHorizontal: '5%' }} >
+            <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: scaler(20), height: scaler(40), width: scaler(40), backgroundColor: iconBackgroundColor }}>
+              {IconComponent}
+            </View>
+            <Text style={{ flex: 1, fontWeight: '500', fontSize: scaler(14), paddingHorizontal: scaler(10), color: '#061D32' }} >{data?.message}</Text>
+          </Card>
+        </SafeAreaViewWithStatusBar>
       )
     }}
     ref={ref => StaticHolder.setDropDown(ref)} />
