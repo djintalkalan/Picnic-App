@@ -23,6 +23,7 @@ type FormType = {
     lastName: string
     phone: string
     phone_dialCode: string
+    phone_countryCode: string
     city: string
     username: string
     email: string
@@ -89,7 +90,7 @@ const ProfileScreen: FC<any> = (props) => {
 
 
     const setProfileData = useCallback((userData: any) => {
-        const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_number, dob, bio, location } = userData
+        const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_country_code, phone_number, dob, bio, location } = userData
         console.log("userData", userData);
 
         locationRef.current = {
@@ -117,6 +118,7 @@ const ProfileScreen: FC<any> = (props) => {
         }
         setValue("phone", phone_number)
         setValue("phone_dialCode", dial_code)
+        setValue("phone_countryCode", phone_country_code)
         setValue("location", address)
     }, [])
 
@@ -128,6 +130,7 @@ const ProfileScreen: FC<any> = (props) => {
             username: data?.username,
             // username:userData?.username?undefined: data?.username,
             dial_code: data?.phone_dialCode,
+            phone_country_code: data?.phone_countryCode,
             phone_number: data?.phone,
             bio: data?.about,
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
@@ -284,9 +287,6 @@ const ProfileScreen: FC<any> = (props) => {
                         control={control}
                         errors={errors}
                     />
-                    {
-                        console.log("Default", Database.DefaultCountry)
-                    }
                     <PhoneInput
                         name={'phone'}
                         placeholder={Language.phone}

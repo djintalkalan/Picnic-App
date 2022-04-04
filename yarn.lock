@@ -3224,10 +3224,10 @@ dijkstrajs@^1.0.1:
   resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.2.tgz#2e48c0d3b825462afe75ab4ad5e829c8ece36257"
   integrity sha512-QV6PMaHTCNmKSeP6QoXhVTw9snc9VD8MulTT0Bd99Pacp4SS1cjcrYPgBPmibqKVtMJJfqC6XvOXgPMEEPH/fg==
 
-dj-intl-phone-input@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.1.1.tgz#59ae05f17392d452f753fac8fe062dd0c3121291"
-  integrity sha512-PhHmbWREJQGDwGJ8b+nUNSNREGwDpVeeVTSlFuOivHbnlXNdK9QcqPtgjSAZ7nm5s0D/1lCZ2mVdPy4JA4lM9g==
+dj-intl-phone-input@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.1.3.tgz#24b6dd024debd4b4016d207f96665060efaa901b"
+  integrity sha512-5wGT3pdvViOVcSUntlJIDgDjWWxs19LLydTbKuEFyLeeXiwmNXBFYDXYBLMqGiDD3YtLLvr++OMFD/gnieeOBA==
 
 dj-react-native-dropdown-alert@^0.0.3:
   version "0.0.3"
@@ -7019,7 +7019,7 @@ react-native-modal-datetime-picker@^13.0.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-pager-view@^5.4.9:
+react-native-pager-view@^5.4.15:
   version "5.4.15"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.4.15.tgz#075fef5ae4ba6ecc37e49b6c4a24770131a2a3cc"
   integrity sha512-5NssD840wFCuOL4B1ZRiRADvt+Vx2Dgify4SmAUqHXCx03yiGPnRWmFjYXyQeK6gq/8VY+gPGE4bTy9ahzBbDw==

@@ -305,7 +305,7 @@ export const en = {
   go_to_home: "Go to Home",
   username_required: "Username is required",
   file_to_large: "File too large. You can only upload files upto 25mb size",
-  radio_freq: "FM Frequency (optional)",
+  radio_freq: "FM frequency (optional)",
   invalid_radio_freq: "Invalid FM frequency",
   how_picnic_collects: "How Picnic collects and uses information",
   version: "Version",
