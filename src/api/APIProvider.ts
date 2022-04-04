@@ -2,6 +2,7 @@ import { config } from 'api';
 import { store } from 'app-store';
 import { setLoadingAction } from 'app-store/actions';
 import axios, { CancelToken, Method } from 'axios';
+import React, { MutableRefObject } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
 import { CANCEL } from 'redux-saga';
@@ -18,6 +19,8 @@ interface header {
 }
 
 let uploadRequest: Request
+
+export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
 const CancelTokenConstructor = axios.CancelToken;
 async function callApi(urlString: string, header: header, body: any, methodType: Method, cancelToken?: CancelToken) {
@@ -48,9 +51,12 @@ async function callApi(urlString: string, header: header, body: any, methodType:
             setTimeout(() => {
                 _showErrorMessage("A webpage is returned instead of a response")
             }, 500);
-        } else if (res.data?.status == config.UNAUTHORIZED_ERROR_CODE) {
-            DeviceEventEmitter.emit("TOKEN_EXPIRED")
-            _showErrorMessage("Invalid Session. Please Login Again")
+        } else if (res?.data?.status == 401) {
+            if (!TOKEN_EXPIRED.current) {
+                TOKEN_EXPIRED.current = true
+                DeviceEventEmitter.emit("TOKEN_EXPIRED")
+                _showErrorMessage(res?.data?.message)
+            }
         }
         else
             return res.data
@@ -71,9 +77,14 @@ async function callApi(urlString: string, header: header, body: any, methodType:
                     }, 500);
                 }
                 else {
-                    if (e.response.data?.status == config.UNAUTHORIZED_ERROR_CODE) {
-                        DeviceEventEmitter.emit("TOKEN_EXPIRED")
-                        _showErrorMessage("Invalid Session. Please Login Again")
+                    if (e.response.data?.status == 401) {
+                        console.log("res.data.response", e.response.data);
+
+                        if (!TOKEN_EXPIRED.current) {
+                            TOKEN_EXPIRED.current = true
+                            DeviceEventEmitter.emit("TOKEN_EXPIRED")
+                            _showErrorMessage(e?.response?.data?.message)
+                        }
                     }
                     return e.response.data
                 }

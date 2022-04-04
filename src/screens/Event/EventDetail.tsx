@@ -60,7 +60,7 @@ const EventDetail: FC<any> = (props) => {
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
             message: Language.are_you_sure_cancel_reservation + '?',
-            customView: () => <TouchableOpacity
+            customView: !event?.is_free_event ? () => <TouchableOpacity
                 onPress={() => {
                     event?.event_refund_policy ?
                         _showPopUpAlert({
@@ -76,7 +76,7 @@ const EventDetail: FC<any> = (props) => {
                         : _showErrorMessage(Language.refund_policy_not_available)
                 }}>
                 <Text style={{ fontSize: scaler(15), color: colors.colorPrimary }}>{Language?.read_refund_policy}</Text>
-            </TouchableOpacity>,
+            </TouchableOpacity> : undefined,
             onPressButton: () => {
                 dispatch(leaveEvent(event?._id))
                 _hidePopUpAlert()

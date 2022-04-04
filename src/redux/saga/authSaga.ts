@@ -13,6 +13,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
+            ApiProvider.TOKEN_EXPIRED.current = false
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
             Database.setMultipleValues({
@@ -29,11 +30,6 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     catch (error) {
         console.log("Catch Error", error);
         yield put(setLoadingAction(false));
-        Database.setMultipleValues({
-            authToken: "abc",
-            userData: { _id: "As" },
-            isLogin: true
-        })
     }
 }
 
@@ -127,6 +123,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             _showSuccessMessage(res?.message);
             const { access_token, notification_settings, location, ...userData } = res?.data
+            ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
                 authToken: access_token,
                 userData,
@@ -200,7 +197,6 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
             userData: null,
             authToken: '',
         })
-
         yield put(setAllGroups([]))
         yield put(setAllEvents([]))
 

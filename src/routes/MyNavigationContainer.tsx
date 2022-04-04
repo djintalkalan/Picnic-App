@@ -62,7 +62,6 @@ import FirebaseNotification from 'src/notification/FirebaseNotification';
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
 
-export let TOKEN_EXPIRED = false;
 const NativeStack = createNativeStackNavigator();
 
 const commonScreens = {};
@@ -157,11 +156,7 @@ const MyNavigationContainer = () => {
   }, []);
 
   const tokenExpiredLocal = useCallback(() => {
-    if (!TOKEN_EXPIRED) {
-      TOKEN_EXPIRED = true;
-      console.log('Logout Dispatched');
-      dispatch(tokenExpired());
-    }
+    dispatch(tokenExpired());
   }, []);
 
   return (
