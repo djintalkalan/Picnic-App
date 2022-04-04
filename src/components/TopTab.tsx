@@ -28,7 +28,7 @@ export const TopTab = (props: TopTabProps) => {
     const { tabs, iconPosition = 'left', swipeEnabled = true, disableTitleColor = colors.colorGreyInactive, activeTitleColor = colors.colorBlackText } = props
     // useScrollToTop(tabs[0].initialParams?.scrollRef);
     return (
-        <Tab.Navigator backBehavior={'none'} keyboardDismissMode={'auto'}
+        <Tab.Navigator sceneContainerStyle={{ overflow: 'visible' }} backBehavior={'none'} keyboardDismissMode={'auto'}
             tabBar={(tabBarProps: any) => <MyTabBar {...tabBarProps} onChangeIndex={props?.onChangeIndex} />}
             screenOptions={{ tabBarAllowFontScaling: false, swipeEnabled }} >
             {tabs && tabs.map((tab, index) => {

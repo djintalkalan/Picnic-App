@@ -5,13 +5,13 @@ import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actio
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
-import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ImageZoom } from 'custom-components/ImageZoom';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { DeviceEventEmitter, LogBox, Text, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -203,40 +203,52 @@ const MyNavigationContainer = () => {
 };
 
 const successImageSrc = Ionicons.getImageSourceSync("ios-checkmark-circle-outline", 50, colors.colorWhite)
-
 const DropdownAlertWithStatusBar = () => {
-  return <DropdownAlert
-    successImageSrc={successImageSrc}
-    updateStatusBar={false}
-    customAlert={(data) => {
-      // console.log("data", data)
-      let IconComponent = <Feather color={colors.colorWhite} size={scaler(22)} name={'check'} />
-      let iconBackgroundColor = colors.colorPrimary
+  const [padding, setPadding] = React.useState(0)
+  const { top } = useSafeAreaInsets();
+  React.useLayoutEffect(() => {
+    console.log("padding", top);
+    if (!padding) {
+      setPadding(top)
+    }
+  }, [top, padding])
+  return <>
+    <DropdownAlert
+      wrapperStyle={{ paddingTop: padding }}
+      successImageSrc={successImageSrc}
+      updateStatusBar={false}
+      customAlert={(data) => {
+        // console.log("data", data)
+        let IconComponent = <Feather color={colors.colorWhite} size={scaler(22)} name={'check'} />
+        let iconBackgroundColor = colors.colorPrimary
 
-      switch (data?.type) {
-        case "error":
-          IconComponent = <AntDesign color={colors.colorWhite} size={scaler(22)} name={'close'} />
-          iconBackgroundColor = "#cc3232"
-          break;
+        switch (data?.type) {
+          case "error":
+            IconComponent = <AntDesign color={colors.colorWhite} size={scaler(22)} name={'close'} />
+            iconBackgroundColor = "#cc3232"
+            break;
 
-        case "info":
-        case "warn":
-          IconComponent = <Ionicons color={colors.colorWhite} size={scaler(22)} name={'information'} />
-          iconBackgroundColor = "#cd853f"
-          break;
-      }
-      return (
-        <SafeAreaViewWithStatusBar style={{ backgroundColor: 'transparent' }} translucent   >
-          <Card cornerRadius={scaler(40)} cardElevation={3} style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(4), borderRadius: scaler(40), backgroundColor: 'white', width: '90%', marginHorizontal: '5%' }} >
-            <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: scaler(20), height: scaler(40), width: scaler(40), backgroundColor: iconBackgroundColor }}>
-              {IconComponent}
-            </View>
-            <Text style={{ flex: 1, fontWeight: '500', fontSize: scaler(14), paddingHorizontal: scaler(10), color: '#061D32' }} >{data?.message}</Text>
-          </Card>
-        </SafeAreaViewWithStatusBar>
-      )
-    }}
-    ref={ref => StaticHolder.setDropDown(ref)} />
+          case "info":
+          case "warn":
+            IconComponent = <Ionicons color={colors.colorWhite} size={scaler(22)} name={'information'} />
+            iconBackgroundColor = "#cd853f"
+            break;
+        }
+        return (
+          <>
+            <FocusAwareStatusBar backgroundColor={'transparent'} />
+            <Card cornerRadius={scaler(40)} cardElevation={3} style={{ flexDirection: 'row', alignItems: 'center', padding: scaler(4), borderRadius: scaler(40), backgroundColor: 'white', width: '90%', marginHorizontal: '5%' }} >
+              <View style={{ alignItems: 'center', justifyContent: 'center', borderRadius: scaler(20), height: scaler(40), width: scaler(40), backgroundColor: iconBackgroundColor }}>
+                {IconComponent}
+              </View>
+              <Text style={{ flex: 1, fontWeight: '500', fontSize: scaler(14), paddingHorizontal: scaler(10), color: '#061D32' }} >{data?.message}</Text>
+            </Card>
+          </>
+
+        )
+      }}
+      ref={ref => StaticHolder.setDropDown(ref)} />
+  </>
 }
 
 

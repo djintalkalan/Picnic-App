@@ -77,6 +77,7 @@ export const useKeyboardService = (): KeyboardValues => {
         return () => {
             willShow?.remove()
             willHide?.remove()
+            dispatch({ type: "SET_KEYBOARD", payload: false })
         }
     }, [isFocused])
 

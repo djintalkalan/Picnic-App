@@ -119,7 +119,7 @@ const EventDetail: FC<any> = (props) => {
     }, [event])
 
     if (!event) {
-        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} style={styles.container}>
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} style={styles.container}>
             <View style={styles.placeholder}>
                 <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
             </View>
@@ -127,7 +127,7 @@ const EventDetail: FC<any> = (props) => {
         </SafeAreaViewWithStatusBar>
     }
     return (
-        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >
+        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader

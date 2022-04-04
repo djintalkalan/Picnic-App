@@ -53,13 +53,13 @@ const App: FC = () => {
                             cancelable: false
                         }
                         )
-                    }, 3000);
+                    }, __DEV__ ? 0 : 3000);
                     return
                 }
             }
             setTimeout(() => {
                 setGif(false)
-            }, 3000);
+            }, __DEV__ ? 0 : 3000);
         }).catch((e: Error) => {
             console.log("error", e);
             if (e?.message?.includes("Network Error")) {
@@ -80,7 +80,7 @@ const App: FC = () => {
             }
             setTimeout(() => {
                 setGif(false)
-            }, 3000);
+            }, __DEV__ ? 0 : 3000);
         })
     }, [])
 

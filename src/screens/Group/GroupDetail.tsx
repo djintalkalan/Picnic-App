@@ -312,7 +312,7 @@ const GroupDetail: FC<any> = (props) => {
 
     // if (group)
     if (!group) {
-        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} style={styles.container}>
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} style={styles.container}>
             <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                 <Image source={Images.ic_group_placeholder} />
             </View>
@@ -320,7 +320,7 @@ const GroupDetail: FC<any> = (props) => {
         </SafeAreaViewWithStatusBar>
     }
     return (
-        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['bottom']} >
+        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
 
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>

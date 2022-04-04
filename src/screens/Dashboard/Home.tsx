@@ -15,7 +15,7 @@ import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink, _showSuccessMessage } from 'utils'
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
@@ -72,6 +72,8 @@ const Home: FC = () => {
   }, [])
 
   const onPressSetting = useCallback(() => {
+    _showSuccessMessage("This is message")
+    return
     NavigationService.navigate("Settings")
   }, [])
 

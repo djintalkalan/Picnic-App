@@ -63,7 +63,7 @@ export const es = {
     city: "Ciudad",
     phoneNumber: "Número de teléfono",
     submit: "Enviar",
-    and: "e",
+    and: "y",
     enter_verification_code: "Ingresar código de verificación",
     enter_otp_sent: "Ingresa el código de verificación que se envió a tu correo electrónico",
     location: "Ubicación",
