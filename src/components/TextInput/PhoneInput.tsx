@@ -123,6 +123,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                 }} >
                 <Controller control={control}
                     name={name + "_dialCode"}
+                    //@ts-ignore
                     render={(data) => {
                         return null
                     }}
@@ -130,6 +131,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
 
                 <Controller control={control}
                     name={name + "_countryCode"}
+                    //@ts-ignore
                     render={(data) => {
                         return null
                     }}
@@ -184,6 +186,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                 filterText={props.filterText}
                                 filterInputStyle={{ fontFamily: Fonts.regular }}
                                 modalCountryItemCountryNameStyle={{ fontFamily: Fonts.regular }}
+                                //@ts-ignore
                                 modalCountryItemCountryDialCodeStyle={{ fontFamily: Fonts.regular }}
                                 closeText={'Close'}
                                 closeTextStyle={{ fontFamily: Fonts.regular }}
