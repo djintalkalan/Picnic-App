@@ -62,6 +62,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
         unmaskedPhoneNumber: "",
         phoneNumber: "",
         isVerified: true,
+        // @ts-ignore
         selectedCountry: props?.countryCode ? {
             code: props?.countryCode
         } : null
