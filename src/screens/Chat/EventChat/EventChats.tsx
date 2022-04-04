@@ -65,7 +65,7 @@ const EventChats: FC<any> = (props) => {
 
 
     const _onPressSend = useCallback(() => {
-        if (textMessageRef?.current) {
+        if (textMessageRef?.current?.trim()) {
             SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
                 resource_id: activeEvent?._id,
                 parent_id: repliedMessage?._id,

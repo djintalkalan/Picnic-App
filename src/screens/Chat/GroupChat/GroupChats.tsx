@@ -60,7 +60,7 @@ export const GroupChats: FC<any> = (props) => {
     }, [socketConnected])
 
     const _onPressSend = useCallback(() => {
-        if (textMessageRef?.current) {
+        if (textMessageRef?.current?.trim()) {
             SocketService.emit(repliedMessage ? EMIT_GROUP_REPLY : EMIT_SEND_GROUP_MESSAGE, {
                 resource_id: activeGroup?._id,
                 parent_id: repliedMessage?._id,
