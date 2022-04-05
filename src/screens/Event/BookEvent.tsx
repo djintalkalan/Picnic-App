@@ -129,8 +129,14 @@ const BookEvent: FC = (props: any) => {
                     {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
                         undefined)}
                 </Text>
+
                 {!event?.is_free_event ?
                     <>
+                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /><Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                            {'Applicable tax'}
+                        </Text><Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                            {noOfTickets ? getSymbol(event?.event_currency) + parseInt(noOfTickets) * 9 : getSymbol(event?.event_currency) + 0}
+                        </Text>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}

@@ -219,7 +219,7 @@ export const en = {
   confirm_reservation: 'Confirm reservation',
   refreshment: 'Refreshment',
   how_many_seats: 'How many seats',
-  available_seats: 'Available seats',
+  available_seats: 'Available spaces',
   read_refund_policy: 'Read refund policy',
   number_of_seats_is_required: 'Number of seats is required',
   pay: 'Pay',
@@ -316,4 +316,10 @@ export const en = {
   internet_connection_seems_not: "Internet connection seems to be not working",
   try_again: "Try again",
   deleted_user: "Deleted user",
+  enter_the_tax_rate: 'Enter the tax rate (if applicable)',
+  tax_rate_limit: 'Applicable tax rate must be in between 0 to 29.9%',
+  tax_rate: 'Tax rate',
+  tax_amount: 'Applicable tax amount',
+  applicable_tax: 'Applicable tax',
+
 }
