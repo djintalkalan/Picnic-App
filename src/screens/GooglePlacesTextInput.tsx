@@ -101,14 +101,14 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         enablePoweredByContainer={false}
                         enableHighAccuracyLocation={true}
                         nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                        GooglePlacesDetailsQuery={{
-                            types: '(cities)',
-                        }}
-                        filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
+                        // GooglePlacesDetailsQuery={{
+                        //     types: '(cities)',
+                        // }}
+                        // filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
                         query={{
                             key: config.GOOGLE_MAP_API_KEY,
                             language: 'en',
-                            types: '(cities)',
+                            // types: '(cities)',
                         }}
                         onPress={_onPress}
                         renderRow={_renderRow}

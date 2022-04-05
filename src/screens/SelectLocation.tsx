@@ -193,8 +193,10 @@ const SelectLocation: FC<any> = (props) => {
                     }} >
                         <Image style={{ height: scaler(35), width: scaler(35) }} source={Images.ic_location} />
                         <View style={{ marginLeft: scaler(10), flex: 1 }}>
-                            <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
-                            <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text>
+                            {/* <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text> */}
+                            <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
                         </View>
                     </View>
 
