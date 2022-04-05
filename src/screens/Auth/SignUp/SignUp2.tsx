@@ -32,8 +32,8 @@ const SignUp2: FC<any> = (props) => {
     const onSubmit = useCallback(() => handleSubmit(data => {
         const { firstName, lastName } = data
         NavigationService.navigate("SignUp3", {
-            first_name: firstName,
-            last_name: lastName,
+            first_name: firstName?.trim(),
+            last_name: lastName?.trim(),
             dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             ...props?.route?.params,
         })

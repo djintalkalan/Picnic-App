@@ -52,9 +52,9 @@ const SignUp3: FC<any> = props => {
         console.log(data);
         dispatch(
           doSignUp({
-            username: data?.username,
+            username: data?.username?.trim(),
             dial_code: data?.phone ? data?.phone_dialCode : '',
-            phone_number: data?.phone,
+            phone_number: data?.phone?.trim(),
             register_platform: Platform.OS,
             ...props.route?.params,
           }),

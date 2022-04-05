@@ -14,7 +14,7 @@ import {
 } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ILocation } from 'database';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Image,
@@ -40,12 +40,10 @@ type FormType = {
   aboutEvent: string;
 };
 
-
-
 const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
   const [eventImage, setEventImage] = useState<any>();
-  const locationRef = useRef<ILocation>(__DEV__ ? defaultLocation : null);
+  const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);

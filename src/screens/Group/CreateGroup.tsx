@@ -93,8 +93,8 @@ const CreateGroup: FC<any> = (props) => {
       _id: group?._id,
       name: data?.name?.trim(),
       category: data?.purpose?.toLowerCase(),
-      short_description: data?.about,
-      details: data?.about,
+      short_description: data?.about?.trim(),
+      details: data?.about?.trim(),
       radio_frequency: data?.radio_frequency,
       image: uploadedImage.current || undefined,
       address: address?.main_text + (address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text,
@@ -138,7 +138,6 @@ const CreateGroup: FC<any> = (props) => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
-
       <MyHeader title={group ? Language.update_group : Language.create_group} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
         <View>

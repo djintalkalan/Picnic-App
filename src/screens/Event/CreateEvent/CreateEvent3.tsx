@@ -30,6 +30,8 @@ const CreateEvent3: FC<any> = props => {
     control,
     handleSubmit,
     getValues,
+    setValue,
+    setError,
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
@@ -41,6 +43,10 @@ const CreateEvent3: FC<any> = props => {
 
   const onSubmit = useCallback(
     (data) => {
+      if (data?.policy?.trim()) {
+        setError("policy", { message: Language.write_refund_policy })
+        return
+      }
       if (!eventDetail?.image && eventDetail?.eventImage?.path) {
         dispatch(
           uploadFile({
@@ -67,10 +73,10 @@ const CreateEvent3: FC<any> = props => {
     const { startTime, endTime, eventDate } = eventDetail?.eventDateTime
     let payload = {
       image: eventDetail?.image,
-      name: eventDetail?.eventName,
+      name: eventDetail?.eventName?.trim(),
       group_id: eventDetail?.myGroup?.id,
       is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
-      short_description: eventDetail?.aboutEvent,
+      short_description: eventDetail?.aboutEvent?.trim(),
       address: address?.main_text + ', ' + address?.secondary_text,
       city: otherData?.city,
       state: otherData?.state,
@@ -86,11 +92,11 @@ const CreateEvent3: FC<any> = props => {
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_start_time: dateFormat(startTime, "HH:mm:ss"),
       event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-      details: eventDetail?.additionalInfo,
+      details: eventDetail?.additionalInfo?.trim(),
       event_currency: eventDetail?.currency.toLowerCase(),
       payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
-      payment_email: data?.paypalId,
-      event_refund_policy: data?.policy
+      payment_email: data?.paypalId?.trim(),
+      event_refund_policy: data?.policy?.trim()
     };
     dispatch(
       createEvent({

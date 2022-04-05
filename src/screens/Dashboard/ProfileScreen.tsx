@@ -29,7 +29,6 @@ type FormType = {
     email: string
     dob: string
     location: string
-
 }
 
 const ProfileScreen: FC<any> = (props) => {
@@ -125,14 +124,14 @@ const ProfileScreen: FC<any> = (props) => {
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {
         const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
         dispatch(updateProfile({
-            first_name: data?.firstName,
-            last_name: data?.lastName,
-            username: data?.username,
+            first_name: data?.firstName?.trim(),
+            last_name: data?.lastName?.trim(),
+            username: data?.username?.trim(),
             // username:userData?.username?undefined: data?.username,
             dial_code: data?.phone_dialCode,
             phone_country_code: data?.phone_countryCode,
             phone_number: data?.phone,
-            bio: data?.about,
+            bio: data?.about?.trim(),
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             image: imageFile,
             address: latitude ? (address?.main_text ? (address?.main_text + ", ") : "") + address?.secondary_text : "",
