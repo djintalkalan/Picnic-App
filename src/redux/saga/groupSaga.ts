@@ -92,7 +92,7 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
     const { groupId, eventId, ...rest } = payload?.data
     const { resource_type }: { resource_type: IResourceType } = rest
     yield put(setLoadingAction(true));
-    console.log("DATA", payload);
+    console.log("DATA", payload?.data);
 
     try {
         let res = yield call(ApiProvider._muteUnmuteResource, rest);

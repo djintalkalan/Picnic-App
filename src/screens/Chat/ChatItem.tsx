@@ -105,8 +105,7 @@ const ChatItem = (props: IChatItem) => {
                 setLink("")
             }
         }
-    }, [])
-
+    }, [_id])
 
     const renderMap = useMemo(() => {
         if (!props?.coordinates?.lat || !props?.coordinates?.lng) {
@@ -219,7 +218,6 @@ const ChatItem = (props: IChatItem) => {
                             resource_id: _id,
                             resource_type: 'message',
                             is_mute: '0',
-                            [isGroupType ? "groupId" : "eventId"]: group?._id
                         },
                         onSuccess: (res) => {
                             // setResources(_ => _.filter(_ => _._id != item?._id))
@@ -259,7 +257,7 @@ const ChatItem = (props: IChatItem) => {
             textStyle: { color: colors.colorRed }
         }))
         _showBottomMenu({ buttons: buttons })
-    }, [])
+    }, [_id])
 
     const dispatch = useDispatch()
 

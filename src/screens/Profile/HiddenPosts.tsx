@@ -17,12 +17,9 @@ const initialPaginationState: IPaginationState = {
 }
 const HiddenPosts: FC = () => {
     const flatListRef = useRef<FlatList>(null);
-    const { isLoading, mutedPosts } = useSelector((state: RootState) => {
-        return ({
-            isLoading: state.isLoading,
-            mutedPosts: state?.privacyData?.mutedPosts,
-        })
-    }, shallowEqual)
+    const isLoading = useSelector<RootState, boolean>(_ => _?.isLoading, shallowEqual)
+    const mutedPosts = useSelector<RootState, Array<any>>(_ => _?.privacyData?.mutedPosts)
+
     const paginationState = useRef<IPaginationState>(initialPaginationState)
     const dispatch = useDispatch();
 
@@ -45,7 +42,6 @@ const HiddenPosts: FC = () => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
-
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
             <ChatItem
@@ -59,7 +55,7 @@ const HiddenPosts: FC = () => {
         <SafeAreaViewWithStatusBar edges={['top']} style={{ flex: 1, backgroundColor: colors.colorWhite }}>
             <MyHeader title={Language.hidden_posts} backEnabled />
             <View style={styles.container}>
-                <View style={{ flexShrink: 1 }}>
+                <View style={{ flex: 1 }}>
                     <FlatList
                         refreshControl={<RefreshControl
                             refreshing={false}
