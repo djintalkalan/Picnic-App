@@ -26,18 +26,28 @@
     "cSpell.words": [
         "authorise",
         "bootsplash",
+        "cardview",
         "codegen",
         "datetime",
+        "datetimepicker",
+        "deintegrate",
+        "flyerhq",
+        "geolocation",
         "gradlew",
+        "inappbrowser",
         "linkify",
         "linkifyjs",
         "netinfo",
         "notifee",
         "Passcode",
         "picnicapp",
+        "pkill",
+        "Podfile",
         "qrcode",
         "Recents",
         "rnuc",
-        "rollbar"
+        "rollbar",
+        "tcpip",
+        "twotalltotems"
     ]
 }
