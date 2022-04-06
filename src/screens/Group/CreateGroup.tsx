@@ -1,18 +1,25 @@
+import { Picker } from '@react-native-picker/picker'
 import { createGroup, uploadFile } from 'app-store/actions'
-import { colors, Images } from 'assets'
+import { colors, Fonts, Images } from 'assets'
 import { Button, defaultLocation, FixedDropdown, MyHeader, TextInput, useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
-import { capitalize } from 'lodash'
+import { capitalize, round } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, Keyboard, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Keyboard, Platform, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler } from 'utils'
+import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _showPopUpAlert } from 'utils'
 
+let n = 87.5
+const frequencies: Array<string> = []
+while (n <= 108.1) {
+  frequencies.push(n.toFixed(1))
+  n = round(n + 0.1, 1)
+}
 
 type FormType = {
   name: string
@@ -41,6 +48,8 @@ const CreateGroup: FC<any> = (props) => {
     mode: 'onChange'
   })
   const keyboardValues = useKeyboardService()
+
+  const pickerRef = useRef<Picker<string>>(null)
 
   const onSubmit = useCallback(() => handleSubmit(data => {
     if (!uploadedImage.current && profileImage?.path) {
@@ -134,6 +143,30 @@ const CreateGroup: FC<any> = (props) => {
       });
     }, 200);
 
+  }, [])
+
+  const CustomView = useCallback((props) => {
+    const [v, setV] = useState(getValues("radio_frequency")?.toString() || frequencies[0])
+    useEffect(() => {
+      setValue("radio_frequency", v)
+    }, [v])
+    return <View style={[{ width: '100%', }, props?.hidden ? { width: 0, height: 0, position: 'absolute', zIndex: -10 } : {}]} >
+      <Picker
+        ref={pickerRef}
+        style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }}
+        selectedValue={v}
+        prompt={Language.radio_freq}
+        mode={'dialog'}
+
+        onValueChange={(value) => {
+          setV(value)
+        }}
+      >
+        {frequencies.map((_, i) => {
+          return <Picker.Item style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }} key={i} value={_} label={_} />
+        })}
+      </Picker>
+    </View>
   }, [])
 
   return (
@@ -235,8 +268,22 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
 
+
+            {Platform.OS == 'android' &&
+              <CustomView hidden={true} />}
+
             <TextInput
               onFocus={() => setDropdown(false)}
+              onPress={() => {
+                if (Platform.OS == 'ios')
+                  _showPopUpAlert({
+                    title: Language.radio_freq,
+                    customView: CustomView,
+                  })
+                else {
+                  pickerRef?.current?.focus();
+                }
+              }}
               containerStyle={{ flex: 1, marginEnd: scaler(4), }}
               placeholder={Language.radio_freq}
               borderColor={colors.colorTextInputBackground}
