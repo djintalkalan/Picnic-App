@@ -105,7 +105,7 @@ const ChatItem = (props: IChatItem) => {
                 setLink("")
             }
         }
-    }, [_id])
+    }, [])
 
     const renderMap = useMemo(() => {
         if (!props?.coordinates?.lat || !props?.coordinates?.lng) {
@@ -257,7 +257,7 @@ const ChatItem = (props: IChatItem) => {
             textStyle: { color: colors.colorRed }
         }))
         _showBottomMenu({ buttons: buttons })
-    }, [_id])
+    }, [])
 
     const dispatch = useDispatch()
 

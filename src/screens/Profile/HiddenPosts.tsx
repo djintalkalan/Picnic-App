@@ -67,7 +67,7 @@ const HiddenPosts: FC = () => {
                         keyboardShouldPersistTaps={'handled'}
                         data={mutedPosts}
                         extraData={mutedPosts?.length}
-                        keyExtractor={_ => _._id}
+                        keyExtractor={_ => _.muted_message_id}
                         bounces={false}
                         ref={flatListRef}
                         // inverted

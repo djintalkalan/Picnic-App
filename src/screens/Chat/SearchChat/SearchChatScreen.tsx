@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native'
 import { _getMyEvents, _searchChat } from 'api'
 import { RootState } from 'app-store'
 import { setLoadingAction } from 'app-store/actions'
@@ -17,13 +18,13 @@ import { SearchProvider, useSearchState } from './SearchProvider'
 const SearchChatScreen: FC<any> = (props) => {
     const dispatch = useDispatch()
     const [currentTabIndex, setCurrentTabIndex] = useState(0)
+    const [isFocused, setFocused] = useState(false);
 
-    const { setChats, setEvents, searchedText, setSearchedText } = useSearchState()
+    const { setChats = () => (null), setEvents = () => (null), searchedText, setSearchedText = () => (null) } = useSearchState()
 
     const { activeGroup } = useSelector((state: RootState) => {
         return {
             activeGroup: props?.route?.params?.type == 'group' ? state?.activeGroup : state?.activeEvent,
-
         }
     }, shallowEqual)
 
@@ -86,9 +87,15 @@ const SearchChatScreen: FC<any> = (props) => {
         searchedText?.trim()?.length < 3 && debounceClear()
     }, [currentTabIndex, searchedText])
 
+    useFocusEffect(useCallback(() => {
+        setTimeout(() => {
+            setFocused(true)
+        }, 100);
+    }, []))
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
-            <View style={{
+            {isFocused && <View style={{
                 paddingVertical: scaler(20),
                 borderBottomColor: 'rgba(0, 0, 0, 0.04)',
                 borderBottomWidth: 2,
@@ -108,7 +115,7 @@ const SearchChatScreen: FC<any> = (props) => {
                 <TouchableOpacity style={styles.imagePlaceholderContainer} onPress={NavigationService.goBack} >
                     <Image style={styles.imagePlaceholder} source={Images.ic_left} />
                 </TouchableOpacity>
-            </View>
+            </View>}
             {props?.route?.params?.type == 'group' ?
                 <TopTab onChangeIndex={(i) => {
                     setCurrentTabIndex(i);

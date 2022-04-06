@@ -78,18 +78,18 @@ export const Text: FC<TextProps> = (props) => {
         })
     }, [style, type])
 
-    if (props?.autoLink) {
-        // console.log("rest?.children", rest?.children);
-        let text = "";
+    const text = useMemo<string>(() => {
         try {
-            text = useMemo(() => {
+            if (props?.autoLink) {
                 return getChildren(rest?.children)
-            }, [rest?.children])
-        }
-        catch (e) {
+            }
+        } catch (e) {
             console.log("E", e)
         }
+        return ""
+    }, [rest?.children, props?.autoLink])
 
+    if (props?.autoLink) {
         return <Autolink
             email
             hashtag="instagram"
