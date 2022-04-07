@@ -177,11 +177,6 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     placeholder: props.placeholder
                                 }}
                                 defaultCountry={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) || defaultCountry}
-                                phoneInputStyle={{
-                                    paddingVertical: 0, marginLeft: scaler(5),
-                                    fontFamily: Fonts.regular, fontSize: scaler(13),
-                                    color: colors.colorBlack,
-                                }}
                                 dialCodeTextStyle={{}}
                                 placeholderTextColor={colors.colorGreyText}
                                 filterText={props.filterText}
