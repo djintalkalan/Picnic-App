@@ -42,7 +42,7 @@ const CreateEvent3: FC<any> = props => {
 
   const onSubmit = useCallback(
     (data) => {
-      if (data?.policy?.trim()) {
+      if (!data?.policy?.trim()) {
         setError("policy", { message: Language.write_refund_policy })
         return
       }
