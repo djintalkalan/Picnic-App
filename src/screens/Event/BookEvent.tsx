@@ -69,7 +69,7 @@ const BookEvent: FC = (props: any) => {
             message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                 : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
             onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + round(parseInt(noOfTickets) * (event?.event_fees + event?.event_tax_amount), 2),
+            buttonText: Language.pay + ' ' + getSymbol(event?.event_currency) + round(parseInt(noOfTickets) * (event?.event_fees + (event?.event_tax_amount ?? 0)), 2),
             buttonStyle: { width: '100%' }
         })
     })(), [event, noOfTickets, isPayByPaypal])
@@ -135,7 +135,7 @@ const BookEvent: FC = (props: any) => {
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /><Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {'Applicable tax'}
                         </Text><Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                            {noOfTickets ? getSymbol(event?.event_currency) + parseInt(noOfTickets) * event?.event_tax_amount : getSymbol(event?.event_currency) + 0}
+                            {noOfTickets && event?.event_tax_amount ? getSymbol(event?.event_currency) + parseInt(noOfTickets) * event?.event_tax_amount : getSymbol(event?.event_currency) + 0}
                         </Text>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
@@ -175,7 +175,7 @@ const BookEvent: FC = (props: any) => {
                     {noOfTickets ?
                         <Button
                             title={event?.is_free_event ? Language.book_ticket
-                                : Language.pay + ' ' + getSymbol(event?.event_currency) + round(parseInt(noOfTickets) * (event?.event_fees + event?.event_tax_amount), 2)}
+                                : Language.pay + ' ' + getSymbol(event?.event_currency) + round(parseInt(noOfTickets) * (event?.event_fees + (event?.event_tax_amount ?? 0)), 2)}
                             onPress={onSubmit}
                             disabled={!payMethodSelected && !event?.is_free_event}
                         />
