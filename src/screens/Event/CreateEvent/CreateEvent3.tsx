@@ -3,13 +3,10 @@ import { colors, Images } from 'assets';
 import { Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
+import { round } from 'lodash';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  Image,
-  StyleSheet,
-  View
-} from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +17,8 @@ import { dateFormat, scaler } from 'utils';
 type FormType = {
   paypalId: string;
   policy: string;
+  taxRate: string;
+  taxPrice: string;
 };
 
 const CreateEvent3: FC<any> = props => {
@@ -96,7 +95,9 @@ const CreateEvent3: FC<any> = props => {
       event_currency: eventDetail?.currency.toLowerCase(),
       payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
       payment_email: data?.paypalId?.trim(),
-      event_refund_policy: data?.policy?.trim()
+      event_refund_policy: data?.policy?.trim(),
+      event_tax_rate: data?.taxRate,
+      event_tax_amount: data?.taxPrice,
     };
     dispatch(
       createEvent({
@@ -119,6 +120,9 @@ const CreateEvent3: FC<any> = props => {
 
     return false;
   }, [isPayByPaypal, isPayByCash]);
+
+  console.log('taxPrice', ((parseFloat(getValues('taxRate')) / 100) * eventDetail?.ticketPrice).toString(), parseFloat(getValues('taxRate')));
+
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -148,6 +152,60 @@ const CreateEvent3: FC<any> = props => {
             paddingHorizontal: scaler(20),
             paddingVertical: scaler(15),
           }}>
+
+          <Text>{Language.tax_rate} (%)</Text>
+          <TextInput
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+            placeholder={
+              Language.enter_the_tax_rate
+            }
+            style={{ paddingLeft: scaler(20) }}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            name={'taxRate'}
+            maxLength={5}
+            keyboardType={'decimal-pad'}
+            onChangeText={(_) => {
+              setValue('taxPrice',
+                (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * parseFloat(eventDetail?.ticketPrice)), 2)).toString() : '')
+            }}
+            iconSize={scaler(18)}
+            // icon={Images.ic_ticket}
+            rules={{
+              validate: (v: string) => {
+                v = v?.trim()
+                if (parseFloat(v) > 29.90 || parseFloat(v) < 0) {
+                  return Language.tax_rate_limit
+                }
+                try {
+                  if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                    return Language.tax_rate_limit
+                  }
+                }
+                catch (e) { }
+
+              }
+            }}
+            control={control}
+            errors={errors}
+          />
+
+          <Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
+          <TextInput
+            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+            placeholder={
+              'Tax Price'
+            }
+            style={{ paddingLeft: scaler(20) }}
+            borderColor={colors.colorTextInputBackground}
+            backgroundColor={colors.colorTextInputBackground}
+            name={'taxPrice'}
+            disabled={true}
+            iconSize={scaler(18)}
+            control={control}
+            errors={errors}
+          />
+
           {isPayByPaypal ?
             <TextInput
               containerStyle={{ flex: 1, marginEnd: scaler(4) }}
