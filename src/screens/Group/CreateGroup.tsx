@@ -163,7 +163,7 @@ const CreateGroup: FC<any> = (props) => {
         }}
       >
         {frequencies.map((_, i) => {
-          return <Picker.Item style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }} key={i} value={_} label={_ + " Hz"} />
+          return <Picker.Item style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }} key={i} value={_} label={_} />
         })}
       </Picker>
     </View>
