@@ -152,6 +152,8 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     {title || placeholder}
                                 </Text> : null} */}
                             <IntlPhoneInput
+                                // sortBy='dialCode'
+                                sortBy='lang'
                                 extraCountries={[{ ru: "Пуэрто-Рико", lt: "Puerto Rikas", tr: "Porto Riko", en: 'Puerto Rico', flag: '🇵🇷', code: 'PR2', dialCode: '+1787', mask: '(999) 999-9999' }]}
                                 containerStyle={styles.phoneInputStyle}
                                 dialCode={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) ? undefined : (currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) || undefined}
@@ -176,11 +178,6 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     placeholder: props.placeholder
                                 }}
                                 defaultCountry={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) || defaultCountry}
-                                phoneInputStyle={{
-                                    paddingVertical: 0, marginLeft: scaler(5),
-                                    fontFamily: Fonts.regular, fontSize: scaler(13),
-                                    color: colors.colorBlack,
-                                }}
                                 dialCodeTextStyle={{}}
                                 placeholderTextColor={colors.colorGreyText}
                                 filterText={props.filterText}
