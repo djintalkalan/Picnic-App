@@ -154,7 +154,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                     <View style={{
                         top: scaler(60), left: 0, right: 0, position: 'absolute', flex: 1, width: '100%',
                         marginTop: scaler(20),
-                        // borderTopColor: "rgba(0, 0, 0, 0.06)",
+                        bottom: 0,
                         // borderTopWidth: 2,
                     }} >
                         <Text style={{
