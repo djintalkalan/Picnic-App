@@ -94,7 +94,9 @@ const CreateEvent3: FC<any> = props => {
       event_currency: eventDetail?.currency.toLowerCase(),
       payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
       payment_email: data?.paypalId,
-      event_refund_policy: data?.policy
+      event_refund_policy: data?.policy,
+      event_tax_rate: data?.taxRate,
+      event_tax_amount: data?.taxPrice,
     };
     dispatch(
       createEvent({

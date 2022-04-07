@@ -54,6 +54,8 @@ type FormType = {
     currency: string;
     paypalId: string;
     policy: string;
+    taxRate: string;
+    taxPrice: string;
 };
 
 const DropDownData = ['USD', 'EUR', 'GBP', 'COP'];
@@ -196,6 +198,8 @@ const EditEvent: FC<any> = props => {
             setValue('currency', event?.event_currency?.toUpperCase())
             setValue('paypalId', event?.payment_email)
             setValue('policy', event?.event_refund_policy)
+            setValue('taxRate', event?.event_tax_rate?.toString())
+            setValue('taxPrice', event?.event_tax_amount?.toString())
             if (event?.image) {
                 setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
             } else {
@@ -256,7 +260,9 @@ const EditEvent: FC<any> = props => {
             event_currency: data?.currency.toLowerCase(),
             payment_method: paymentMethods,
             payment_email: data?.paypalId,
-            event_refund_policy: data?.policy
+            event_refund_policy: data?.policy,
+            event_tax_rate: data?.taxRate,
+            event_tax_amount: data?.taxPrice,
         };
         dispatch(
             createEvent({
@@ -639,14 +645,12 @@ const EditEvent: FC<any> = props => {
                                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
                                     <MaterialIcons name={paymentMethods?.includes('paypal') ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                                 </TouchableOpacity>
-                            </View><View
-                                style={{
-                                    width: '100%',
-                                    paddingVertical: scaler(10),
-                                }}>
+                            </View>
+
+                                <View style={{ width: '100%', paddingBottom: scaler(10) }}>
                                     {paymentMethods?.includes('paypal') ?
                                         <TextInput
-                                            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                            containerStyle={{ flex: 1, marginEnd: scaler(4), marginBottom: scaler(10) }}
                                             placeholder={Language.paypal_id}
                                             borderColor={colors.colorTextInputBackground}
                                             backgroundColor={colors.colorTextInputBackground}
@@ -654,6 +658,60 @@ const EditEvent: FC<any> = props => {
                                             required={Language.paypal_id_required}
                                             control={control}
                                             errors={errors} /> : undefined}
+
+                                    <Text>{Language.tax_rate} (%)</Text>
+                                    <TextInput
+                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                        placeholder={
+                                            Language.enter_the_tax_rate
+                                        }
+                                        style={{ paddingLeft: scaler(20) }}
+                                        borderColor={colors.colorTextInputBackground}
+                                        backgroundColor={colors.colorTextInputBackground}
+                                        name={'taxRate'}
+                                        maxLength={5}
+                                        keyboardType={'decimal-pad'}
+                                        onChangeText={(_) => {
+                                            setValue('taxPrice',
+                                                (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * parseFloat(getValues('ticketPrice'))), 2)).toString() : '')
+                                        }}
+                                        iconSize={scaler(18)}
+                                        // icon={Images.ic_ticket}
+                                        rules={{
+                                            validate: (v: string) => {
+                                                v = v?.trim()
+                                                if (parseFloat(v) > 29.90 || parseFloat(v) < 0) {
+                                                    return Language.tax_rate_limit
+                                                }
+                                                try {
+                                                    if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                                        return Language.tax_rate_limit
+                                                    }
+                                                }
+                                                catch (e) { }
+
+                                            }
+                                        }}
+                                        control={control}
+                                        errors={errors}
+                                    />
+
+                                    <Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
+                                    <TextInput
+                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                        placeholder={
+                                            'Tax Price'
+                                        }
+                                        style={{ paddingLeft: scaler(20) }}
+                                        borderColor={colors.colorTextInputBackground}
+                                        backgroundColor={colors.colorTextInputBackground}
+                                        name={'taxPrice'}
+                                        disabled={true}
+                                        iconSize={scaler(18)}
+                                        control={control}
+                                        errors={errors}
+                                    />
+
                                     <View style={{ flex: 1, width: '100%' }}>
                                         <TextInput
                                             placeholder={Language.write_refund_policy}
