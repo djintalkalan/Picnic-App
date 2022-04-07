@@ -303,12 +303,12 @@ export const getAddressFromLocation = async (region: ILocation) => {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
         // console.log('ADDRESS JSON:', JSON.stringify(json));
 
-        var addressComponent = json.results[0].address_components;
-
+        const addressComponent = json.results[0].address_components;
+        const formattedAddress = json.results[0].formatted_address;
         const otherData = getOtherData(addressComponent);
         // console.log('other Data', otherData);
 
-        const address = getFormattedAddress(addressComponent) //json.results[0].formatted_address;
+        const address = getFormattedAddress(addressComponent, formattedAddress) //json.results[0].formatted_address;
         console.log('ADDRESS:', JSON.stringify(address));
         return { address, otherData }
     }
@@ -320,26 +320,37 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
 }
 
-export const getFormattedAddress = (addressComponent: any) => {
+export const getFormattedAddress = (addressComponent: any, formattedAddress: string) => {
     let main_text = ""
     let secondary_text = ""
     let b = false
+
+    const cityName = addressComponent?.find((item: any, index: number) => (item?.types?.includes('locality')))?.long_name
+
+    if (cityName)
+        return {
+            main_text: formattedAddress?.substring(0, formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase())),
+            secondary_text: formattedAddress?.substring(formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase()))
+        }
+
     for (let i = 0; i < addressComponent.length - 1; i++) {
-        let locality = addressComponent[i];
-        let types = locality.types;
+        let address = addressComponent[i];
+        let types = address.types;
 
         if (!types.includes('plus_code') && !types.includes('locality')) {
             if (b) {
-                secondary_text += locality?.long_name + ", "
+                if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
             } else
-                main_text += locality?.long_name + ", "
+                if (!main_text?.includes(address?.long_name)) main_text += (address?.long_name) + ", "
+
         }
         if (types.includes('locality')) {
             b = true
-            if (main_text)
-                secondary_text += locality?.long_name + ", "
+            if (main_text) {
+                if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
+            }
             else
-                main_text += locality?.long_name + ", "
+                if (!main_text?.includes(address?.long_name)) main_text += address?.long_name + ", "
         }
     }
     return {

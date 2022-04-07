@@ -1,4 +1,3 @@
-import { useIsFocused } from '@react-navigation/native'
 import { colors, Images } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -15,9 +14,7 @@ interface IChatHeader {
     containerStyle?: StyleProp<ViewStyle>
 }
 export const ChatHeader: FC<IChatHeader> = (props) => {
-    const isFocused = useIsFocused()
-    const { isKeyboard, dismissKeyboard } = useKeyboardService(isFocused)
-
+    const { isKeyboard, dismissKeyboard } = useKeyboardService()
     const { defaultIcon, subtitle, title, containerStyle, icon, onPress, rightView: RightView, } = props
     const styles = useMemo(() => StyleSheet.create({
         ...defaultStyles,
@@ -45,6 +42,7 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
             <TouchableHighlight style={{ alignSelf: 'center', paddingHorizontal: scaler(3) }} onPress={onPress} underlayColor={colors.colorWhite} >
                 <ImageLoader
                     placeholderSource={defaultIcon}
+                    //@ts-ignore
                     source={icon} style={styles.iconStyle} />
             </TouchableHighlight>
             <TouchableOpacity onPress={onPress} style={{ paddingLeft: scaler(5), flexShrink: 1, }} >
@@ -53,6 +51,7 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
             </TouchableOpacity>
             <View style={{ alignItems: 'flex-end', flexGrow: 1 }} >
                 {RightView ? React.isValidElement(RightView) ?
+                    //@ts-ignore
                     RightView : <RightView /> : null}
             </View>
         </View>

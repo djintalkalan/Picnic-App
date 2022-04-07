@@ -4,8 +4,13 @@ import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 
 import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, InteractionManager, Platform, StyleSheet, TextInput, TouchableOpacity as RTO, View } from 'react-native'
-import { TouchableOpacity as GTO } from 'react-native-gesture-handler'
+import {
+    Dimensions, Image, InteractionManager, StyleSheet, TextInput,
+    // TouchableOpacity as RTO,
+    TouchableOpacity,
+    View
+} from 'react-native'
+// import { TouchableOpacity as GTO } from 'react-native-gesture-handler'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -16,7 +21,7 @@ import { getAddressFromLocation, NavigationService, scaler } from 'utils'
 
 const { width, height } = Dimensions.get('window');
 
-const TouchableOpacity = Platform.OS == 'android' ? RTO : GTO
+// const TouchableOpacity = Platform.OS == 'android' ? RTO : RTO
 
 const ASPECT_RATIO = width / height;
 const DefaultDelta = {
@@ -193,8 +198,10 @@ const SelectLocation: FC<any> = (props) => {
                     }} >
                         <Image style={{ height: scaler(35), width: scaler(35) }} source={Images.ic_location} />
                         <View style={{ marginLeft: scaler(10), flex: 1 }}>
-                            <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
-                            <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text>
+                            {/* <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text> */}
+                            <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
+                            <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
                         </View>
                     </View>
 
