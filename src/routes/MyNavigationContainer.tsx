@@ -57,7 +57,7 @@ import Subscription from 'screens/Subscription/Subscription';
 import { SocketService } from 'socket';
 import { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
-import FirebaseNotification from 'src/notification/FirebaseNotification';
+import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
@@ -110,7 +110,7 @@ const dashboardScreens = {
 };
 
 const MyNavigationContainer = () => {
-  FirebaseNotification();
+  useFirebaseNotifications();
   const dispatch = useDispatch();
 
   // const { isConnected, isInternetReachable } = useNetInfo()

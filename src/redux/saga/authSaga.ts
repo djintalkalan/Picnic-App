@@ -145,7 +145,8 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
 function* doLogout({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._logoutApi);
+        const firebaseToken = Database.getStoredValue('firebaseToken')
+        let res = yield call(ApiProvider._logoutApi, { device_token: firebaseToken });
         if (res.status == 200) {
         } else if (res.status == 400) {
             // _showErrorMessage(res.message);
