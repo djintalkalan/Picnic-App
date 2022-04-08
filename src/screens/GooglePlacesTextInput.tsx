@@ -158,7 +158,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         // borderTopWidth: 2,
                     }} >
                         <Text style={{
-                            fontWeight: '500', flex: 1, fontSize: scaler(12), color: '#9A9A9A',
+                            fontWeight: '500', fontSize: scaler(12), color: '#9A9A9A',
                             marginHorizontal: scaler(20),
                             marginTop: scaler(20),
                             marginBottom: scaler(10),
