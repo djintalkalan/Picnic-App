@@ -288,7 +288,7 @@ const ProfileScreen: FC<any> = (props) => {
                     />
                     <PhoneInput
                         name={'phone'}
-                        placeholder={Language.phone}
+                        // placeholder={Language.phone}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         controlObject={{ control, getValues, setValue, setError }}
