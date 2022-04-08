@@ -153,6 +153,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                 </Text> : null} */}
                             <IntlPhoneInput
                                 sortBy='dialCode'
+                                filterInputStyleContainer={{ elevation: 0 }}
                                 extraCountries={[{ ru: "Пуэрто-Рико", lt: "Puerto Rikas", tr: "Porto Riko", en: 'Puerto Rico', flag: '🇵🇷', code: 'PR2', dialCode: '+1787', mask: '(999) 999-9999' }]}
                                 containerStyle={styles.phoneInputStyle}
                                 dialCode={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) ? undefined : (currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) || undefined}
