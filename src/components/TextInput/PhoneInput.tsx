@@ -165,6 +165,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                         setValue(name + "_countryCode", selectedCountry?.code)
                                     onChange(phoneNumber)
                                 }}
+                                maskPlaceholder
                                 inputProps={{
                                     onFocus: () => {
                                         setFocused(true)
