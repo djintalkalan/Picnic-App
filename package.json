@@ -65,6 +65,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-cardview": "^2.0.5",
     "react-native-contacts": "^7.0.4",
+    "react-native-device-info": "^8.7.0",
     "react-native-document-picker": "^8.0.0",
     "react-native-exit-app": "^1.1.0",
     "react-native-fast-image": "^8.5.11",

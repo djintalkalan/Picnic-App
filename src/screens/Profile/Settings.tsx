@@ -7,6 +7,7 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import ImageLoader from 'custom-components/ImageLoader'
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import DeviceInfo from 'react-native-device-info'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
@@ -16,6 +17,16 @@ import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePo
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 
+let installer = "Other"
+DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
+    console.log("installerPackageName", installerPackageName);
+    installer = installerPackageName
+
+    // Play Store: "com.android.vending"
+    // Amazon: "com.amazon.venezia"
+    // Samsung App Store: "com.sec.android.app.samsungapps"
+    // iOS: "AppStore", "TestFlight", "Other"
+});
 const Settings: FC<any> = (props) => {
 
     const updateLanguage = useUpdateLanguage()
@@ -179,7 +190,7 @@ const Settings: FC<any> = (props) => {
                             <MaterialIcons color={colors.colorBlackText} size={scaler(25)} name={'info-outline'} />
                             <View>
                                 <Text style={[styles.buttonText, { color: colors.colorBlackText, }]} >{Language.version}</Text>
-                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME}</Text>
+                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Platform.OS == 'ios' ? installer != "AppStore" ? ("TestFlight v" + config.IOS_VERSION + " Build " + config.IOS_BUILD_NUMBER) : config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
