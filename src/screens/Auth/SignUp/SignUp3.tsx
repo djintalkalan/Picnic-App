@@ -109,7 +109,7 @@ const SignUp3: FC<any> = props => {
             title={Language.phone}
             // placeholder={'0000-000-000'}
             controlObject={{ control, getValues, setValue, setError }}
-            defaultCountry={Database.DefaultCountry}
+            defaultCountryCode={Database.DefaultCountry}
             errors={errors}
           />
 

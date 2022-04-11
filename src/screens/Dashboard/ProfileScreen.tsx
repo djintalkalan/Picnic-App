@@ -123,6 +123,14 @@ const ProfileScreen: FC<any> = (props) => {
 
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {
         const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
+
+        const unmaskedPhoneNumber = (data?.phone?.match(/\d+/g) || []).join('');
+        if (data?.phone_fixedValue && unmaskedPhoneNumber == data?.phone_fixedValue || !data?.phone?.trim()) {
+            data.phone_dialCode = ""
+            data.phone = ""
+            data.phone_countryCode = ""
+        }
+
         dispatch(updateProfile({
             first_name: data?.firstName?.trim(),
             last_name: data?.lastName?.trim(),
@@ -292,7 +300,7 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         controlObject={{ control, getValues, setValue, setError }}
-                        defaultCountry={Database.DefaultCountry}
+                        defaultCountryCode={Database.DefaultCountry}
                         // required
                         errors={errors}
                     />

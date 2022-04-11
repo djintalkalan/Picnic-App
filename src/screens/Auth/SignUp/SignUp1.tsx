@@ -37,9 +37,9 @@ const SignUp1: FC = () => {
     setError,
   } = useForm<FormType>({
     defaultValues: {
-      // email: "deepakq@testings.com",
-      // password: "Dj@123456",
-      // confirmPassword: "Dj@123456"
+      email: "deepakq@testings.com",
+      password: "Dj@123456",
+      confirmPassword: "Dj@123456"
     },
     mode: 'onChange',
   });

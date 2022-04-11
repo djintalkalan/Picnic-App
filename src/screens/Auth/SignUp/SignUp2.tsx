@@ -23,8 +23,8 @@ const SignUp2: FC<any> = (props) => {
 
     const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<FormType>({
         defaultValues: {
-            // firstName: "Deepak",
-            // lastName: "Jaglan"
+            firstName: "Deepak",
+            lastName: "Jaglan"
         },
         mode: 'onChange'
     })
