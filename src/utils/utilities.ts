@@ -353,14 +353,14 @@ export const getFormattedAddress = (addressComponent: any, formattedAddress: str
         let types = address.types;
         if (!types?.includes("postal_code") && !types.includes('plus_code')) {
 
-            if (!types.includes('plus_code') && !types.includes('administrative_area_level_1')) {
+            if (!types.includes('administrative_area_level_1') && !types.includes('administrative_area_level_2')) {
                 if (b) {
                     if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
                 } else
                     if (!main_text?.includes(address?.long_name)) main_text += (address?.long_name) + ", "
 
             }
-            if (types.includes('administrative_area_level_1')) {
+            if (types.includes('administrative_area_level_2') || types.includes('administrative_area_level_1')) {
                 b = true
                 if (main_text) {
                     if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
@@ -389,13 +389,16 @@ export const getFormattedAddress = (addressComponent: any, formattedAddress: str
 }
 
 export const getOtherData = (addressComponent: any) => {
-    let city = "", state = "", country = "";
+    let city = "", state = "", country = "", adminCity = "";
     for (let i = 0; i < addressComponent.length - 1; i++) {
         let locality = addressComponent[i];
         let types = locality.types;
         for (let j = 0; j < types.length - 1; j++) {
             if (types[j] === 'locality') {
                 city = locality.long_name
+            }
+            if (types[j] === 'administrative_area_level_2') {
+                adminCity = locality.long_name
             }
             if (types[j] === 'administrative_area_level_1') {
                 state = locality.long_name
@@ -405,7 +408,7 @@ export const getOtherData = (addressComponent: any) => {
             }
         }
     }
-    return { city: city?.trim(), state: state?.trim(), country: country?.trim() }
+    return { city: city?.trim() || adminCity?.trim(), state: state?.trim(), country: country?.trim() }
 }
 
 export const getOtherDataFromAddress = (address: { main_text: string, secondary_text: string }) => {
@@ -429,11 +432,11 @@ export const InitialPaginationState: IPaginationState = {
 
 export const getShortAddress = (address: string, state: string, city?: string) => {
     try {
-        let index = address?.indexOf(city ?? state) - 2
+        let index = address?.indexOf(city || state) - 2
         if (index < 0) {
             index = 0
         }
-        return address.substring(0, index)
+        return address.substring(0, index) || city || state
     } catch (e) {
         console.log("E", e);
 

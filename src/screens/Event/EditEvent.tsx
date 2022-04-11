@@ -157,12 +157,20 @@ const EditEvent: FC<any> = props => {
 
     useEffect(() => {
         if (event) {
+
+            const main_text = getShortAddress(event?.address, event?.state, event?.city)
+            let secondary_text = event?.city + ", " + event?.state + ", " + event?.country
+
+            if (secondary_text?.includes(main_text)) {
+                secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+            }
+
             locationRef.current = {
                 latitude: event?.location?.coordinates[1],
                 longitude: event?.location?.coordinates[0],
                 address: {
-                    main_text: getShortAddress(event?.address, event?.state, event?.city),
-                    secondary_text: event?.city + ", " + event?.state + ", " + event?.country
+                    main_text,
+                    secondary_text,
                 },
                 otherData: {
                     city: event?.city,
@@ -170,8 +178,6 @@ const EditEvent: FC<any> = props => {
                     country: event?.country
                 }
             }
-            console.log("event?.address", getShortAddress(event?.address, event?.state, event?.city));
-            console.log("event?.city", event?.city);
 
             // return
             eventDateTime.current = {

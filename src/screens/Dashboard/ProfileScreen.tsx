@@ -91,13 +91,19 @@ const ProfileScreen: FC<any> = (props) => {
     const setProfileData = useCallback((userData: any) => {
         const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_country_code, phone_number, dob, bio, location } = userData
         console.log("userData", userData);
+        const main_text = getShortAddress(address, state, city)
+        let secondary_text = (city + (city ? ", " : "") + state + (state ? ", " : "") + country)?.trim();
+
+        if (secondary_text?.includes(main_text)) {
+            secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+        }
 
         locationRef.current = {
             latitude: location?.coordinates[1],
             longitude: location?.coordinates[0],
             address: {
-                main_text: getShortAddress(address, state, city),
-                secondary_text: city + ", " + state + ", " + country
+                main_text,
+                secondary_text,
             },
             otherData: {
                 city: city,
@@ -279,7 +285,8 @@ const ProfileScreen: FC<any> = (props) => {
                                 prevSelectedLocation: locationRef.current,
                                 onSelectLocation: (location: ILocation) => {
                                     locationRef.current = location;
-                                    setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                    // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                    setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
                                     locationInputRef?.current?.setNativeProps({
                                         selection: {
                                             start: 0,

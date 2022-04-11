@@ -69,13 +69,20 @@ const CreateGroup: FC<any> = (props) => {
 
   useEffect(() => {
     if (group) {
+      const main_text = getShortAddress(group?.address, group?.state, group?.city)
+      let secondary_text = group?.city + ", " + group?.state + ", " + group?.country
+
+      if (secondary_text?.includes(main_text)) {
+        secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+      }
+
       console.log(group)
       locationRef.current = {
         latitude: group?.location?.coordinates[1],
         longitude: group?.location?.coordinates[0],
         address: {
-          main_text: getShortAddress(group?.address, group?.state, group?.city),
-          secondary_text: group?.city + ", " + group?.state + ", " + group?.country
+          main_text,
+          secondary_text,
         },
         otherData: {
           city: group?.city,
