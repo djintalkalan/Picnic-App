@@ -377,9 +377,12 @@ const GroupDetail: FC<any> = (props) => {
                             <Text style={styles.address} >{getCityOnly(group?.city, group?.state, group?.country)}</Text>
                             {/* <Text style={styles.address} >{group?.city + ", " + (group?.state ? (group?.state + ", ") : "") + group?.country}</Text> */}
                         </View>
-                        <View style={styles.typeContainer} >
-                            <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
-                            <Text style={styles.groupType}>{group?.category}</Text>
+                        <View style={{ alignItems: 'flex-end' }} >
+                            <View style={styles.typeContainer} >
+                                <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
+                                <Text style={styles.groupType}>{group?.category}</Text>
+                            </View>
+                            {group?.radio_frequency ? <Text style={[styles.address, { textAlign: 'right', marginHorizontal: scaler(3) }]}>{Language.fm_freq} : {group?.radio_frequency}</Text> : null}
                         </View>
                     </View>
                     <Text autoLink style={styles.about} >{group?.details}</Text>
@@ -519,7 +522,7 @@ const styles = StyleSheet.create({
         borderRadius: scaler(20),
         alignItems: 'center',
         padding: scaler(4),
-        alignSelf: 'baseline',
+        // alignSelf: 'baseline',
         backgroundColor: colors.colorPrimary
     },
     about: {

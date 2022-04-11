@@ -315,5 +315,6 @@ export const es = {
     internet_connection_seems_not: "",
     try_again: "",
     deleted_user: "",
+    fm_freq: "",
 
 }

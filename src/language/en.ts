@@ -321,5 +321,6 @@ export const en = {
   tax_rate: 'Tax rate',
   tax_amount: 'Applicable tax amount',
   applicable_tax: 'Applicable tax',
+  fm_freq: "FM frequency",
 
 }
