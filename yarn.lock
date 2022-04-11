@@ -3229,10 +3229,10 @@ dijkstrajs@^1.0.1:
   resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.2.tgz#2e48c0d3b825462afe75ab4ad5e829c8ece36257"
   integrity sha512-QV6PMaHTCNmKSeP6QoXhVTw9snc9VD8MulTT0Bd99Pacp4SS1cjcrYPgBPmibqKVtMJJfqC6XvOXgPMEEPH/fg==
 
-dj-intl-phone-input@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.2.2.tgz#0aca31a84a9bebe84a8ff649062e39994f543850"
-  integrity sha512-SkIh6utzbPJ4uG/NOsZIao4eGyL91+3WENeUHemj67ImX4WHn6+o7tpicjfdnHukuHxEePfTaqeNkcRtGpHwgQ==
+dj-intl-phone-input@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.2.3.tgz#cef2ec164d919b88843d60d10f3f82cd84d1ad7c"
+  integrity sha512-XjPwU0CIWgasOT7F84zgvsMDbbeuFUKtTqhm2X/EjaakZzuwt4d7IwJO0bCzC/qBILnhKGJg47Rgp1pVmkDpAw==
 
 dj-react-native-dropdown-alert@^0.0.3:
   version "0.0.3"
