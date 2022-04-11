@@ -97,6 +97,12 @@ const ProfileScreen: FC<any> = (props) => {
         if (secondary_text?.includes(main_text)) {
             secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
         }
+        if (secondary_text?.startsWith(",")) {
+            secondary_text = secondary_text?.replace(",", "")?.trim()
+        }
+        if (secondary_text?.endsWith(",")) {
+            secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
+        }
 
         locationRef.current = {
             latitude: location?.coordinates[1],
