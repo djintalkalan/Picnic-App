@@ -83,7 +83,7 @@ const CreateGroup: FC<any> = (props) => {
       }
 
       console.log(group)
-      locationRef.current = {
+      locationRef.current = (group?.location?.coordinates[0] && group?.location?.coordinates[1]) ? {
         latitude: group?.location?.coordinates[1],
         longitude: group?.location?.coordinates[0],
         address: {
@@ -95,7 +95,7 @@ const CreateGroup: FC<any> = (props) => {
           state: group?.state,
           country: group?.country
         }
-      }
+      } : null
       setValue('about', group?.details)
       setValue('location', group?.address)
       setValue('name', group?.name)

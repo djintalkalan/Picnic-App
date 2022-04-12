@@ -92,7 +92,7 @@ const ProfileScreen: FC<any> = (props) => {
         const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_country_code, phone_number, dob, bio, location } = userData
         console.log("userData", userData);
         const main_text = getShortAddress(address, state, city)
-        let secondary_text = (city + (city ? ", " : "") + state + (state ? ", " : "") + country)?.trim();
+        let secondary_text = ((city || "") + (city ? ", " : "") + (state || "") + (state ? ", " : "") + (country || ""))?.trim();
 
         if (secondary_text?.includes(main_text)) {
             secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
@@ -104,7 +104,7 @@ const ProfileScreen: FC<any> = (props) => {
             secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
         }
 
-        locationRef.current = {
+        locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
             latitude: location?.coordinates[1],
             longitude: location?.coordinates[0],
             address: {
@@ -116,7 +116,7 @@ const ProfileScreen: FC<any> = (props) => {
                 state: state,
                 country: country
             }
-        }
+        } : undefined
 
         setValue("firstName", first_name)
         setValue("lastName", last_name)
@@ -154,10 +154,10 @@ const ProfileScreen: FC<any> = (props) => {
             bio: data?.about?.trim(),
             // dob: dateFormat(birthDate.current, "YYYY-MM-DD"),
             image: imageFile,
-            address: latitude ? (address?.main_text ? (address?.main_text + ", ") : "") + address?.secondary_text : "",
-            city: otherData?.city,
-            state: otherData?.state,
-            country: otherData?.country,
+            address: "",// latitude ? (address?.main_text ? (address?.main_text + ", ") : "") + address?.secondary_text : "",
+            city: "",//otherData?.city,
+            state: "",// otherData?.state,
+            country: "",// otherData?.country,
             location: {
                 type: 'Point',
                 coordinates: [
@@ -287,7 +287,10 @@ const ProfileScreen: FC<any> = (props) => {
                         ref={locationInputRef}
                         icon={Images.ic_gps}
                         onPress={() => {
+                            console.log("locationRef.current", locationRef.current);
+
                             NavigationService.navigate("SelectLocation", {
+
                                 prevSelectedLocation: locationRef.current,
                                 onSelectLocation: (location: ILocation) => {
                                     locationRef.current = location;

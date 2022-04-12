@@ -171,7 +171,7 @@ const EditEvent: FC<any> = props => {
                 secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
             }
 
-            locationRef.current = {
+            locationRef.current = (event?.location?.coordinates[0] && event?.location?.coordinates[1]) ? {
                 latitude: event?.location?.coordinates[1],
                 longitude: event?.location?.coordinates[0],
                 address: {
@@ -183,7 +183,7 @@ const EditEvent: FC<any> = props => {
                     state: event?.state,
                     country: event?.country
                 }
-            }
+            } : undefined
 
             // return
             eventDateTime.current = {
