@@ -12,7 +12,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _showPopUpAlert } from 'utils'
+import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 
 let n = 87.5
 const frequencies: Array<string> = []
@@ -159,7 +159,7 @@ const CreateGroup: FC<any> = (props) => {
   }, [])
 
   const CustomView = useCallback((props) => {
-    const [v, setV] = useState(getValues("radio_frequency")?.toString() || frequencies[0])
+    const [v, setV] = useState(getValues("radio_frequency")?.toString() || "")
     useEffect(() => {
       setValue("radio_frequency", v)
     }, [v])
@@ -170,11 +170,11 @@ const CreateGroup: FC<any> = (props) => {
         selectedValue={v}
         prompt={Language.radio_freq}
         mode={'dialog'}
-
         onValueChange={(value) => {
           setV(value)
         }}
       >
+        <Picker.Item style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }} value={""} label={Language.select} />
         {frequencies.map((_, i) => {
           return <Picker.Item style={{ fontFamily: Fonts.regular, color: colors.colorBlackText }} key={i} value={_} label={_} />
         })}
@@ -285,7 +285,6 @@ const CreateGroup: FC<any> = (props) => {
 
             {Platform.OS == 'android' &&
               <CustomView hidden={true} />}
-
             <TextInput
               onFocus={() => setDropdown(false)}
               onPress={() => {
@@ -293,6 +292,9 @@ const CreateGroup: FC<any> = (props) => {
                   _showPopUpAlert({
                     title: Language.radio_freq,
                     customView: CustomView,
+                    cancelButtonText: null,
+                    buttonText: Language.done,
+                    onPressButton: _hidePopUpAlert
                   })
                 else {
                   pickerRef?.current?.focus();

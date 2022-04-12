@@ -322,5 +322,6 @@ export const en = {
   tax_amount: 'Applicable tax amount',
   applicable_tax: 'Applicable tax',
   fm_freq: "FM frequency",
+  select: "-- Select --",
 
 }
