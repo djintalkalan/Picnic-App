@@ -327,7 +327,7 @@ export const getAddressFromLocation = async (region: ILocation) => {
     catch (e) {
         console.log(e)
         // _showErrorMessage("Location Error: " + e?.message)
-        _showErrorMessage('Location is unavailable, please check your network.', 5000)
+        // _showErrorMessage('Location is unavailable, please check your network.', 5000)
         return { address: null, otherData: null }
     }
 }
