@@ -303,6 +303,9 @@ export const getAddressFromLocation = async (region: ILocation) => {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
         // console.log('ADDRESS JSON:', JSON.stringify(json));
 
+        let formattedAddress = json.results[0].formatted_address;
+
+
         let addressComponent = json.results[0].address_components;
         let valueAvailable = false
         addressComponent?.some((item) => {
@@ -313,10 +316,10 @@ export const getAddressFromLocation = async (region: ILocation) => {
         })
         if (!valueAvailable) {
             addressComponent = json.results[1].address_components;
+            formattedAddress = json.results[1].formatted_address;
         }
 
 
-        const formattedAddress = json.results[0].formatted_address;
         const otherData = getOtherData(addressComponent);
         // console.log('other Data', otherData);
 
@@ -386,6 +389,52 @@ export const getFormattedAddress = (addressComponent: any, formattedAddress: str
     return {
         main_text: main_text?.trim(), secondary_text: secondary_text?.trim()
     }
+}
+
+const getAddressObject = (address_components: any) => {
+    var ShouldBeComponent: any = {
+        home: ["street_number"],
+        postal_code: ["postal_code"],
+        street: ["street_address", "route"],
+        region: [
+            "administrative_area_level_1",
+            "administrative_area_level_2",
+            "administrative_area_level_3",
+            "administrative_area_level_4",
+            "administrative_area_level_5"
+        ],
+        city: [
+            "locality",
+            "sublocality",
+            "sublocality_level_1",
+            "sublocality_level_2",
+            "sublocality_level_3",
+            "sublocality_level_4"
+        ],
+        country: ["country"]
+    };
+
+    let address: any = {
+        home: "",
+        postal_code: "",
+        street: "",
+        region: "",
+        city: "",
+        country: ""
+    };
+    address_components.forEach((component: any) => {
+        for (var shouldBe in ShouldBeComponent) {
+            if (ShouldBeComponent?.[shouldBe].indexOf(component.types[0]) !== -1) {
+                if (shouldBe === "country") {
+                    address[shouldBe] = component.short_name;
+                } else {
+                    address[shouldBe] = component.long_name;
+                }
+            }
+        }
+    });
+    return address;
+
 }
 
 export const getOtherData = (addressComponent: any) => {
