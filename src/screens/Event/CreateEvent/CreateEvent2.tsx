@@ -28,7 +28,7 @@ type FormType = {
   currency: string;
 };
 
-const DropDownData = ['USD', 'EUR', 'GBP', 'COP'];
+const DropDownData = ['USD', 'EUR', 'GBP'];
 
 type IEventDateTime = {
   selectedType: "eventDate" | "startTime" | "endTime",
