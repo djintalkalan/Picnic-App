@@ -39,6 +39,7 @@ const SelectLocation: FC<any> = (props) => {
     const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
     const [selectedLocation, setSelectedLocation] = useDatabase<ILocation>("selectedLocation", currentLocation ?? defaultLocation)
     const [localLocation, setLocalLocation] = useState<ILocation>(onSelectLocation ? prevSelectedLocation : selectedLocation)
+
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {
             askPermission && askPermission()
@@ -92,7 +93,6 @@ const SelectLocation: FC<any> = (props) => {
         const { coordinate } = e.nativeEvent
         setPosition(coordinate)
     }, [])
-    console.log("locallocation", localLocation);
 
     return (
         <View style={styles.container} >
@@ -114,9 +114,15 @@ const SelectLocation: FC<any> = (props) => {
                                     longitude: e.nativeEvent.coordinate.longitude,
                                 }
                                 let { address, otherData } = await getAddressFromLocation(coords)
-                                address && Database.setCurrentLocation({
+                                let newLocation = {
                                     ...coords, address, otherData
-                                })
+                                }
+                                // let oldLocation = Database.getStoredValue("currentLocation")
+                                // console.log("oldLocation", oldLocation);
+                                // console.log("newLocation", newLocation);
+
+                                // !_.isEqual(oldLocation?.address, newLocation?.address) &&
+                                address && Database.setCurrentLocation(newLocation)
                             }}
                             initialRegion={{
                                 latitude: localLocation?.latitude ?? currentLocation?.latitude ?? defaultLocation?.latitude,
@@ -182,7 +188,7 @@ const SelectLocation: FC<any> = (props) => {
 
             </View>
             {
-                localLocation?.otherData?.city ? <View style={{
+                localLocation?.address ? <View style={{
                     width: '100%',
                     borderRadius: scaler(10),
                     backgroundColor: colors.colorWhite,
@@ -201,7 +207,7 @@ const SelectLocation: FC<any> = (props) => {
                             {/* <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
                             <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text> */}
                             <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
-                            <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>
+                            {localLocation?.address?.secondary_text && <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>}
                         </View>
                     </View>
 

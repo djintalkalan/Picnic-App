@@ -303,8 +303,23 @@ export const getAddressFromLocation = async (region: ILocation) => {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
         // console.log('ADDRESS JSON:', JSON.stringify(json));
 
-        const addressComponent = json.results[0].address_components;
-        const formattedAddress = json.results[0].formatted_address;
+        let formattedAddress = json.results[0].formatted_address;
+
+
+        let addressComponent = json.results[0].address_components;
+        let valueAvailable = false
+        addressComponent?.some((item) => {
+            if (item?.types?.includes("locality") || item?.types?.includes("political")) {
+                valueAvailable = true
+                return true
+            }
+        })
+        if (!valueAvailable) {
+            addressComponent = json.results[1].address_components;
+            formattedAddress = json.results[1].formatted_address;
+        }
+
+
         const otherData = getOtherData(addressComponent);
         // console.log('other Data', otherData);
 
@@ -315,7 +330,7 @@ export const getAddressFromLocation = async (region: ILocation) => {
     catch (e) {
         console.log(e)
         // _showErrorMessage("Location Error: " + e?.message)
-        _showErrorMessage('Location is unavailable, please check your network.', 5000)
+        // _showErrorMessage('Location is unavailable, please check your network.', 5000)
         return { address: null, otherData: null }
     }
 }
@@ -325,47 +340,114 @@ export const getFormattedAddress = (addressComponent: any, formattedAddress: str
     let secondary_text = ""
     let b = false
 
-    const cityName = addressComponent?.find((item: any, index: number) => (item?.types?.includes('locality')))?.long_name
+    let cityName = addressComponent?.find((item: any, index: number) => (item?.types?.includes('locality')))?.long_name
 
-    if (cityName)
-        return {
-            main_text: formattedAddress?.substring(0, formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase())),
-            secondary_text: formattedAddress?.substring(formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase()))
-        }
+    if (!cityName)
 
-    for (let i = 0; i < addressComponent.length - 1; i++) {
+        if (cityName)
+            return {
+                main_text: formattedAddress?.substring(0, formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase())),
+                secondary_text: formattedAddress?.substring(formattedAddress?.toLowerCase()?.indexOf(cityName?.toLowerCase()))
+            }
+    console.log("addressComponent", addressComponent);
+
+    for (let i = 0; i < addressComponent.length; i++) {
         let address = addressComponent[i];
         let types = address.types;
+        if (!types?.includes("postal_code") && !types.includes('plus_code')) {
 
-        if (!types.includes('plus_code') && !types.includes('locality')) {
-            if (b) {
-                if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
-            } else
-                if (!main_text?.includes(address?.long_name)) main_text += (address?.long_name) + ", "
+            if (!types.includes('administrative_area_level_1') && !types.includes('administrative_area_level_2')) {
+                if (b) {
+                    if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
+                } else
+                    if (!main_text?.includes(address?.long_name)) main_text += (address?.long_name) + ", "
 
-        }
-        if (types.includes('locality')) {
-            b = true
-            if (main_text) {
+            }
+            if (types.includes('administrative_area_level_2') || types.includes('administrative_area_level_1')) {
+                b = true
+                if (main_text) {
+                    if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
+                }
+                else
+                    if (!main_text?.includes(address?.long_name)) main_text += address?.long_name + ", "
+            } else if (types.includes('country')) {
                 if (!secondary_text?.includes(address?.long_name)) secondary_text += address?.long_name + ", "
             }
-            else
-                if (!main_text?.includes(address?.long_name)) main_text += address?.long_name + ", "
         }
     }
+    main_text = main_text?.trim().slice(0, -1)
+    secondary_text = secondary_text?.trim().slice(0, -1)
+    if ((!main_text && secondary_text) || (main_text && !secondary_text)) {
+        main_text = main_text || secondary_text
+        secondary_text = main_text.substring(main_text?.indexOf(", "))?.trim()
+        main_text = main_text.substring(0, main_text?.indexOf(", "))?.trim()
+
+        if (secondary_text?.startsWith(","))
+            secondary_text = secondary_text?.replace(",", "")
+
+    }
     return {
-        main_text: main_text?.trim().slice(0, -1), secondary_text: secondary_text?.trim().slice(0, -1)
+        main_text: main_text?.trim(), secondary_text: secondary_text?.trim()
     }
 }
 
+const getAddressObject = (address_components: any) => {
+    var ShouldBeComponent: any = {
+        home: ["street_number"],
+        postal_code: ["postal_code"],
+        street: ["street_address", "route"],
+        region: [
+            "administrative_area_level_1",
+            "administrative_area_level_2",
+            "administrative_area_level_3",
+            "administrative_area_level_4",
+            "administrative_area_level_5"
+        ],
+        city: [
+            "locality",
+            "sublocality",
+            "sublocality_level_1",
+            "sublocality_level_2",
+            "sublocality_level_3",
+            "sublocality_level_4"
+        ],
+        country: ["country"]
+    };
+
+    let address: any = {
+        home: "",
+        postal_code: "",
+        street: "",
+        region: "",
+        city: "",
+        country: ""
+    };
+    address_components.forEach((component: any) => {
+        for (var shouldBe in ShouldBeComponent) {
+            if (ShouldBeComponent?.[shouldBe].indexOf(component.types[0]) !== -1) {
+                if (shouldBe === "country") {
+                    address[shouldBe] = component.short_name;
+                } else {
+                    address[shouldBe] = component.long_name;
+                }
+            }
+        }
+    });
+    return address;
+
+}
+
 export const getOtherData = (addressComponent: any) => {
-    let city = "", state = "", country = "";
+    let city = "", state = "", country = "", adminCity = "";
     for (let i = 0; i < addressComponent.length - 1; i++) {
         let locality = addressComponent[i];
         let types = locality.types;
         for (let j = 0; j < types.length - 1; j++) {
             if (types[j] === 'locality') {
                 city = locality.long_name
+            }
+            if (types[j] === 'administrative_area_level_2') {
+                adminCity = locality.long_name
             }
             if (types[j] === 'administrative_area_level_1') {
                 state = locality.long_name
@@ -375,13 +457,13 @@ export const getOtherData = (addressComponent: any) => {
             }
         }
     }
-    return { city: city?.trim(), state: state?.trim(), country: country?.trim() }
+    return { city: city?.trim() || adminCity?.trim(), state: state?.trim(), country: country?.trim() }
 }
 
 export const getOtherDataFromAddress = (address: { main_text: string, secondary_text: string }) => {
     let state = "", country = "";
-    const arr = address?.secondary_text.split(",")
-    arr.some((_, i) => {
+    const arr = address?.secondary_text?.split(",")
+    arr?.some((_, i) => {
         if (i == arr.length - 1) {
             country = _
         } else {
@@ -399,11 +481,11 @@ export const InitialPaginationState: IPaginationState = {
 
 export const getShortAddress = (address: string, state: string, city?: string) => {
     try {
-        let index = address?.indexOf(city ?? state) - 2
+        let index = address?.indexOf(city || state) - 2
         if (index < 0) {
             index = 0
         }
-        return address.substring(0, index)
+        return address.substring(0, index) || city || state
     } catch (e) {
         console.log("E", e);
 

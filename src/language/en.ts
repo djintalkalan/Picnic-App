@@ -124,7 +124,7 @@ export const en = {
   remove: "Remove",
   report: "Report",
   group_details: "Group details",
-  are_you_sure_delete_account: "Are you sure you want to Delete account",
+  are_you_sure_delete_account: "Are you sure you want to Delete account?",
   yes_delete_account: "Yes, Delete account",
   yes_logout: "Yes, Logout",
   enter_password_to_delete: "Enter password to delete the account",
@@ -321,5 +321,6 @@ export const en = {
   tax_rate: 'Tax rate',
   tax_amount: 'Applicable tax amount',
   applicable_tax: 'Applicable tax',
+  fm_freq: "FM frequency",
 
 }

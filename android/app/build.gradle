@@ -208,11 +208,11 @@ android {
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
                         if(variant.buildType.name.equals("release")){
                         variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
-                        output.outputFileName = outputFileName+"_"+abi+".apk"
+                        output.outputFileName = outputFileName+"-"+abi+"-v"+ANDROID_VERSION_NAME+".apk"
                         }
             } else if (variant.buildType.name.equals("release")) {
                 variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
-                output.outputFileName = outputFileName+".apk"
+                output.outputFileName = outputFileName+"-v"+ANDROID_VERSION_NAME+".apk"
                 // directly assign the new name back to outputFileName
             }
 

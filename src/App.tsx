@@ -32,7 +32,7 @@ const App: FC = () => {
         _getAppVersion().then((res: any) => {
             if (res && res.status == 200) {
                 const serverVersion = res?.data?.[Platform.OS]
-                const currentVersion = "0" ?? (Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME)
+                const currentVersion = (Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME)
                 const isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
                 // console.log("currentVersion", currentVersion);
                 console.log("isUpdateAvailable", isUpdateAvailable);

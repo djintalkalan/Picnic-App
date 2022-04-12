@@ -163,9 +163,9 @@ export const _loginApi = async (body: any) => {
     return fetchApiData(config.API_URL + 'auth/login', body, "POST")
 }
 
-export const _logoutApi = async () => {
+export const _logoutApi = async (body: any) => {
     console.log("---------- Logout Api Call ---------------")
-    return fetchApiData(config.API_URL + 'user/logout', {}, "POST")
+    return fetchApiData(config.API_URL + 'user/logout', body, "POST")
 }
 
 export const _forgotPassword = async (body: any) => {

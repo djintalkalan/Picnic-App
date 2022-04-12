@@ -22,10 +22,10 @@ const SignUp2: FC<any> = (props) => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<FormType>({
-        defaultValues: {
-            // firstName: "Deepak",
-            // lastName: "Jaglan"
-        },
+        defaultValues: __DEV__ ? {
+            firstName: "Deepak",
+            lastName: "Jaglan"
+        } : {},
         mode: 'onChange'
     })
 

@@ -22,6 +22,7 @@ import { openLink, scaler } from 'utils';
 type FormType = {
   username: string;
   phone: string;
+  phone_countryCode: string;
   phone_dialCode: string;
 };
 
@@ -50,11 +51,13 @@ const SignUp3: FC<any> = props => {
     () =>
       handleSubmit(data => {
         console.log(data);
+        // return
         dispatch(
           doSignUp({
             username: data?.username?.trim(),
             dial_code: data?.phone ? data?.phone_dialCode : '',
             phone_number: data?.phone?.trim(),
+            phone_country_code: data?.phone_countryCode?.trim(),
             register_platform: Platform.OS,
             ...props.route?.params,
           }),
@@ -107,9 +110,9 @@ const SignUp3: FC<any> = props => {
             name={'phone'}
             ref={phoneRef}
             title={Language.phone}
-            placeholder={'0000-000-000'}
+            // placeholder={'0000-000-000'}
             controlObject={{ control, getValues, setValue, setError }}
-            defaultCountry={Database.DefaultCountry}
+            defaultCountryCode={Database.DefaultCountry}
             errors={errors}
           />
 

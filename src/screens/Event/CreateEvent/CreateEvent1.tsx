@@ -199,7 +199,8 @@ const CreateEvent1: FC<any> = props => {
                   onSelectLocation: (location: ILocation) => {
                     locationRef.current = location;
                     // console.log("LOCATION:", location)
-                    setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                    // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                    setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
                     locationInputRef?.current?.setNativeProps({
                       selection: {
                         start: 0,

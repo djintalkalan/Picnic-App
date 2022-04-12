@@ -34,7 +34,7 @@ let isFirstTime = true
 
 let dispatch: Dispatch<any>
 
-const FirebaseNotification = () => {
+export const useFirebaseNotifications = () => {
     const [isLogin] = useDatabase<boolean>("isLogin");
     const [firebaseToken, setFirebaseToken] = useDatabase<string>('firebaseToken');
 
@@ -214,6 +214,3 @@ const showNotification = (message: any, isBackground: boolean) => {
 
 
 }
-
-
-export default FirebaseNotification

@@ -91,13 +91,25 @@ const ProfileScreen: FC<any> = (props) => {
     const setProfileData = useCallback((userData: any) => {
         const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_country_code, phone_number, dob, bio, location } = userData
         console.log("userData", userData);
+        const main_text = getShortAddress(address, state, city)
+        let secondary_text = (city + (city ? ", " : "") + state + (state ? ", " : "") + country)?.trim();
+
+        if (secondary_text?.includes(main_text)) {
+            secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+        }
+        if (secondary_text?.startsWith(",")) {
+            secondary_text = secondary_text?.replace(",", "")?.trim()
+        }
+        if (secondary_text?.endsWith(",")) {
+            secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
+        }
 
         locationRef.current = {
             latitude: location?.coordinates[1],
             longitude: location?.coordinates[0],
             address: {
-                main_text: getShortAddress(address, state, city),
-                secondary_text: city + ", " + state + ", " + country
+                main_text,
+                secondary_text,
             },
             otherData: {
                 city: city,
@@ -123,6 +135,14 @@ const ProfileScreen: FC<any> = (props) => {
 
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {
         const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
+
+        const unmaskedPhoneNumber = (data?.phone?.match(/\d+/g) || []).join('');
+        if (data?.phone_fixedValue && unmaskedPhoneNumber == data?.phone_fixedValue || !data?.phone?.trim()) {
+            data.phone_dialCode = ""
+            data.phone = ""
+            data.phone_countryCode = ""
+        }
+
         dispatch(updateProfile({
             first_name: data?.firstName?.trim(),
             last_name: data?.lastName?.trim(),
@@ -271,7 +291,8 @@ const ProfileScreen: FC<any> = (props) => {
                                 prevSelectedLocation: locationRef.current,
                                 onSelectLocation: (location: ILocation) => {
                                     locationRef.current = location;
-                                    setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                    // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                    setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
                                     locationInputRef?.current?.setNativeProps({
                                         selection: {
                                             start: 0,
@@ -288,11 +309,11 @@ const ProfileScreen: FC<any> = (props) => {
                     />
                     <PhoneInput
                         name={'phone'}
-                        placeholder={Language.phone}
+                        // placeholder={Language.phone}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         controlObject={{ control, getValues, setValue, setError }}
-                        defaultCountry={Database.DefaultCountry}
+                        defaultCountryCode={Database.DefaultCountry}
                         // required
                         errors={errors}
                     />

@@ -1,6 +1,7 @@
 import { colors, Fonts } from 'assets';
 import { Text } from 'custom-components';
-import IntlPhoneInput, { IntlPhoneInputProps, IOnChangeText } from 'dj-intl-phone-input';
+import { ICountry } from 'dj-intl-phone-input/src/Countries';
+import { IntlPhoneInput, IOnChangeText, NewIntlPhoneInputProps } from 'dj-intl-phone-input/src/NewIntlPhoneInput';
 import { capitalize } from 'lodash';
 import React, { forwardRef, useMemo, useRef, useState } from 'react';
 import { Control, Controller, FieldErrors, FieldValues, RegisterOptions, UseFormClearErrors, UseFormGetValues, UseFormSetError, UseFormSetFocus, UseFormSetValue } from 'react-hook-form';
@@ -23,7 +24,7 @@ type UseFormReturn<TFieldValues extends FieldValues = FieldValues, TContext exte
     setFocus?: UseFormSetFocus<TFieldValues>;
 };
 
-interface InputPhoneProps extends IntlPhoneInputProps {
+interface InputPhoneProps extends NewIntlPhoneInputProps {
     title?: string
     required?: boolean
     disabled?: boolean
@@ -56,9 +57,10 @@ interface IVerifiedData {
 export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { style, borderColor = "#E9E9E9", backgroundColor = colors.colorWhite, iconMargin, icon, defaultCountry, fontFamily = "regular", errors, controlObject: { getValues, setError, setValue, control }, title, placeholder, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const [toggle, setToggle] = useState(false)
+    const { style, borderColor = "#E9E9E9", backgroundColor = colors.colorWhite, iconMargin, icon, fontFamily = "regular", errors, controlObject: { getValues, setError, setValue, control }, title, placeholder, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
     const currentDataRef = useRef<IOnChangeText>({
-        dialCode: props?.dialCode ?? "",
+        dialCode: "",
         unmaskedPhoneNumber: "",
         phoneNumber: "",
         isVerified: true,
@@ -138,6 +140,14 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                 />
 
                 <Controller control={control}
+                    name={name + "_fixedValue"}
+                    //@ts-ignore
+                    render={(data) => {
+                        return null
+                    }}
+                />
+
+                <Controller control={control}
                     name={name}
                     rules={{
                         required: required, ...rules, validate: (v) => {
@@ -153,18 +163,24 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                 </Text> : null} */}
                             <IntlPhoneInput
                                 sortBy='dialCode'
-                                extraCountries={[{ ru: "Пуэрто-Рико", lt: "Puerto Rikas", tr: "Porto Riko", en: 'Puerto Rico', flag: '🇵🇷', code: 'PR2', dialCode: '+1787', mask: '(999) 999-9999' }]}
+                                filterInputStyleContainer={{ elevation: 0 }}
                                 containerStyle={styles.phoneInputStyle}
-                                dialCode={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) ? undefined : (currentDataRef?.current?.dialCode || getValues(name + "_dialCode")) || undefined}
+                                onChangeCountry={(c: ICountry) => {
+                                    const { fixedValue, code } = c
+                                    if (getValues(name + "_countryCode") != code)
+                                        setValue(name + "_countryCode", code)
+                                    if (getValues(name + "_fixedValue") != fixedValue)
+                                        setValue(name + "_fixedValue", fixedValue)
+                                }}
                                 onChangeText={(data: IOnChangeText) => {
                                     const { dialCode, unmaskedPhoneNumber, phoneNumber, isVerified, selectedCountry } = data
                                     currentDataRef.current = data
                                     if (getValues(name + "_dialCode") != dialCode)
                                         setValue(name + "_dialCode", dialCode)
-                                    if (getValues(name + "_countryCode") != selectedCountry?.code)
-                                        setValue(name + "_countryCode", selectedCountry?.code)
+
                                     onChange(phoneNumber)
                                 }}
+                                maskPlaceholder
                                 inputProps={{
                                     onFocus: () => {
                                         setFocused(true)
@@ -176,7 +192,7 @@ export const PhoneInput = forwardRef((props: InputPhoneProps, ref) => {
                                     value: value,
                                     placeholder: props.placeholder
                                 }}
-                                defaultCountry={(currentDataRef?.current?.selectedCountry?.code || getValues(name + "_countryCode")) || defaultCountry}
+                                defaultCountryCode={(currentDataRef?.current?.selectedCountry?.code?.toString() || getValues(name + "_countryCode")?.toString()) || 'US'}
                                 dialCodeTextStyle={{}}
                                 placeholderTextColor={colors.colorGreyText}
                                 filterText={props.filterText}

@@ -157,12 +157,26 @@ const EditEvent: FC<any> = props => {
 
     useEffect(() => {
         if (event) {
+
+            const main_text = getShortAddress(event?.address, event?.state, event?.city)
+            let secondary_text = event?.city + ", " + event?.state + ", " + event?.country
+
+            if (secondary_text?.includes(main_text)) {
+                secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+            }
+            if (secondary_text?.startsWith(",")) {
+                secondary_text = secondary_text?.replace(",", "")?.trim()
+            }
+            if (secondary_text?.endsWith(",")) {
+                secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
+            }
+
             locationRef.current = {
                 latitude: event?.location?.coordinates[1],
                 longitude: event?.location?.coordinates[0],
                 address: {
-                    main_text: getShortAddress(event?.address, event?.state, event?.city),
-                    secondary_text: event?.city + ", " + event?.state + ", " + event?.country
+                    main_text,
+                    secondary_text,
                 },
                 otherData: {
                     city: event?.city,
@@ -170,8 +184,6 @@ const EditEvent: FC<any> = props => {
                     country: event?.country
                 }
             }
-            console.log("event?.address", getShortAddress(event?.address, event?.state, event?.city));
-            console.log("event?.city", event?.city);
 
             // return
             eventDateTime.current = {
@@ -428,7 +440,8 @@ const EditEvent: FC<any> = props => {
                                     onSelectLocation: (location: ILocation) => {
                                         locationRef.current = location;
                                         // console.log("LOCATION:", location)
-                                        setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                        // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                                        setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
                                         locationInputRef?.current?.setNativeProps({
                                             selection: {
                                                 start: 0,
