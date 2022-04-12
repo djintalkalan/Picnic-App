@@ -57,7 +57,7 @@ const SignUp3: FC<any> = props => {
             username: data?.username?.trim(),
             dial_code: data?.phone ? data?.phone_dialCode : '',
             phone_number: data?.phone?.trim(),
-            phone_countryCode: data?.phone_countryCode?.trim(),
+            phone_country_code: data?.phone_countryCode?.trim(),
             register_platform: Platform.OS,
             ...props.route?.params,
           }),
