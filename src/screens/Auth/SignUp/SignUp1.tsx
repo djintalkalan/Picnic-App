@@ -36,11 +36,11 @@ const SignUp1: FC = () => {
     formState: { errors },
     setError,
   } = useForm<FormType>({
-    defaultValues: {
+    defaultValues: __DEV__ ? {
       email: "deepakq@testings.com",
       password: "Dj@123456",
       confirmPassword: "Dj@123456"
-    },
+    } : {},
     mode: 'onChange',
   });
 
