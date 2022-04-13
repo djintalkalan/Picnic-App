@@ -316,5 +316,6 @@ export const es = {
     try_again: "",
     deleted_user: "",
     fm_freq: "",
+    select: "",
 
 }

@@ -188,7 +188,7 @@ const SelectLocation: FC<any> = (props) => {
 
             </View>
             {
-                localLocation?.address ? <View style={{
+                localLocation?.address?.main_text ? <View style={{
                     width: '100%',
                     borderRadius: scaler(10),
                     backgroundColor: colors.colorWhite,
@@ -207,7 +207,7 @@ const SelectLocation: FC<any> = (props) => {
                             {/* <Text style={styles.primaryText} >{localLocation?.otherData?.city}</Text>
                             <Text style={styles.secondaryText} >{localLocation?.otherData?.state ? localLocation?.otherData?.state + ", " : ""} {localLocation?.otherData?.country}</Text> */}
                             <Text style={styles.primaryText} >{localLocation?.address?.main_text}</Text>
-                            {localLocation?.address?.secondary_text && <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text>}
+                            {localLocation?.address?.secondary_text ? <Text style={styles.secondaryText} >{localLocation?.address?.secondary_text}</Text> : null}
                         </View>
                     </View>
 
