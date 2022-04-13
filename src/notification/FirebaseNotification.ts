@@ -36,11 +36,8 @@ let dispatch: Dispatch<any>
 
 export const useFirebaseNotifications = () => {
     const [isLogin] = useDatabase<boolean>("isLogin");
-    const [firebaseToken, setFirebaseToken] = useDatabase<string>('firebaseToken');
 
     dispatch = useDispatch()
-
-
     const checkPermission = useCallback(async () => {
         const authStatus = await messaging().requestPermission();
         const enabled =
@@ -51,7 +48,7 @@ export const useFirebaseNotifications = () => {
             console.log('Authorization status:', authStatus);
             messaging().getToken().then(token => {
                 console.log("Token", token)
-                setFirebaseToken(token)
+                Database.setFirebaseToken(token)
                 // messaging().registerDeviceForRemoteMessages()
             }).catch(e => {
                 console.log("error in getting token", e);

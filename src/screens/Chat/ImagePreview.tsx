@@ -103,7 +103,7 @@ const ImagePreview: FC<any> = (props) => {
                 <View onLayout={(e) => {
                     setImageHeight(height - e?.nativeEvent?.layout.height)
                 }} style={{ bottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight) : bottom, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-                    <ChatInput onChangeText={(text: string) => {
+                    <ChatInput inputAccessoryView onChangeText={(text: string) => {
                         textRef.current = text
                     }} onPressSend={() => {
                         _uploadImageOrVideo(imageCurrent, mediaType, textRef.current);
