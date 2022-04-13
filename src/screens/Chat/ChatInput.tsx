@@ -4,7 +4,7 @@ import { Preview, Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
 import Database, { ILocation } from 'database/Database'
 import React, { Dispatch, ForwardedRef, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
-import { Dimensions, Image, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, Dimensions, Image, InputAccessoryView, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
@@ -22,6 +22,7 @@ interface ChatInputProps {
     onChooseLocation?: (location: ILocation) => void,
     onChooseContacts?: (contacts: Array<any>) => void,
     placeholder?: string
+    inputAccessoryView?: boolean
 }
 const { height, width } = Dimensions.get('screen')
 
@@ -32,7 +33,7 @@ const DefaultDelta = {
 }
 
 const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRef<TextInput>) => {
-    const { repliedMessage, link, placeholder = Language.type_a_message, disableButton = false, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
+    const { inputAccessoryView = false, repliedMessage, link, placeholder = Language.type_a_message, disableButton = false, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
         _showBottomMenu({
@@ -176,6 +177,14 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
                         placeholder={placeholder}
                         placeholderTextColor={colors.colorGreyInactive}
                     />
+                    {Platform.OS == 'ios' && inputAccessoryView && <InputAccessoryView nativeID={"done"}   >
+                        <View style={styles.accessory}>
+                            <Button
+                                onPress={() => Keyboard.dismiss()}
+                                title="Done"
+                            />
+                        </View>
+                    </InputAccessoryView>}
 
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', position: 'absolute', end: scaler(20), top: scaler(5) }} >
@@ -241,6 +250,14 @@ const styles = StyleSheet.create({
         fontSize: scaler(15),
         color: colors.colorBlackText,
         marginTop: scaler(4),
-    }
+    },
+    accessory: {
+        width: Dimensions.get('window').width,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: '#F8F8F8',
+        paddingHorizontal: scaler(8)
+    },
 
 })
