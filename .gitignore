@@ -62,6 +62,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+GoogleService-Info.plist
 
 # Archives
 *.zip
@@ -71,5 +72,4 @@ buck-out/
 rnuc.xcconfig
 # uncomment these if you are in project
 #
-production.env
-staging.env
+*.env
