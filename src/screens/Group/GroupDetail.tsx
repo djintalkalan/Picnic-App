@@ -438,8 +438,28 @@ const GroupDetail: FC<any> = (props) => {
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                         {renderBottomActionButtons()}
                     </>
-
-                    : null}
+                    :
+                    <>
+                        <Text style={{ padding: scaler(15), fontWeight: '500', fontSize: scaler(15) }}>{Language.group_admin}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
+                                style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
+                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
+                                {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
+                            </Text>
+                            <MaterialIcons
+                                color={colors.colorPrimary}
+                                style={{ marginEnd: scaler(10) }}
+                                onPress={() => {
+                                    console.log("person", group?.creator_of_group);
+                                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                                }}
+                                size={scaler(20)} name='chat' />
+                        </View>
+                    </>
+                }
 
             </ScrollView>
             {group?.is_admin ? null : renderBottomActionButtons()}

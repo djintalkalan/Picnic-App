@@ -8,7 +8,7 @@ import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { getDetailsFromDynamicUrl, NavigationService, WaitTill } from 'utils';
+import { getDetailsFromDynamicUrl, getDisplayName, NavigationService, WaitTill } from 'utils';
 
 const CHANNEL_NAME = "high-priority"
 
@@ -159,12 +159,59 @@ export const onMessageReceived = async (message: any, isBackground: boolean = fa
 }
 
 const showNotification = (message: any, isBackground: boolean) => {
+    console.log("Message", message);
+    if (message?.chat_room_id) {
+
+    }
+
     let { title, body, message: data } = message?.data ?? {};
     if (data) {
         if (typeof data == 'string') {
             data = JSON.parse(data)
         }
         console.log("data is ", data);
+
+        if (data?.chat_room_id) {
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if (!isBackground && (params?.chatRoomId == data?.chat_room_id &&
+                (name == "PersonChat")
+            )
+            ) {
+
+            } else {
+                let body = data?.text
+                switch (data?.message_type) {
+                    case "image":
+                        body = 'Image message arrived'
+                        break
+                    case "video":
+                        body = 'Video message arrived'
+                        break
+                    case "contact":
+                        body = 'Contact shared'
+                        break
+                    case "location":
+                        body = 'Location shared'
+                        break
+                }
+                const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
+                notifee.displayNotification({
+                    // subtitle:getDisplayName(user),
+                    body,
+                    title: getDisplayName(user),
+                    data: { title, body, message: JSON.stringify(data) },
+                    android: {
+                        channelId: CHANNEL_NAME,
+                        sound: 'default',
+                        // category: AndroidCategory.ALARM,
+                        defaults: [AndroidDefaults.ALL]
+                    },
+                    ios: {
+                        sound: 'default',
+                    }
+                });
+            }
+        }
 
         if (data?.group || data?.event) {
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}

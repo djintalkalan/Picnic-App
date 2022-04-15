@@ -161,8 +161,8 @@ const ProfileScreen: FC<any> = (props) => {
             location: {
                 type: 'Point',
                 coordinates: [
-                    longitude,
-                    latitude
+                    longitude || 0,
+                    latitude || 0
                 ]
             }
         }))
