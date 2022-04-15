@@ -114,6 +114,11 @@ const navigateToPages = async (notification: any) => {
             dispatch && dispatch((data?.group ? setActiveGroup : setActiveEvent)(data?.group ?? data?.event))
             NavigationService.closeAndPush(data?.group ? "GroupChatScreen" : "EventChats", { id: data?.resource_id })
         }
+
+        if (data?.chat_room_id) {
+            const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
+            NavigationService.closeAndPush("PersonChat", { person: user, chatRoomId: data?.chat_room_id })
+        }
     }
 }
 
