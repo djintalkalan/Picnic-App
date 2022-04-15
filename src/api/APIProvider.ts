@@ -453,3 +453,17 @@ export const _getAppVersion = async () => {
     console.log("---------- get app version Api Call ---------------")
     return fetchApiData(config.API_URL + 'common/app-version', null, "GET")
 }
+
+export const _getPersonChat = async (body: any) => {
+    console.log("---------- getPersonChat Api Call ---------------")
+    const params = objectToParamString(body)
+    return fetchApiData(config.API_URL + 'chat/get-conversation?' + params, null, "GET")
+}
+
+const objectToParamString = (body: any) => {
+    let s = ""
+    Object.keys(body).some((d: string, index: number) => {
+        if (body?.[d]?.toString().trim()) s += ((index ? "&" : "") + d + "=" + body?.[d]?.toString()?.trim())
+    })
+    return s
+}

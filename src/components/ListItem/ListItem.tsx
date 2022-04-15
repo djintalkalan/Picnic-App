@@ -57,7 +57,7 @@ interface MemberListItemProps {
     isSelected?: boolean,
     containerStyle?: StyleProp<ViewStyle>
     customRightTextStyle?: StyleProp<ViewStyle>
-    customRightText?: string
+    customRightText?: string | Element
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     onLongPress?: (e?: GestureResponderEvent) => void

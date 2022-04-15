@@ -1,4 +1,5 @@
 import { colors } from 'assets'
+import { Text } from 'custom-components'
 import React, { FC } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Contact } from 'react-native-contacts'
@@ -6,7 +7,6 @@ import { Contact } from 'react-native-contacts'
 interface IChatItem {
     _id: string
     created_by: any
-    isAdmin: any,
     is_system_message?: 1 | 0
     user?: any,
     parent_message: any,
@@ -14,35 +14,30 @@ interface IChatItem {
     setRepliedMessage: (msg: any) => void
     message_type: any
     is_message_liked_by_me: boolean
-    message_liked_by_last_five: []
-    message_total_likes_count: number
-    message_liked_by_user_name: []
-    message_recently_liked_user_ids: Array<any>
-    is_message_sender_is_admin: boolean
     message_liked_by_users: Array<any>
-    group?: any
-    event?: any
-    isGroupType: boolean
     message_deleted_by_user: any
-    isMuted?: boolean
-
     location: { lat: string, lng: string }
     text: string
     image: string
     video: string
     document: string
     contacts: Array<Contact>
+    user_id: string
+    chat_room_id: string
+    message_deleted_user_id: string
+    is_message_read_by_me: boolean
 }
 
-const OneToOneChatInput: FC<any> = (props) => {
+const SingleChatItem: FC<any> = (props) => {
+    const { text } = props
     return (
         <View style={styles.container} >
-
+            <Text>{text}</Text>
         </View>
     )
 }
 
-export default OneToOneChatInput
+export default SingleChatItem
 
 const styles = StyleSheet.create({
     container: {

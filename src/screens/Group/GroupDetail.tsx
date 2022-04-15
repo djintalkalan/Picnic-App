@@ -14,13 +14,13 @@ import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SwipeRow } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
-
 const GroupDetail: FC<any> = (props) => {
 
     const swipeRef = useRef<SwipeRow<any>>(null)
@@ -116,7 +116,12 @@ const GroupDetail: FC<any> = (props) => {
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : ""}
+                customRightText={item?.is_admin ? Language?.admin : <MaterialIcons
+                    onPress={() => {
+                        console.log("person", item?.user);
+                        NavigationService.navigate("PersonChat", { person: item?.user })
+                    }}
+                    size={scaler(20)} name='chat' />}
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_home_profile}
             />

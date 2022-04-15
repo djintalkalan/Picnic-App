@@ -5,6 +5,7 @@ export * from './groupActions';
 export * from './groupChatActions';
 export * from './homeActions';
 export * from './otherActions';
+export * from './personChatAction';
 export * from './profileActions';
 
 export interface IPaginationState {

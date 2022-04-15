@@ -1,11 +1,11 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
 import { mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
-import { EMIT_JOIN, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_RECONNECT } from "./SocketEvents";
+import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT } from "./SocketEvents";
 
 class Service {
     static instance?: Service;
@@ -89,6 +89,13 @@ class Service {
         this.socket?.on(ON_EVENT_MESSAGE_DELETE, this.onEventMessageDelete)
         this.socket?.on(ON_EVENT_DELETE, this.onEventDelete)
         this.socket?.on(ON_EVENT_MEMBER_DELETE, this.onEventMemberDelete)
+
+        this.socket?.on(ON_PERSONAL_MESSAGE, this.onPersonalMessage)
+        this.socket?.on(ON_PERSONAL_LIKE_UNLIKE, this.onPersonalLikeUnlike)
+        this.socket?.on(ON_PERSONAL_MESSAGE_DELETE, this.onPersonalMessageDelete)
+        this.socket?.on(ON_PERSONAL_JOIN_ROOM_REQUEST, this.onJoinRequest)
+
+
         this.listenErrors();
         // this.socket?.on(ON_EVENT_MESSAGE_TYPING, this.onEventMessageTyping)
     }
@@ -316,9 +323,37 @@ class Service {
         }
     }
 
-    private onEventMessageTyping = (e: any) => {
+
+    private onPersonalMessage = (e: any) => {
+        console.log("Personal message received", e);
+        if (e?.data?.data) {
+            const data = e?.data?.data
+            this.dispatch(setChatInPerson({
+                chatRoomId: data?.chat_room_id,
+                chats: [data]
+            }))
+        }
 
     }
+
+    private onPersonalLikeUnlike = (e: any) => {
+        console.log("PersonalLikeUnlike", e);
+
+    }
+
+    private onPersonalMessageDelete = (e: any) => {
+        console.log("PersonalMessage Deleted", e);
+
+    }
+
+    private onJoinRequest = (e: any) => {
+        console.log("room join request", e);
+        if (e?.data?.user_id == Database.getStoredValue('userData')?._id) {
+            this?.emit(EMIT_JOIN_PERSONAL_ROOM, e?.data)
+        }
+    }
+
+
 
 
 
