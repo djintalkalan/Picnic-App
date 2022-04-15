@@ -348,8 +348,8 @@ class Service {
 
     private onJoinRequest = (e: any) => {
         console.log("room join request", e);
-        if (e?.data?.user_id == Database.getStoredValue('userData')?._id) {
-            this?.emit(EMIT_JOIN_PERSONAL_ROOM, e?.data)
+        if (e?.user_id == Database.getStoredValue('userData')?._id) {
+            this?.emit(EMIT_JOIN_PERSONAL_ROOM, e)
         }
     }
 
