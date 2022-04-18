@@ -1,17 +1,20 @@
+import Clipboard from '@react-native-community/clipboard'
 import { colors, Images } from 'assets'
-import { Text } from 'custom-components'
+import { PreviewLink2, Text } from 'custom-components'
 import Database from 'database/Database'
-import React, { memo, useMemo } from 'react'
-import { Image, TouchableOpacity, View } from 'react-native'
+import { find as findUrl } from 'linkifyjs'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { Dimensions, GestureResponderEvent, Image, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { EMIT_PERSONAL_LIKE_UNLIKE, SocketService } from 'socket'
-import { getDisplayName, scaler } from 'utils'
+import { getDisplayName, scaler, _showToast } from 'utils'
 import { ContactMessageReplied } from './ContactMessage'
 import { ImageMessageReplied } from './ImageMessage'
 import { LocationMessageReplied } from './LocationMessage'
 import { VideoMessageReplied } from './VideoMessage'
-
+const { height, width } = Dimensions.get('screen')
 interface ITextMessage {
+    onPressOpenActionMenu: (e?: GestureResponderEvent) => void,
     text: string,
     isMyMessage: boolean
     parent_message?: any
@@ -32,7 +35,44 @@ interface ITextMessageReplied {
 }
 
 export const TextMessage = memo((props: ITextMessage) => {
-    const { _id, text, isMyMessage, parent_message, sender, person, is_message_liked_by_me, message_liked_by_users } = props
+    const { _id, onPressOpenActionMenu, text, isMyMessage, parent_message, sender, person, is_message_liked_by_me, message_liked_by_users } = props
+    const [link, setLink] = useState("")
+
+    useEffect(() => {
+        const matches = findUrl(text?.toLowerCase())
+        let found = false
+        matches?.some((link) => {
+            if (link?.type == 'url' && link?.isLink && link?.href) {
+                found = true
+                setLink(link?.href)
+                return true
+            }
+        })
+        if (!found) {
+            setLink("")
+        }
+    }, [])
+
+    const _onCopy = useCallback((e: GestureResponderEvent) => {
+        let gravity: "BOTTOM" | "CENTER" | "TOP" | undefined = 'BOTTOM'
+        try {
+            if (e?.nativeEvent?.pageY) {
+                const d = ((height) / 3)
+                if (e?.nativeEvent?.pageY < (2 * d)) {
+                    gravity = "CENTER"
+                }
+
+            }
+        }
+        catch (e) {
+            console.log("e", e);
+
+        }
+        Clipboard?.setString(text?.trim());
+        // console.log("e", e, ((height - scaler(80)) / 3));
+        _showToast("Copied", 'SHORT', gravity);
+    }, [])
+
     const likeString = useMemo<React.ReactNode>(() => {
         let string: any = ["Like"]
         if (is_message_liked_by_me) {
@@ -85,13 +125,21 @@ export const TextMessage = memo((props: ITextMessage) => {
     return <TouchableOpacity activeOpacity={0.8} style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
         {!isMyMessage ?
             <View style={{ flex: 1, alignItems: 'flex-end' }} >
-                <TouchableOpacity onPress={() => { }} style={{ padding: scaler(5) }} >
+                <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
         <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(7), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
-            <Text style={{ fontSize: scaler(12), flex: 1, alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text}</Text>
+            {link ?
+
+                <PreviewLink2
+
+                    text={link} />
+                : null}
+            <View style={{ width: '100%' }} >
+                <Text autoLink onLongPress={_onCopy} style={{ fontSize: scaler(12), flex: 1, alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text?.trim()}</Text>
+            </View>
             <View style={{ flexDirection: 'row', marginTop: scaler(5), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
                 <TouchableOpacity onPress={() => {
                     SocketService?.emit(EMIT_PERSONAL_LIKE_UNLIKE, {
@@ -109,7 +157,7 @@ export const TextMessage = memo((props: ITextMessage) => {
             </View>
         </View>
         {isMyMessage ?
-            <TouchableOpacity onPress={() => { }} style={{ padding: scaler(5) }} >
+            <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
                 <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
             </TouchableOpacity> : null}
     </TouchableOpacity>

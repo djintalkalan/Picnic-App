@@ -1,5 +1,5 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
@@ -365,7 +365,14 @@ class Service {
 
     private onPersonalMessageDelete = (e: any) => {
         console.log("PersonalMessage Deleted", e);
-
+        if (e?.data?.data) {
+            const data = e?.data?.data
+            this.dispatch(updateChatInPersonSuccess({
+                chatRoomId: data?.chat_room_id,
+                resourceId: data?._id,
+                message: data
+            }))
+        }
     }
 
     private onJoinRequest = (e: any) => {

@@ -2,7 +2,7 @@ import { colors } from 'assets'
 import { Text } from 'custom-components'
 import Database from 'database/Database'
 import React, { memo, useCallback, useMemo } from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { GestureResponderEvent, TouchableOpacity, View } from 'react-native'
 import Contacts, { Contact } from 'react-native-contacts'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Language from 'src/language/Language'
@@ -13,6 +13,7 @@ import { TextMessageReplied } from './TextMessage'
 import { VideoMessageReplied } from './VideoMessage'
 
 interface IContactMessage {
+    onPressOpenActionMenu: (e?: GestureResponderEvent) => void,
     contacts: Array<Contact>,
     isMyMessage: boolean
     parent_message?: any
@@ -32,7 +33,7 @@ interface IContactMessageReplied {
 }
 
 export const ContactMessage = memo((props: IContactMessage) => {
-    const { _id, contacts, isMyMessage, parent_message, sender, person,
+    const { _id, onPressOpenActionMenu, contacts, isMyMessage, parent_message, sender, person,
         // is_message_liked_by_me, message_liked_by_users
     } = props
     const contact = contacts[0]
@@ -97,7 +98,7 @@ export const ContactMessage = memo((props: IContactMessage) => {
     return <View style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
         {!isMyMessage ?
             <View style={{ flex: 1, alignItems: 'flex-end' }} >
-                <TouchableOpacity onPress={() => { }} style={{ padding: scaler(5) }} >
+                <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
@@ -134,7 +135,7 @@ export const ContactMessage = memo((props: IContactMessage) => {
             </View> */}
         </View>
         {isMyMessage ?
-            <TouchableOpacity onPress={() => { }} style={{ padding: scaler(5) }} >
+            <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
                 <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
             </TouchableOpacity> : null}
     </View>

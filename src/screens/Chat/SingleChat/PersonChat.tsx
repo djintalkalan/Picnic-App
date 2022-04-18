@@ -151,7 +151,7 @@ const PersonChat: FC<any> = (props) => {
         inputRef.current?.clear()
         setLink(_ => _ ? "" : _)
         if (repliedMessage) {
-            // setRepliedMessage(null)
+            setRepliedMessage(null)
         }
     }, [repliedMessage])
 

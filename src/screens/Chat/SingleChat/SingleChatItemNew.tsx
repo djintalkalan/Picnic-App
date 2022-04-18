@@ -1,10 +1,14 @@
 import { colors } from 'assets'
+import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import Database from 'database/Database'
-import { isEqual } from 'lodash'
-import React, { FC, memo, useMemo } from 'react'
+import React, { FC, memo, useCallback, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { Contact } from 'react-native-contacts'
+import { EMIT_PERSONAL_MESSAGE_DELETE, SocketService } from 'socket'
+import Language from 'src/language/Language'
+import { _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils'
 import { ContactMessage } from './ContactMessage'
+import { DeletedMessage } from './DeletedMessage'
 import { ImageMessage } from './ImageMessage'
 import { LocationMessage } from './LocationMessage'
 import { TextMessage } from './TextMessage'
@@ -12,6 +16,7 @@ import { VideoMessage } from './VideoMessage'
 
 interface IChatItem {
     _id: string
+    status: number,
     created_by: any
     is_system_message?: 1 | 0
     user?: any,
@@ -36,17 +41,48 @@ interface IChatItem {
 }
 
 const SingleChatItem: FC<IChatItem> = (props) => {
-    const { _id, location, image, video, contacts, text, person, parent_message, message_type, message_liked_by_users, is_message_liked_by_me, user_id } = props
+    const { _id, status, location, setRepliedMessage, image, video, contacts, text, person, parent_message, message_type, message_liked_by_users, is_message_liked_by_me, user_id } = props
     const { isMyMessage, sender } = useMemo(() => ({
         isMyMessage: person?._id != user_id,
         sender: person?._id != user_id ? Database.getStoredValue("userData") : person
     }), [person?.id, user_id])
 
+    const onPressOpenActionMenu = useCallback(() => {
+        let buttons: IBottomMenuButton[] = [{
+            title: Language.reply,
+            onPress: () => setRepliedMessage({ _id, user: sender, message: text, message_type, contacts, coordinates: location, location }),
+        }]
+        if (isMyMessage) {
+            buttons.push({
+                title: Language.delete,
+                onPress: () => {
+                    _showPopUpAlert({
+                        message: Language.are_you_sure_delete_message,
+                        onPressButton: () => {
+                            SocketService.emit(EMIT_PERSONAL_MESSAGE_DELETE, {
+                                message_id: _id
+                            })
+                            _hidePopUpAlert()
+                        },
+                        buttonText: Language.yes_delete
+                    })
+                },
+            })
+        }
+        _showBottomMenu({ buttons: buttons })
+    }, [])
+
     const renderMessage = useMemo(() => {
+        if (status == 2) {
+            return <DeletedMessage
+                isMyMessage={isMyMessage}
+            />
+        }
         switch (message_type) {
             case "image":
 
                 return <ImageMessage
+                    onPressOpenActionMenu={onPressOpenActionMenu}
                     is_message_liked_by_me={is_message_liked_by_me}
                     message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
@@ -58,6 +94,7 @@ const SingleChatItem: FC<IChatItem> = (props) => {
             case "video":
 
                 return <VideoMessage
+                    onPressOpenActionMenu={onPressOpenActionMenu}
                     is_message_liked_by_me={is_message_liked_by_me}
                     message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
@@ -68,6 +105,7 @@ const SingleChatItem: FC<IChatItem> = (props) => {
 
             case "text":
                 return <TextMessage
+                    onPressOpenActionMenu={onPressOpenActionMenu}
                     is_message_liked_by_me={is_message_liked_by_me}
                     message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
@@ -76,6 +114,7 @@ const SingleChatItem: FC<IChatItem> = (props) => {
 
             case "contact":
                 return <ContactMessage
+                    onPressOpenActionMenu={onPressOpenActionMenu}
                     // is_message_liked_by_me={is_message_liked_by_me}
                     // message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
@@ -87,6 +126,7 @@ const SingleChatItem: FC<IChatItem> = (props) => {
 
             case "location":
                 return <LocationMessage
+                    onPressOpenActionMenu={onPressOpenActionMenu}
                     // is_message_liked_by_me={is_message_liked_by_me}
                     // message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
@@ -97,7 +137,9 @@ const SingleChatItem: FC<IChatItem> = (props) => {
     return renderMessage ?? null
 }
 
-export default memo(SingleChatItem, (prevProps, nextProps) => (isEqual(prevProps, nextProps)))
+export default memo(SingleChatItem
+    // ,(prevProps, nextProps) => (isEqual(prevProps, nextProps)))
+)
 
 const styles = StyleSheet.create({
     container: {
