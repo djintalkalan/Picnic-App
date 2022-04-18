@@ -66,19 +66,13 @@ const SingleChatItem: FC<IChatItem> = (props) => {
                     video={video}
                 />
 
-
-                break;
-
             case "text":
-
                 return <TextMessage
                     is_message_liked_by_me={is_message_liked_by_me}
                     message_liked_by_users={message_liked_by_users}
                     person={person} sender={sender}
                     _id={_id} parent_message={parent_message}
                     isMyMessage={isMyMessage} text={text} />
-
-                break;
 
             case "contact":
                 return <ContactMessage
@@ -87,9 +81,9 @@ const SingleChatItem: FC<IChatItem> = (props) => {
                     person={person} sender={sender}
                     _id={_id} parent_message={parent_message}
                     isMyMessage={isMyMessage} contacts={contacts} />
-            case "document":
 
-                break;
+            case "document":
+                return null
 
             case "location":
                 return <LocationMessage
@@ -98,9 +92,6 @@ const SingleChatItem: FC<IChatItem> = (props) => {
                     person={person} sender={sender}
                     _id={_id} parent_message={parent_message}
                     isMyMessage={isMyMessage} location={location} />
-
-            default:
-                break;
         }
     }, [message_type, props])
     return renderMessage ?? null

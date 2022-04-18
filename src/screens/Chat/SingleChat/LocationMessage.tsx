@@ -86,14 +86,13 @@ export const LocationMessage = memo((props: ILocationMessage) => {
                     return <ContactMessageReplied _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} contacts={parent_message?.contacts} />
 
                 case "document":
-
-                    break;
+                    return null
 
                 case "location":
                     return <LocationMessageReplied _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} location={parent_message?.contacts} />
 
                 default:
-                    break;
+                    return null
             }
     }, [parent_message?.message_type, props])
 

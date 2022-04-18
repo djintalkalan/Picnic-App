@@ -74,24 +74,20 @@ export const VideoMessage = memo((props: IVideoMessage) => {
                 case "video":
                     return <VideoMessageReplied video={parent_message?.video} _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} text={parent_message?.text} />
 
-
                 case "text":
                     return <TextMessageReplied _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} text={parent_message?.text} />
-
 
                 case "contact":
                     return <ContactMessageReplied _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} contacts={parent_message?.contacts} />
 
-
                 case "document":
-
+                    return null
 
                 case "location":
                     return <LocationMessageReplied _id={parent_message?._id} sender={senderParent} isMyMessage={isMyMessage} isMyMessageParent={isMyMessageParent} location={parent_message?.contacts} />
 
-
                 default:
-                    break;
+                    return null
             }
     }, [parent_message?.message_type, props])
 
