@@ -112,7 +112,7 @@ export const VideoMessage = memo((props: IVideoMessage) => {
             }
     }, [parent_message?.message_type, props])
 
-    return <TouchableOpacity activeOpacity={0.8} style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
+    return <View style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
         {!isMyMessage ?
             <View style={{ flex: 1, alignItems: 'flex-end' }} >
                 <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
@@ -169,7 +169,7 @@ export const VideoMessage = memo((props: IVideoMessage) => {
             <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
                 <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
             </TouchableOpacity> : null}
-    </TouchableOpacity>
+    </View>
 }
     // , (prevProps, nextProps) => (isEqual(prevProps, nextProps))
 )
@@ -178,7 +178,7 @@ export const VideoMessage = memo((props: IVideoMessage) => {
 export const VideoMessageReplied = memo((props: IVideoMessageReplied) => {
     const { isMyMessage, isMyMessageParent } = props
     const senderName = props?.isMyMessageParent ? "You" : getDisplayName(props?.sender)
-    return <TouchableOpacity style={{
+    return <TouchableOpacity activeOpacity={0.7} style={{
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,
         width: '100%',

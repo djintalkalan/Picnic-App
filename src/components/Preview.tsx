@@ -101,13 +101,14 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
         if (image?.url) {
             aspectRatio = (image?.width ?? 0) / (image?.height ?? 1) ?? aspectRatio
         }
-        return <View style={{ width: width - scaler(13) - (width * 3 / 10), }} >
+        return <View style={{ width: width - scaler(13) - (width * 3 / 10), paddingBottom: scaler(10) }} >
             {image?.url ? <ImageLoader
                 placeholderSource={Images.ic_image_placeholder}
                 resizeMode={'contain'}
                 source={{ uri: image?.url }}
                 //@ts-ignore
                 style={{
+                    backgroundColor: colors.colorBlackText,
                     alignSelf: 'center',
                     padding: scaler(5),
                     // width: '100%',
@@ -118,7 +119,7 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
                     // height: width / 3
                 }} /> : null}
             {title ? <Text style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '500' }} >{title}</Text> : null}
-            {description ? <Text style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '400' }} >{description}</Text> : null}
+            {description ? <Text numberOfLines={2} style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '400' }} >{description}</Text> : null}
         </View>
     }
 
