@@ -1,5 +1,6 @@
 export const colors = {
     colorPrimary: "#4AD395",
+    colorMessage: "rgba(74, 211, 149, 0.5)",
     colorFadedPrimary: "rgba(74, 211, 149, 0.2)",
     colorWhite: "#fff",
     colorBlack: '#000',

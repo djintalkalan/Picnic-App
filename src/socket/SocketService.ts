@@ -1,5 +1,5 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { io, Socket } from "socket.io-client";
@@ -338,6 +338,28 @@ class Service {
 
     private onPersonalLikeUnlike = (e: any) => {
         console.log("PersonalLikeUnlike", e);
+
+        if (e?.data?.data?.chat_room_id) {
+            const userId = Database.getStoredValue("userData")?._id
+            const data = e?.data?.data
+            if (data?.message_liked_by_users?.findIndex((e: any) => (e?.user_id == userId)) > -1) {
+                data.is_message_liked_by_me = true
+            } else {
+                data.is_message_liked_by_me = false
+            }
+            // e?.liked_by_users?.some((e: any, index: number) => {
+            //     if (e?.user_id == userId) {
+            //         data[0].is_message_liked_by_me = true
+            //         return true
+            //     }
+            // });
+            console.log("data", data);
+
+            this.dispatch(updateChatInPerson({
+                chatRoomId: data?.chat_room_id,
+                chat: data
+            }))
+        }
 
     }
 

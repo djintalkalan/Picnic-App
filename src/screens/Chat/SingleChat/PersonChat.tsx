@@ -4,20 +4,20 @@ import { getPersonChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
-import Database, { ILocation, useDatabase } from 'database/Database'
+import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
-import { getImageUrl, NavigationService, scaler } from 'utils'
+import { getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
-import SingleChatItem from './SingleChatItem'
+import SingleChatItem from './SingleChatItemNew'
 
 let loadMore = false
 const { width } = Dimensions.get("screen")
@@ -28,15 +28,6 @@ const PersonChat: FC<any> = (props) => {
     useEffect(() => {
         chatRoomIdRef.current = props?.route?.params?.chatRoomId
     }, [props?.route?.params?.chatRoomId])
-
-
-    const members = useMemo(() => {
-        const userData = Database.getStoredValue('userData');
-        return {
-            [userData?._id]: userData,
-            [person?._id]: person
-        }
-    }, [person])
 
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
@@ -84,6 +75,7 @@ const PersonChat: FC<any> = (props) => {
                 chat_room_id: "",
                 user_id: person?._id,
                 parent_id: repliedMessage?._id,
+                // parent_id: "625d3bc2724648d4a6c00d98" || repliedMessage?._id,
                 message_type: "text",
                 text: textMessageRef?.current?.trim()
             })
@@ -107,9 +99,10 @@ const PersonChat: FC<any> = (props) => {
                         chat_room_id: "",
                         user_id: person?._id,
                         parent_id: repliedMessage?._id,
+                        // parent_id: "625d3bc2724648d4a6c00d98" ?? repliedMessage?._id,
                         message_type: mediaType == 'video' ? 'video' : "image",
-                        text: textMessageRef?.current?.trim(),
-                        image: url
+                        text: text,
+                        [mediaType == 'video' ? 'video' : 'image']: url
                     })
                     inputRef.current?.clear()
                     setLink(_ => _ ? "" : _)
@@ -131,7 +124,6 @@ const PersonChat: FC<any> = (props) => {
 
     const _onChooseContacts = useCallback((contacts: Array<any>) => {
         SocketService.emit(EMIT_SEND_PERSONAL_MESSAGE, {
-
             chat_room_id: chatRoomIdRef?.current,
             user_id: person?._id,
             parent_id: repliedMessage?._id,
@@ -212,7 +204,7 @@ const PersonChat: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
-                title={person?.first_name + " " + person?.last_name}
+                title={getDisplayName(person)}
                 // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
                 icon={person?.image ? { uri: getImageUrl(person?.image, { width: scaler(50), type: 'users' }) } : undefined}
                 defaultIcon={Images.ic_home_profile}

@@ -104,7 +104,7 @@ const ProfileScreen: FC<any> = (props) => {
             secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
         }
 
-        locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
+        locationRef.current = (location?.coordinates?.[0] && location?.coordinates?.[1]) ? {
             latitude: location?.coordinates[1],
             longitude: location?.coordinates[0],
             address: {
