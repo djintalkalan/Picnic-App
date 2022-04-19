@@ -54,13 +54,14 @@ const PersonChat: FC<any> = (props) => {
         })
         if (!found) {
             setLink("")
-
         }
     }, 800), [])
 
-    const _onChatRoomIdUpdate = useCallback((id: string) => {
-        roomIdUpdateListener?.remove();
-        props?.navigation?.setParams({ ...props?.navigation?.route?.params, chatRoomId: id })
+    const _onChatRoomIdUpdate = useCallback(({ chat_room_id, person_id }: { chat_room_id: string, person_id: string }) => {
+        if (person_id == person?._id) {
+            roomIdUpdateListener?.remove();
+            props?.navigation?.setParams({ ...props?.navigation?.route?.params, chatRoomId: chat_room_id })
+        }
     }, [])
 
     useEffect(() => {
@@ -114,7 +115,6 @@ const PersonChat: FC<any> = (props) => {
                     if (repliedMessage) {
                         setRepliedMessage(null)
                     }
-
                     if (NavigationService.getCurrentScreen()?.name == "ImagePreview") {
                         NavigationService.goBack();
                     }
@@ -205,7 +205,6 @@ const PersonChat: FC<any> = (props) => {
                 setRepliedMessage={setRepliedMessage}
             />)
     }, [person])
-
 
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >

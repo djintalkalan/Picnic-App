@@ -21,7 +21,7 @@ function* _getPersonChat({ type, payload, }: action): Generator<any, any, any> {
                 let chat_room_id = payload?.chat_room_id
                 if (!chat_room_id) {
                     chat_room_id = chats?.[0]?.chat_room_id
-                    DeviceEventEmitter.emit("UpdateChatRoomId", chat_room_id)
+                    DeviceEventEmitter.emit("UpdateChatRoomId", { chat_room_id, person_id: payload?.id })
                 }
                 chats?.[0]?.chat_room_id
                 yield put((payload?.message_id ? setChatInPerson : refreshChatInPerson)({ chatRoomId: (payload?.chat_room_id || chats?.[0]?.chat_room_id), chats: chats, message_id: payload?.message_id }))

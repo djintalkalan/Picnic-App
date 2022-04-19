@@ -380,9 +380,17 @@ class Service {
         console.log("room join request", e);
         if (e?.user_id == Database.getStoredValue('userData')?._id) {
             this?.emit(EMIT_JOIN_PERSONAL_ROOM, e)
+            DeviceEventEmitter.emit("UpdateChatRoomId", {
+                chat_room_id: e?.chat_room_id,
+                person_id: e?.sender_id
+            })
+            this.onPersonalMessage(e?.data)
         }
         if (e?.sender_id == Database.getStoredValue('userData')?._id) {
-            DeviceEventEmitter.emit("UpdateChatRoomId", e?.chat_room_id)
+            DeviceEventEmitter.emit("UpdateChatRoomId", {
+                chat_room_id: e?.chat_room_id,
+                person_id: e?.user_id
+            })
         }
     }
 
