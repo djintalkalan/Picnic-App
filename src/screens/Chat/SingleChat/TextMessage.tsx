@@ -74,15 +74,15 @@ export const TextMessage = memo((props: ITextMessage) => {
     }, [])
 
     const likeString = useMemo<React.ReactNode>(() => {
-        let string: any = ["Like"]
+        let string: any = [<Text key='1' >Like</Text>]
         if (is_message_liked_by_me) {
-            string = ["Liked by ", <Text style={{ fontWeight: '600' }} >You</Text>]
+            string = [<Text key='2'>Liked by </Text>, <Text key='3' style={{ fontWeight: '600' }} >You</Text>]
             if (message_liked_by_users?.length == 2) {
-                string.push(" and ")
-                string.push(<Text style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>)
+                string.push(<Text key='4'> and </Text>)
+                string.push(<Text key='5' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>)
             }
         } else if (message_liked_by_users?.length) {
-            string = ["Liked by ", <Text style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>]
+            string = [<Text key='6'>Liked by </Text>, <Text key='7' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>]
         }
         return string
     }, [is_message_liked_by_me, message_liked_by_users, props])
