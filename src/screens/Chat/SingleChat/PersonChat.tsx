@@ -67,6 +67,8 @@ const PersonChat: FC<any> = (props) => {
         }
     }, 800), [])
 
+
+
     useEffect(() => {
         if (repliedMessage) {
             inputRef.current?.focus()
@@ -108,8 +110,8 @@ const PersonChat: FC<any> = (props) => {
                         user_id: person?._id,
                         parent_id: repliedMessage?._id,
                         message_type: mediaType == 'video' ? 'video' : "image",
-                        text: textMessageRef?.current?.trim(),
-                        image: url
+                        text: text,
+                        [mediaType == 'video' ? 'video' : 'image']: url
                     })
                     inputRef.current?.clear()
                     setLink(_ => _ ? "" : _)
@@ -159,7 +161,7 @@ const PersonChat: FC<any> = (props) => {
         inputRef.current?.clear()
         setLink(_ => _ ? "" : _)
         if (repliedMessage) {
-            // setRepliedMessage(null)
+            setRepliedMessage(null)
         }
     }, [repliedMessage])
 
