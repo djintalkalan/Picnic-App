@@ -8,6 +8,7 @@ const { width, height } = Dimensions.get('screen')
 
 interface PreviewProps extends LinkPreviewProps {
     changeableLink?: boolean
+    isMyMessage?: boolean | null
 }
 
 const defaultRenderText = () => (null)
@@ -66,7 +67,7 @@ const PreviewLink: FC<PreviewProps> = (props) => {
 
 export const PreviewLink2 = memo((props: PreviewProps) => {
     const [previewData, setPreviewData] = useState<PreviewData>()
-    const { containerStyle, changeableLink = false, onPreviewDataFetched, touchableWithoutFeedbackProps, renderText = defaultRenderText, ...rest } = props
+    const { isMyMessage, containerStyle, changeableLink = false, onPreviewDataFetched, touchableWithoutFeedbackProps, renderText = defaultRenderText, ...rest } = props
     const _onPreviewDataFetched = useCallback((data) => {
         console.log("_onPreviewDataFetched", data);
 
@@ -101,7 +102,10 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
         if (image?.url) {
             aspectRatio = (image?.width ?? 0) / (image?.height ?? 1) ?? aspectRatio
         }
-        return <View style={{ width: width - scaler(13) - (width * 3 / 10), paddingBottom: scaler(10) }} >
+        return <View style={{
+            width: width - scaler(13) - (width * 3 / 10),
+            paddingBottom: scaler(10),
+        }} >
             {image?.url ? <ImageLoader
                 placeholderSource={Images.ic_image_placeholder}
                 resizeMode={'contain'}
@@ -118,8 +122,8 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
                     // // width: image?.width,
                     // height: width / 3
                 }} /> : null}
-            {title ? <Text style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '500' }} >{title}</Text> : null}
-            {description ? <Text numberOfLines={2} style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '400' }} >{description}</Text> : null}
+            {title ? <Text style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '500', color: colors.colorBlackText }} >{title}</Text> : null}
+            {description ? <Text numberOfLines={2} style={{ paddingTop: scaler(5), paddingHorizontal: scaler(4), fontWeight: '400', color: colors.colorPlaceholder }} >{description}</Text> : null}
         </View>
     }
 
@@ -133,7 +137,10 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
                 backgroundColor: colors.colorFadedPrimary,
                 ...(previewData?.link ? {
                     flex: 1,
-                    marginBottom: scaler(10)
+                    borderTopLeftRadius: isMyMessage ? scaler(8) : 0,
+                    borderTopRightRadius: isMyMessage != null && !isMyMessage ? scaler(8) : 0,
+                    overflow: 'hidden'
+                    // marginBottom: scaler(10)
                     // paddingTop: scaler(5),
                     // borderBottomColor: 'grey', borderBottomWidth: 0.5
                 } : { height: 0, width: 0, padding: 0 })

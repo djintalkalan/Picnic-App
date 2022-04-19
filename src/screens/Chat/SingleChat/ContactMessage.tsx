@@ -102,7 +102,7 @@ export const ContactMessage = memo((props: IContactMessage) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
-        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(7), paddingBottom: 0, backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
+        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(2), paddingBottom: 0, backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
             <View style={{
                 borderRadius: scaler(15), overflow: 'hidden',
@@ -112,10 +112,10 @@ export const ContactMessage = memo((props: IContactMessage) => {
                     <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
                         <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{contact.givenName?.[0]?.toUpperCase()}</Text>
                     </View>
-                    <Text style={{ marginRight: scaler(10), color: colors.colorBlackText }} >{contact.givenName + (contact?.familyName ? (" " + contact?.familyName) : "")}</Text>
+                    <Text style={{ fontSize: scaler(12), marginRight: scaler(10), color: colors.colorBlackText }} >{contact.givenName + (contact?.familyName ? (" " + contact?.familyName) : "")}</Text>
                 </View>
                 <TouchableOpacity onPress={onPressContact} style={{ paddingVertical: scaler(6), alignItems: 'center', justifyContent: 'center' }} >
-                    <Text style={{ color: colors.colorLink, fontSize: scaler(13), fontWeight: '500' }} >{Language.add_to_contacts}</Text>
+                    <Text style={{ color: colors.colorLink, fontSize: scaler(12), fontWeight: '500' }} >{Language.add_to_contacts}</Text>
                 </TouchableOpacity>
             </View>
             {/* <View style={{ flexDirection: 'row', marginTop: scaler(5), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
@@ -152,6 +152,7 @@ export const ContactMessageReplied = memo((props: IContactMessageReplied) => {
         borderLeftColor: colors.colorLink,
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'baseline',
         width: '100%',
         borderLeftWidth: scaler(4),
         borderRadius: scaler(8), padding: scaler(5),

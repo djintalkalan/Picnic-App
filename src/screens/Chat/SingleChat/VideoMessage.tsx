@@ -119,18 +119,18 @@ export const VideoMessage = memo((props: IVideoMessage) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
-        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(5), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
+        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(2), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
-            <View>
+            <View style={{}}>
                 <ImageLoader
                     reload={true}
                     placeholderSource={Images.ic_image_placeholder}
                     borderRadius={scaler(15)}
-                    resizeMode={'contain'}
+                    resizeMode={'stretch'}
                     source={{ uri: config.VIDEO_URL + (video?.substring(0, video?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
                     style={{
                         //@ts-ignore
-                        resizeMode: 'contain',
+                        resizeMode: 'stretch',
                         borderRadius: scaler(8),
                         height: (width - scaler(20)) / 2.2,
                         width: width - scaler(13) - (width * 3 / 10),
@@ -145,11 +145,11 @@ export const VideoMessage = memo((props: IVideoMessage) => {
                 </TouchableOpacity>
             </View>
             {text ?
-                <View style={{ width: '100%' }} >
+                <View style={{ alignSelf: 'baseline' }} >
                     <Text onLongPress={_onCopy} autoLink style={{ flex: 1, marginTop: scaler(5), alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text}</Text>
                 </View>
                 : null}
-            <View style={{ flexDirection: 'row', marginTop: scaler(5), marginBottom: scaler(3), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
+            <View style={{ paddingHorizontal: scaler(4), flexDirection: 'row', marginTop: scaler(5), marginBottom: scaler(3), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
                 <TouchableOpacity onPress={() => {
                     SocketService?.emit(EMIT_PERSONAL_LIKE_UNLIKE, {
                         message_id: _id,
@@ -182,6 +182,7 @@ export const VideoMessageReplied = memo((props: IVideoMessageReplied) => {
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,
         width: '100%',
+        alignSelf: 'baseline',
         flexDirection: 'row',
         borderLeftWidth: scaler(4),
         borderRadius: scaler(8),

@@ -129,18 +129,17 @@ export const TextMessage = memo((props: ITextMessage) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
-        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(7), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
+        <View style={{ marginLeft: scaler(10), overflow: 'hidden', maxWidth: '70%', alignItems: 'flex-end', padding: scaler(2), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
             {link ?
-
                 <PreviewLink2
-
+                    isMyMessage={parent_message ? null : isMyMessage}
                     text={link} />
                 : null}
-            <View style={{ width: '100%' }} >
+            <View style={{ alignSelf: 'baseline', paddingHorizontal: scaler(4), marginTop: scaler(5) }} >
                 <Text autoLink onLongPress={_onCopy} style={{ fontSize: scaler(12), flex: 1, alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text?.trim()}</Text>
             </View>
-            <View style={{ flexDirection: 'row', marginTop: scaler(5), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
+            <View style={{ flexDirection: 'row', paddingHorizontal: scaler(4), paddingVertical: scaler(4), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
                 <TouchableOpacity onPress={() => {
                     SocketService?.emit(EMIT_PERSONAL_LIKE_UNLIKE, {
                         message_id: _id,
@@ -156,11 +155,13 @@ export const TextMessage = memo((props: ITextMessage) => {
                 <Text children={likeString} style={{ fontSize: scaler(10), color: colors.colorBlackText }} />
             </View>
         </View>
-        {isMyMessage ?
-            <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
-                <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
-            </TouchableOpacity> : null}
-    </View>
+        {
+            isMyMessage ?
+                <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >
+                    <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity> : null
+        }
+    </View >
 })
 
 
@@ -171,11 +172,12 @@ export const TextMessageReplied = memo((props: ITextMessageReplied) => {
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,
         width: '100%',
+        alignSelf: 'baseline',
         borderLeftWidth: scaler(4),
         borderRadius: scaler(8), padding: scaler(5),
         backgroundColor: props?.isMyMessage ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.5)"
     }} >
-        <Text style={{ color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
-        <Text style={{ color: colors.colorBlackText }}>{props?.text}</Text>
+        <Text style={{ fontSize: scaler(13), color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
+        <Text style={{ fontSize: scaler(11), fontWeight: '400', color: colors.colorBlackText, flexShrink: 1 }}>{props?.text?.trim()}</Text>
     </TouchableOpacity>
 })

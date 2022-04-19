@@ -113,7 +113,7 @@ export const ImageMessage = memo((props: IImageMessage) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
-        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(5), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
+        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(2), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
             <ImageLoader
                 placeholderSource={Images.ic_image_placeholder}
@@ -131,12 +131,12 @@ export const ImageMessage = memo((props: IImageMessage) => {
                 }} />
 
             {text ?
-                <View style={{ width: '100%' }} >
+                <View style={{ alignSelf: 'baseline' }} >
                     <Text onLongPress={_onCopy} autoLink style={{ flex: 1, marginTop: scaler(5), alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text}</Text>
                 </View>
                 : null}
 
-            <View style={{ flexDirection: 'row', marginTop: scaler(5), marginBottom: scaler(3), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
+            <View style={{ flexDirection: 'row', marginTop: scaler(5), paddingHorizontal: scaler(4), marginBottom: scaler(3), alignItems: 'center', alignSelf: !isMyMessage ? 'flex-start' : 'flex-end' }} >
                 <TouchableOpacity onPress={() => {
                     SocketService?.emit(EMIT_PERSONAL_LIKE_UNLIKE, {
                         message_id: _id,
@@ -169,6 +169,7 @@ export const ImageMessageReplied = memo((props: IImageMessageReplied) => {
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,
         width: '100%',
+        alignSelf: 'baseline',
         flexDirection: 'row',
         borderLeftWidth: scaler(4),
         borderRadius: scaler(8),

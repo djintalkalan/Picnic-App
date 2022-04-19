@@ -108,7 +108,7 @@ export const LocationMessage = memo((props: ILocationMessage) => {
                     <MaterialCommunityIcons color={colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View> : null}
-        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(7), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
+        <View style={{ marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(2), backgroundColor: isMyMessage ? colors.colorWhite : colors.colorMessage, borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
             {renderParentMessage}
             <TouchableOpacity activeOpacity={0.8} onPress={onPressLocation} style={{
                 borderRadius: scaler(8),
@@ -169,6 +169,7 @@ export const LocationMessageReplied = memo((props: ILocationMessageReplied) => {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
+        alignSelf: 'baseline',
         borderLeftWidth: scaler(4),
         borderRadius: scaler(8), padding: scaler(5),
         backgroundColor: props?.isMyMessage ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.5)"
