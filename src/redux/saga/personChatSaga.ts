@@ -1,5 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
 import { refreshChatInPerson, setChatInPerson } from "app-store/actions";
+import { DeviceEventEmitter } from 'react-native';
 import { call, put, takeLeading } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { _showErrorMessage } from "utils";
@@ -20,7 +21,7 @@ function* _getPersonChat({ type, payload, }: action): Generator<any, any, any> {
                 let chat_room_id = payload?.chat_room_id
                 if (!chat_room_id) {
                     chat_room_id = chats?.[0]?.chat_room_id
-                    payload?.onChatRoomIdUpdate && payload?.onChatRoomIdUpdate(chat_room_id)
+                    DeviceEventEmitter.emit("UpdateChatRoomId", chat_room_id)
                 }
                 chats?.[0]?.chat_room_id
                 yield put((payload?.message_id ? setChatInPerson : refreshChatInPerson)({ chatRoomId: (payload?.chat_room_id || chats?.[0]?.chat_room_id), chats: chats, message_id: payload?.message_id }))

@@ -2,6 +2,7 @@ import { config } from "api";
 import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
+import { DeviceEventEmitter } from "react-native";
 import { io, Socket } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
 import { mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
@@ -379,6 +380,9 @@ class Service {
         console.log("room join request", e);
         if (e?.user_id == Database.getStoredValue('userData')?._id) {
             this?.emit(EMIT_JOIN_PERSONAL_ROOM, e)
+        }
+        if (e?.sender_id == Database.getStoredValue('userData')?._id) {
+            DeviceEventEmitter.emit("UpdateChatRoomId", e?.chat_room_id)
         }
     }
 

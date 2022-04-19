@@ -8,7 +8,7 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { DeviceEventEmitter, Dimensions, EmitterSubscription, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -21,7 +21,7 @@ import SingleChatItem from './SingleChatItemNew'
 
 let loadMore = false
 const { width } = Dimensions.get("screen")
-
+let roomIdUpdateListener: EmitterSubscription;
 const PersonChat: FC<any> = (props) => {
     const { person } = props?.route?.params
     const chatRoomIdRef = useRef();
@@ -57,6 +57,11 @@ const PersonChat: FC<any> = (props) => {
 
         }
     }, 800), [])
+
+    const _onChatRoomIdUpdate = useCallback((id: string) => {
+        roomIdUpdateListener?.remove();
+        props?.navigation?.setParams({ ...props?.navigation?.route?.params, chatRoomId: id })
+    }, [])
 
     useEffect(() => {
         if (repliedMessage) {
@@ -177,18 +182,19 @@ const PersonChat: FC<any> = (props) => {
     // }, [chats])
 
     useEffect(() => {
+        roomIdUpdateListener = DeviceEventEmitter.addListener("UpdateChatRoomId", _onChatRoomIdUpdate)
         dispatch(getPersonChat({
             id: person?._id,
             chat_room_id: chatRoomIdRef?.current,
-            onChatRoomIdUpdate: (id: string) => {
-                props?.navigation?.setParams({ ...props?.navigation?.route?.params, chatRoomId: id })
-            },
             setChatLoader: chats?.length ? null : setChatLoader
         }))
         setTimeout(() => {
             loadMore = true
         }, 200);
-        return () => { loadMore = false }
+        return () => {
+            loadMore = false
+            roomIdUpdateListener?.remove()
+        }
     }, [])
 
     const _renderChatItem = useCallback(({ item, index }) => {
