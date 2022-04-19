@@ -126,11 +126,11 @@ export const VideoMessage = memo((props: IVideoMessage) => {
                     reload={true}
                     placeholderSource={Images.ic_image_placeholder}
                     borderRadius={scaler(15)}
-                    resizeMode={'stretch'}
+                    resizeMode={'cover'}
                     source={{ uri: config.VIDEO_URL + (video?.substring(0, video?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
                     style={{
                         //@ts-ignore
-                        resizeMode: 'stretch',
+                        resizeMode: 'cover',
                         borderRadius: scaler(8),
                         height: (width - scaler(20)) / 2.2,
                         width: width - scaler(13) - (width * 3 / 10),
