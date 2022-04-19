@@ -131,7 +131,7 @@ export const ImageMessage = memo((props: IImageMessage) => {
                 }} />
 
             {text ?
-                <View style={{ alignSelf: 'baseline' }} >
+                <View style={{ alignSelf: 'baseline', paddingHorizontal: scaler(4), marginTop: scaler(5) }} >
                     <Text onLongPress={_onCopy} autoLink style={{ flex: 1, marginTop: scaler(5), alignSelf: 'flex-start', color: isMyMessage ? colors.colorBlackText : colors.colorBlackText }} >{text}</Text>
                 </View>
                 : null}
