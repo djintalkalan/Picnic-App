@@ -48,6 +48,9 @@ const SingleChatItem: FC<IChatItem> = (props) => {
     }), [person?.id, user_id])
 
     const onPressOpenActionMenu = useCallback(() => {
+        if (!Database.getStoredValue("socketConnected")) {
+            return
+        }
         let buttons: IBottomMenuButton[] = [{
             title: Language.reply,
             onPress: () => setRepliedMessage({ _id, user: sender, message: message_type == 'video' ? video : message_type == 'image' ? image : text, message_type: message_type == 'video' ? 'file' : message_type, contacts, coordinates: location, personChat: true }),

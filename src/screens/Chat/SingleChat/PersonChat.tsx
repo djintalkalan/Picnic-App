@@ -213,17 +213,21 @@ const PersonChat: FC<any> = (props) => {
                 // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
                 icon={person?.image ? { uri: getImageUrl(person?.image, { width: scaler(50), type: 'users' }) } : undefined}
                 defaultIcon={Images.ic_home_profile}
-                rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', {
-                        type: 'person'
-                    })} style={{ paddingHorizontal: scaler(5) }} >
+                rightView={chatRoomIdRef.current ? <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <TouchableOpacity onPress={() => {
+                        NavigationService.navigate('SearchChatScreen', {
+                            type: 'person',
+                            chatRoomId: chatRoomIdRef.current,
+                            person: person
+                        })
+                    }} style={{ paddingHorizontal: scaler(5) }} >
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                     </TouchableOpacity>
                     {/* <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                     </TouchableOpacity> */}
                 </View>
-                }
+                    : null}
             />
 
             <View style={styles.container} >

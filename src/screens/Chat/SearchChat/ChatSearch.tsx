@@ -1,5 +1,6 @@
 import { colors } from 'assets';
 import { SingleBoldText, Text } from 'custom-components';
+import { useDatabase } from 'database/Database';
 import React, { FC, useCallback, useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { getDisplayName, scaler } from 'utils';
@@ -13,19 +14,28 @@ const insertAtIndex = (text: string, i: number) => {
     return pair.join('')
 }
 
-const ChatSearch: FC<any> = () => {
+const ChatSearch: FC<any> = (props) => {
+    const person = props?.person
     const { chats, searchedText } = useSearchState()
+    const [userData] = useDatabase('userData')
     const _renderChatItem = useCallback(({ item, index }) => {
         // let regEx = new RegExp(searched?.trim(), "ig");
         // const message = item?.message.replace(regEx, ("**" + searched?.trim() + "**"))
         // item?.message?.toLowerCase()?.indexOf(searched);
 
+        let sender = userData
+        if (person) {
+            item.message = item?.text
+            if (item?.user_id == person?._id)
+                sender = person
+        }
         let message = insertAtIndex(item?.message, item?.message?.toLowerCase()?.indexOf(searched))
         message = insertAtIndex(message, message?.toLowerCase()?.indexOf(searched) + searched?.length)
 
+
         return (
             <View style={{ paddingHorizontal: scaler(24), paddingTop: scaler(17) }}>
-                <Text>{getDisplayName(item?.user)}</Text>
+                <Text>{getDisplayName(person ? sender : item?.user)}</Text>
                 <View style={styles.msgContainer}>
                     <SingleBoldText fontWeight='600' style={{ fontSize: scaler(15), color: colors.colorWhite, fontWeight: '400' }} text={message} />
                 </View>

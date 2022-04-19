@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { _getMyEvents, _searchChat } from 'api'
+import { _getMyEvents, _searchChat, _searchPersonChat } from 'api'
 import { RootState } from 'app-store'
 import { setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -21,15 +21,15 @@ const SearchChatScreen: FC<any> = (props) => {
     const [isFocused, setFocused] = useState(false);
 
     const { setChats = () => (null), setEvents = () => (null), searchedText, setSearchedText = () => (null) } = useSearchState()
-
+    const chatRoomId = props?.route?.params?.chatRoomId
+    const person = props?.route?.params?.person
     const { activeGroup } = useSelector((state: RootState) => {
-        return {
+        return !chatRoomId ? {
             activeGroup: props?.route?.params?.type == 'group' ? state?.activeGroup : state?.activeEvent,
-        }
+        } : {}
     }, shallowEqual)
 
-
-    const tabs: TabProps[] = useMemo(() => [
+    const tabs: TabProps[] = useMemo(() => !chatRoomId ? [
         {
             title: Language.chat,
             name: "ChatSearch",
@@ -43,18 +43,22 @@ const SearchChatScreen: FC<any> = (props) => {
             Screen: SearchedEvents,
             initialParams: { type: props?.route?.params?.type },
         }
-    ], [])
+    ] : [], [])
 
     const debounceSearch = useCallback(_.debounce((text) => {
         if (!text?.length) return
         if (currentTabIndex == 0) {
             dispatch(setLoadingAction(true))
-            _searchChat({
-                id: activeGroup?._id,
+            const fun = chatRoomId ? _searchPersonChat : _searchChat
+            fun({
+                id: chatRoomId || activeGroup?._id,
                 q: text
             }).then(res => {
                 dispatch(setLoadingAction(false))
-                res?.data && setChats(res?.data)
+                if (chatRoomId) {
+                    res?.data?.data && setChats(res?.data?.data)
+                } else
+                    res?.data && setChats(res?.data)
             }).catch(e => {
                 dispatch(setLoadingAction(false))
                 console.log(e)
@@ -121,7 +125,7 @@ const SearchChatScreen: FC<any> = (props) => {
                     setCurrentTabIndex(i);
                 }} swipeEnabled={false} iconPosition='right' tabs={tabs} />
                 :
-                <ChatSearch />
+                <ChatSearch person={person} />
             }
         </SafeAreaViewWithStatusBar>
     )
