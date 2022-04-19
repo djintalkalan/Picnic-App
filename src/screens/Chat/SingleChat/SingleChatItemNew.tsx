@@ -50,7 +50,7 @@ const SingleChatItem: FC<IChatItem> = (props) => {
     const onPressOpenActionMenu = useCallback(() => {
         let buttons: IBottomMenuButton[] = [{
             title: Language.reply,
-            onPress: () => setRepliedMessage({ _id, user: sender, message: message_type == 'video' ? video : message_type == 'image' ? image : text, message_type: message_type == 'video' ? 'file' : message_type, contacts, coordinates: location, location }),
+            onPress: () => setRepliedMessage({ _id, user: sender, message: message_type == 'video' ? video : message_type == 'image' ? image : text, message_type: message_type == 'video' ? 'file' : message_type, contacts, coordinates: location, personChat: true }),
         }]
         if (isMyMessage) {
             buttons.push({
