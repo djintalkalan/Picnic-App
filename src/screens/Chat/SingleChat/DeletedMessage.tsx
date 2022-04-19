@@ -21,7 +21,7 @@ export const DeletedMessage = memo((props: IDeletedMessage) => {
     const { isMyMessage } = props
     return <TouchableOpacity activeOpacity={0.8} style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
         <View style={{ marginRight: scaler(32), marginLeft: scaler(10), maxWidth: '70%', alignItems: 'flex-end', padding: scaler(7), backgroundColor: ("#c5c5c5" || (isMyMessage ? colors.colorWhite : colors.colorMessage)), borderRadius: scaler(10), borderTopLeftRadius: isMyMessage ? scaler(10) : 0, borderTopRightRadius: !isMyMessage ? scaler(10) : 0, }} >
-            <Text style={{ fontStyle: 'italic', fontSize: scaler(12), flex: 1, alignSelf: 'flex-start', color: "#ad313e" }} >{"Message Deleted"}</Text>
+            <Text style={{ fontStyle: 'italic', fontSize: scaler(12), flex: 1, alignSelf: 'flex-start', color: "#ad313e" }} >{" Message Deleted "}</Text>
         </View>
     </TouchableOpacity>
 })
