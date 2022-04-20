@@ -175,7 +175,7 @@ const showNotification = (message: any, isBackground: boolean) => {
 
         if (data?.chat_room_id) {
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-            if (!isBackground && (name == "PersonChat") && (params?.person?.id == data?.user_id)
+            if (!isBackground && (name == "PersonChat") && (params?.person?._id == data?.user_id)
             ) {
 
             } else {
