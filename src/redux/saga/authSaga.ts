@@ -1,12 +1,22 @@
 import * as ApiProvider from 'api/APIProvider';
-import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { NavigationService, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
+import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
+let installer = "Other"
+DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
+    console.log("installerPackageName", installerPackageName);
+    installer = installerPackageName
 
+    // Play Store: "com.android.vending"
+    // Amazon: "com.amazon.venezia"
+    // Samsung App Store: "com.sec.android.app.samsungapps"
+    // iOS: "AppStore", "TestFlight", "Other"
+});
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
@@ -23,6 +33,8 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 userData: { ...userData, is_premium: false },
                 isLogin: true
             })
+            yield call(WaitTill, 1000)
+            yield put(restorePurchaseAction())
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -211,6 +223,33 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+function* restorePurchase({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(false));
+    try {
+        let res = yield call(ApiProvider._getActiveMembership);
+        if (res?.status == 200) {
+            const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+            const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            // if (expireAt >= new Date()) {
+            if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+                // _showErrorMessage(Language.you_are_not_a_member)
+            } else {
+                Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+            }
+
+        } else if (res.status == 400) {
+            // _showErrorMessage(res.message);
+        } else {
+            // _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 // Watcher: watch auth request
 export default function* watchAuth() {
     yield takeLatest(ActionTypes.DO_LOGIN, doLogin);
@@ -222,6 +261,7 @@ export default function* watchAuth() {
     yield takeLatest(ActionTypes.TOKEN_EXPIRED, tokenExpired);
     yield takeLatest(ActionTypes.CHECK_EMAIL, checkEmail);
     yield takeLatest(ActionTypes.DELETE_ACCOUNT, deleteAccount);
+    yield takeLatest(ActionTypes.RESTORE_PURCHASE, restorePurchase);
 
 
 };

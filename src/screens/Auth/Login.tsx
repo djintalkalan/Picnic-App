@@ -33,11 +33,14 @@ const Login: FC = () => {
             // password: "Sangu@123",
             email: "deepak@shinewebservices.com",
             password: "Deepak@123",
+            // email: "deepakq@testings.com",
+            // password: "Dj@123456",
 
         } : {
+            // email: "deepakq@testings.com",
+            //     password: "Dj@123456",
             email: "deepak@shinewebservices.com",
             password: "Deepak@123",
-
         } : {},
         mode: 'onChange'
     })

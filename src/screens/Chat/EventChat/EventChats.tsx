@@ -208,6 +208,7 @@ const EventChats: FC<any> = (props) => {
                 {...item}
                 event={eventDetail}
                 isAdmin={eventDetail?.is_admin}
+                isMember={eventDetail?.is_event_member}
                 setRepliedMessage={setRepliedMessage}
             />)
     }, [eventDetail])

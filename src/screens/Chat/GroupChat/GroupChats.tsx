@@ -25,6 +25,7 @@ export const GroupChats: FC<any> = (props) => {
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
+    const [userData] = useDatabase<any>('userData');
     const [isChatLoader, setChatLoader] = useState(false)
     const { bottom } = useSafeAreaInsets()
     const textMessageRef = useRef("")
@@ -185,6 +186,7 @@ export const GroupChats: FC<any> = (props) => {
                 {...item}
                 isGroupType={true}
                 group={groupDetail}
+                isMember={groupDetail?.is_group_member && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium))}
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
@@ -192,7 +194,7 @@ export const GroupChats: FC<any> = (props) => {
 
     return (
         <View style={styles.container} >
-            <View pointerEvents={(groupDetail?.is_group_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
+            <View style={{ flexShrink: 1 }} >
                 {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
                     borderWidth={0}
                     animationConfig={{ bounciness: 2 }}
@@ -230,24 +232,31 @@ export const GroupChats: FC<any> = (props) => {
                 />
             </View>
             {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-                <ChatInput
-                    // value={textMessage}
-                    ref={inputRef}
-                    link={link}
-                    disableButton={!socketConnected}
-                    repliedMessage={repliedMessage}
-                    setRepliedMessage={setRepliedMessage}
-                    onChooseImage={_onChooseImage}
-                    onChooseContacts={_onChooseContacts}
-                    onChooseLocation={_onChooseLocation}
-                    onChangeText={_updateTextMessage}
-                    onPressSend={_onPressSend}
-                />
-                {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                    <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
-                </View> : null}
+                {groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium) ?
+                    <><ChatInput
+                        // value={textMessage}
+                        ref={inputRef}
+                        link={link}
+                        disableButton={!socketConnected}
+                        repliedMessage={repliedMessage}
+                        setRepliedMessage={setRepliedMessage}
+                        onChooseImage={_onChooseImage}
+                        onChooseContacts={_onChooseContacts}
+                        onChooseLocation={_onChooseLocation}
+                        onChangeText={_updateTextMessage}
+                        onPressSend={_onPressSend}
+                    />
+                        {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
+                            <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
+                        </View> : null}
+                    </> :
+                    <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
+                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >Only {groupDetail?.restriction_mode == 'subscribed' ? 'subscribers' : 'admin'} can send messages</Text>
+                    </View>
+                }
+            </View> : !socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
+                <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
             </View> : null}
-
         </View >
     )
 }
