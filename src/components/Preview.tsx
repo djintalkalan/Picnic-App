@@ -17,7 +17,7 @@ const PreviewLink: FC<PreviewProps> = (props) => {
     const [previewData, setPreviewData] = useState<PreviewData>()
     const { containerStyle, changeableLink = false, onPreviewDataFetched, touchableWithoutFeedbackProps, renderText = defaultRenderText, ...rest } = props
     const _onPreviewDataFetched = useCallback((data) => {
-        console.log("_onPreviewDataFetched", data);
+        // console.log("_onPreviewDataFetched", data);
 
         onPreviewDataFetched && onPreviewDataFetched(data)
         if (!(!data?.image && !data?.description))
@@ -69,7 +69,7 @@ export const PreviewLink2 = memo((props: PreviewProps) => {
     const [previewData, setPreviewData] = useState<PreviewData>()
     const { isMyMessage, containerStyle, changeableLink = false, onPreviewDataFetched, touchableWithoutFeedbackProps, renderText = defaultRenderText, ...rest } = props
     const _onPreviewDataFetched = useCallback((data) => {
-        console.log("_onPreviewDataFetched", data);
+        // console.log("_onPreviewDataFetched", data);
 
         onPreviewDataFetched && onPreviewDataFetched(data)
         if (!(!data?.image && !data?.description))

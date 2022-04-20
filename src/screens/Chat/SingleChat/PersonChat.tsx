@@ -23,12 +23,8 @@ let loadMore = false
 const { width } = Dimensions.get("screen")
 let roomIdUpdateListener: EmitterSubscription;
 const PersonChat: FC<any> = (props) => {
-    const { person } = props?.route?.params
-    const chatRoomIdRef = useRef();
-    useEffect(() => {
-        chatRoomIdRef.current = props?.route?.params?.chatRoomId
-    }, [props?.route?.params?.chatRoomId])
-
+    const { person, chatRoomId } = props?.route?.params
+    const chatRoomIdRef = useRef<string>(chatRoomId || undefined);
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
@@ -60,7 +56,7 @@ const PersonChat: FC<any> = (props) => {
     const _onChatRoomIdUpdate = useCallback(({ chat_room_id, person_id }: { chat_room_id: string, person_id: string }) => {
         if (person_id == person?._id) {
             roomIdUpdateListener?.remove();
-            props?.navigation?.setParams({ ...props?.navigation?.route?.params, chatRoomId: chat_room_id })
+            chatRoomIdRef.current = chat_room_id
         }
     }, [])
 
@@ -169,7 +165,7 @@ const PersonChat: FC<any> = (props) => {
     }, [])
 
     const { chats } = useSelector((state: RootState) => ({
-        chats: chatRoomIdRef?.current ? state?.personChat?.chatRooms?.[chatRoomIdRef?.current]?.chats : [],
+        chats: state?.personChat?.chatRooms?.[person?._id]?.chats || [],
     }))
 
     const dispatch = useDispatch()

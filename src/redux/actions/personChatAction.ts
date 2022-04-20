@@ -5,35 +5,35 @@ export const getPersonChat = (payload: any) => ({
     payload
 })
 
-export const setChatInPerson = (payload: { chatRoomId: string, chats: Array<any>, message_id?: string }) => ({
+export const setChatInPerson = (payload: { chatRoomUserId: string, chats: Array<any>, message_id?: string }) => ({
     type: ActionTypes.SET_CHAT_IN_PERSON,
     payload
 })
 
-export const addChatInPerson = (payload: { chatRoomId: string, chat: any }) => ({
+export const addChatInPerson = (payload: { chatRoomUserId: string, chat: any }) => ({
     type: ActionTypes.ADD_CHAT_IN_PERSON,
     payload
 })
 
-export const updateChatInPerson = (payload: { chatRoomId: string, chat: any }) => ({
+export const updateChatInPerson = (payload: { chatRoomUserId: string, chat: any }) => ({
     type: ActionTypes.UPDATE_CHAT_IN_PERSON,
     payload
 })
 
 
 
-export const updateChatInPersonSuccess = (payload: { chatRoomId: string, resourceId: any, message: any }) => ({
+export const updateChatInPersonSuccess = (payload: { chatRoomUserId: string, resourceId: any, message: any }) => ({
     type: ActionTypes.UPDATE_CHAT_IN_PERSON_SUCCESS,
     payload
 })
 
 
-export const deleteChatInPersonSuccess = (payload: { chatRoomId: string, resourceId: any }) => ({
+export const deleteChatInPersonSuccess = (payload: { chatRoomUserId: string, resourceId: any }) => ({
     type: ActionTypes.DELETE_CHAT_IN_PERSON_SUCCESS,
     payload
 })
 
-export const refreshChatInPerson = (payload: { chatRoomId: string, chats: Array<any> }) => ({
+export const refreshChatInPerson = (payload: { chatRoomUserId: string, chats: Array<any> }) => ({
     type: ActionTypes.REFRESH_CHAT_IN_PERSON,
     payload
 })

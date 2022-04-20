@@ -165,9 +165,6 @@ export const onMessageReceived = async (message: any, isBackground: boolean = fa
 
 const showNotification = (message: any, isBackground: boolean) => {
     console.log("Message", message);
-    if (message?.chat_room_id) {
-
-    }
 
     let { title, body, message: data } = message?.data ?? {};
     if (data) {
@@ -178,9 +175,7 @@ const showNotification = (message: any, isBackground: boolean) => {
 
         if (data?.chat_room_id) {
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}
-            if (!isBackground && (params?.chatRoomId == data?.chat_room_id &&
-                (name == "PersonChat")
-            )
+            if (!isBackground && (name == "PersonChat") && (params?.person?.id == data?.user_id)
             ) {
 
             } else {

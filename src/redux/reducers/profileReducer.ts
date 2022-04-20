@@ -49,6 +49,9 @@ export const privacyStateReducer = (state: IPrivacyState = initialPrivacyState, 
             return action.payload
         case ActionTypes.REMOVE_BLOCKED_MEMBER:
             return { ...state, users: (state?.users || 1) - 1 }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialPrivacyState
         default:
             return state
     }
@@ -87,6 +90,9 @@ export const privacyDataReducer = (state: IPrivacyData = initialPrivacyData, act
             return { ...state, [updateKey]: state?.[updateKey]?.filter(_ => (_?.resource_id ?? _?.muted_event_id ?? _?.muted_message_id) != data) }
         case ActionTypes.ADD_MUTED_RESOURCE:
             return { ...state, [updateKey]: [...state?.[updateKey], ...data] }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialPrivacyData
         default:
             return state
     }
@@ -106,6 +112,9 @@ export const userEventGroupReducer = (state: IUserEventsGroups = initialUserEven
                 upcoming: state?.upcoming.filter(_ => _._id != action?.payload),
                 past: state?.upcoming.filter(_ => _._id != action?.payload),
             }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialUserEventsGroupsState
 
         default:
             return state

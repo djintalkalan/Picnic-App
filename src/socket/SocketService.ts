@@ -5,7 +5,7 @@ import { Dispatch } from "react";
 import { DeviceEventEmitter } from "react-native";
 import { io, Socket } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
-import { mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
+import { getChatUsers, mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
 import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT } from "./SocketEvents";
 
 class Service {
@@ -329,10 +329,15 @@ class Service {
         console.log("Personal message received", e);
         if (e?.data?.data) {
             const data = e?.data?.data
-            this.dispatch(setChatInPerson({
-                chatRoomId: data?.chat_room_id,
-                chats: [data]
-            }))
+            const users = e?.data?.users
+            if (users?.length == 2) {
+                const { chatUser } = getChatUsers(users)
+                this.dispatch(setChatInPerson({
+                    chatRoomUserId: chatUser?._id,
+                    chats: [data]
+                }))
+            }
+
         }
 
     }
@@ -341,25 +346,30 @@ class Service {
         console.log("PersonalLikeUnlike", e);
 
         if (e?.data?.data?.chat_room_id) {
-            const userId = Database.getStoredValue("userData")?._id
-            const data = e?.data?.data
-            if (data?.message_liked_by_users?.findIndex((e: any) => (e?.user_id == userId)) > -1) {
-                data.is_message_liked_by_me = true
-            } else {
-                data.is_message_liked_by_me = false
-            }
-            // e?.liked_by_users?.some((e: any, index: number) => {
-            //     if (e?.user_id == userId) {
-            //         data[0].is_message_liked_by_me = true
-            //         return true
-            //     }
-            // });
-            console.log("data", data);
 
-            this.dispatch(updateChatInPerson({
-                chatRoomId: data?.chat_room_id,
-                chat: data
-            }))
+
+            const data = e?.data?.data
+            const users = e?.data?.users
+            if (users?.length == 2) {
+                const { chatUser, loggedInUser } = getChatUsers(users)
+                if (data?.message_liked_by_users?.findIndex((e: any) => (e?.user_id == loggedInUser?._id)) > -1) {
+                    data.is_message_liked_by_me = true
+                } else {
+                    data.is_message_liked_by_me = false
+                }
+                // e?.liked_by_users?.some((e: any, index: number) => {
+                //     if (e?.user_id == userId) {
+                //         data[0].is_message_liked_by_me = true
+                //         return true
+                //     }
+                // });
+                // console.log("data", data);
+
+                this.dispatch(updateChatInPerson({
+                    chatRoomUserId: chatUser?._id,
+                    chat: data
+                }))
+            }
         }
 
     }
@@ -368,11 +378,15 @@ class Service {
         console.log("PersonalMessage Deleted", e);
         if (e?.data?.data) {
             const data = e?.data?.data
-            this.dispatch(updateChatInPersonSuccess({
-                chatRoomId: data?.chat_room_id,
-                resourceId: data?._id,
-                message: data
-            }))
+            const users = e?.data?.users
+            if (users?.length == 2) {
+                const { chatUser } = getChatUsers(users)
+                this.dispatch(updateChatInPersonSuccess({
+                    chatRoomUserId: chatUser?._id,
+                    resourceId: data?._id,
+                    message: data
+                }))
+            }
         }
     }
 
@@ -384,6 +398,7 @@ class Service {
                 chat_room_id: e?.chat_room_id,
                 person_id: e?.sender_id
             })
+            // e.data.users = [{ _id: e?.user_id }, e?.e?.sender_id]
             this.onPersonalMessage(e?.data)
         }
         if (e?.sender_id == Database.getStoredValue('userData')?._id) {

@@ -116,6 +116,7 @@ const MyNavigationContainer = () => {
   const dispatch = useDispatch();
 
   // const { isConnected, isInternetReachable } = useNetInfo()
+  // useSelector(_ => console.log(_))
 
   const [isLogin] = useDatabase<boolean>('isLogin', false);
   const language = useLanguage();

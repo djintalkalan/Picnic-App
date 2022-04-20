@@ -1,5 +1,4 @@
 import { isEqual } from "lodash";
-import FastImage from "react-native-fast-image";
 // import * as RNLocalize from "react-native-localize";
 import MMKVStorage, { useMMKVStorage } from "react-native-mmkv-storage";
 import { ILanguages, LanguageType } from "src/language/Language";
@@ -271,12 +270,6 @@ class Database {
         }
     }
 
-    public clearStorage = () => {
-        // Database.phoneStorage.clearStore()
-        // console.log("Database.phoneStorage", Database.phoneStorage);
-
-        FastImage.clearMemoryCache()
-    }
 }
 
 export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):

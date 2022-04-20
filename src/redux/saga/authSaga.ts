@@ -1,5 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setAllEvents, setAllGroups, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
@@ -13,6 +14,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
+            yield put(resetStateOnLogin())
             ApiProvider.TOKEN_EXPIRED.current = false
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
@@ -122,6 +124,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._signUp, { ...payload, device_token: firebaseToken });
         if (res.status == 200) {
             _showSuccessMessage(res?.message);
+            yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
             ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
@@ -198,17 +201,9 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
             userData: null,
             authToken: '',
         })
-        yield put(setAllGroups([]))
-        yield put(setAllEvents([]))
-
         yield call(WaitTill, 1000)
-
-        Database.clearStorage()
-
-
-
-
-
+        yield put(resetStateOnLogout())
+        FastImage.clearMemoryCache()
     }
     catch (error) {
         console.log("Catch Error", error);

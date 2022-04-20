@@ -664,3 +664,11 @@ export const getQueryVariables = (url: string) => {
     }
     return params
 }
+
+export const getChatUsers = (users: Array<any>) => {
+    const user = Database.getStoredValue("userData");
+    return {
+        chatUser: users?.find(_ => _?._id != user?._id),
+        loggedInUser: user
+    }
+}

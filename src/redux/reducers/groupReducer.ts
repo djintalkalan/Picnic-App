@@ -57,6 +57,9 @@ export const groupReducer = (state: IGroupReducer = initialGroupState, action: a
                 return newState
             }
             return state;
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialGroupState
         default:
             return state
     }
@@ -107,6 +110,9 @@ export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: acti
                     [action.type == ActionTypes.SET_UPCOMING_EVENTS ? "upcomingEvents" : "pastEvents"]: action?.payload?.data
                 }
             }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return {}
         default:
             return state
     }
@@ -116,6 +122,9 @@ export const activeGroupReducer = (state: any = null, action: action): any => {
     switch (action.type) {
         case ActionTypes.SET_ACTIVE_GROUP:
             return action?.payload
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return null
         default:
             return state
     }

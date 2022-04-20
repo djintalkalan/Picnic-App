@@ -18,6 +18,9 @@ export const homeReducer = (state: IHomeReducer = initialHomeData, action: actio
                 return state
             }
             return { searchedGroups: null, searchedEvents: null, [key]: action?.payload?.data }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialHomeData
         default:
             return state
     }
