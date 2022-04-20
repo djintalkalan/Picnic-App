@@ -1,6 +1,6 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidDefaults, AndroidImportance, EventType, Notification } from "@notifee/react-native";
+import notifee, { AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
 import { store } from "app-store";
@@ -163,7 +163,7 @@ export const onMessageReceived = async (message: any, isBackground: boolean = fa
     }
 }
 
-const showNotification = (message: any, isBackground: boolean) => {
+const showNotification = async (message: any, isBackground: boolean) => {
     console.log("Message", message);
 
     let { title, body, message: data } = message?.data ?? {};
@@ -195,6 +195,17 @@ const showNotification = (message: any, isBackground: boolean) => {
                         break
                 }
                 const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
+                await notifee.displayNotification({
+                    id: data?.chat_room_id,
+                    title: getDisplayName(user),
+                    android: {
+                        channelId: CHANNEL_NAME,
+                        groupSummary: true,
+                        groupId: data?.chat_room_id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                    },
+                });
+
                 notifee.displayNotification({
                     // subtitle:getDisplayName(user),
                     body,
@@ -204,7 +215,9 @@ const showNotification = (message: any, isBackground: boolean) => {
                         channelId: CHANNEL_NAME,
                         sound: 'default',
                         // category: AndroidCategory.ALARM,
-                        defaults: [AndroidDefaults.ALL]
+                        defaults: [AndroidDefaults.ALL],
+                        groupId: data?.chat_room_id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
                     },
                     ios: {
                         sound: 'default',
@@ -237,6 +250,19 @@ const showNotification = (message: any, isBackground: boolean) => {
                         body = 'Location shared'
                         break
                 }
+
+                await notifee.displayNotification({
+                    id: (data?.group || data?.event)?._id,
+                    title: data?.user?.display_name,
+                    subtitle: (data?.group || data?.event)?.name,
+                    android: {
+                        channelId: CHANNEL_NAME,
+                        groupSummary: true,
+                        groupId: (data?.group || data?.event)?._id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                    },
+                });
+
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
                     body,
@@ -246,7 +272,9 @@ const showNotification = (message: any, isBackground: boolean) => {
                         channelId: CHANNEL_NAME,
                         sound: 'default',
                         // category: AndroidCategory.ALARM,
-                        defaults: [AndroidDefaults.ALL]
+                        defaults: [AndroidDefaults.ALL],
+                        groupId: (data?.group || data?.event)?._id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
                     },
                     ios: {
                         sound: 'default',
