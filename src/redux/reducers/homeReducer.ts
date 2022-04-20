@@ -18,6 +18,12 @@ export const homeReducer = (state: IHomeReducer = initialHomeData, action: actio
                 return state
             }
             return { searchedGroups: null, searchedEvents: null, [key]: action?.payload?.data }
+        case ActionTypes.DELETE_GROUP_SUCCESS:
+            return {
+                ...state,
+                searchedGroups: state?.searchedGroups ? state?.searchedGroups?.filter(_ => _._id != action?.payload) : null,
+                searchedEvents: state?.searchedEvents ? state?.searchedEvents?.filter(_ => _._id != action?.payload) : null
+            }
         case ActionTypes.RESET_STATE_ON_LOGIN:
         case ActionTypes.RESET_STATE_ON_LOGOUT:
             return initialHomeData
