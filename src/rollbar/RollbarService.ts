@@ -3,25 +3,24 @@ import Database from 'database/Database';
 import { Platform } from 'react-native';
 import { Client, Configuration } from 'rollbar-react-native';
 
-const isDev = __DEV__
 class RollbarService {
     private rollbar?: Client
     private static mInstance: RollbarService
 
     static getInstance = () => {
-        if (!this.mInstance && !isDev) {
+        if (!this.mInstance && !__DEV__) {
             this.mInstance = new RollbarService()
         }
         return this.mInstance
     }
 
     init = () => {
-        if (isDev) return
+        if (__DEV__) return
         const isLogin = Database.getStoredValue("isLogin")
         const userData = Database.getStoredValue("userData")
         const authToken = Database.getStoredValue("authToken")
         const firebaseToken = Database.getStoredValue("firebaseToken")
-        const configurations = new Configuration('8d2372e9ae69491ab962b57e355e843c', {
+        const configurations = new Configuration(config.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, {
             // endpoint: 'https://api.rollbar.com/api/1/item/',
             // logLevel: 'info',
 
@@ -35,6 +34,7 @@ class RollbarService {
                     authToken,
                 } : {},
                 firebaseToken,
+                'Application-Environment': config.APP_TYPE == 'staging' ? "Testing" : config.APP_TYPE
             }
         });
         this.rollbar = new Client(configurations);
@@ -51,7 +51,6 @@ class RollbarService {
     }
 
     reStart = () => {
-        if (isDev) return
         this.exit();
         this.init();
     }
