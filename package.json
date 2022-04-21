@@ -32,7 +32,7 @@
     "postinstall": "node scripts/env-fix.js && yarn env-s && npx pod-install",
     "kill-all": "((pkill -f '.*GradleDaemon.*' || ./android/gradlew gradle --stop) && (rm -rf ~/.gradle/daemon || true))",
     "w-tcp": "adb tcpip 5555",
-    "load":"node scripts/load-google-service.js",
+    "load": "node scripts/load-google-service.js",
     "w-co": "adb connect "
   },
   "dependencies": {
