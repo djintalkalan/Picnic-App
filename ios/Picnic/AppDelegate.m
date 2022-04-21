@@ -44,7 +44,11 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
- [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN];
+  #if DEBUG
+    //Do something on debug
+  #else
+  [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN environment:((APP_TYPE isEqualToString:@"staging")?@"testing":APP_TYPE)];
+  #endif
  [FIRApp configure];
  [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY]; // add this line using the api key obtained from Google Console
 

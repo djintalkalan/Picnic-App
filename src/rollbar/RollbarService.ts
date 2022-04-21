@@ -34,7 +34,7 @@ class RollbarService {
                     authToken,
                 } : {},
                 firebaseToken,
-                'Application-Environment': config.APP_TYPE == 'staging' ? "Testing" : config.APP_TYPE
+                'Application-Environment': config.APP_TYPE == 'staging' ? "testing" : config.APP_TYPE
             }
         });
         this.rollbar = new Client(configurations);

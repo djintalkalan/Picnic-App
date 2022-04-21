@@ -53,7 +53,9 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, "production");
+    if (!BuildConfig.DEBUG) {
+      RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, BuildConfig.APP_TYPE=="staging"?"testing":BuildConfig.APP_TYPE);
+    }
     SoLoader.init(this, /* native exopackage */ false);
     UltimateConfigModule.setBuildConfig(BuildConfig.class);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
