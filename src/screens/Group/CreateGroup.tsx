@@ -119,7 +119,7 @@ const CreateGroup: FC<any> = (props) => {
       details: data?.about?.trim(),
       radio_frequency: data?.radio_frequency,
       image: uploadedImage.current || undefined,
-      address: address?.main_text + (address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text,
+      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,

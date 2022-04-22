@@ -517,9 +517,14 @@ type IDynamicType = "group-detail" | "event-detail"
 
 export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDynamicType } => {
     try {
-        const arr = url?.split("/").reverse();
+        // const arr = url?.split("/").reverse();
+
+        const { i, t } = getQueryVariables(url)
+        return { id: i, type: t }
+
+
         //@ts-ignore
-        return { id: arr[0], type: arr[1] }
+        // return { id: arr[0], type: arr[1] }
     }
     catch (e) {
         return { id: undefined, type: undefined }
@@ -528,7 +533,7 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
 
 const buildLink = async (l: string) => {
     const link = await dynamicLinks().buildShortLink({
-        link: 'https://www.picnicapp.link/',
+        link: 'https://www.picnicapp.link/' + l,
         domainUriPrefix: 'https://picnicapp.page.link',
         android: {
             packageName: config.PACKAGE_NAME
@@ -543,7 +548,7 @@ const buildLink = async (l: string) => {
 export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
     try {
         store.dispatch(setLoadingAction(true))
-        const link = await buildLink(type + "/" + id)
+        const link = await buildLink("?t=" + type + "&i=" + id)
         store.dispatch(setLoadingAction(false))
         setTimeout(() => {
             share("Share " + name, link)
@@ -557,7 +562,7 @@ export const shareDynamicLink = async (name: string, { type, id }: { type: IDyna
 
 export const shareAppLink = async (name: string) => {
     const link = await dynamicLinks().buildShortLink({
-        link: 'https://www.picnicapp.link/',
+        link: 'https://picnicapp.com/',
         domainUriPrefix: 'https://picnicapp.page.link',
         android: {
             packageName: config.PACKAGE_NAME

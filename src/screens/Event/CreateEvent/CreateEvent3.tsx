@@ -75,7 +75,7 @@ const CreateEvent3: FC<any> = props => {
       group_id: eventDetail?.myGroup?.id,
       is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
       short_description: eventDetail?.aboutEvent?.trim(),
-      address: address?.main_text + ', ' + address?.secondary_text,
+      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
