@@ -8,8 +8,7 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
+import { Dimensions, FlatList, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -79,7 +78,7 @@ const EventChats: FC<any> = (props) => {
             if (repliedMessage) {
                 setRepliedMessage(null)
             }
-            flatListRef?.current?.scrollToPosition(0, 0, true);
+            flatListRef?.current?.scrollToIndex({ index: 0, animated: true });
         }
     }, [repliedMessage])
 

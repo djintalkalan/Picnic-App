@@ -1,6 +1,6 @@
 import { colors, Fonts } from "assets";
 import { Match } from 'autolinker/dist/es2015';
-import React, { FC, Fragment, isValidElement, useMemo } from "react";
+import React, { FC, isValidElement, useMemo } from "react";
 import { Linking, Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 import Autolink, { AutolinkProps } from 'react-native-autolink';
 import { openLink } from "utils";
@@ -158,6 +158,49 @@ export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { tex
 };
 
 export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
+
+    const thisStyle = useMemo(() => {
+        const flatten = StyleSheet.flatten(style)
+        return StyleSheet.create({
+            style: flatten,
+            boldStyle: StyleSheet.flatten([flatten, {
+                fontWeight
+            }])
+        })
+    }, [style, fontWeight])
+    let isStart = true
+    let arr = Array.from(IText)
+    console.log("arr", arr);
+
+    const finalStrings: any[] = []
+
+    let boldString = ""
+    let normalString = ""
+    arr.forEach((s: string, i: number) => {
+        if (isStart == false)
+            boldString += s
+        else {
+            normalString += s
+        }
+        if ((s + (arr?.[i + 1] || "")) == "**") {
+            if (isStart) {
+                isStart = false
+                finalStrings.push(<Text style={thisStyle.style} key={i}>{normalString.replace(/\*/g, "")}</Text>)
+                normalString = ""
+            }
+            else {
+                isStart = true
+                finalStrings.push(<Text style={thisStyle.boldStyle} key={i}>{boldString.replace(/\*/g, "")}</Text>)
+                boldString = ""
+            }
+        }
+    })
+    finalStrings.push(<Text key={arr?.length + 1}>{normalString.replace(/\*/g, "")}</Text>)
+    return <Text children={finalStrings} style={style} />
+
+};
+
+export const MultiBoldTextOld = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
 
     let isStart = true
     let arr = Array.from(IText)
