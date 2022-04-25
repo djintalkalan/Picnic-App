@@ -122,7 +122,7 @@ export const TextMessage = memo((props: ITextMessage) => {
             }
     }, [parent_message?.message_type, props])
 
-    return <View style={{ width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
+    return <View style={{ overflow: 'hidden', width: '100%', justifyContent: 'flex-end', marginVertical: scaler(8), flexDirection: isMyMessage ? 'row' : 'row-reverse' }} >
         {!isMyMessage ?
             <View style={{ flex: 1, alignItems: 'flex-end' }} >
                 <TouchableOpacity onPress={onPressOpenActionMenu} style={{ padding: scaler(5) }} >

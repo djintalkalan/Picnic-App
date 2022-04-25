@@ -33,7 +33,14 @@
     "kill-all": "((pkill -f '.*GradleDaemon.*' || ./android/gradlew gradle --stop) && (rm -rf ~/.gradle/daemon || true))",
     "w-tcp": "adb tcpip 5555",
     "load": "node scripts/load-google-service.js",
-    "w-co": "adb connect "
+    "w-co": "adb connect ",
+    "ipa-s":"yarn env-s && yarn clean-ios && yarn archive",
+    "ipa-b":"yarn env-b && yarn clean-ios && yarn archive",
+    "ipa-p":"yarn env-p && yarn clean-ios && yarn archive",
+    "archive":"yarn generate-archive && yarn generate-ipa",
+    "clean-ios":"xcodebuild clean -workspace ios/Picnic.xcworkspace -scheme Picnic && xcodebuild clean -project ios/Picnic.xcodeproj -scheme Picnic && rm -rf ios/build && rm -rf ios/output",
+    "generate-archive":"xcodebuild -sdk iphoneos -workspace ios/Picnic.xcworkspace -scheme Picnic -configuration Release -archivePath ios/build/Picnic.xcarchive archive",
+    "generate-ipa":"xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptions.plist -exportPath ios/output -allowProvisioningUpdates"
   },
   "dependencies": {
     "@flyerhq/react-native-link-preview": "^1.6.0",
