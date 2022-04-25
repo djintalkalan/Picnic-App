@@ -1,3 +1,4 @@
+import analytics from '@react-native-firebase/analytics';
 import * as ApiProvider from 'api/APIProvider';
 import { resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import DeviceInfo from 'react-native-device-info';
@@ -28,6 +29,14 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
             ApiProvider.TOKEN_EXPIRED.current = false
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
+            try {
+                analytics().setUserId(userData?._id)
+                analytics().setUserProperties(userData)
+            }
+            catch (e) {
+                console.log("Analytical Error", e);
+            }
+
             Database.setMultipleValues({
                 authToken: access_token,
                 userData: { ...userData, is_premium: false },
@@ -138,6 +147,13 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
             _showSuccessMessage(res?.message);
             yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
+            try {
+                analytics().setUserId(userData?._id)
+                analytics().setUserProperties(userData)
+            }
+            catch (e) {
+                console.log("Analytical Error", e);
+            }
             ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
                 authToken: access_token,
@@ -208,6 +224,13 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingMsg("Logging out"));
     }
     try {
+        try {
+            analytics().setUserId(null)
+            analytics().setUserProperties({})
+        }
+        catch (e) {
+            console.log("Analytical Error", e);
+        }
         Database.setMultipleValues({
             isLogin: false,
             userData: null,
