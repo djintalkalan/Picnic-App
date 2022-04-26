@@ -7,6 +7,7 @@ import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
 import { Dispatch, useCallback, useEffect } from 'react';
+import { Platform } from "react-native";
 import { useDispatch } from 'react-redux';
 import { getDetailsFromDynamicUrl, getDisplayName, NavigationService, WaitTill } from 'utils';
 
@@ -195,16 +196,17 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         break
                 }
                 const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
-                await notifee.displayNotification({
-                    id: data?.chat_room_id,
-                    title: getDisplayName(user),
-                    android: {
-                        channelId: CHANNEL_NAME,
-                        groupSummary: true,
-                        groupId: data?.chat_room_id,
-                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
-                    },
-                });
+                if (Platform.OS == 'android')
+                    await notifee.displayNotification({
+                        id: data?.chat_room_id,
+                        title: getDisplayName(user),
+                        android: {
+                            channelId: CHANNEL_NAME,
+                            groupSummary: true,
+                            groupId: data?.chat_room_id,
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        },
+                    });
 
                 notifee.displayNotification({
                     // subtitle:getDisplayName(user),
@@ -250,18 +252,18 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         body = 'Location shared'
                         break
                 }
-
-                await notifee.displayNotification({
-                    id: (data?.group || data?.event)?._id,
-                    title: data?.user?.display_name,
-                    subtitle: (data?.group || data?.event)?.name,
-                    android: {
-                        channelId: CHANNEL_NAME,
-                        groupSummary: true,
-                        groupId: (data?.group || data?.event)?._id,
-                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
-                    },
-                });
+                if (Platform.OS == 'android')
+                    await notifee.displayNotification({
+                        id: (data?.group || data?.event)?._id,
+                        title: data?.user?.display_name,
+                        subtitle: (data?.group || data?.event)?.name,
+                        android: {
+                            channelId: CHANNEL_NAME,
+                            groupSummary: true,
+                            groupId: (data?.group || data?.event)?._id,
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        },
+                    });
 
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
