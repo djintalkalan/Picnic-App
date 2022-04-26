@@ -57,7 +57,7 @@ import SelectContacts from 'screens/SelectContacts';
 import SelectLocation from 'screens/SelectLocation';
 import Subscription from 'screens/Subscription/Subscription';
 import { SocketService } from 'socket';
-import { useDatabase } from 'src/database/Database';
+import Database, { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
@@ -149,6 +149,20 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     if (isLogin) {
+      try {
+        const userData = Database.getStoredValue("userData")
+        analytics().setUserId(userData?._id || "")
+        analytics().setUserProperties({
+          username: userData?.username,
+          fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+          email: userData?.email
+        })
+        console.log("First time user set user id and data");
+      }
+      catch (e) {
+        console.log("First time user set error");
+        console.log(e);
+      }
       SocketService.init(dispatch);
     }
     return () => {
@@ -181,6 +195,7 @@ const MyNavigationContainer = () => {
               screen_name: currentRouteName,
               screen_class: currentRouteName,
             });
+            // console.log("Event Sent", currentRouteName);
           }
           routeNameRef.current = currentRouteName;
         }}
