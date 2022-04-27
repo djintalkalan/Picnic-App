@@ -73,3 +73,4 @@ rnuc.xcconfig
 # uncomment these if you are in project
 #
 *.env
+*.yaml

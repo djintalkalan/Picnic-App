@@ -16,9 +16,9 @@
     "release": "cd android && ./gradlew assembleRelease && cd ..",
     "bundle": "cd android && ./gradlew bundleRelease && cd ..",
     "clean": "cd android && ./gradlew clean && cd ..",
-    "env-p": "yarn rnuc production.env && yarn load production",
-    "env-s": "yarn rnuc staging.env && yarn load staging",
-    "env-b": "yarn rnuc beta.env && yarn load beta",
+    "env-p": "yarn rnuc production.yaml && yarn load production",
+    "env-s": "yarn rnuc staging.yaml && yarn load staging",
+    "env-b": "yarn rnuc beta.yaml && yarn load beta",
     "apk-p": "(yarn kill-all || true) && yarn env-p && yarn clean && yarn release",
     "apk-s": "(yarn kill-all || true) && yarn env-s && yarn clean && yarn release",
     "apk-b": "(yarn kill-all || true) && yarn env-b && yarn clean && yarn release",
@@ -32,7 +32,7 @@
     "postinstall": "node scripts/env-fix.js && yarn env-s && npx pod-install",
     "kill-all": "((pkill -f '.*GradleDaemon.*' || ./android/gradlew gradle --stop) && (rm -rf ~/.gradle/daemon || true))",
     "w-tcp": "adb tcpip 5555",
-    "load":"node scripts/load-google-service.js",
+    "load": "node scripts/load-google-service.js",
     "w-co": "adb connect "
   },
   "dependencies": {
