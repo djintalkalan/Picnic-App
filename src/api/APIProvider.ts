@@ -453,3 +453,8 @@ export const _getAppVersion = async () => {
     console.log("---------- get app version Api Call ---------------")
     return fetchApiData(config.API_URL + 'common/app-version', null, "GET")
 }
+
+export const _setLanguage = async (body: any) => {
+    console.log("---------- set language Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/set-language', body, "POST")
+}

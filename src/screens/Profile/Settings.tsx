@@ -1,5 +1,5 @@
-import { config } from 'api'
-import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/actions'
+import { config, _setLanguage } from 'api'
+import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
@@ -44,41 +44,39 @@ const Settings: FC<any> = (props) => {
         dispatch(getProfile())
     }, [selectedLanguage]);
 
-    const customView = useCallback(memo(() => {
-
-        return <View style={{ width: '100%' }} >
-            <TouchableOpacity onPress={() => {
-                InteractionManager.runAfterInteractions(() => {
+    const setLanguage = useCallback((language: any) => {
+        dispatch(setLoadingAction(true))
+        InteractionManager.runAfterInteractions(() => {
+            _setLanguage({ language: language }).then((res) => {
+                if (res && res.status == 200) {
                     _hidePopUpAlert()
-                    setTimeout(() => {
-                        updateLanguage("en")
-                    }, 0);
+                    updateLanguage(language)
+                    dispatch(setLoadingAction(false))
                     setTimeout(() => {
                         dispatch(refreshLanguage())
                     }, 500);
-                })
-            }}
-                style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
+                }
+            }).catch((e) => {
+                console.log(e)
+                dispatch(setLoadingAction(false))
+            })
+        })
+    }, [updateLanguage])
+
+    const customView = useCallback(memo(() => {
+
+        return <View style={{ width: '100%' }} >
+            <TouchableOpacity onPress={() => { setLanguage('en') }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'en' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
                 <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }} >English</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => {
-                InteractionManager.runAfterInteractions(() => {
-                    _hidePopUpAlert()
-                    setTimeout(() => {
-                        updateLanguage("es")
-                    }, 0);
-                    setTimeout(() => {
-                        dispatch(refreshLanguage())
-                    }, 500);
-                })
-            }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
+            <TouchableOpacity onPress={() => { setLanguage('es') }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
                 <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>Española (Spanish)</Text>
             </TouchableOpacity>
         </View>
-    }), [updateLanguage, selectedLanguage])
+    }), [selectedLanguage])
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
