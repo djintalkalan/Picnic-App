@@ -153,6 +153,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - hermes-engine (0.9.0)
+  - Intercom (12.0.0)
+  - intercom-react-native (3.0.1):
+    - Intercom (~> 12.0.0)
+    - React-Core
   - libevent (2.1.12)
   - libwebp (1.2.1):
     - libwebp/demux (= 1.2.1)
@@ -646,6 +650,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.99.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (~> 0.9.0)
+  - "intercom-react-native (from `../node_modules/@intercom/intercom-react-native`)"
   - libevent (~> 2.1.12)
   - OpenSSL-Universal (= 1.1.180)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
@@ -747,6 +752,7 @@ SPEC REPOS:
     - GoogleMaps
     - GoogleUtilities
     - hermes-engine
+    - Intercom
     - libevent
     - libwebp
     - MMKV
@@ -774,6 +780,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  intercom-react-native:
+    :path: "../node_modules/@intercom/intercom-react-native"
   Permission-Camera:
     :path: "../node_modules/react-native-permissions/ios/Camera"
   Permission-Contacts:
@@ -948,6 +956,8 @@ SPEC CHECKSUMS:
   GoogleMaps: 086ae1dab659eaa7339bdb30fc88e2f44e7c597c
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   hermes-engine: bf7577d12ac6ccf53ab8b5af3c6ccf0dd8458c5c
+  Intercom: d706bc52b0e80758b38ceadce9143b76577100fb
+  intercom-react-native: a20a96ff9e65bbde40f2728b487e42a3cf7f2d4c
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   MMKV: 76033b9ace2006623308910a3afcc0e25eba3140
@@ -1034,6 +1044,6 @@ SPEC CHECKSUMS:
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ad4399185db28fbfc6d3aef4a6a11fc3da5df9d8
+PODFILE CHECKSUM: 528a789a055fe6c8b31bcce030f03dcaf09c5bf1
 
 COCOAPODS: 1.11.3

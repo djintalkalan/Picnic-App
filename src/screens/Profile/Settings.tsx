@@ -1,3 +1,4 @@
+import Intercom, { IntercomEvents } from '@intercom/intercom-react-native'
 import { config } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -40,9 +41,27 @@ const Settings: FC<any> = (props) => {
 
     const passwordRef = useRef("")
 
+    const [unreadCount, setUnreadCount] = useState(0)
+
     useEffect(() => {
         dispatch(getProfile())
     }, [selectedLanguage]);
+
+
+    useEffect(() => {
+
+        const countListener = Intercom.addEventListener(
+            IntercomEvents.IntercomUnreadCountDidChange,
+            (response) => {
+                console.log("response", response);
+
+                setUnreadCount(response.count as number);
+            }
+        );
+        return () => {
+            countListener.remove();
+        };
+    }, []);
 
     const customView = useCallback(memo(() => {
 
@@ -172,6 +191,15 @@ const Settings: FC<any> = (props) => {
                         image={languageImageSource}
                         title={Language.change_language}
                     />
+
+                    <SettingButton
+                        onPress={() => {
+                            Intercom.displayMessenger();
+                        }}
+                        image={Images.ic_smiley}
+                        title={"Help and Support (" + unreadCount + ")"}
+                    />
+
                     <View style={{}} >
                         <TouchableOpacity
                             onPress={() => {

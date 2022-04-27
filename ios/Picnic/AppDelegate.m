@@ -20,6 +20,8 @@
 //Rollbar
 #import <RollbarReactNative/RollbarReactNative.h>
 
+// Intercomm
+#import <IntercomModule.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -79,6 +81,7 @@ static void InitializeFlipper(UIApplication *application) {
     rootView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
   }
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+  [IntercomModule initialize:INTERCOM_API_KEY withAppId:INTERCOM_APP_ID];
   return YES;
 }
 

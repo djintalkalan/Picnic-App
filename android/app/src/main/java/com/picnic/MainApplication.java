@@ -13,6 +13,7 @@ import java.util.List;
 import com.reactnativeultimateconfig.UltimateConfigModule;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.rollbar.RollbarReactNative;
+import com.intercom.reactnative.IntercomModule;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -56,6 +57,7 @@ public class MainApplication extends Application implements ReactApplication {
     RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, "production");
     SoLoader.init(this, /* native exopackage */ false);
     UltimateConfigModule.setBuildConfig(BuildConfig.class);
+    IntercomModule.initialize(this, BuildConfig.INTERCOM_API_KEY, BuildConfig.INTERCOM_APP_ID);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
