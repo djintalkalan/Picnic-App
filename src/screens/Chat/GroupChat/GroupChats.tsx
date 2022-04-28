@@ -7,8 +7,7 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
-import { KeyboardAwareFlatList as FlatList } from 'react-native-keyboard-aware-scroll-view'
+import { Dimensions, FlatList, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -75,7 +74,7 @@ export const GroupChats: FC<any> = (props) => {
                 setRepliedMessage(null)
             }
             setLink(_ => _ ? "" : _)
-            flatListRef?.current?.scrollToPosition(0, 0, true);
+            flatListRef?.current?.scrollToIndex({ index: 0, animated: true });
         }
     }, [repliedMessage])
 
@@ -207,6 +206,7 @@ export const GroupChats: FC<any> = (props) => {
                     // removeClippedSubviews={false}
                     keyboardShouldPersistTaps={'handled'}
                     data={chats}
+                    style={{ flexGrow: 1 }}
                     extraData={chats?.length}
                     keyExtractor={_ => _._id}
                     bounces={false}
