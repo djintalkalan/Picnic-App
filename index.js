@@ -14,7 +14,7 @@ import { onMessageReceived, onNotificationOpened } from 'src/notification/Fireba
 import { name as appName } from './app.json';
 
 console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
-if (__DEV__ && config.REACTOTRON_STATUS == true) {
+if (__DEV__ && config.REACTOTRON_STATUS) {
     import('./ReactotronConfig').then(() => {
         console.log = Reactotron.log
         console.warn = Reactotron.warn
