@@ -32,7 +32,7 @@ const App: FC = () => {
         _getAppVersion().then((res: any) => {
             if (res && res.status == 200) {
                 const serverVersion = res?.data?.[Platform.OS]
-                const currentVersion = (Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME)
+                const currentVersion = (Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.APP_VERSION)
                 const isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
                 // console.log("currentVersion", currentVersion);
                 console.log("isUpdateAvailable", isUpdateAvailable);
@@ -43,7 +43,7 @@ const App: FC = () => {
                             {
                                 text: Language.update, onPress: () => {
                                     Platform.OS == 'android' ?
-                                        Linking.openURL("http://play.google.com/store/apps/details?id=" + config.PACKAGE_NAME?.replace('test', 'app'))
+                                        Linking.openURL("http://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('test', 'app'))
                                         :
                                         Linking.openURL('itms-apps://apps.apple.com/us/app/picnic-groups/id1561013758')
                                     // RNExitApp?.exitApp();
