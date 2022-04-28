@@ -35,6 +35,7 @@
         "geolocation",
         "gradlew",
         "inappbrowser",
+        "iphoneos",
         "linkify",
         "linkifyjs",
         "MMKVJSI",
@@ -49,6 +50,12 @@
         "rnuc",
         "rollbar",
         "tcpip",
-        "twotalltotems"
+        "twotalltotems",
+        "twotalltotems",
+        "xcarchive",
+        "xcodebuild",
+        "xcodeproj",
+        "xcworkspace"
+
     ]
 }
