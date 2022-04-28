@@ -536,10 +536,10 @@ const buildLink = async (l: string) => {
         link: 'https://www.picnicapp.link/' + l,
         domainUriPrefix: 'https://picnicapp.page.link',
         android: {
-            packageName: config.PACKAGE_NAME
+            packageName: config.BUNDLE_ID_PACKAGE_NAME
         },
         ios: {
-            bundleId: config.BUNDLE_ID
+            bundleId: config.BUNDLE_ID_PACKAGE_NAME
         }
     });
     return link;
@@ -565,10 +565,10 @@ export const shareAppLink = async (name: string) => {
         link: 'https://picnicapp.com/',
         domainUriPrefix: 'https://picnicapp.page.link',
         android: {
-            packageName: config.PACKAGE_NAME
+            packageName: config.BUNDLE_ID_PACKAGE_NAME
         },
         ios: {
-            bundleId: config.BUNDLE_ID
+            bundleId: config.BUNDLE_ID_PACKAGE_NAME
         },
         navigation: {
             forcedRedirectEnabled: true
