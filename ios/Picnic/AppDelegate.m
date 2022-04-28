@@ -85,6 +85,12 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
+// - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+//     [Intercom setDeviceToken:deviceToken failure:^(NSError * _Nullable error) {
+//         // Handle error
+//     }];
+// }
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG

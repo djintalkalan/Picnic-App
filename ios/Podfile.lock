@@ -154,7 +154,7 @@ PODS:
     - GoogleUtilities/Logger
   - hermes-engine (0.9.0)
   - Intercom (12.0.0)
-  - intercom-react-native (3.0.1):
+  - intercom-react-native (3.0.0):
     - Intercom (~> 12.0.0)
     - React-Core
   - libevent (2.1.12)
@@ -957,7 +957,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   hermes-engine: bf7577d12ac6ccf53ab8b5af3c6ccf0dd8458c5c
   Intercom: d706bc52b0e80758b38ceadce9143b76577100fb
-  intercom-react-native: a20a96ff9e65bbde40f2728b487e42a3cf7f2d4c
+  intercom-react-native: 43841bfc8d4e4eb4acad9d860e9dd10c80b8ed4b
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   MMKV: 76033b9ace2006623308910a3afcc0e25eba3140

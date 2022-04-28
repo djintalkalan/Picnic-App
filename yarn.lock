@@ -864,10 +864,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@intercom/intercom-react-native@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@intercom/intercom-react-native/-/intercom-react-native-3.0.1.tgz#4568294448ed592ba1074de37f6aff472cd406a9"
-  integrity sha512-nuGCXJJNPXTSAtb8ZxC9GctEYX+AFxWhDplEfxtHFfEkb66/hs9zYikpcy9Pr3FjZrBXfRCi6uDkzTi+VVswuQ==
+"@intercom/intercom-react-native@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@intercom/intercom-react-native/-/intercom-react-native-3.0.0.tgz#9d1eab690181e3fe83d1502f37aad86762626f4c"
+  integrity sha512-R2CnzPrpbn6woBfG+60P4CXYL/Y/9xb49Za5nMcDFLHTrp7PFQJ68G7lM2Bfr1BjcNfPixJa4zmCFX/iNp+8gQ==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"

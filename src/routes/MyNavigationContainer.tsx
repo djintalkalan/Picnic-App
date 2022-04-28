@@ -109,7 +109,6 @@ const dashboardScreens = {
   SelectContacts: SelectContacts,
   ImagePreview: ImagePreview
 };
-
 const MyNavigationContainer = () => {
   useFirebaseNotifications();
   const dispatch = useDispatch();
@@ -140,6 +139,7 @@ const MyNavigationContainer = () => {
     Rollbar?.init();
     const userData = Database.getStoredValue("userData")
     Intercom.registerIdentifiedUser({ email: userData?.email, userId: userData?._id })
+    Intercom.sendTokenToIntercom(Database.getStoredValue("firebaseToken"))
     Intercom.updateUser({
       email: userData?.email,
       userId: userData?._id,

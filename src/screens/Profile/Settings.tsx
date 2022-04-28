@@ -17,6 +17,7 @@ import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
+const helpImageSource = MaterialIcons.getImageSourceSync("live-help", 50, colors.colorBlackText)
 
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
@@ -196,8 +197,8 @@ const Settings: FC<any> = (props) => {
                         onPress={() => {
                             Intercom.displayMessenger();
                         }}
-                        image={Images.ic_smiley}
-                        title={"Help and Support (" + unreadCount + ")"}
+                        image={helpImageSource}
+                        title={"Help and Support"}// (" + unreadCount + ")"}
                     />
 
                     <View style={{}} >
