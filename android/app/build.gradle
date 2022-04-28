@@ -87,12 +87,12 @@ apply from: "../../node_modules/react-native-ultimate-config/android/rnuc.gradle
 
 
 def outputFileName = project.config.get("OUTPUT_NAME")
-def ANDROID_VERSION_CODE = project.config.get("ANDROID_VERSION_CODE").toInteger()
-def ANDROID_VERSION_NAME = project.config.get("ANDROID_VERSION_NAME")
+def ANDROID_VERSION_CODE = project.config.get("BUILD_NUMBER_CODE").toInteger()
+def ANDROID_VERSION_NAME = project.config.get("APP_VERSION")
 def KEYSTORE_NAME = project.config.get("KEYSTORE_NAME")
 def KEYSTORE_PASSWORD = project.config.get("KEYSTORE_PASSWORD")
 def ALIAS_NAME = project.config.get("ALIAS_NAME")
-def PACKAGE_NAME = project.config.get("PACKAGE_NAME")
+def PACKAGE_NAME = project.config.get("BUNDLE_ID_PACKAGE_NAME")
 def APP_TYPE = project.config.get("APP_TYPE")
 def outputPathName = "${project.rootDir.absolutePath}/output"
 

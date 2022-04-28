@@ -188,7 +188,7 @@ const Settings: FC<any> = (props) => {
                             <MaterialIcons color={colors.colorBlackText} size={scaler(25)} name={'info-outline'} />
                             <View>
                                 <Text style={[styles.buttonText, { color: colors.colorBlackText, }]} >{Language.version}</Text>
-                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Platform.OS == 'ios' ? installer != "AppStore" ? ("TestFlight v" + config.IOS_VERSION + " Build " + config.IOS_BUILD_NUMBER) : config.APP_STORE_VERSION : config.ANDROID_VERSION_NAME}</Text>
+                                <Text style={[styles.buttonText, { fontSize: scaler(11), color: colors.colorGreyInactive, fontWeight: '400' }]} >{Platform.OS == 'ios' ? installer != "AppStore" ? ("TestFlight v" + config.APP_VERSION + " Build " + config.BUILD_NUMBER_CODE) : config.APP_STORE_VERSION : config.APP_VERSION}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
