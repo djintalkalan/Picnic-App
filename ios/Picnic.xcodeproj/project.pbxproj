@@ -625,7 +625,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}";
+				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID_PACKAGE_NAME}";
 				PRODUCT_NAME = Picnic;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Picnic-Bridging-Header.h";
@@ -657,7 +657,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}";
+				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID_PACKAGE_NAME}";
 				PRODUCT_NAME = Picnic;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Picnic-Bridging-Header.h";
