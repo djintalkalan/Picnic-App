@@ -24,7 +24,7 @@ export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
 const CancelTokenConstructor = axios.CancelToken;
 async function callApi(urlString: string, header: header, body: any, methodType: Method, cancelToken?: CancelToken) {
-    if (config.REACTOTRON_STATUS == 'false') {
+    if (!config.REACTOTRON_STATUS) {
         console.log("-----------AXIOS  Api request is----------- ");
         console.log("url string " + urlString);
         console.log("header " + JSON.stringify(header));
@@ -38,7 +38,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
         headers: header,
         cancelToken: cancelToken
     }).then(res => {
-        if (config.REACTOTRON_STATUS == 'false') {
+        if (!config.REACTOTRON_STATUS) {
             console.log("-----------AXIOS  Api Response is----------- ");
             console.log("url string " + urlString);
             console.log("header " + JSON.stringify(header));
@@ -67,7 +67,7 @@ async function callApi(urlString: string, header: header, body: any, methodType:
             console.log(e)
             console.log("catch Error" + JSON.stringify(e))
             if (e.response && e.response.data) {
-                if (config.REACTOTRON_STATUS == 'false') {
+                if (!config.REACTOTRON_STATUS) {
                     console.log("catch response", JSON.stringify(e.response.data))
                 }
                 if (JSON.stringify(e.response.data).startsWith("<") || JSON.stringify(e.response.data).startsWith("\"<")) {
