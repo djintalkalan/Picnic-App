@@ -3221,16 +3221,21 @@ dijkstrajs@^1.0.1:
   resolved "https://registry.yarnpkg.com/dijkstrajs/-/dijkstrajs-1.0.2.tgz#2e48c0d3b825462afe75ab4ad5e829c8ece36257"
   integrity sha512-QV6PMaHTCNmKSeP6QoXhVTw9snc9VD8MulTT0Bd99Pacp4SS1cjcrYPgBPmibqKVtMJJfqC6XvOXgPMEEPH/fg==
 
-dj-intl-phone-input@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.2.4.tgz#8814b25aae5247f0935f971db842e86478b47b97"
-  integrity sha512-aEznZQBhCbPdg73HhYKGn3RDqOmPUy/7uuPDmIkHPZNZnS8JFvKo0P1nXHQRx2Udd+8VYK/r3DJiwomDVTzn9Q==
-
-dj-react-native-dropdown-alert@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/dj-react-native-dropdown-alert/-/dj-react-native-dropdown-alert-0.0.3.tgz#500ce1264c55b88a78b48048aa3b80047ddc1965"
-  integrity sha512-EVTsWtMPCw0Jgop4iHUfR6HHNw3ukHb4VEqatB8ssYLhFAwmjqHUwFlkEM7UoC3cQDUshkbLTrPg4xGngRVl6w==
+dj-intl-phone-input@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/dj-intl-phone-input/-/dj-intl-phone-input-1.2.5.tgz#d393ece1d3bfa53dc242226bd8f1f912978f96d3"
+  integrity sha512-udvT4wQuEJtfqP4ZHihJ7nmwEKt9RGMndZQOU3DPlV2W74liCopSKlqrCEgKbJ4YvxJBDU+Q0Ahx/GLZkZ5Aow==
   dependencies:
+    libphonenumber-js "^1.9.51"
+    lodash "^4.17.19"
+    react-native-safe-area-context "^3.4.1"
+
+dj-react-native-dropdown-alert@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/dj-react-native-dropdown-alert/-/dj-react-native-dropdown-alert-0.1.2.tgz#15d586f73ba4a3560e60e163cb9a37370e9c084d"
+  integrity sha512-CuY5g8oYhIvIXBz92mnQ1IK+ra8wwovyamfYy7ZgW6sbdfQx7pDyocCVbBN2JjDJpjn6zeMWZvvi/bmiBJYCbQ==
+  dependencies:
+    lodash "^4.17.19"
     prop-types "15.5.10"
 
 doctrine@^2.1.0:
@@ -7076,7 +7081,7 @@ react-native-reanimated@^2.4.1:
     setimmediate "^1.0.5"
     string-hash-64 "^1.0.3"
 
-react-native-safe-area-context@^3.3.2:
+react-native-safe-area-context@^3.3.2, react-native-safe-area-context@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.4.1.tgz#c967a52903d55fe010b2428e5368b42f1debc0a7"
   integrity sha512-xfpVd0CiZR7oBhuwJ2HcZMehg5bjha1Ohu1XHpcT+9ykula0TgovH2BNU0R5Krzf/jBR1LMjR6VabxdlUjqxcA==
