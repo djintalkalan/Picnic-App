@@ -119,7 +119,7 @@ const EventDetail: FC<any> = (props) => {
     }, [event])
 
     if (!event) {
-        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} style={styles.container}>
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
             <View style={styles.placeholder}>
                 <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
             </View>
@@ -127,7 +127,7 @@ const EventDetail: FC<any> = (props) => {
         </SafeAreaViewWithStatusBar>
     }
     return (
-        <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} >
+        <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
                 <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
@@ -144,7 +144,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {eventDate >= new Date() ?
+                    {eventDate >= new Date() && event.status == 1 ?
                         <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -303,18 +303,20 @@ const EventDetail: FC<any> = (props) => {
                             <Text autoLink style={styles.about} >{event?.short_description}</Text>
                         </View> : <View style={{ marginBottom: scaler(22) }} />
                     }
-                    <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
-                        <ImageLoader
-                            placeholderSource={Images.ic_home_profile}
-                            source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
-                            style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
-                        <Text style={{ marginLeft: scaler(10) }}>
-                            {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
-                        </Text>
-                    </View>
+                    {event.status == 1 && <>
+                        <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
+                                style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
+                            <Text style={{ marginLeft: scaler(10) }}>
+                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                            </Text>
+                        </View>
+                    </>}
 
-                    {event?.event_group?.name ?
+                    {event?.event_group?.name && event.status == 1 ?
                         <>
                             <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.group}</Text>
                             <ListItem
@@ -356,57 +358,79 @@ const EventDetail: FC<any> = (props) => {
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
             </ScrollView>
-            {(event?.is_admin || event?.is_event_member) ?
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                    {eventDate >= new Date() ?
-                        <View style={{ flex: 1 }}>
-                            <Button onPress={() => {
-                                try {
-                                    const startDate = eventDate?.toISOString()
-                                    const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : add(eventDate, { minutes: 1 }).toISOString()
-                                    presentEventCreatingDialog({
-                                        startDate,
-                                        endDate,
-                                        allDay: false,
-                                        location: event?.address,
-                                        title: '"' + event?.name + '" event from Picnic Groups',
-                                        notes: event?.name
-                                    }).then(res => {
-                                        console.log("Res", res);
 
-                                    }).catch(e => {
-                                        console.log("E", e);
+            {event?.status == 1 ?
+                <>
+                    {(event?.is_admin || event?.is_event_member) ?
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
+                            {eventDate >= new Date() ?
+                                <View style={{ flex: 1 }}>
+                                    <Button onPress={() => {
+                                        try {
+                                            const startDate = eventDate?.toISOString()
+                                            const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                            presentEventCreatingDialog({
+                                                startDate,
+                                                endDate,
+                                                allDay: false,
+                                                location: event?.address,
+                                                title: '"' + event?.name + '" event from Picnic Groups',
+                                                notes: event?.name
+                                            }).then(res => {
+                                                console.log("Res", res);
 
-                                    })
-                                }
-                                catch (e) {
-                                    console.log("Error", e);
+                                            }).catch(e => {
+                                                console.log("E", e);
 
-                                }
-                            }} title={Language.add_to_calender} />
-                        </View> : undefined}
-                    <View style={{ flex: 1 }}>
-                        <Button title={Language.start_chat}
-                            onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                            fontColor={eventDate >= new Date() ? 'black' : 'white'}
-                            backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
-                            buttonStyle={{
-                                borderColor: 'black',
-                                borderWidth: eventDate >= new Date() ? scaler(1) : 0
-                            }}
-                            textStyle={{ fontWeight: '400' }} />
+                                            })
+                                        }
+                                        catch (e) {
+                                            console.log("Error", e);
+
+                                        }
+                                    }} title={Language.add_to_calender} />
+                                </View> : undefined}
+                            <View style={{ flex: 1 }}>
+                                <Button title={Language.start_chat}
+                                    onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
+                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
+                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
+                                    buttonStyle={{
+                                        borderColor: 'black',
+                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                    }}
+                                    textStyle={{ fontWeight: '400' }} />
+                            </View>
+                        </View> :
+                        (eventDate >= new Date() &&
+                            (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
+                            <View style={{ marginHorizontal: scaler(10) }}>
+                                <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                    onPress={() => NavigationService.navigate('BookEvent',
+                                        {
+                                            id: event?._id,
+                                        })} />
+                            </View> : null
+                    }
+                </> :
+                <>
+
+                    <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
+                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{Language.event_is_no_longer_available}</Text>
                     </View>
-                </View> :
-                (eventDate >= new Date() &&
-                    (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
-                    <View style={{ marginHorizontal: scaler(10) }}>
-                        <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
-                            onPress={() => NavigationService.navigate('BookEvent',
-                                {
-                                    id: event?._id,
-                                })} />
-                    </View> : null
+                    <Button title={Language.chat}
+                        onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
+                        fontColor={'black'}
+                        paddingVertical={scaler(10)}
+                        backgroundColor={colors.colorWhite}
+                        buttonStyle={{
+                            borderColor: 'black',
+                            borderWidth: 1
+                        }}
+                        textStyle={{ fontWeight: '400' }} />
+                </>
             }
+
         </SafeAreaViewWithStatusBar>
     )
 }

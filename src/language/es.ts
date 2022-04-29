@@ -317,5 +317,10 @@ export const es = {
     deleted_user: "",
     fm_freq: "",
     select: "",
+    group_admin: "",
+    subscribers: "",
+    only_can_send_messages: "",
+    group_is_no_longer_available: "",
+    event_is_no_longer_available: "",
 
 }

@@ -433,12 +433,14 @@ const GroupDetail: FC<any> = (props) => {
                                 <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
                                     <Text style={styles.events} >{(groupMembers?.length - 5)} {Language.more}</Text>
                                     <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                                </TouchableOpacity></>}
+                                </TouchableOpacity>
+                            </>}
                         </View>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                         {renderBottomActionButtons()}
                     </>
                     :
+                    group?.status != 6 &&
                     <>
                         <Text style={{ padding: scaler(15), fontWeight: '500', fontSize: scaler(15) }}>{Language.group_admin}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>

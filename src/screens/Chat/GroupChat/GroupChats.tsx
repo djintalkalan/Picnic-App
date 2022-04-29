@@ -12,6 +12,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
+import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
@@ -185,7 +186,7 @@ export const GroupChats: FC<any> = (props) => {
                 {...item}
                 isGroupType={true}
                 group={groupDetail}
-                isMember={groupDetail?.is_group_member && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium))}
+                isMember={groupDetail?.status == 1 && groupDetail?.is_group_member && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium))}
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
             />)
@@ -232,7 +233,7 @@ export const GroupChats: FC<any> = (props) => {
                 />
             </View>
             {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-                {groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium) ?
+                {groupDetail?.status == 1 && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium)) ?
                     <><ChatInput
                         // value={textMessage}
                         ref={inputRef}
@@ -251,7 +252,7 @@ export const GroupChats: FC<any> = (props) => {
                         </View> : null}
                     </> :
                     <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
-                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >Only {groupDetail?.restriction_mode == 'subscribed' ? 'subscribers' : 'admin'} can send messages</Text>
+                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
                     </View>
                 }
             </View> : !socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >

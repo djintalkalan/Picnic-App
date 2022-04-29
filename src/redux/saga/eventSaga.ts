@@ -245,6 +245,10 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
+            if (res?.data?.invalid_resource) {
+                yield put(getEventDetail(res?.data?.resource_id))
+                NavigationService.goBack()
+            }
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
