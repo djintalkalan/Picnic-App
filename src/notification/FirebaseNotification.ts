@@ -1,6 +1,7 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
+import Intercom from "@intercom/intercom-react-native";
+import notifee, { AndroidColor, AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
 import { store } from "app-store";
@@ -101,6 +102,8 @@ export const onNotificationOpened = (notification: Notification) => {
 }
 
 const navigateToPages = async (notification: any) => {
+    console.log("isFirstTime", isFirstTime);
+
     if (isFirstTime) {
         await WaitTill(1500)
     }
@@ -110,6 +113,13 @@ const navigateToPages = async (notification: any) => {
             data = JSON.parse(data)
         }
         console.log("data is ", data);
+
+        if (data?.receiver == 'intercom_sdk') {
+            setTimeout(() => {
+                Intercom.displayMessenger();
+            }, 50);
+            return
+        }
 
         if (data?.group || data?.event) {
             dispatch && dispatch((data?.group ? setActiveGroup : setActiveEvent)(data?.group ?? data?.event))
@@ -158,15 +168,38 @@ export const onMessageReceived = async (message: any, isBackground: boolean = fa
         console.log("Background Firebase Message ", message)
     else
         console.log("Firebase Message ", message)
+    if (message?.data?.receiver == 'intercom_sdk') {
+        showIntercomNotification(message?.data)
+        return
+    }
     const isLogin = Database.getStoredValue("isLogin");
     if (isLogin) {
         showNotification(message, isBackground)
     }
 }
 
-const showNotification = async (message: any, isBackground: boolean) => {
-    console.log("Message", message);
+const showIntercomNotification = (data: any) => {
+    console.log("Showing Intercom Notification", data);
 
+    const { app_name, body, conversation_id, avatar_color, message, conversation_part_id, image_url } = data ?? {}
+    notifee.displayNotification({
+        body,
+        title: "Picnic Support",
+        data: { title: "Picnic Support", body, message: JSON.stringify(data) },
+        android: {
+            channelId: CHANNEL_NAME,
+            sound: 'default',
+            // category: AndroidCategory.ALARM,
+            defaults: [AndroidDefaults.ALL],
+            color: AndroidColor.RED
+        },
+        ios: {
+            sound: 'default',
+        }
+    });
+}
+
+const showNotification = async (message: any, isBackground: boolean) => {
     let { title, body, message: data } = message?.data ?? {};
     if (data) {
         if (typeof data == 'string') {

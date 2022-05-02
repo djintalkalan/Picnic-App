@@ -1,4 +1,5 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
+import Intercom from '@intercom/intercom-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
@@ -56,7 +57,7 @@ import SelectContacts from 'screens/SelectContacts';
 import SelectLocation from 'screens/SelectLocation';
 import Subscription from 'screens/Subscription/Subscription';
 import { SocketService } from 'socket';
-import { useDatabase } from 'src/database/Database';
+import Database, { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
@@ -110,7 +111,6 @@ const dashboardScreens = {
   ImagePreview: ImagePreview,
   PersonChat: PersonChat
 };
-
 const MyNavigationContainer = () => {
   useFirebaseNotifications();
   const dispatch = useDispatch();
@@ -140,8 +140,22 @@ const MyNavigationContainer = () => {
   useEffect(() => {
     dispatch(refreshLanguage())
     Rollbar?.init();
+    const userData = Database.getStoredValue("userData")
+    Intercom.registerIdentifiedUser({ email: userData?.email, userId: userData?._id })
+    Intercom.sendTokenToIntercom(Database.getStoredValue("firebaseToken"))
+    Intercom.updateUser({
+      email: userData?.email,
+      userId: userData?._id,
+      name: userData?.first_name + (userData?.last_name?.trim() ? (" " + userData?.last_name?.trim()) : ""),
+      phone: userData?.phone_number,
+      // languageOverride: userData?.language,
+      // signedUpAt: 1621844451,
+      // unsubscribedFromEmails: true,
+    });
+    console.log("Intercom Initialized")
     return () => {
       Rollbar?.exit();
+      Intercom.logout()
     }
   }, [isLogin])
 

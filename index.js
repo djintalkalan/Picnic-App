@@ -1,6 +1,7 @@
 /**
  * @format
  */
+import Intercom from '@intercom/intercom-react-native';
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';
@@ -12,6 +13,9 @@ import { config } from 'src/api/config';
 import App from 'src/App';
 import { onMessageReceived, onNotificationOpened } from 'src/notification/FirebaseNotification';
 import { name as appName } from './app.json';
+
+Intercom.setInAppMessageVisibility("GONE")
+
 
 console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
 if (__DEV__ && config.REACTOTRON_STATUS) {
