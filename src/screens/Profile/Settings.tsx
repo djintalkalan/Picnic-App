@@ -47,7 +47,7 @@ const Settings: FC<any> = (props) => {
     const setLanguage = useCallback((language: any) => {
         dispatch(setLoadingAction(true))
         InteractionManager.runAfterInteractions(() => {
-            _setLanguage({ language: language }).then((res) => {
+            _setLanguage({ language: language }).then((res: any) => {
                 if (res && res.status == 200) {
                     _hidePopUpAlert()
                     updateLanguage(language)
@@ -56,7 +56,7 @@ const Settings: FC<any> = (props) => {
                         dispatch(refreshLanguage())
                     }, 500);
                 }
-            }).catch((e) => {
+            }).catch((e: any) => {
                 console.log(e)
                 dispatch(setLoadingAction(false))
             })
