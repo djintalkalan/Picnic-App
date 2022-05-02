@@ -146,46 +146,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} />
 
-            {/* <BottomButton
-                title={Language.leave_group}
-                icon={Images.ic_leave_group}
-                visibility={group?.is_group_member && !group?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_leave_group,
-                        onPressButton: () => {
-                            dispatch(leaveGroup(group?._id))
-                            _hidePopUpAlert()
-                        },
-                        buttonStyle: { backgroundColor: colors.colorRed },
-                        buttonText: Language.yes_leave
-                    })
-                }} />
-
-            <BottomButton
-                title={Language.join_now}
-                icon={Images.ic_leave_group}
-                visibility={!group?.is_group_member}
-                onPress={() => {
-                    dispatch(joinGroup(group?._id))
-                }} /> */}
-
-            {/* <BottomButton
-                title={Language.report_group}
-                icon={Images.ic_report_group}
-                visibility={!group?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_report_group,
-                        onPressButton: () => {
-                            dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
-                            _hidePopUpAlert()
-                        },
-                        buttonText: Language.yes_report
-                    })
-                }} /> */}
-
-            {!group?.is_admin && <SwipeRow ref={swipeRef} disableRightSwipe
+            {(!group?.is_admin || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
@@ -260,10 +221,12 @@ const GroupDetail: FC<any> = (props) => {
                         title={Language.join_now}
                         icon={Images.ic_leave_group}
                         hideBottomBar
-                        visibility={!group?.is_group_member}
+                        visibility={!group?.is_group_member && group?.status == 1}
                         onPress={() => {
                             dispatch(joinGroup(group?._id))
-                        }} />}
+                        }} />
+                    // : undefined
+                }
 
             </SwipeRow>}
         </View>
