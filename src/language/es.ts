@@ -323,5 +323,6 @@ export const es = {
     applicable_tax: '',
     fm_freq: "",
     select: "",
+    group_admin: ""
 
 }
