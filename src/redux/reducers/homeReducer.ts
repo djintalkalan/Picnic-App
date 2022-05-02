@@ -18,6 +18,14 @@ export const homeReducer = (state: IHomeReducer = initialHomeData, action: actio
                 return state
             }
             return { searchedGroups: null, searchedEvents: null, [key]: action?.payload?.data }
+        case ActionTypes.JOIN_GROUP_SUCCESS:
+            return { ...state, searchedGroups: state.searchedGroups?.map(_ => (_._id == action?.payload ? { ..._, is_group_member: true } : _)) || null }
+        case ActionTypes.LEAVE_GROUP_SUCCESS:
+            return { ...state, searchedGroups: state.searchedGroups?.map(_ => (_._id == action?.payload ? { ..._, is_group_member: false } : _)) || null }
+        case ActionTypes.JOIN_EVENT_SUCCESS:
+            return { ...state, searchedEvents: state.searchedEvents?.map(_ => (_._id == action?.payload ? { ..._, is_event_member: true } : _)) || null }
+        case ActionTypes.LEAVE_EVENT_SUCCESS:
+            return { ...state, searchedEvents: state.searchedEvents?.map(_ => (_._id == action?.payload ? { ..._, is_event_member: false } : _)) || null }
         default:
             return state
     }
