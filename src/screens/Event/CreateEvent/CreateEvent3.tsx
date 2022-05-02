@@ -6,8 +6,7 @@ import Database from 'database/Database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, StyleSheet, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
@@ -76,7 +75,7 @@ const CreateEvent3: FC<any> = props => {
       group_id: eventDetail?.myGroup?.id,
       is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
       short_description: eventDetail?.aboutEvent?.trim(),
-      address: address?.main_text + ', ' + address?.secondary_text,
+      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,

@@ -113,6 +113,10 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                 }
             }
             return state
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            initialGroupChatState.groups = {}
+            return initialGroupChatState
         default:
             return state
     }

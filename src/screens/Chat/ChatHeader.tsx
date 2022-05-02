@@ -6,7 +6,7 @@ import { GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleShee
 import { NavigationService, scaler } from 'utils'
 interface IChatHeader {
     title: string
-    subtitle: string
+    subtitle?: string
     icon?: ImageSourcePropType
     defaultIcon: ImageSourcePropType
     rightView?: FC<any> | ReactElement<any, any> | null
@@ -47,7 +47,7 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
             </TouchableHighlight>
             <TouchableOpacity onPress={onPress} style={{ paddingLeft: scaler(5), flexShrink: 1, }} >
                 <Text style={styles.title} >{title}</Text>
-                <Text numberOfLines={1} style={styles.subtitle}>{subtitle}</Text>
+                {subtitle ? <Text numberOfLines={1} style={styles.subtitle}>{subtitle}</Text> : null}
             </TouchableOpacity>
             <View style={{ alignItems: 'flex-end', flexGrow: 1 }} >
                 {RightView ? React.isValidElement(RightView) ?

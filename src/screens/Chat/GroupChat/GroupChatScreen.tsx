@@ -28,9 +28,9 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
     useEffect(() => {
-        if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
-            dispatch(getGroupDetail(activeGroup?._id))
-        }
+        // if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
+        dispatch(getGroupDetail(activeGroup?._id))
+        // }
     }, [])
 
 

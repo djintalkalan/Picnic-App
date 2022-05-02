@@ -53,6 +53,9 @@ export const eventReducer = (state: IEventReducer = initialEventState, action: a
                 return newState
             }
             return state;
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return initialEventState
         default:
             return state
     }
@@ -101,6 +104,9 @@ export const eventDetailReducer = (state: IEventDetailReducer = {}, action: acti
                     eventMembersNotCheckedIn: state?.[action?.payload?.eventId]?.eventMembersNotCheckedIn?.filter(_ => _.user_id != action?.payload?.data)
                 }
             }
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return {}
         default:
             return state
     }
@@ -109,6 +115,9 @@ export const activeEventReducer = (state: any = null, action: action): any => {
     switch (action.type) {
         case ActionTypes.SET_ACTIVE_EVENT:
             return action?.payload
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return null
         default:
             return state
     }

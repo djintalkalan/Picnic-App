@@ -50,11 +50,9 @@
         "rollbar",
         "tcpip",
         "twotalltotems",
-        "twotalltotems",
         "xcarchive",
         "xcodebuild",
         "xcodeproj",
         "xcworkspace"
-
     ]
 }

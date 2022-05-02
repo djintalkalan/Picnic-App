@@ -1,14 +1,15 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidDefaults, AndroidImportance, EventType, Notification } from "@notifee/react-native";
+import notifee, { AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
 import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
 import { Dispatch, useCallback, useEffect } from 'react';
+import { Platform } from "react-native";
 import { useDispatch } from 'react-redux';
-import { getDetailsFromDynamicUrl, NavigationService, WaitTill } from 'utils';
+import { getDetailsFromDynamicUrl, getDisplayName, NavigationService, WaitTill } from 'utils';
 
 const CHANNEL_NAME = "high-priority"
 
@@ -114,6 +115,11 @@ const navigateToPages = async (notification: any) => {
             dispatch && dispatch((data?.group ? setActiveGroup : setActiveEvent)(data?.group ?? data?.event))
             NavigationService.closeAndPush(data?.group ? "GroupChatScreen" : "EventChats", { id: data?.resource_id })
         }
+
+        if (data?.chat_room_id) {
+            const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
+            NavigationService.closeAndPush("PersonChat", { person: user, chatRoomId: data?.chat_room_id })
+        }
     }
 }
 
@@ -158,13 +164,69 @@ export const onMessageReceived = async (message: any, isBackground: boolean = fa
     }
 }
 
-const showNotification = (message: any, isBackground: boolean) => {
+const showNotification = async (message: any, isBackground: boolean) => {
+    console.log("Message", message);
+
     let { title, body, message: data } = message?.data ?? {};
     if (data) {
         if (typeof data == 'string') {
             data = JSON.parse(data)
         }
         console.log("data is ", data);
+
+        if (data?.chat_room_id) {
+            const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+            if (!isBackground && (name == "PersonChat") && (params?.person?._id == data?.user_id)
+            ) {
+
+            } else {
+                let body = data?.text
+                switch (data?.message_type) {
+                    case "image":
+                        body = 'Image message arrived'
+                        break
+                    case "video":
+                        body = 'Video message arrived'
+                        break
+                    case "contact":
+                        body = 'Contact shared'
+                        break
+                    case "location":
+                        body = 'Location shared'
+                        break
+                }
+                const user = data?.users?.[data?.users?.[0]?._id == data?.user_id ? 0 : 1]
+                if (Platform.OS == 'android')
+                    await notifee.displayNotification({
+                        id: data?.chat_room_id,
+                        title: getDisplayName(user),
+                        android: {
+                            channelId: CHANNEL_NAME,
+                            groupSummary: true,
+                            groupId: data?.chat_room_id,
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        },
+                    });
+
+                notifee.displayNotification({
+                    // subtitle:getDisplayName(user),
+                    body,
+                    title: getDisplayName(user),
+                    data: { title, body, message: JSON.stringify(data) },
+                    android: {
+                        channelId: CHANNEL_NAME,
+                        sound: 'default',
+                        // category: AndroidCategory.ALARM,
+                        defaults: [AndroidDefaults.ALL],
+                        groupId: data?.chat_room_id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                    },
+                    ios: {
+                        sound: 'default',
+                    }
+                });
+            }
+        }
 
         if (data?.group || data?.event) {
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}
@@ -190,6 +252,19 @@ const showNotification = (message: any, isBackground: boolean) => {
                         body = 'Location shared'
                         break
                 }
+                if (Platform.OS == 'android')
+                    await notifee.displayNotification({
+                        id: (data?.group || data?.event)?._id,
+                        title: data?.user?.display_name,
+                        subtitle: (data?.group || data?.event)?.name,
+                        android: {
+                            channelId: CHANNEL_NAME,
+                            groupSummary: true,
+                            groupId: (data?.group || data?.event)?._id,
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        },
+                    });
+
                 notifee.displayNotification({
                     subtitle: (data?.group || data?.event)?.name,
                     body,
@@ -199,7 +274,9 @@ const showNotification = (message: any, isBackground: boolean) => {
                         channelId: CHANNEL_NAME,
                         sound: 'default',
                         // category: AndroidCategory.ALARM,
-                        defaults: [AndroidDefaults.ALL]
+                        defaults: [AndroidDefaults.ALL],
+                        groupId: (data?.group || data?.event)?._id,
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
                     },
                     ios: {
                         sound: 'default',

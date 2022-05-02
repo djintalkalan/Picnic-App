@@ -24,7 +24,7 @@ const closeAndPush = (name: string, params: any = {}) => {
   // console.log("navigationRef?.current??", params, navigationRef?.current?.getCurrentRoute())
   const currentName = navigationRef?.current?.getCurrentRoute()?.name
 
-  if (((currentName == "GroupChatScreen" || currentName == 'EventChats' || currentName == "Chats" || currentName == 'UpcomingEventsChat') && (name == "GroupChatScreen" || name == "EventChats"))
+  if (((currentName == "PersonChat" || currentName == "GroupChatScreen" || currentName == 'EventChats' || currentName == "Chats" || currentName == 'UpcomingEventsChat') && (name == "PersonChat" || name == "GroupChatScreen" || name == "EventChats"))
   ) {
     goBack()
   }

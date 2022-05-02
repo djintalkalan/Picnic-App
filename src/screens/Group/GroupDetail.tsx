@@ -14,13 +14,13 @@ import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SwipeRow } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
-
 const GroupDetail: FC<any> = (props) => {
 
     const swipeRef = useRef<SwipeRow<any>>(null)
@@ -116,7 +116,12 @@ const GroupDetail: FC<any> = (props) => {
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : ""}
+                customRightText={item?.is_admin ? Language?.admin : <MaterialIcons
+                    onPress={() => {
+                        console.log("person", item?.user);
+                        NavigationService.navigate("PersonChat", { person: item?.user })
+                    }}
+                    size={scaler(20)} name='chat' />}
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_home_profile}
             />
@@ -433,8 +438,28 @@ const GroupDetail: FC<any> = (props) => {
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                         {renderBottomActionButtons()}
                     </>
-
-                    : null}
+                    :
+                    <>
+                        <Text style={{ padding: scaler(15), fontWeight: '500', fontSize: scaler(15) }}>{Language.group_admin}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
+                                style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
+                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
+                                {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
+                            </Text>
+                            <MaterialIcons
+                                color={colors.colorPrimary}
+                                style={{ marginEnd: scaler(10) }}
+                                onPress={() => {
+                                    console.log("person", group?.creator_of_group);
+                                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                                }}
+                                size={scaler(20)} name='chat' />
+                        </View>
+                    </>
+                }
 
             </ScrollView>
             {group?.is_admin ? null : renderBottomActionButtons()}

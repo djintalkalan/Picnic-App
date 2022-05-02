@@ -6,6 +6,7 @@ import watchGroupChat from './groupChatSaga';
 import watchGroups from './groupSaga';
 import watchHome from './homeSaga';
 import watchUploadSaga from './imageUploadSaga';
+import watchPersonChat from './personChatSaga';
 import watchProfile from './profileSaga';
 
 export function* rootSaga() {
@@ -18,5 +19,6 @@ export function* rootSaga() {
     fork(watchEvents),
     fork(watchGroupChat),
     fork(watchEventChat),
+    fork(watchPersonChat),
   ]);
 }

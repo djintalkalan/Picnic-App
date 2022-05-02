@@ -1,6 +1,6 @@
 export const CONNECTION = 'connection';
 
-//Listeners from client to server
+// EMITTER FOR client to server
 
 //Groups Events
 export const EMIT_SEND_GROUP_MESSAGE = 'sendGroupMessage';
@@ -27,6 +27,13 @@ export const EMIT_LEAVE_ROOM = "leaveRoom";
 export const EMIT_JOIN_ROOM = "joinRoom";
 export const EMIT_LIKE_UNLIKE = 'likeUnlike';
 
+// PERSONAL Messages Events
+
+export const EMIT_SEND_PERSONAL_MESSAGE = 'sendMessage';
+export const EMIT_PERSONAL_LIKE_UNLIKE = 'oneToOneLikeUnlike';
+export const EMIT_PERSONAL_MESSAGE_DELETE = 'oneToOneDeleteMessage';
+export const EMIT_JOIN_PERSONAL_ROOM = 'joinOneToOneRoom';
+
 /********************************************************************************************************/
 /********************************************************************************************************/
 /********************************************************************************************************/
@@ -35,7 +42,7 @@ export const EMIT_LIKE_UNLIKE = 'likeUnlike';
 /********************************************************************************************************/
 /********************************************************************************************************/
 
-//Emitter from server to client
+//LISTENER from server to client
 
 //Groups Events
 export const ON_GROUP_MESSAGE_DELETE = 'onGroupMessageDelete';
@@ -62,3 +69,9 @@ export const ON_JOIN = 'onJoin';
 export const ON_LEAVE_ROOM = "onLeaveRoom";
 export const ON_JOIN_ROOM = "onJoinRoom";
 export const ON_LIKE_UNLIKE = "onLikeUnlike";//When Message Is  Like/Un-liked
+
+// PERSONAL Messages Events
+export const ON_PERSONAL_MESSAGE = 'onMessage';
+export const ON_PERSONAL_LIKE_UNLIKE = 'onOneToOneLikeUnlike';
+export const ON_PERSONAL_MESSAGE_DELETE = 'onOneToOneDeleteMessage';
+export const ON_PERSONAL_JOIN_ROOM_REQUEST = 'onJoinOneToOneRoom';

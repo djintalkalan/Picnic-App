@@ -92,6 +92,10 @@ export const eventChatReducer = (state: IEventChatReducer = initialEventChatStat
                 }
             }
             return state
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            initialEventChatState.events = {}
+            return initialEventChatState
         default:
             return state
     }

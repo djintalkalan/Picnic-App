@@ -444,6 +444,11 @@ export const _searchChat = async (body: any) => {
     return fetchApiData(config.API_URL + 'message/search?resource_id=' + (body?.id ?? "") + '&q=' + (body?.q ?? ""), null, "GET")
 }
 
+export const _searchPersonChat = async (body: any) => {
+    console.log("---------- _searchPersonChat Api Call ---------------")
+    return fetchApiData(config.API_URL + 'chat/search?chat_room_id=' + (body?.id ?? "") + '&q=' + (body?.q ?? ""), null, "GET")
+}
+
 export const _refreshLanguage = async (body?: any) => {
     console.log("---------- _refreshLanguage Api Call ---------------")
     return fetchApiData(config.API_URL + 'language/labels', null, "GET")
@@ -452,4 +457,18 @@ export const _refreshLanguage = async (body?: any) => {
 export const _getAppVersion = async () => {
     console.log("---------- get app version Api Call ---------------")
     return fetchApiData(config.API_URL + 'common/app-version', null, "GET")
+}
+
+export const _getPersonChat = async (body: any) => {
+    console.log("---------- getPersonChat Api Call ---------------")
+    const params = objectToParamString(body)
+    return fetchApiData(config.API_URL + 'chat/get-conversation?' + params, null, "GET")
+}
+
+const objectToParamString = (body: any) => {
+    let s = ""
+    Object.keys(body).some((d: string, index: number) => {
+        if (body?.[d]?.toString().trim()) s += ((index ? "&" : "") + d + "=" + body?.[d]?.toString()?.trim())
+    })
+    return s
 }

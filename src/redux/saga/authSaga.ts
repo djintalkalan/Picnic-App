@@ -1,11 +1,22 @@
 import * as ApiProvider from 'api/APIProvider';
-import { setAllEvents, setAllGroups, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import DeviceInfo from 'react-native-device-info';
+import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { NavigationService, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
+import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
+let installer = "Other"
+DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
+    console.log("installerPackageName", installerPackageName);
+    installer = installerPackageName
 
+    // Play Store: "com.android.vending"
+    // Amazon: "com.amazon.venezia"
+    // Samsung App Store: "com.sec.android.app.samsungapps"
+    // iOS: "AppStore", "TestFlight", "Other"
+});
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
@@ -13,6 +24,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
+            yield put(resetStateOnLogin())
             ApiProvider.TOKEN_EXPIRED.current = false
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
@@ -21,6 +33,8 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 userData: { ...userData, is_premium: false },
                 isLogin: true
             })
+            yield call(WaitTill, 1000)
+            yield put(restorePurchaseAction())
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -122,6 +136,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._signUp, { ...payload, device_token: firebaseToken });
         if (res.status == 200) {
             _showSuccessMessage(res?.message);
+            yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
             ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
@@ -198,17 +213,36 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
             userData: null,
             authToken: '',
         })
-        yield put(setAllGroups([]))
-        yield put(setAllEvents([]))
-
         yield call(WaitTill, 1000)
+        yield put(resetStateOnLogout())
+        FastImage.clearMemoryCache()
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
 
-        Database.clearStorage()
+function* restorePurchase({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(false));
+    try {
+        let res = yield call(ApiProvider._getActiveMembership);
+        if (res?.status == 200) {
+            const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+            const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            // if (expireAt >= new Date()) {
+            if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+                // _showErrorMessage(Language.you_are_not_a_member)
+            } else {
+                Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+            }
 
-
-
-
-
+        } else if (res.status == 400) {
+            // _showErrorMessage(res.message);
+        } else {
+            // _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
@@ -227,6 +261,7 @@ export default function* watchAuth() {
     yield takeLatest(ActionTypes.TOKEN_EXPIRED, tokenExpired);
     yield takeLatest(ActionTypes.CHECK_EMAIL, checkEmail);
     yield takeLatest(ActionTypes.DELETE_ACCOUNT, deleteAccount);
+    yield takeLatest(ActionTypes.RESTORE_PURCHASE, restorePurchase);
 
 
 };

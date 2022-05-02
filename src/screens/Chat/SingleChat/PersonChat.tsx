@@ -1,6 +1,6 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native'
+import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
+import { getPersonChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -8,21 +8,22 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, FlatList, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { DeviceEventEmitter, Dimensions, EmitterSubscription, FlatList, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
+import { useDispatch, useSelector } from 'react-redux'
+import { EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
+import { getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
-import ChatItem from '../ChatItem'
+import SingleChatItem from './SingleChatItemNew'
 
 let loadMore = false
 const { width } = Dimensions.get("screen")
-
-const EventChats: FC<any> = (props) => {
-
+let roomIdUpdateListener: EmitterSubscription;
+const PersonChat: FC<any> = (props) => {
+    const { person, chatRoomId } = props?.route?.params
+    const chatRoomIdRef = useRef<string>(chatRoomId || undefined);
     const flatListRef = useRef<FlatList>(null);
     const inputRef = useRef<TextInput>(null);
     const [socketConnected] = useDatabase<boolean>('socketConnected');
@@ -48,9 +49,15 @@ const EventChats: FC<any> = (props) => {
         })
         if (!found) {
             setLink("")
-
         }
     }, 800), [])
+
+    const _onChatRoomIdUpdate = useCallback(({ chat_room_id, person_id }: { chat_room_id: string, person_id: string }) => {
+        if (person_id == person?._id) {
+            roomIdUpdateListener?.remove();
+            chatRoomIdRef.current = chat_room_id
+        }
+    }, [])
 
     useEffect(() => {
         if (repliedMessage) {
@@ -65,12 +72,13 @@ const EventChats: FC<any> = (props) => {
 
     const _onPressSend = useCallback(() => {
         if (textMessageRef?.current?.trim()) {
-            SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
-                resource_id: activeEvent?._id,
+            SocketService.emit(EMIT_SEND_PERSONAL_MESSAGE, {
+                chat_room_id: "",
+                user_id: person?._id,
                 parent_id: repliedMessage?._id,
-                resource_type: "event",
+                // parent_id: "625d3bc2724648d4a6c00d98" || repliedMessage?._id,
                 message_type: "text",
-                message: textMessageRef?.current?.trim()
+                text: textMessageRef?.current?.trim()
             })
             textMessageRef.current = ""
             inputRef.current?.clear()
@@ -88,22 +96,20 @@ const EventChats: FC<any> = (props) => {
             image, onSuccess: (url, thumbnail) => {
                 dispatch(setLoadingAction(false))
                 if (url) {
-                    SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
-                        resource_id: activeEvent?._id,
+                    SocketService.emit(EMIT_SEND_PERSONAL_MESSAGE, {
+                        chat_room_id: "",
+                        user_id: person?._id,
                         parent_id: repliedMessage?._id,
-                        resource_type: "event",
-                        text,
-                        message_type: mediaType == 'video' ? 'file' : "image",
-                        // thumbnail,
-                        message: url,
-                        media_extention: mediaType == 'video' ? url?.substring(url?.lastIndexOf('.') + 1, url?.length) : undefined
+                        // parent_id: "625d3bc2724648d4a6c00d98" ?? repliedMessage?._id,
+                        message_type: mediaType == 'video' ? 'video' : "image",
+                        text: text,
+                        [mediaType == 'video' ? 'video' : 'image']: url
                     })
                     inputRef.current?.clear()
                     setLink(_ => _ ? "" : _)
                     if (repliedMessage) {
                         setRepliedMessage(null)
                     }
-
                     if (NavigationService.getCurrentScreen()?.name == "ImagePreview") {
                         NavigationService.goBack();
                     }
@@ -117,12 +123,11 @@ const EventChats: FC<any> = (props) => {
     }, [repliedMessage])
 
     const _onChooseContacts = useCallback((contacts: Array<any>) => {
-        SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
-            resource_id: activeEvent?._id,
-            // parent_id: repliedMessage?._id,
-            resource_type: "event",
+        SocketService.emit(EMIT_SEND_PERSONAL_MESSAGE, {
+            chat_room_id: chatRoomIdRef?.current,
+            user_id: person?._id,
+            parent_id: repliedMessage?._id,
             message_type: "contact",
-            message: "",
             contacts: contacts,
         })
         inputRef.current?.clear()
@@ -133,13 +138,12 @@ const EventChats: FC<any> = (props) => {
     }, [repliedMessage])
 
     const _onChooseLocation = useCallback((location: ILocation) => {
-        SocketService.emit(repliedMessage ? EMIT_EVENT_REPLY : EMIT_SEND_EVENT_MESSAGE, {
-            resource_id: activeEvent?._id,
-            // parent_id: repliedMessage?._id,
-            resource_type: "event",
+        SocketService.emit(EMIT_SEND_PERSONAL_MESSAGE, {
+            chat_room_id: chatRoomIdRef?.current,
+            user_id: person?._id,
+            parent_id: repliedMessage?._id,
             message_type: "location",
-            message: "",
-            coordinates: {
+            location: {
                 lat: location?.latitude,
                 lng: location?.longitude
             },
@@ -147,7 +151,7 @@ const EventChats: FC<any> = (props) => {
         inputRef.current?.clear()
         setLink(_ => _ ? "" : _)
         if (repliedMessage) {
-            // setRepliedMessage(null)
+            setRepliedMessage(null)
         }
     }, [repliedMessage])
 
@@ -159,16 +163,9 @@ const EventChats: FC<any> = (props) => {
             setLink("")
     }, [])
 
-    const { eventDetail, activeEvent } = useSelector((state: RootState) => ({
-        eventDetail: state?.eventDetails?.[state?.activeEvent?._id]?.event ?? state?.activeEvent,
-        activeEvent: state?.activeEvent,
-    }), shallowEqual)
-
     const { chats } = useSelector((state: RootState) => ({
-        chats: state?.eventChat?.events?.[state?.activeEvent?._id]?.chats ?? [],
+        chats: state?.personChat?.chatRooms?.[person?._id]?.chats || [],
     }))
-
-    const { name, city, image, state, country, _id } = eventDetail ?? activeEvent
 
     const dispatch = useDispatch()
 
@@ -180,74 +177,56 @@ const EventChats: FC<any> = (props) => {
     // }, [chats])
 
     useEffect(() => {
-        dispatch(getEventChat({
-            id: activeEvent?._id,
+        roomIdUpdateListener = DeviceEventEmitter.addListener("UpdateChatRoomId", _onChatRoomIdUpdate)
+        dispatch(getPersonChat({
+            id: person?._id,
+            chat_room_id: chatRoomIdRef?.current,
             setChatLoader: chats?.length ? null : setChatLoader
         }))
         setTimeout(() => {
             loadMore = true
         }, 200);
-        if (!eventDetail || activeEvent?.is_event_member != eventDetail?.is_event_member) {
-            dispatch(getEventDetail(activeEvent?._id))
+        return () => {
+            loadMore = false
+            roomIdUpdateListener?.remove()
         }
-        return () => { loadMore = false }
     }, [])
-
-    useFocusEffect(useCallback(() => {
-        if (eventDetail && !eventDetail.is_event_member) {
-            NavigationService.goBack();
-        }
-    }, [eventDetail]))
-
-
 
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
-            <ChatItem
+            <SingleChatItem
                 {...item}
-                event={eventDetail}
-                isAdmin={eventDetail?.is_admin}
-                isMember={eventDetail?.is_event_member}
+                person={person}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [eventDetail])
-
-    const shareEvent = useCallback(() => {
-        shareDynamicLink(eventDetail?.name, {
-            type: "event-detail",
-            id: eventDetail?._id
-        });
-    }, [eventDetail])
+    }, [person])
 
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
-                title={name}
-                onPress={() => {
-                    setTimeout(() => {
-                        NavigationService.navigate("EventDetail", { id: _id })
-                    }, 0);
-                }}
+                title={getDisplayName(person)}
                 // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
-                subtitle={getCityOnly(city, state, country)}
-                icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
-                defaultIcon={Images.ic_event_placeholder}
-                rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', {
-                        type: 'event'
-                    })} style={{ paddingHorizontal: scaler(5) }} >
+                icon={person?.image ? { uri: getImageUrl(person?.image, { width: scaler(50), type: 'users' }) } : undefined}
+                defaultIcon={Images.ic_home_profile}
+                rightView={chatRoomIdRef.current ? <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                    <TouchableOpacity onPress={() => {
+                        NavigationService.navigate('SearchChatScreen', {
+                            type: 'person',
+                            chatRoomId: chatRoomIdRef.current,
+                            person: person
+                        })
+                    }} style={{ paddingHorizontal: scaler(5) }} >
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
-
                     </TouchableOpacity>
                     {/* <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
                         <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                     </TouchableOpacity> */}
                 </View>
-                }
+                    : null}
             />
 
             <View style={styles.container} >
-                <View pointerEvents={(eventDetail?.is_event_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
+                <View style={{ flexShrink: 1 }} >
                     {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
                         borderWidth={0}
                         animationConfig={{ bounciness: 2 }}
@@ -269,8 +248,9 @@ const EventChats: FC<any> = (props) => {
                             if (loadMore && !isChatLoader && isFocused) {
                                 console.log("End", chats[chats.length - 1]?._id);
                                 loadMore = false
-                                dispatch(getEventChat({
-                                    id: activeEvent?._id,
+                                dispatch(getPersonChat({
+                                    id: person?._id,
+                                    chat_room_id: chatRoomIdRef?.current,
                                     message_id: chats[chats.length - 1]?._id,
                                     setChatLoader: setChatLoader
                                 }))
@@ -283,7 +263,7 @@ const EventChats: FC<any> = (props) => {
                         renderItem={_renderChatItem}
                     />
                 </View>
-                {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+                <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
 
                     <ChatInput
                         // value={textMessage}
@@ -301,7 +281,7 @@ const EventChats: FC<any> = (props) => {
                     {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
                         <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
                     </View> : null}
-                </View> : null}
+                </View>
 
             </View >
         </SafeAreaViewWithStatusBar>
@@ -328,4 +308,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EventChats
+export default PersonChat

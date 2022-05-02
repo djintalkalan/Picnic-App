@@ -28,6 +28,7 @@ import EventChats from 'screens/Chat/EventChat/EventChats';
 import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
 import ImagePreview from 'screens/Chat/ImagePreview';
 import SearchChatScreen from 'screens/Chat/SearchChat/SearchChatScreen';
+import PersonChat from 'screens/Chat/SingleChat/PersonChat';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import BookEvent from 'screens/Event/BookEvent';
@@ -106,7 +107,8 @@ const dashboardScreens = {
   Payment: Payment,
   SearchChatScreen: SearchChatScreen,
   SelectContacts: SelectContacts,
-  ImagePreview: ImagePreview
+  ImagePreview: ImagePreview,
+  PersonChat: PersonChat
 };
 
 const MyNavigationContainer = () => {
@@ -114,6 +116,7 @@ const MyNavigationContainer = () => {
   const dispatch = useDispatch();
 
   // const { isConnected, isInternetReachable } = useNetInfo()
+  // useSelector(_ => console.log(_))
 
   const [isLogin] = useDatabase<boolean>('isLogin', false);
   const language = useLanguage();

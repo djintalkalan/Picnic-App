@@ -84,3 +84,8 @@ export const updatePassword = (payload: any) => ({
   type: ActionTypes.UPDATE_PASSWORD,
   payload
 })
+
+export const restorePurchase = (payload?: any) => ({
+  type: ActionTypes.RESTORE_PURCHASE,
+  payload
+})

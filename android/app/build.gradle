@@ -206,21 +206,26 @@ android {
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-                        if(variant.buildType.name.equals("release")){
-                        variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
-                        output.outputFileName = outputFileName+"-"+abi+"-v"+ANDROID_VERSION_NAME+".apk"
-                        }
+                if (variant.buildType.name.equals("release")) {
+                    variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
+                    output.outputFileName = outputFileName + "-" + abi + "-v" + ANDROID_VERSION_NAME + ".apk"
+                }
             } else if (variant.buildType.name.equals("release")) {
                 variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
-                output.outputFileName = outputFileName+"-v"+ANDROID_VERSION_NAME+".apk"
-                // directly assign the new name back to outputFileName
+                output.outputFileName = outputFileName + "-v" + ANDROID_VERSION_NAME + ".apk"
             }
 
         }
     }
+
+    packagingOptions {
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
+    }
 }
 
 dependencies {
+    implementation "org.webkit:android-jsc:+"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

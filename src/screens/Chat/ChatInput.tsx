@@ -151,7 +151,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
 
                                     </MapView>
                                 </View>
-                                : <Text numberOfLines={1} style={styles.message} >{repliedMessage?.message}</Text>}
+                                : <Text numberOfLines={1} style={[styles.message, { fontSize: repliedMessage?.personChat ? scaler(12) : scaler(15) }]} >{repliedMessage?.message}</Text>}
 
                 </View>
                 <TouchableOpacity onPress={() => setRepliedMessage && setRepliedMessage(null)} >

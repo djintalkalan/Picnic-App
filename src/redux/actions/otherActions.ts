@@ -31,3 +31,15 @@ export const refreshLanguage = (payload?: any): action => ({
   type: ActionTypes.REFRESH_LANGUAGE,
   payload
 })
+
+export const resetStateOnLogin = (payload?: any): action => ({
+  type: ActionTypes.RESET_STATE_ON_LOGIN,
+  payload
+})
+
+export const resetStateOnLogout = (payload?: any): action => ({
+  type: ActionTypes.RESET_STATE_ON_LOGOUT,
+  payload
+})
+
+
