@@ -1,5 +1,5 @@
 import { RootState } from 'app-store'
-import { getAllCurrencies, searchAtHome, setSearchedData } from 'app-store/actions'
+import { getAllCurrencies, getProfile, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, defaultLocation, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -63,6 +63,7 @@ const Home: FC = () => {
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       dispatch(getAllCurrencies())
+      dispatch(getProfile())
     })
   }, [])
 

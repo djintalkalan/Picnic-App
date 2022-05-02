@@ -4,7 +4,7 @@ import { setNotificationSettings, setUserGroups, setUserUpcomingPastEvents } fro
 import { store } from 'app-store/store';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
-import Language from 'src/language/Language';
+import Language, { updateLanguageDirect } from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
@@ -15,6 +15,12 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._getProfile);
         if (res.status == 200) {
             const { notification_settings, ...userData } = res?.data
+            if (userData?.language) {
+                const selectedLanguage = Database.getStoredValue('selectedLanguage')
+                if (userData?.language != selectedLanguage) {
+                    updateLanguageDirect(userData?.language)
+                }
+            }
             yield put(setNotificationSettings({
                 ...notification_settings,
                 is_notification_enabled: userData?.is_notification_enabled
