@@ -75,7 +75,12 @@ export const GroupChats: FC<any> = (props) => {
                 setRepliedMessage(null)
             }
             setLink(_ => _ ? "" : _)
-            flatListRef?.current?.scrollToIndex({ index: 0, animated: true });
+            try {
+                flatListRef?.current?.scrollToIndex({ index: 0, animated: true });
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
     }, [repliedMessage])
 
