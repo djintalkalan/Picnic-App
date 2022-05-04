@@ -305,9 +305,10 @@ const GroupDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
-                    </TouchableOpacity>
+                    {group?.status == 1 ?
+                        <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
+                        </TouchableOpacity> : undefined}
                 </View>
                 {isEditButtonOpened ?
                     <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
