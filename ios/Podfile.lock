@@ -577,7 +577,7 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBAnalytics (14.8.0):
+  - RNFBAnalytics (14.9.1):
     - Firebase/Analytics (= 8.15.0)
     - React-Core
     - RNFBApp
@@ -1075,7 +1075,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNExitApp: c4e052df2568b43bec8a37c7cd61194d4cfee2c3
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBAnalytics: b559224a3249e2af676136e7c7a3db84b760dfc8
+  RNFBAnalytics: 0851ea9b451f0b39d5dd4f402973372e32a6f921
   RNFBApp: fd23737680ed2bdde41ca27d8bfb171b6d668c6b
   RNFBDynamicLinks: 20bd934c6c89ecba6af23a31c1de6b03786923ca
   RNFBMessaging: cd273b4dcacf98c83a25ce1711c8c85511573990
