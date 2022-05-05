@@ -163,19 +163,21 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     if (isLogin) {
-      try {
-        const userData = Database.getStoredValue("userData")
-        analytics().setUserId(userData?._id || "")
-        analytics().setUserProperties({
-          username: userData?.username,
-          fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-          email: userData?.email
-        })
-        console.log("First time user set user id and data");
-      }
-      catch (e) {
-        console.log("First time user set error");
-        console.log(e);
+      if (!__DEV__) {
+        try {
+          const userData = Database.getStoredValue("userData")
+          analytics().setUserId(userData?._id || "")
+          analytics().setUserProperties({
+            username: userData?.username,
+            fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+            email: userData?.email
+          })
+          console.log("First time user set user id and data");
+        }
+        catch (e) {
+          console.log("First time user set error");
+          console.log(e);
+        }
       }
       SocketService.init(dispatch);
     }
@@ -204,7 +206,7 @@ const MyNavigationContainer = () => {
         onStateChange={async () => {
           const previousRouteName = routeNameRef.current;
           const currentRouteName = NavigationService.getCurrentScreen()?.name ?? "";
-          if (previousRouteName !== currentRouteName) {
+          if (previousRouteName !== currentRouteName && !__DEV__) {
             await analytics().logScreenView({
               screen_name: currentRouteName,
               screen_class: currentRouteName,

@@ -30,12 +30,14 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
             try {
-                analytics().setUserId(userData?._id)
-                analytics().setUserProperties({
-                    username: userData?.username,
-                    fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-                    email: userData?.email
-                })
+                if (!__DEV__) {
+                    analytics().setUserId(userData?._id)
+                    analytics().setUserProperties({
+                        username: userData?.username,
+                        fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+                        email: userData?.email
+                    })
+                }
             }
             catch (e) {
                 console.log("Analytical Error", e);
@@ -152,12 +154,14 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
             yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
             try {
-                analytics().setUserId(userData?._id)
-                analytics().setUserProperties({
-                    username: userData?.username,
-                    fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-                    email: userData?.email
-                })
+                if (!__DEV__) {
+                    analytics()?.setUserId(userData?._id)
+                    analytics()?.setUserProperties({
+                        username: userData?.username,
+                        fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+                        email: userData?.email
+                    })
+                }
             }
             catch (e) {
                 console.log("Analytical Error", e);
@@ -233,12 +237,14 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
     }
     try {
         try {
-            analytics().setUserId(null)
-            analytics().setUserProperties({
-                username: null,
-                fullName: null,
-                email: null
-            })
+            if (!__DEV__) {
+                analytics().setUserId(null)
+                analytics().setUserProperties({
+                    username: null,
+                    fullName: null,
+                    email: null
+                })
+            }
         }
         catch (e) {
             console.log("Analytical Error", e);
