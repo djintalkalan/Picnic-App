@@ -1,6 +1,6 @@
 import { colors, Fonts } from "assets";
 import { Match } from 'autolinker/dist/es2015';
-import React, { FC, isValidElement, useMemo } from "react";
+import React, { FC, Fragment, isValidElement, useMemo } from "react";
 import { Linking, Platform, StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
 import Autolink, { AutolinkProps } from 'react-native-autolink';
 import { openLink } from "utils";
@@ -170,7 +170,7 @@ export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text
     }, [style, fontWeight])
     let isStart = true
     let arr = Array.from(IText)
-    console.log("arr", arr);
+    // console.log("arr", arr);
 
     const finalStrings: any[] = []
 
