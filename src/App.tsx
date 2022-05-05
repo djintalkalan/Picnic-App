@@ -16,7 +16,6 @@ import Database, { useOtherValues } from './database/Database';
 import Language from './language/Language';
 import MyNavigationContainer from './routes/MyNavigationContainer';
 
-
 if (__DEV__) {
     FastImage.clearMemoryCache()
     FastImage.clearDiskCache()
@@ -29,6 +28,12 @@ const App: FC = () => {
     const [showGif, setGif] = useOtherValues<boolean>("showGif", true);
 
     const getVersion = useCallback(() => {
+        if (config.APP_TYPE == 'beta') {
+            setTimeout(() => {
+                setGif(false)
+            }, __DEV__ ? 0 : 3000);
+            return
+        }
         _getAppVersion().then((res: any) => {
             if (res && res.status == 200) {
                 const serverVersion = res?.data?.[Platform.OS]

@@ -1,5 +1,6 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
 import Intercom from '@intercom/intercom-react-native';
+import analytics from '@react-native-firebase/analytics';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
@@ -63,6 +64,7 @@ import { useFirebaseNotifications } from 'src/notification/FirebaseNotification'
 // import { useLanguage } from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
+
 
 const NativeStack = createNativeStackNavigator();
 
@@ -161,6 +163,20 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     if (isLogin) {
+      try {
+        const userData = Database.getStoredValue("userData")
+        analytics().setUserId(userData?._id || "")
+        analytics().setUserProperties({
+          username: userData?.username,
+          fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+          email: userData?.email
+        })
+        console.log("First time user set user id and data");
+      }
+      catch (e) {
+        console.log("First time user set error");
+        console.log(e);
+      }
       SocketService.init(dispatch);
     }
     return () => {
@@ -176,10 +192,27 @@ const MyNavigationContainer = () => {
     dispatch(tokenExpired());
   }, []);
 
+  const routeNameRef = React.useRef<string>("");
+
   return (
     <SafeAreaProvider>
       <NavigationContainer
         ref={NavigationService.setNavigationRef}
+        onReady={() => {
+          routeNameRef.current = NavigationService.getCurrentScreen()?.name || "";
+        }}
+        onStateChange={async () => {
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName = NavigationService.getCurrentScreen()?.name ?? "";
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+            // console.log("Event Sent", currentRouteName);
+          }
+          routeNameRef.current = currentRouteName;
+        }}
       >
         {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Object.entries({

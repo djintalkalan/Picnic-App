@@ -3,6 +3,7 @@
  */
 import Intercom from '@intercom/intercom-react-native';
 import notifee, { EventType } from "@notifee/react-native";
+import analytics, { firebase } from '@react-native-firebase/analytics';
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';
 import { AppRegistry } from 'react-native';
@@ -16,6 +17,13 @@ import { name as appName } from './app.json';
 
 Intercom.setInAppMessageVisibility("GONE")
 
+firebase.analytics().setAnalyticsCollectionEnabled(true).then(() => {
+    console.log("Firebase Analytics Enabled");
+});
+
+analytics().getAppInstanceId().then((id) => {
+    console.log("Instance Id is ", id)
+});
 
 console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
 if (__DEV__ && config.REACTOTRON_STATUS) {
