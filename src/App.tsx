@@ -7,6 +7,7 @@ import { VideoProvider } from 'custom-components/VideoProvider';
 import React, { FC, useCallback, useEffect } from 'react';
 import { Alert, Dimensions, Image, Linking, LogBox, Platform, StatusBar, StyleSheet, View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
+import RNExitApp from 'react-native-exit-app';
 import FastImage from 'react-native-fast-image';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
@@ -51,7 +52,7 @@ const App: FC = () => {
                                         Linking.openURL("http://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('test', 'app'))
                                         :
                                         Linking.openURL('itms-apps://apps.apple.com/us/app/picnic-groups/id1561013758')
-                                    // RNExitApp?.exitApp();
+                                    RNExitApp?.exitApp();
                                 }
                             }
                         ], {
