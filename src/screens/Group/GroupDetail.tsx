@@ -9,7 +9,7 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SwipeRow } from 'react-native-swipe-list-view'
@@ -222,6 +222,7 @@ const GroupDetail: FC<any> = (props) => {
                         icon={Images.ic_leave_group}
                         hideBottomBar
                         visibility={!group?.is_group_member && group?.status == 1}
+                        buttonTextColor={colors.colorPrimary}
                         onPress={() => {
                             dispatch(joinGroup(group?._id))
                         }} />
@@ -439,14 +440,14 @@ interface IBottomButton {
     visibility?: boolean
     onPress?: (e?: GestureResponderEvent) => void
     hideBottomBar?: boolean
+    buttonTextColor?: ColorValue
 }
-const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false }) => {
-
+const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false, buttonTextColor = colors.colorRed }) => {
     return visibility ? (
         <>
             <TouchableOpacity onPress={onPress} activeOpacity={1} style={{ backgroundColor: colors.colorWhite, paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
-                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain' }} />
-                <Text style={{ color: colors.colorRed, marginLeft: scaler(10) }} >{title}</Text>
+                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: buttonTextColor }} />
+                <Text style={{ color: buttonTextColor, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>
             {!hideBottomBar && <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />}
         </>

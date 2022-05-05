@@ -170,6 +170,7 @@ export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text
     }, [style, fontWeight])
     let isStart = true
     let arr = Array.from(IText)
+    // console.log("arr", arr);
 
     const finalStrings: any[] = []
 

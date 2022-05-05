@@ -230,7 +230,8 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    // implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'
@@ -255,7 +256,7 @@ dependencies {
 
     // Firebase
 
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-messaging'

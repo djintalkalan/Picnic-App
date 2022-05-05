@@ -22,14 +22,16 @@ export const useLanguage = () => {
   return useDatabase<LanguageType>('selectedLanguage', DefaultLanguage)[0];
 };
 
+export const updateLanguageDirect = (language: LanguageType) => {
+  Language.setLanguage(language ?? DefaultLanguage);
+  Database.setSelectedLanguage(language);
+}
+
 export const useUpdateLanguage = () => {
   const [language] = useDatabase<LanguageType>('selectedLanguage');
+  const updateLanguage = useCallback(updateLanguageDirect, [])
 
-  const updateLanguage = useCallback((language: LanguageType) => {
-    Language.setLanguage(language ?? DefaultLanguage);
-    Database.setSelectedLanguage(language);
-  }, []);
-  return updateLanguage;
+  return (updateLanguage);
 };
 
 export default Language;

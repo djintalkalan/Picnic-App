@@ -12,6 +12,11 @@ PODS:
     - React-Core (= 0.67.4)
     - React-jsi (= 0.67.4)
     - ReactCommon/turbomodule/core (= 0.67.4)
+  - Firebase/Analytics (8.15.0):
+    - Firebase/Core
+  - Firebase/Core (8.15.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (~> 8.15.0)
   - Firebase/CoreOnly (8.15.0):
     - FirebaseCore (= 8.15.0)
   - Firebase/DynamicLinks (8.15.0):
@@ -20,6 +25,24 @@ PODS:
   - Firebase/Messaging (8.15.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.15.0)
+  - FirebaseAnalytics (8.15.0):
+    - FirebaseAnalytics/AdIdSupport (= 8.15.0)
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (~> 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (8.15.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleAppMeasurement (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (~> 2.30908.0)
   - FirebaseCore (8.15.0):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -126,6 +149,26 @@ PODS:
     - GoogleMaps
   - Google-Maps-iOS-Utils/QuadTree (3.10.3):
     - GoogleMaps
+  - GoogleAppMeasurement (8.15.0):
+    - GoogleAppMeasurement/AdIdSupport (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (~> 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (8.15.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (~> 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (8.15.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
+    - nanopb (~> 2.30908.0)
   - GoogleDataTransport (9.1.2):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
@@ -143,6 +186,8 @@ PODS:
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.7.0):
     - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.7.0):
+    - GoogleUtilities/Logger
   - GoogleUtilities/Network (7.7.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
@@ -153,6 +198,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - hermes-engine (0.9.0)
+  - Intercom (12.0.0)
+  - intercom-react-native (3.0.0):
+    - Intercom (~> 12.0.0)
+    - React-Core
   - libevent (2.1.12)
   - libwebp (1.2.1):
     - libwebp/demux (= 1.2.1)
@@ -520,7 +569,7 @@ PODS:
     - React-Core
   - RNDateTimePicker (3.5.2):
     - React-Core
-  - RNDeviceInfo (8.7.0):
+  - RNDeviceInfo (8.7.1):
     - React-Core
   - RNExitApp (1.1.0):
     - React
@@ -528,15 +577,19 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (14.8.1):
+  - RNFBAnalytics (14.9.1):
+    - Firebase/Analytics (= 8.15.0)
+    - React-Core
+    - RNFBApp
+  - RNFBApp (14.9.1):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
-  - RNFBDynamicLinks (14.8.1):
+  - RNFBDynamicLinks (14.9.1):
     - Firebase/DynamicLinks (= 8.15.0)
     - GoogleUtilities/AppDelegateSwizzler
     - React-Core
     - RNFBApp
-  - RNFBMessaging (14.8.1):
+  - RNFBMessaging (14.9.1):
     - Firebase/Messaging (= 8.15.0)
     - React-Core
     - RNFBApp
@@ -645,6 +698,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.99.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (~> 0.9.0)
+  - "intercom-react-native (from `../node_modules/@intercom/intercom-react-native`)"
   - libevent (~> 2.1.12)
   - OpenSSL-Universal (= 1.1.180)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
@@ -704,6 +758,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNExitApp (from `../node_modules/react-native-exit-app`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
+  - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
@@ -726,6 +781,7 @@ SPEC REPOS:
   trunk:
     - CocoaAsyncSocket
     - Firebase
+    - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseDynamicLinks
@@ -742,10 +798,12 @@ SPEC REPOS:
     - FlipperKit
     - fmt
     - Google-Maps-iOS-Utils
+    - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleMaps
     - GoogleUtilities
     - hermes-engine
+    - Intercom
     - libevent
     - libwebp
     - MMKV
@@ -773,6 +831,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  intercom-react-native:
+    :path: "../node_modules/@intercom/intercom-react-native"
   Permission-Camera:
     :path: "../node_modules/react-native-permissions/ios/Camera"
   Permission-Contacts:
@@ -883,6 +943,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-exit-app"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
+  RNFBAnalytics:
+    :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBDynamicLinks:
@@ -926,6 +988,7 @@ SPEC CHECKSUMS:
   FBLazyVector: f7b0632c6437e312acf6349288d9aa4cb6d59030
   FBReactNativeSpec: 0f4e1f4cfeace095694436e7c7fcc5bf4b03a0ff
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
+  FirebaseAnalytics: 7761cbadb00a717d8d0939363eb46041526474fa
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseDynamicLinks: 1dc816ef789c5adac6fede0b46d11478175c70e4
@@ -943,10 +1006,13 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
   Google-Maps-iOS-Utils: 95d5ca4d2004314eff88c1819b969db6cac37ab6
+  GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleMaps: 086ae1dab659eaa7339bdb30fc88e2f44e7c597c
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   hermes-engine: bf7577d12ac6ccf53ab8b5af3c6ccf0dd8458c5c
+  Intercom: d706bc52b0e80758b38ceadce9143b76577100fb
+  intercom-react-native: 43841bfc8d4e4eb4acad9d860e9dd10c80b8ed4b
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   MMKV: 76033b9ace2006623308910a3afcc0e25eba3140
@@ -1006,12 +1072,13 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
-  RNDeviceInfo: 36286df381fcaf1933ff9d2d3c34ba2abeb2d8d8
+  RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNExitApp: c4e052df2568b43bec8a37c7cd61194d4cfee2c3
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBApp: 6aa068869d959488039cbceb2d830f53d4136c72
-  RNFBDynamicLinks: 0cf72a6bdfc2f1ae7426800150d66802ae5d0080
-  RNFBMessaging: 6f77a25697eaa0f2efbcce144bdbdb58b8686b84
+  RNFBAnalytics: 0851ea9b451f0b39d5dd4f402973372e32a6f921
+  RNFBApp: fd23737680ed2bdde41ca27d8bfb171b6d668c6b
+  RNFBDynamicLinks: 20bd934c6c89ecba6af23a31c1de6b03786923ca
+  RNFBMessaging: cd273b4dcacf98c83a25ce1711c8c85511573990
   RNGestureHandler: 4f4986408310a43f1606c391f38f76e0d6e790d5
   RNIap: d248609d1b8937e63bd904e865c318e9b1457eff
   RNImageCropPicker: 44e2807bc410741f35d4c45b6586aedfe3da39d2
@@ -1033,6 +1100,6 @@ SPEC CHECKSUMS:
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ad4399185db28fbfc6d3aef4a6a11fc3da5df9d8
+PODFILE CHECKSUM: 528a789a055fe6c8b31bcce030f03dcaf09c5bf1
 
 COCOAPODS: 1.11.3

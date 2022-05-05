@@ -7,6 +7,9 @@ buildscript {
         compileSdkVersion = 31
         targetSdkVersion = 31
         ndkVersion = "21.4.7075529"
+        IntercomReactNative_compileSdkVersion = 31
+        IntercomReactNative_minSdkVersion = 23
+        IntercomReactNative_targetSdkVersion = 31
     }
     repositories {
         google()

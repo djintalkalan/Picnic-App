@@ -153,6 +153,14 @@ export const uploadFileAWS = async (body: any, prefix: any, progressCallback: (p
     return callUploadFileAWS(body, prefix, progressCallback)
 }
 
+const objectToParamString = (body: any) => {
+    let s = ""
+    Object.keys(body).some((d: string, index: number) => {
+        if (body?.[d]?.toString().trim()) s += ((index ? "&" : "") + d + "=" + body?.[d]?.toString()?.trim())
+    })
+    return s
+}
+
 export const _signUp = async (body: any) => {
     console.log("---------- new_signup OTP Api Call ---------------")
     return fetchApiData(config.API_URL + 'auth/signup', body, "POST")
@@ -465,10 +473,7 @@ export const _getPersonChat = async (body: any) => {
     return fetchApiData(config.API_URL + 'chat/get-conversation?' + params, null, "GET")
 }
 
-const objectToParamString = (body: any) => {
-    let s = ""
-    Object.keys(body).some((d: string, index: number) => {
-        if (body?.[d]?.toString().trim()) s += ((index ? "&" : "") + d + "=" + body?.[d]?.toString()?.trim())
-    })
-    return s
+export const _setLanguage = async (body: any) => {
+    console.log("---------- set language Api Call ---------------")
+    return fetchApiData(config.API_URL + 'user/set-language', body, "POST")
 }
