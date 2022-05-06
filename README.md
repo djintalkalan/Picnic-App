@@ -11,23 +11,23 @@
 ### 2. Place ENVs in root folder of the project
 
 >
-> **staging.env**
-> **beta.env**
-> **production.env**
+> **dev.yaml**
+> **beta.yaml**
+> **production.yaml**
 >
 
 ### 3. Place google-services.json in android
 
 >
-> {project-root}/android/app/src/**staging**/google-services.json
-> {project-root}/android/app/src/**beta**/google-services.json
-> {project-root}/android/app/src/**production**/google-services.json
+> {project-root}/android/app/google-services/**dev**/google-services.json
+> {project-root}/android/app/google-services/**beta**/google-services.json
+> {project-root}/android/app/google-services/**production**/google-services.json
 >
 
 ### 4. Place GoogleService-Info.plist in ios
 
 >
-> {project-root}/ios/GoogleServices/**staging**/GoogleService-Info.plist
+> {project-root}/ios/GoogleServices/**dev**/GoogleService-Info.plist
 > {project-root}/ios/GoogleServices/**beta**/GoogleService-Info.plist
 > {project-root}/ios/GoogleServices/**production**/GoogleService-Info.plist
 >

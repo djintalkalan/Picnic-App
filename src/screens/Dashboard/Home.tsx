@@ -7,8 +7,9 @@ import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, ImageStyle, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
 import EventList from 'screens/Event/EventList'
@@ -16,6 +17,10 @@ import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
+
+
+const addIcon = Ionicons.getImageSourceSync("add-circle-sharp", 50, colors.colorPrimary)
+
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
@@ -191,6 +196,18 @@ const Home: FC = () => {
               }}
               icon={Images.ic_host_event}
             />
+            {!userData?.is_premium ?
+              <InnerButton
+                title={Language.join_now}
+                onPress={() => {
+                  NavigationService.navigate('Subscription', { from: 'settings' });
+                  setTimeout(() => {
+                    setFABOpen(false);
+                  }, 1000);
+                }}
+                imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
+                icon={addIcon}
+              /> : null}
           </Card>
         )}
         <TouchableOpacity
@@ -213,6 +230,7 @@ const InnerButton = (props: {
   title: string;
   icon: ImageSourcePropType;
   onPress?: (e?: GestureResponderEvent) => void;
+  imageStyle?: ImageStyle
 }) => {
   const { onPress, title, icon } = props;
   return (
@@ -231,7 +249,7 @@ const InnerButton = (props: {
         }}>
         {title}
       </Text>
-      <Image style={{ height: scaler(50), width: scaler(50) }} source={icon} />
+      <Image style={[{ height: scaler(50), width: scaler(50), resizeMode: 'contain' }, props?.imageStyle ?? {}]} source={icon} />
     </TouchableOpacity>
   );
 };

@@ -1,12 +1,12 @@
 import analytics from '@react-native-firebase/analytics';
 import * as ApiProvider from 'api/APIProvider';
-import { resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showSuccessMessage } from "utils";
+import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
@@ -48,8 +48,6 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 userData: { ...userData, is_premium: false },
                 isLogin: true
             })
-            yield call(WaitTill, 1000)
-            yield put(restorePurchaseAction())
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -275,7 +273,19 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
             if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                 // _showErrorMessage(Language.you_are_not_a_member)
             } else {
-                Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+                const oldUserData = Database.getStoredValue("userData")
+
+                if (!oldUserData?.is_premium)
+                    _showPopUpAlert({
+                        title: Language.restore_purchase,
+                        message: Language.do_you_want_to_restore_your_purchases,
+                        buttonText: Language.restore,
+                        onPressButton: () => {
+                            _hidePopUpAlert()
+                            _showSuccessMessage(Language.purchase_successfully_restored)
+                            Database.setUserData({ ...oldUserData, is_premium: true })
+                        }
+                    })
             }
 
         } else if (res.status == 400) {

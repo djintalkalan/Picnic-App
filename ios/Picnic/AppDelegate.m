@@ -50,7 +50,7 @@ static void InitializeFlipper(UIApplication *application) {
   
   #else
     RollbarConfiguration *config = [RollbarConfiguration configuration];
-    config.environment = [APP_TYPE isEqualToString:@"staging"]? @"development" : APP_TYPE;
+    config.environment = [APP_TYPE isEqualToString:@"dev"]? @"development" : APP_TYPE;
       //Do something on debug
     [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN configuration:config];
   #endif

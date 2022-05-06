@@ -49,7 +49,7 @@ const App: FC = () => {
                             {
                                 text: Language.update, onPress: () => {
                                     Platform.OS == 'android' ?
-                                        Linking.openURL("http://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('test', 'app'))
+                                        Linking.openURL("http://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('dev', 'app'))
                                         :
                                         Linking.openURL('itms-apps://apps.apple.com/us/app/picnic-groups/id1561013758')
                                     RNExitApp?.exitApp();

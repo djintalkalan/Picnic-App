@@ -328,5 +328,6 @@ export const en = {
   only_can_send_messages: "Only {0} can send messages",
   group_is_no_longer_available: "Group is no longer available",
   event_is_no_longer_available: "Event is no longer available",
+  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases"
 
 }
