@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -167,6 +167,20 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
         if (res.status == 200 && !isEmpty(res.data.event)) {
+            if (res?.data?.event?.status == 5) {
+                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "EventDetail" || name == "EventChats") &&
+                    params?.id == payload
+                ) {
+                    _showErrorMessage(Language.getString("this_event_is_deleted"), 5000)
+                    NavigationService.navigate("Home")
+                }
+                yield put(deleteEventSuccess(payload))
+                return
+            }
+
+
             res.data.event.is_event_admin = res.data?.event?.is_admin ? true : false
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))

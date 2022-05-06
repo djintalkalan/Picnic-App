@@ -291,7 +291,7 @@ class Service {
         else if (e?.status == 400) {
             if (e?.data?.invalid_resource) {
                 console.log("Invalid Resource Id");
-                this.dispatch(getGroupDetail(e?.data?.resource_id))
+                this.dispatch(getEventDetail(e?.data?.resource_id))
             }
         }
 
