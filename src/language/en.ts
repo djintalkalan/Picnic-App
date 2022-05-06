@@ -323,6 +323,7 @@ export const en = {
   applicable_tax: 'Applicable tax',
   fm_freq: "FM frequency",
   select: "-- Select --",
-  group_admin: "Group admin"
+  group_admin: "Group admin",
+  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases"
 
 }

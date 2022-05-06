@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { createEvent, getEventDetail, getMyGroups, uploadFile } from 'app-store/actions';
+import { createEvent, getEventDetail, getMyGroups, restorePurchase, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import {
     Button,
@@ -144,6 +144,7 @@ const EditEvent: FC<any> = props => {
 
     useEffect(() => {
         dispatch(getMyGroups())
+        dispatch(restorePurchase())
     }, [])
 
 
