@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getMyGroups, restorePurchase } from 'app-store/actions';
+import { getMyGroups } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import {
   Button,
@@ -99,7 +99,6 @@ const CreateEvent1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
-    dispatch(restorePurchase())
   }, [])
 
   return (
