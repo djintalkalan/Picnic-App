@@ -1,3 +1,52 @@
+const fs = require('fs');
+
+module.exports = {
+    js_override: true,
+    on_env: async function ({ APP_TYPE }) {
+        const replaceData = {
+            android: {
+                source: `${__dirname}/android/app/google-services/${APP_TYPE}/google-services.json`,
+                destination: `${__dirname}/android/app/google-services.json`,
+                message: "Replacing google-services.json in android project"
+            },
+            ios: {
+                source: `${__dirname}/ios/GoogleServices/${APP_TYPE}/GoogleService-Info.plist`,
+                destination: `${__dirname}/ios/GoogleService-Info.plist`,
+                message: "Replacing GoogleService-Info.plist in ios project"
+            }
+        }
+        console.log("\n", "flavor", APP_TYPE, "\n");
+
+        for (const platform in replaceData) {
+            const { source, destination } = replaceData[platform];
+            let fileName = "google-services.json"
+            if (platform == 'ios') {
+                fileName = "GoogleService-Info.plist"
+            }
+            console.log(`Replacing ${fileName} in ${platform} project`);
+            try {
+                console.log(`Deleting old file ${fileName}`);
+                fs.unlinkSync(destination);
+            }
+            catch (e) {
+                console.log(`Old ${fileName} not found.... Skipping delete`);
+            }
+            console.log(`Writing new ${fileName}`);
+            try {
+                fs.copyFileSync(source, destination, fs.constants.COPYFILE_EXCL);
+                console.log(`${fileName} successfully loaded`);
+            }
+            catch (e) {
+                if (e?.message?.includes("no such file or directory")) {
+                    console.error(`Loading Error:\n ${fileName} not found in project \n Please add your ${fileName} file in respective flavor folder`)
+                }
+            }
+            console.log("\n");
+        }
+
+    }
+}
+
 // const fs = require('fs');
 
 // module.exports = {

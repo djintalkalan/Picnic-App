@@ -7138,10 +7138,10 @@ react-native-tab-view@^3.1.1:
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.1.1.tgz#1f8d7a835ab4f5b1b1407ec8dddc1053b53fa3c6"
   integrity sha512-M5pRN6utQfytKWoKlKVzg5NbkYu308qNoW1khGTtEOTs1k14p2dHJ/BWOJoJYHKbPVUyZldbG9MFT7gUl4YHnw==
 
-react-native-ultimate-config@^3.4.2:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-3.4.2.tgz#9494f6462e23cf350a886ec74a86610e6adae6ba"
-  integrity sha512-c7VFhiHqg7OqYqRhijXcahgEJ+2kBlGkXsm85+Zx9IqsVKQ4iJSyy6DuQTeeXh0jcFFlIhHKjfL5Q3cA7vPTNA==
+react-native-ultimate-config@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-4.0.0.tgz#d49705b3184d1c232df7342e75236604ba60c2c5"
+  integrity sha512-17eFnzQEmehy7qb8eQhaxCh3qhnGAXRZf+aE1b2eSrhDQyvvPxUMsLYz4YTdPJ5DRJd+fHCzlyQwg5c2QEvgrg==
   dependencies:
     dotenv "^8"
     handlebars "^4.7.7"

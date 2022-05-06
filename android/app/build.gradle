@@ -285,20 +285,20 @@ task copyDownloadableDepsToLibs(type: Copy) {
 task cleanExtra(type: Delete) {
     print "outPath is $outputPathName\n"
     delete outputPathName
-    delete "google-services.json"
+    // delete "google-services.json"
 }
 
-task loadGoogleService(type: Copy) {
-    description = 'Switches to ${APP_TYPE} google-services.json'
-    from "google-services/${APP_TYPE}"
-    include "google-services.json"
-    into "."
-}
+// task loadGoogleService(type: Copy) {
+//     description = 'Switches to ${APP_TYPE} google-services.json'
+//     from "google-services/${APP_TYPE}"
+//     include "google-services.json"
+//     into "."
+// }
 
-afterEvaluate {
-    processDebugGoogleServices.dependsOn loadGoogleService
-    processReleaseGoogleServices.dependsOn loadGoogleService
-}
+// afterEvaluate {
+//     processDebugGoogleServices.dependsOn loadGoogleService
+//     processReleaseGoogleServices.dependsOn loadGoogleService
+// }
 
 clean.dependsOn(cleanExtra)
 
