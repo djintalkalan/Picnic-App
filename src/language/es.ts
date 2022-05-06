@@ -323,6 +323,8 @@ export const es = {
     applicable_tax: '',
     fm_freq: "",
     select: "",
-    group_admin: ""
+    group_admin: "",
+    do_you_want_to_restore_your_purchases: ""
+
 
 }
