@@ -328,5 +328,6 @@ export const es = {
     only_can_send_messages: "",
     group_is_no_longer_available: "",
     event_is_no_longer_available: "",
+    do_you_want_to_restore_your_purchases: ""
 
 }
