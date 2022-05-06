@@ -290,7 +290,7 @@ task cleanExtra(type: Delete) {
 
 task loadGoogleService(type: Copy) {
     description = 'Switches to ${APP_TYPE} google-services.json'
-    from "src/${APP_TYPE}"
+    from "google-services/${APP_TYPE}"
     include "google-services.json"
     into "."
 }

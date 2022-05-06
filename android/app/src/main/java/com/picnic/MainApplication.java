@@ -58,7 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     if (!BuildConfig.DEBUG) {
-        RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, BuildConfig.APP_TYPE == "staging" ? "development" : BuildConfig.APP_TYPE);
+        RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, BuildConfig.APP_TYPE == "dev" ? "development" : BuildConfig.APP_TYPE);
     }
     SoLoader.init(this, /* native exopackage */ false);
     UltimateConfigModule.setBuildConfig(BuildConfig.class);
