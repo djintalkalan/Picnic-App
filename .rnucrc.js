@@ -15,7 +15,8 @@ module.exports = {
                 message: "Replacing GoogleService-Info.plist in ios project"
             }
         }
-        console.log("\n", "flavor", APP_TYPE, "\n");
+        console.log("\n");
+        console.log(`Environment ${APP_TYPE} \n`);
 
         for (const platform in replaceData) {
             const { source, destination } = replaceData[platform];
@@ -38,7 +39,7 @@ module.exports = {
             }
             catch (e) {
                 if (e?.message?.includes("no such file or directory")) {
-                    console.error(`Loading Error:\n ${fileName} not found in project \n Please add your ${fileName} file in respective flavor folder`)
+                    console.error(`Loading Error:\n ${fileName} not found in project \n Please add your ${fileName} file in respective environment folder`)
                 }
             }
             console.log("\n");
