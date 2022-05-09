@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/core'
 import { colors, Images, MapStyle } from 'assets'
-import { Button, defaultLocation, Text, useLocationService, useStatusBar } from 'custom-components'
+import { Button, defaultLocation, Text, useLocationService } from 'custom-components'
 import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
@@ -32,7 +32,6 @@ const SelectLocation: FC<any> = (props) => {
     const onSelectLocation = props?.route?.params?.onSelectLocation
     const prevSelectedLocation = props?.route?.params?.prevSelectedLocation
     const type = props?.route?.params?.type || ""
-    const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
     const [focused, setFocused] = useState(false)
     const mapRef = useRef<MapView>(null)
     const { askPermission } = useLocationService()
@@ -59,7 +58,6 @@ const SelectLocation: FC<any> = (props) => {
 
     useFocusEffect(useCallback(() => {
         InteractionManager.runAfterInteractions(() => {
-            pushStatusBarStyle({ translucent: true, backgroundColor: 'transparent' })
             setTimeout(() => {
                 setFocused(true)
             }, 200)
@@ -67,7 +65,6 @@ const SelectLocation: FC<any> = (props) => {
 
         return () => {
             setFocused(false)
-            popStatusBarStyle()
         }
     }, []))
 
