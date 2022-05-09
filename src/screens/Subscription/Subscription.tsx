@@ -1,8 +1,7 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
-import { Button, Text, useStatusBar } from 'custom-components';
+import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
 import { add } from 'date-fns';
@@ -34,7 +33,6 @@ const Subscription: FC = (props: any) => {
 
     // const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
     const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
-    const { pushStatusBarStyle, popStatusBarStyle } = useStatusBar()
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -158,13 +156,6 @@ const Subscription: FC = (props: any) => {
         }
         console.log('purchaseErrorListener IN-APP>>>>', error);
     }, [])
-
-    useFocusEffect(useCallback(() => {
-        pushStatusBarStyle({ backgroundColor: '#E9FFF3', barStyle: 'dark-content' })
-        return () => {
-            popStatusBarStyle()
-        }
-    }, []))
 
     // console.log('product', products)
 
