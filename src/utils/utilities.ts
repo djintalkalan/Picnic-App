@@ -677,3 +677,26 @@ export const getChatUsers = (users: Array<any>) => {
         loggedInUser: user
     }
 }
+
+const totalRoutes: Array<string> = [];
+export const getAnalyticScreenName = (routeName: string) => {
+    if (!totalRoutes?.includes(routeName)) {
+        totalRoutes.push(routeName);
+
+    }
+    console.log("totalRoutes", totalRoutes);
+
+    switch (routeName) {
+        case "HomeEventTab":
+            return "EventListTab"
+        case "HomeGroupTab":
+            return "GroupListTab"
+        case "ProfileScreen":
+            return "Profile"
+        case "GooglePlacesTextInput":
+            return "SearchLocation"
+        default:
+            return routeName
+    }
+
+}

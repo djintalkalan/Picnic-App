@@ -5,6 +5,6 @@
       "messaging_android_notification_channel_id": "high-priority",
       "messaging_android_notification_color": "@color/springgreen",
       "google_analytics_automatic_screen_reporting_enabled": false,
-      "analytics_auto_collection_enabled": false
+      "analytics_auto_collection_enabled": true
     }
 }

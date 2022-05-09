@@ -62,7 +62,7 @@ import Database, { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
-import { NavigationService, scaler } from 'utils';
+import { getAnalyticScreenName, NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
 
 
@@ -207,6 +207,7 @@ const MyNavigationContainer = () => {
           const previousRouteName = routeNameRef.current;
           const currentRouteName = NavigationService.getCurrentScreen()?.name ?? "";
           if (previousRouteName !== currentRouteName && !__DEV__) {
+            const ActualScreenName = getAnalyticScreenName(currentRouteName)
             await analytics().logScreenView({
               screen_name: currentRouteName,
               screen_class: currentRouteName,
