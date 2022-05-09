@@ -16,15 +16,15 @@ import { name as appName } from './app.json';
 import './ReactotronConfig';
 Intercom.setInAppMessageVisibility("GONE")
 
-if (!__DEV__) {
-    firebase.analytics().setAnalyticsCollectionEnabled(true).then(() => {
-        console.log("Firebase Analytics Enabled");
-    });
+// if (!__DEV__) {
+firebase.analytics().setAnalyticsCollectionEnabled(true).then(() => {
+    console.log("Firebase Analytics Enabled");
+});
 
-    analytics().getAppInstanceId().then((id) => {
-        console.log("Instance Id is ", id)
-    });
-}
+analytics().getAppInstanceId().then((id) => {
+    console.log("Instance Id is ", id)
+});
+// }
 
 console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
 
