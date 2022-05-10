@@ -168,7 +168,7 @@ export const en = {
   select_start_time: 'Select start time',
   select_end_time: 'Select end time',
   optional: 'Optional',
-  write_additional_information_about_event: 'Write additional information about the event	',
+  write_additional_information_about_event: 'Write additional information about the event',
   select_currency: 'Select currency',
   capacity_required: 'Capacity is required',
   ticket_price_required: 'Event price is required',
@@ -324,6 +324,6 @@ export const en = {
   fm_freq: "FM frequency",
   select: "-- Select --",
   group_admin: "Group admin",
-  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases"
+  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?"
 
 }
