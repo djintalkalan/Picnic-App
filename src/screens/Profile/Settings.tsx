@@ -242,7 +242,7 @@ const Settings: FC<any> = (props) => {
                         containerStyle={{ paddingTop: scaler(10) }}
                         onPress={() => {
                             _showPopUpAlert({
-                                message: Language.are_you_sure_delete_account,
+                                message: Language.are_you_sure_delete_account + '?',
                                 buttonText: Language.yes_delete_account,
                                 buttonStyle: { backgroundColor: colors.colorRed },
                                 onPressButton: () => {
