@@ -168,7 +168,7 @@ export const en = {
   select_start_time: 'Select start time',
   select_end_time: 'Select end time',
   optional: 'Optional',
-  write_additional_information_about_event: 'Write additional information about the event	',
+  write_additional_information_about_event: 'Write additional information about the event',
   select_currency: 'Select currency',
   capacity_required: 'Capacity is required',
   ticket_price_required: 'Event price is required',
