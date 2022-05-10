@@ -14,7 +14,7 @@ import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
-import Language from 'src/language/Language';
+import Language, { LanguageType } from 'src/language/Language';
 import { StaticHolder } from './StaticHolder';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
@@ -675,6 +675,15 @@ export const getChatUsers = (users: Array<any>) => {
     return {
         chatUser: users?.find(_ => _?._id != user?._id),
         loggedInUser: user
+    }
+}
+
+const getLanguageString = (language: LanguageType) => {
+    switch (language) {
+        case 'en':
+            return "English";
+        case 'es':
+            return "Español (Spanish)"
     }
 }
 
