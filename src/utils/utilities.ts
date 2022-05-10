@@ -534,7 +534,7 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
 const buildLink = async (l: string) => {
     const link = await dynamicLinks().buildShortLink({
         link: 'https://www.picnicapp.link/' + l,
-        domainUriPrefix: 'https://picnicapp.page.link',
+        domainUriPrefix: 'https://picnicgroups.page.link',
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME
         },
@@ -563,7 +563,7 @@ export const shareDynamicLink = async (name: string, { type, id }: { type: IDyna
 export const shareAppLink = async (name: string) => {
     const link = await dynamicLinks().buildShortLink({
         link: 'https://picnicapp.com/',
-        domainUriPrefix: 'https://picnicapp.page.link',
+        domainUriPrefix: 'https://picnicgroups.page.link',
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME
         },
