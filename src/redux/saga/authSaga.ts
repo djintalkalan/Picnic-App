@@ -1,6 +1,7 @@
 import analytics from '@react-native-firebase/analytics';
 import * as ApiProvider from 'api/APIProvider';
 import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -18,30 +19,46 @@ DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     // Samsung App Store: "com.sec.android.app.samsungapps"
     // iOS: "AppStore", "TestFlight", "Other"
 });
+
+const setAnalyticsData = async (userData: any, isSignUp?: boolean) => {
+    await analytics().setUserId(userData?._id)
+    await analytics().setUserProperties({
+        username: userData?.username,
+        fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+        email: userData?.email
+    })
+    isSignUp ?
+        await analytics().logSignUp({ method: Platform.OS + "-app" }) :
+        await analytics().logLogin({ method: Platform.OS + "-app" })
+}
+
+const clearAnalyticsData = async () => {
+    await analytics().setUserId(null)
+    await analytics().setUserProperties({
+        username: null,
+        fullName: null,
+        email: null
+    })
+}
+
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
     try {
         let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
-        yield put(setLoadingAction(false));
         if (res.status == 200) {
             yield put(resetStateOnLogin())
             ApiProvider.TOKEN_EXPIRED.current = false
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
+            // if (!__DEV__) {
             try {
-                // if (!__DEV__) {
-                analytics().setUserId(userData?._id)
-                analytics().setUserProperties({
-                    username: userData?.username,
-                    fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-                    email: userData?.email
-                })
-                // }
+                yield call(setAnalyticsData, userData)
             }
             catch (e) {
                 console.log("Analytical Error", e);
             }
+            // }
 
             Database.setMultipleValues({
                 authToken: access_token,
@@ -53,6 +70,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
+        yield put(setLoadingAction(false));
     }
     catch (error) {
         console.log("Catch Error", error);
@@ -151,19 +169,14 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
             _showSuccessMessage(res?.message);
             yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
+            // if (!__DEV__) {
             try {
-                // if (!__DEV__) {
-                analytics()?.setUserId(userData?._id)
-                analytics()?.setUserProperties({
-                    username: userData?.username,
-                    fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-                    email: userData?.email
-                })
-                // }
+                yield call(setAnalyticsData, userData, true)
             }
             catch (e) {
                 console.log("Analytical Error", e);
             }
+            // }
             ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
                 authToken: access_token,
@@ -234,19 +247,20 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingMsg("Logging out"));
     }
     try {
+        // if (!__DEV__) {
+
         try {
-            // if (!__DEV__) {
-            analytics().setUserId(null)
-            analytics().setUserProperties({
-                username: null,
-                fullName: null,
-                email: null
-            })
-            // }
+            yield put(setLoadingAction(true));
+            yield call(clearAnalyticsData)
+            yield put(setLoadingAction(false));
+
+
         }
         catch (e) {
             console.log("Analytical Error", e);
+            yield put(setLoadingAction(false));
         }
+        // }
         Database.setMultipleValues({
             isLogin: false,
             userData: null,
