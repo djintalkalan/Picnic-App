@@ -460,7 +460,7 @@ const EditEvent: FC<any> = props => {
                         <TextInput
                             placeholder={Language.write_something_about_event}
                             name={'aboutEvent'}
-                            limit={400}
+                            limit={2000}
                             multiline
                             keyboardValues={keyboardValues}
                             style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
