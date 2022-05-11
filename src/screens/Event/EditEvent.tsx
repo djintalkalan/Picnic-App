@@ -276,6 +276,7 @@ const EditEvent: FC<any> = props => {
             event_refund_policy: data?.policy,
             event_tax_rate: data?.taxRate,
             event_tax_amount: data?.taxPrice,
+            is_copied_event: props?.route?.params?.copy ?? "0"
         };
         dispatch(
             createEvent({
@@ -287,7 +288,7 @@ const EditEvent: FC<any> = props => {
                 },
             }),
         );
-    }, []);
+    }, [props]);
 
 
     const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {

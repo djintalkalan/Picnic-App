@@ -324,7 +324,8 @@ export const es = {
     fm_freq: "",
     select: "",
     group_admin: "",
-    do_you_want_to_restore_your_purchases: ""
-
+    do_you_want_to_restore_your_purchases: "",
+    copy: '',
+    new_event_name: '',
 
 }

@@ -1,13 +1,14 @@
+import { _copyEvent } from 'api/APIProvider'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Card, Text } from 'custom-components'
+import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem } from 'custom-components/ListItem/ListItem'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
@@ -28,6 +29,7 @@ const EventDetail: FC<any> = (props) => {
 
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
     const dispatch = useDispatch()
+    const eventNameRef = useRef("")
 
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
@@ -118,6 +120,54 @@ const EventDetail: FC<any> = (props) => {
         });
     }, [event])
 
+    const onConfirmCopy = useCallback(() => {
+        if (!eventNameRef.current?.trim()) {
+            _showErrorMessage(Language.event_name_required)
+            return
+        }
+        if (eventNameRef.current?.trim()?.length < 3) {
+            _showErrorMessage(Language.min_characters_event_name)
+            return
+        }
+        _copyEvent({ _id: event?._id, name: eventNameRef.current }).
+            then((res) => {
+                _hidePopUpAlert()
+                if (res?.status == 200) {
+                    NavigationService.navigate('EditEvent', { id: res?.data, copy: "1" })
+                    eventNameRef.current = ''
+                }
+                else {
+                    _showErrorMessage(res?.message)
+                }
+            }).
+            catch(e => console.log(e))
+    }, [event])
+
+    const onCopyEvent = useCallback(() => {
+        return (
+            _showPopUpAlert({
+                title: Language.copy + ' ' + event?.name,
+                customView: () => <View style={{ width: '100%' }}>
+                    <TextInput
+                        containerStyle={{ marginEnd: scaler(4) }}
+                        placeholder={Language.new_event_name}
+                        borderColor={colors.colorTextInputBackground}
+                        backgroundColor={colors.colorTextInputBackground}
+                        name={'eventName'}
+                        onChangeText={(text) => eventNameRef.current = text}
+                        required={true}
+                    />
+                </View>,
+                buttonText: Language.copy,
+                buttonStyle: { backgroundColor: colors.colorPrimary },
+                onPressButton: onConfirmCopy,
+                onPressCancel: () => {
+                    eventNameRef.current = ''
+                }
+            })
+        )
+    }, [event?.name, onConfirmCopy])
+
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} style={styles.container}>
             <View style={styles.placeholder}>
@@ -158,6 +208,10 @@ const EventDetail: FC<any> = (props) => {
                                     setEditButtonOpened(false)
                                     NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
+                                    <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
+                                        setEditButtonOpened(false)
+                                        onCopyEvent()
+                                    }} title={Language.copy} />
                                     <InnerButton onPress={() => {
                                         shareEvent();
                                         setEditButtonOpened(false)
