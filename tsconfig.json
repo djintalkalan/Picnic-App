@@ -85,6 +85,9 @@
       "socket/*":[
         "src/socket/*"
       ],
+      "analytics":[
+        "src/analytics"
+      ],
       "rollbar-service":[
         "src/rollbar"
       ],
