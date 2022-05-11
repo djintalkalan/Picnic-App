@@ -15,6 +15,7 @@ import { isEqual, round } from 'lodash';
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+    Dimensions,
     Image,
     InteractionManager,
     StyleSheet,
@@ -87,6 +88,8 @@ const EditEvent: FC<any> = props => {
         startTime: defaultTime,
         endTime: defaultTime,
     });
+    const eventDateRef = useRef<RNTextInput>(null)
+    const scrollViewRef = useRef<ScrollView>(null)
 
     const [userData] = useDatabase("userData")
     const { event } = useSelector((state: RootState) => ({
@@ -149,7 +152,6 @@ const EditEvent: FC<any> = props => {
         dispatch(restorePurchase())
     }, [])
 
-
     useLayoutEffect(() => {
         // console.log("payload", props)
         InteractionManager.runAfterInteractions(() => {
@@ -188,16 +190,29 @@ const EditEvent: FC<any> = props => {
                 }
             } : undefined
 
-            eventDateTime.current = {
-                eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
-                startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
-                endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
-                selectedType: 'eventDate',
-            }
+            if (!props?.route?.params?.copy) {
+                eventDateTime.current = {
+                    eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
+                    startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
+                    endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
+                    selectedType: 'eventDate',
+                }
 
-            setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
-            setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
-            setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+                setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
+                setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
+                setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+            } else {
+                setValue('eventDate', '')
+                setValue('startTime', '')
+                setValue('endTime', '')
+                if (eventDateRef.current) {
+                    eventDateRef.current?.measureInWindow((x, y) => {
+                        scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
+                    })
+                    // eventDateRef.current?.blur()
+                }
+
+            }
 
             selectedGroupRef.current = event?.event_group
             setPaymentMethods(event?.payment_method ?? []);
@@ -377,6 +392,7 @@ const EditEvent: FC<any> = props => {
             <MyHeader title={Language.edit_event} />
             <ScrollView
                 nestedScrollEnabled
+                ref={scrollViewRef}
                 keyboardShouldPersistTaps={'handled'}
                 contentContainerStyle={{ alignItems: 'center' }}>
                 <View>
@@ -619,6 +635,7 @@ const EditEvent: FC<any> = props => {
                             />
                         </View>
                         <TextInput
+                            ref={eventDateRef}
                             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                             placeholder={Language.select_date}
                             borderColor={colors.colorTextInputBackground}
