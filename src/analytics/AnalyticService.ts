@@ -52,4 +52,4 @@ const logShare = async (id: string, type: string, method: string = "") => {
     })
 }
 
-export const AnalyticsService = { init, setUserData, clearUserData, logScreenView, logShare }
+export const AnalyticService = { init, setUserData, clearUserData, logScreenView, logShare }

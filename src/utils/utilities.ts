@@ -1,6 +1,6 @@
 
 import dynamicLinks from '@react-native-firebase/dynamic-links';
-import { AnalyticsService } from 'analytics';
+import { AnalyticService } from 'analytics';
 import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';
@@ -571,7 +571,7 @@ const handleShareAction = (shareAction: ShareAction | null, type: string, id: st
 
                 break;
             case 'sharedAction':
-                AnalyticsService.logShare(id, type, shareAction?.activityType)
+                AnalyticService.logShare(id, type, shareAction?.activityType)
                 break;
             default:
                 break;

@@ -2,7 +2,7 @@
 import Intercom from '@intercom/intercom-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AnalyticsService } from 'analytics';
+import { AnalyticService } from 'analytics';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
@@ -166,7 +166,7 @@ const MyNavigationContainer = () => {
       // if (!__DEV__) {
       try {
         const userData = Database.getStoredValue("userData")
-        AnalyticsService.setUserData(userData)
+        AnalyticService.setUserData(userData)
         console.log("First time user set user id and data");
       }
       catch (e) {
@@ -202,7 +202,7 @@ const MyNavigationContainer = () => {
           const previousRouteName = routeNameRef.current;
           const currentRouteName = NavigationService.getCurrentScreen()?.name ?? "";
           if (previousRouteName !== currentRouteName) {//&& !__DEV__) {
-            await AnalyticsService.logScreenView(currentRouteName)
+            await AnalyticService.logScreenView(currentRouteName)
             // console.log("Event Sent", currentRouteName);
           }
           routeNameRef.current = currentRouteName;

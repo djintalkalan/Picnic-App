@@ -1,4 +1,4 @@
-import { AnalyticsService } from 'analytics';
+import { AnalyticService } from 'analytics';
 import * as ApiProvider from 'api/APIProvider';
 import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import DeviceInfo from 'react-native-device-info';
@@ -31,7 +31,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
             const { access_token, notification_settings, ...userData } = res?.data
             // if (!__DEV__) {
             try {
-                yield call(AnalyticsService.setUserData, userData, 1)
+                yield call(AnalyticService.setUserData, userData, 1)
             }
             catch (e) {
                 console.log("Analytical Error", e);
@@ -149,7 +149,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
             const { access_token, notification_settings, location, ...userData } = res?.data
             // if (!__DEV__) {
             try {
-                yield call(AnalyticsService.setUserData, userData, 2)
+                yield call(AnalyticService.setUserData, userData, 2)
             }
             catch (e) {
                 console.log("Analytical Error", e);
@@ -229,7 +229,7 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
 
         try {
             yield put(setLoadingAction(true));
-            yield call(AnalyticsService.clearUserData)
+            yield call(AnalyticService.clearUserData)
             yield put(setLoadingAction(false));
 
 

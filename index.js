@@ -4,7 +4,7 @@
 import Intercom from '@intercom/intercom-react-native';
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
-import { AnalyticsService } from 'analytics';
+import { AnalyticService } from 'analytics';
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import 'react-native-gesture-handler';
@@ -17,7 +17,7 @@ import './ReactotronConfig';
 Intercom.setInAppMessageVisibility("GONE")
 
 // if (!__DEV__) {
-AnalyticsService.init().then(console.log)
+AnalyticService.init().then(console.log)
 // }
 
 console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
