@@ -327,6 +327,7 @@ export const es = {
     do_you_want_to_restore_your_purchases: "",
     start_time_invalid: "",
     end_time_invalid: "",
+    event_date_invalid: "",
 
 
 }

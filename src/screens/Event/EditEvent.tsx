@@ -188,13 +188,17 @@ const EditEvent: FC<any> = props => {
                 }
             } : undefined
 
-            // return
             eventDateTime.current = {
                 eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
                 startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
                 endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
                 selectedType: 'eventDate',
             }
+
+            setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
+            setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
+            setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+
             selectedGroupRef.current = event?.event_group
             setPaymentMethods(event?.payment_method ?? []);
             setIsOnlineEvent(event?.is_online_event ? true : false)
@@ -206,9 +210,6 @@ const EditEvent: FC<any> = props => {
             setValue('aboutEvent', event?.short_description)
             setValue('capacity', (event?.capacity || "")?.toString())
             setValue('ticketPrice', (event?.event_fees || "")?.toString())
-            setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
-            setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
-            setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
             setValue('additionalInfo', event?.details)
             setValue('currency', event?.event_currency?.toUpperCase())
             setValue('paypalId', event?.payment_email)
@@ -353,8 +354,12 @@ const EditEvent: FC<any> = props => {
 
     const onPressSubmit = useCallback(() => handleSubmit((v) => {
         const { endTime } = v
-        const { startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
+        const { eventDate, startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
         const currentDate = new Date()
+        if (eventDate < currentDate) {
+            _showErrorMessage(Language.event_date_invalid)
+            return
+        }
         if (startTimeDate <= currentDate) {
             _showErrorMessage(Language.start_time_invalid)
             return

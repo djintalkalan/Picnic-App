@@ -327,5 +327,5 @@ export const en = {
   do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?",
   start_time_invalid: "Event start time should be greater than current time",
   end_time_invalid: "Event end time should be greater than start time",
-
+  event_date_invalid: "Event date should be equal or greater than current date",
 }
