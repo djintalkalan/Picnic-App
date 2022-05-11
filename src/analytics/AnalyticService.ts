@@ -41,9 +41,9 @@ const logScreenView = async (currentRouteName: string) => {
 }
 
 const logShare = async (id: string, type: string, method: string = "") => {
-    console.log("id", id);
-    console.log("type", type);
-    console.log("method", method);
+    // console.log("id", id);
+    // console.log("type", type);
+    // console.log("method", method);
 
     await analytics().logShare({
         content_type: type,
