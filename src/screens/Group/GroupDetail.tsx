@@ -450,14 +450,16 @@ const GroupDetail: FC<any> = (props) => {
                             <Text style={{ marginLeft: scaler(10), flex: 1 }}>
                                 {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
                             </Text>
-                            <MaterialIcons
-                                color={colors.colorPrimary}
-                                style={{ marginEnd: scaler(10) }}
-                                onPress={() => {
-                                    console.log("person", group?.creator_of_group);
-                                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
-                                }}
-                                size={scaler(20)} name='chat' />
+                            {group?.is_group_member ?
+                                <MaterialIcons
+                                    color={colors.colorPrimary}
+                                    style={{ marginEnd: scaler(10) }}
+                                    onPress={() => {
+                                        console.log("person", group?.creator_of_group);
+                                        NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                                    }}
+                                    size={scaler(20)} name='chat' />
+                                : undefined}
                         </View>
                     </>
                 }
