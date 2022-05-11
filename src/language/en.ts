@@ -324,7 +324,7 @@ export const en = {
   fm_freq: "FM frequency",
   select: "-- Select --",
   group_admin: "Group admin",
-  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases",
+  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?",
   start_time_invalid: "Event start time should be greater than current time",
   end_time_invalid: "Event end time should be greater than start time",
 
