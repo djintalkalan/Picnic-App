@@ -22,6 +22,7 @@ import { Rollbar } from 'rollbar-service';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
+import SendOtp from 'screens/Auth/SignUp/SendOtp';
 import SignUp1 from 'screens/Auth/SignUp/SignUp1';
 import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
@@ -78,6 +79,7 @@ const authScreens = {
   SignUp1: SignUp1,
   SignUp2: SignUp2,
   SignUp3: SignUp3,
+  SendOtp: SendOtp,
 };
 
 const dashboardScreens = {

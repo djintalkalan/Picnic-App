@@ -146,7 +146,7 @@ const Login: FC = () => {
                     <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.login} onPress={onSubmit} />
 
                     <Text style={styles.notAMember} >{Language.not_a_member}
-                        <Text onPress={() => NavigationService.navigate("SignUp1")} style={[styles.notAMember, { color: colors.colorPrimary }]} > {Language.sign_up}</Text></Text>
+                        <Text onPress={() => NavigationService.navigate("SendOtp")} style={[styles.notAMember, { color: colors.colorPrimary }]} > {Language.sign_up}</Text></Text>
 
                 </View>
 
