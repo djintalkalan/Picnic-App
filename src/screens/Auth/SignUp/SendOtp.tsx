@@ -36,7 +36,7 @@ const SendOtp: FC = () => {
     const onSubmit = useCallback(
         () =>
             handleSubmit(data => {
-                NavigationService.navigate('VerifyOtp', data);
+                NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
 
             })(),
         [],

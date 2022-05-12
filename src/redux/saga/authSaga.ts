@@ -66,7 +66,7 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._forgotPassword, payload);
         if (res.status == 200) {
-            NavigationService.navigate("VerifyOTP", payload)
+            NavigationService.navigate("VerifyOtp", payload)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -83,9 +83,14 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._verifyOtp, payload);
+        const { isSignUp = false, ...rest } = payload
+        let res = yield call(ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
-            NavigationService.replace("CreateNewPassword", payload)
+            if (isSignUp) {
+                NavigationService.replace("CreateNewPassword", rest)
+                return
+            }
+            NavigationService.replace("CreateNewPassword", rest)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
