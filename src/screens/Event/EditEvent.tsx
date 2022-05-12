@@ -208,6 +208,9 @@ const EditEvent: FC<any> = props => {
                 if (eventDateRef.current) {
                     eventDateRef.current?.measureInWindow((x, y) => {
                         scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
+                        setTimeout(() => {
+                            (openDatePicker("eventDate"))
+                        }, 1000)
                     })
                     // eventDateRef.current?.blur()
                 }
@@ -239,23 +242,22 @@ const EditEvent: FC<any> = props => {
         }
     }, [event])
 
-    const onSubmit = useCallback(
-        (data) => {
-            if (!uploadedImage.current && eventImage?.path) {
-                dispatch(
-                    uploadFile({
-                        image: eventImage,
-                        onSuccess: url => {
-                            uploadedImage.current = url;
-                            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
-                        },
-                        prefixType: 'events',
-                    }),
-                );
-            } else {
-                callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
-            }
-        },
+    const onSubmit = useCallback((data) => {
+        if (!uploadedImage.current && eventImage?.path) {
+            dispatch(
+                uploadFile({
+                    image: eventImage,
+                    onSuccess: url => {
+                        uploadedImage.current = url;
+                        callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
+                    },
+                    prefixType: 'events',
+                }),
+            );
+        } else {
+            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
+        }
+    },
         [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods],
     );
 

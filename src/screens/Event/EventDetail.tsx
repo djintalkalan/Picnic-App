@@ -1,6 +1,6 @@
 import { _copyEvent } from 'api/APIProvider'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions'
+import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -129,8 +129,10 @@ const EventDetail: FC<any> = (props) => {
             _showErrorMessage(Language.min_characters_event_name)
             return
         }
+        dispatch(setLoadingAction(true))
         _copyEvent({ _id: event?._id, name: eventNameRef.current }).
             then((res) => {
+                dispatch(setLoadingAction(false))
                 _hidePopUpAlert()
                 if (res?.status == 200) {
                     NavigationService.navigate('EditEvent', { id: res?.data, copy: "1" })
@@ -140,7 +142,10 @@ const EventDetail: FC<any> = (props) => {
                     _showErrorMessage(res?.message)
                 }
             }).
-            catch(e => console.log(e))
+            catch(e => {
+                console.log(e)
+                dispatch(setLoadingAction(false))
+            })
     }, [event])
 
     const onCopyEvent = useCallback(() => {
