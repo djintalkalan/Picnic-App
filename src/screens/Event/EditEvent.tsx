@@ -385,7 +385,7 @@ const EditEvent: FC<any> = props => {
             return
         }
         onSubmit(v)
-    })(), [])
+    })(), [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods])
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
