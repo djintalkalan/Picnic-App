@@ -1,6 +1,7 @@
 import analytics from '@react-native-firebase/analytics';
 import * as ApiProvider from 'api/APIProvider';
 import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { colors } from 'assets/Colors';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -84,10 +85,25 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         const { isSignUp = false, ...rest } = payload
-        let res = yield call(ApiProvider._verifyOtp, rest);
+        let res = yield call(isSignUp ? ApiProvider._verifyEmailOtp : ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
             if (isSignUp) {
-                NavigationService.replace("CreateNewPassword", rest)
+                if (res?.data?.resignUp) {
+                    yield put(setLoadingAction(false));
+
+                    return (
+                        _showPopUpAlert({
+                            title: 'Restore account',
+                            message: 'Do you want to restore your account?',
+                            buttonText: 'yes, restore',
+                            buttonStyle: { backgroundColor: colors.colorPrimary },
+
+                            cancelButtonText: 'No, create a new account'
+                        })
+                    )
+                }
+                NavigationService.replace("SignUp1", rest)
+                yield put(setLoadingAction(false));
                 return
             }
             NavigationService.replace("CreateNewPassword", rest)
@@ -149,9 +165,10 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
 
 function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
+    const { otp, ...rest } = payload
     const firebaseToken = Database.getStoredValue('firebaseToken')
     try {
-        let res = yield call(ApiProvider._signUp, { ...payload, device_token: firebaseToken });
+        let res = yield call(ApiProvider._signUp, { ...rest, device_token: firebaseToken });
         if (res.status == 200) {
             _showSuccessMessage(res?.message);
             yield put(resetStateOnLogin())

@@ -45,7 +45,7 @@ export const en = {
   privacy_policy: "Privacy policy",
   optional_information: "Optional information",
   choose_a_username: "Choose a username",
-  username: "username",
+  username: "Username",
   phone_including_country: "Phone number including country code",
   phone: "Phone",
   did_you_not_receive: "Did not receive the email? Check your spam filter or",
@@ -324,6 +324,8 @@ export const en = {
   fm_freq: "FM frequency",
   select: "-- Select --",
   group_admin: "Group admin",
-  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?"
+  do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?",
+  we_have_sent_you_email_verification: "We have sent the email verification code to your email.",
+  required_information: 'Required information',
 
 }

@@ -1,3 +1,4 @@
+import { _sendOtp } from 'api/APIProvider';
 import { checkEmail } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
@@ -11,7 +12,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { NavigationService, scaler } from 'utils';
+import { NavigationService, scaler, _showErrorMessage, _showSuccessMessage } from 'utils';
 
 type FormType = {
     email: string;
@@ -28,7 +29,7 @@ const SendOtp: FC = () => {
         setError,
     } = useForm<FormType>({
         defaultValues: __DEV__ ? {
-            email: "deepakq@testings.com",
+            email: "abcdefg@yopmail.com",
         } : {},
         mode: 'onChange',
     });
@@ -36,8 +37,15 @@ const SendOtp: FC = () => {
     const onSubmit = useCallback(
         () =>
             handleSubmit(data => {
-                NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
-
+                _sendOtp({ email: data?.email }).then((res) => {
+                    if (res?.status == 200) {
+                        _showSuccessMessage(res?.message)
+                        NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
+                    }
+                    else {
+                        _showErrorMessage(res?.message)
+                    }
+                }).catch(e => console.log(e))
             })(),
         [],
     );
@@ -70,7 +78,7 @@ const SendOtp: FC = () => {
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
-            <Stepper step={1} totalSteps={3} />
+            <Stepper step={1} totalSteps={4} />
             <ScrollView keyboardShouldPersistTaps={'handled'}>
                 <View
                     style={{

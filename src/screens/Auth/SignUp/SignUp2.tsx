@@ -52,7 +52,7 @@ const SignUp2: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
 
-            <Stepper isBackButton step={2} totalSteps={3} />
+            <Stepper isBackButton step={3} totalSteps={4} />
 
             <ScrollView keyboardShouldPersistTaps={'handled'} >
 

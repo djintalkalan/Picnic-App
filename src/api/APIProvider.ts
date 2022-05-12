@@ -187,7 +187,7 @@ export const _resetPassword = async (body: any) => {
 }
 
 export const _checkEmail = async (body: any) => {
-    console.log("---------- Reset Password Api Call ---------------")
+    console.log("---------- check email Api Call ---------------")
     return fetchApiData(config.API_URL + 'auth/check-email', body, "POST")
 }
 
@@ -476,4 +476,19 @@ export const _getPersonChat = async (body: any) => {
 export const _setLanguage = async (body: any) => {
     console.log("---------- set language Api Call ---------------")
     return fetchApiData(config.API_URL + 'user/set-language', body, "POST")
+}
+
+export const _sendOtp = async (body: any) => {
+    console.log("---------- send otp Api Call ---------------")
+    return fetchApiData(config.API_URL + 'auth/send-signup-otp', body, "POST")
+}
+
+export const _verifyEmailOtp = async (body: any) => {
+    console.log("---------- verify email otp Api Call ---------------")
+    return fetchApiData(config.API_URL + 'auth/verify-signup-otp', body, "POST")
+}
+
+export const _restoreAccount = async (body: any) => {
+    console.log("---------- restore account otp Api Call ---------------")
+    return fetchApiData(config.API_URL + 'auth/restore', body, "POST")
 }
