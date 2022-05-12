@@ -356,7 +356,7 @@ const EditEvent: FC<any> = props => {
         const { endTime } = v
         const { eventDate, startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
         const currentDate = new Date()
-        if (eventDate < currentDate) {
+        if (dateFormat(eventDate, "YYYYMMDD") < dateFormat(currentDate, "YYYYMMDD")) {
             _showErrorMessage(Language.event_date_invalid)
             return
         }
