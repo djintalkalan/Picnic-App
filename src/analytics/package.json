@@ -1,3 +1,4 @@
 {
-    "name": "analytics"
+    "name": "analytics",
+    "main": "AnalyticService.ts"
 }

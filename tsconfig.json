@@ -88,6 +88,9 @@
       "analytics":[
         "src/analytics"
       ],
+      "intercom":[
+        "src/intercom"
+      ],
       "rollbar-service":[
         "src/rollbar"
       ],

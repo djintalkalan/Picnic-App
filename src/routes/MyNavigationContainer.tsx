@@ -1,8 +1,7 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
-import Intercom from '@intercom/intercom-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AnalyticService } from 'analytics';
+import AnalyticService from 'analytics';
 import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
@@ -10,6 +9,7 @@ import { BottomMenu } from 'custom-components/BottomMenu';
 import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ImageZoom } from 'custom-components/ImageZoom';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
+import IntercomService from 'intercom';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { DeviceEventEmitter, LogBox, Text, View } from 'react-native';
@@ -142,22 +142,11 @@ const MyNavigationContainer = () => {
   useEffect(() => {
     dispatch(refreshLanguage())
     Rollbar?.init();
-    const userData = Database.getStoredValue("userData")
-    Intercom.registerIdentifiedUser({ email: userData?.email, userId: userData?._id })
-    Intercom.sendTokenToIntercom(Database.getStoredValue("firebaseToken"))
-    Intercom.updateUser({
-      email: userData?.email,
-      userId: userData?._id,
-      name: userData?.first_name + (userData?.last_name?.trim() ? (" " + userData?.last_name?.trim()) : ""),
-      phone: userData?.phone_number,
-      // languageOverride: userData?.language,
-      // signedUpAt: 1621844451,
-      // unsubscribedFromEmails: true,
-    });
-    console.log("Intercom Initialized")
+    IntercomService.init()
+
     return () => {
       Rollbar?.exit();
-      Intercom.logout()
+      IntercomService.logout()
     }
   }, [isLogin])
 
@@ -167,10 +156,8 @@ const MyNavigationContainer = () => {
       try {
         const userData = Database.getStoredValue("userData")
         AnalyticService.setUserData(userData)
-        console.log("First time user set user id and data");
       }
       catch (e) {
-        console.log("First time user set error");
         console.log(e);
       }
       // }

@@ -2,7 +2,45 @@
 import analytics, { firebase } from '@react-native-firebase/analytics';
 import { Platform } from 'react-native';
 
-export const AnalyticService = {
+const getAnalyticScreenName = (routeName: string) => {
+    console.log("routeName", routeName);
+
+    switch (routeName) {
+        case "HomeEventTab":
+            return "EventList at Home"
+        case "HomeGroupTab":
+            return "GroupList at Home"
+        case "ProfileScreen":
+            return "Profile"
+        case "GooglePlacesTextInput":
+            return "SearchLocation"
+        case "ProfileUpcomingEvents":
+            return "User's UpcomingEvents"
+        case "ProfilePastEvents":
+            return "User's PastEvents"
+        case "UpcomingEventsChat":
+            return "Upcoming Event in Chat Screen"
+        case "ProfileGroups":
+            return "User's Groups"
+        case "PrivacyScreen":
+            return "Review"
+        case "MuteGroupTab":
+            return "Muted Groups"
+        case "MuteEventTab":
+            return "Muted Events"
+        case "EventChats":
+            return "Event Chat"
+        case "Chats":
+            return "Group Chat"
+        case "PersonChat":
+            return "Admin Chat"
+        default:
+            return routeName
+    }
+
+}
+
+const AnalyticService = {
     init: async () => {
         firebase.analytics().setAnalyticsCollectionEnabled(true).then(() => console.log("Firebase Analytics Enabled"))
         const instanceId = await analytics().getAppInstanceId()
@@ -50,39 +88,4 @@ export const AnalyticService = {
     }
 }
 
-
-const getAnalyticScreenName = (routeName: string) => {
-    console.log("routeName", routeName);
-
-    switch (routeName) {
-        case "HomeEventTab":
-            return "EventList at Home"
-        case "HomeGroupTab":
-            return "GroupList at Home"
-        case "ProfileScreen":
-            return "Profile"
-        case "GooglePlacesTextInput":
-            return "SearchLocation"
-        case "ProfileUpcomingEvents":
-            return "User's UpcomingEvents"
-        case "ProfilePastEvents":
-            return "User's PastEvents"
-        case "UpcomingEventsChat":
-            return "Upcoming Event in Chat Screen"
-        case "ProfileGroups":
-            return "User's Groups"
-        case "PrivacyScreen":
-            return "Review"
-        case "MuteGroupTab":
-            return "Muted Groups"
-        case "MuteEventTab":
-            return "Muted Events"
-        case "EventChats":
-            return "Event Chat"
-        case "Chats":
-            return "Group Chat"
-        default:
-            return routeName
-    }
-
-}
+export default AnalyticService

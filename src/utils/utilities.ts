@@ -1,6 +1,6 @@
 
 import dynamicLinks from '@react-native-firebase/dynamic-links';
-import { AnalyticService } from 'analytics';
+import AnalyticService from 'analytics';
 import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';

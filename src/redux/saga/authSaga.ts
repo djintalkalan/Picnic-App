@@ -1,4 +1,4 @@
-import { AnalyticService } from 'analytics';
+import AnalyticService from 'analytics';
 import * as ApiProvider from 'api/APIProvider';
 import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import DeviceInfo from 'react-native-device-info';

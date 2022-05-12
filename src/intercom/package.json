@@ -1,0 +1,4 @@
+{
+    "name": "intercom",
+    "main": "IntercomService.ts"
+}
