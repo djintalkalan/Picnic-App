@@ -492,3 +492,8 @@ export const _restoreAccount = async (body: any) => {
     console.log("---------- restore account otp Api Call ---------------")
     return fetchApiData(config.API_URL + 'auth/restore', body, "POST")
 }
+export const _copyEvent = async (body: any) => {
+    console.log("---------- copy event Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/copy-event', body, "POST")
+}
+

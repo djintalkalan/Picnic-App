@@ -4,7 +4,7 @@ import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, us
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database, { ILocation, useDatabase } from 'database';
 import { round } from 'lodash';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   StyleSheet,
@@ -37,6 +37,8 @@ type IEventDateTime = {
   endTime: Date,
 }
 
+const defaultTime = new Date(new Date(dateFormat(new Date(), "YYYY-MM-DD")).toISOString().slice(0, -1))
+
 const CreateEvent2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
@@ -51,9 +53,12 @@ const CreateEvent2: FC<any> = props => {
   const eventDateTime = useRef<IEventDateTime>({
     selectedType: 'eventDate',
     eventDate: new Date(),
-    startTime: new Date(),
-    endTime: new Date()
+    startTime: defaultTime,
+    endTime: defaultTime,
+    // startTime: new Date(),
+    // endTime: new Date(),
   });
+
   const [userData] = useDatabase("userData")
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -69,24 +74,6 @@ const CreateEvent2: FC<any> = props => {
   });
 
   const bodyData = props?.route?.params
-
-  useEffect(() => {
-    // _getActiveMembership().then(res => {
-    //   if (res?.status == 200) {
-    //     const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-    //     const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
-    //     let is_premium = 1
-    //     if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
-    //       is_premium = 0
-    //     }
-    //     if (userData?.is_premium != is_premium) {
-    //       Database.setUserData({ ...userData, is_premium })
-    //     }
-    //   }
-    // }).catch(e => {
-    //   console.log(e);
-    // })
-  }, [])
 
   const onSubmit = useCallback(
     (data) => {
@@ -174,29 +161,85 @@ const CreateEvent2: FC<any> = props => {
 
   const getMinDate = useCallback(() => {
     const { startTime, endTime, eventDate, selectedType } = eventDateTime.current
+    // const eventDateString = eventDate ? dateFormat(new Date(), "DD-MM-YYYY") : undefined
+    // const currentDateString = dateFormat(new Date(), "DD-MM-YYYY")
+
     switch (selectedType) {
       case "eventDate":
         return new Date();
       case "startTime":
-        if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
-          return new Date()
-        } else {
-          return undefined
-        }
+        return undefined
+      // if (eventDate && currentDateString == eventDateString) {
+      //   return new Date()
+      // } else {
+      //   return undefined
+      // }
       case "endTime":
+        return undefined
+
         if (startTime) {
           return startTime
-        } else
-          if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
-            return new Date()
-          } else {
-            return undefined
-          }
+        } else {
+          return undefined
+          // if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
+          //   return new Date()
+          // } else {
+          //   return undefined
+          // }
+        }
       default:
         break;
     }
 
   }, [])
+
+  const onPressSubmit = useCallback(() => handleSubmit((data) => {
+    const { endTime } = data
+    const { startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
+    const currentDate = new Date()
+    if (startTimeDate <= currentDate) {
+      _showErrorMessage(Language.start_time_invalid)
+      return
+    }
+    if (endTime && endTimeDate <= startTimeDate) {
+      _showErrorMessage(Language.end_time_invalid)
+      return
+    }
+
+    !userData?.is_premium ?
+      _showPopUpAlert({
+        message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        buttonText: Language.join_now,
+        onPressButton: () => {
+          NavigationService.navigate("Subscription", {
+            onSubscription: onSubmit, data: {
+              ...data, ...bodyData,
+              eventDateTime: eventDateTime.current,
+              image: uploadedImage?.current,
+              isUnlimitedCapacity: isUnlimitedCapacity,
+              isFreeEvent: isFreeEvent
+            }
+          });
+          _hidePopUpAlert()
+        },
+        cancelButtonText: Language.no_thanks_create_my_event,
+        onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
+      }) :
+      isFreeEvent ?
+        onSubmit(data)
+        :
+        NavigationService.navigate('CreateEvent3',
+          {
+            data: {
+              ...data, ...bodyData,
+              eventDateTime: eventDateTime.current,
+              image: uploadedImage?.current,
+              isUnlimitedCapacity: isUnlimitedCapacity
+            }
+          })
+    //   :
+    //  undefined
+  })(), [userData, isFreeEvent, isUnlimitedCapacity])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -381,6 +424,7 @@ const CreateEvent2: FC<any> = props => {
               name={'additionalInfo'}
               ref={additionalInfoInputRef}
               multiline
+              limit={2000}
               keyboardValues={keyboardValues}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
@@ -392,41 +436,7 @@ const CreateEvent2: FC<any> = props => {
               disabled={calculateButtonDisability()}
               containerStyle={{ marginTop: scaler(20) }}
               title={Language.next}
-              onPress={() => handleSubmit((data) => {
-                !userData?.is_premium ?
-                  _showPopUpAlert({
-                    message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
-                    buttonText: Language.join_now,
-                    onPressButton: () => {
-                      NavigationService.navigate("Subscription", {
-                        onSubscription: onSubmit, data: {
-                          ...data, ...bodyData,
-                          eventDateTime: eventDateTime.current,
-                          image: uploadedImage?.current,
-                          isUnlimitedCapacity: isUnlimitedCapacity,
-                          isFreeEvent: isFreeEvent
-                        }
-                      });
-                      _hidePopUpAlert()
-                    },
-                    cancelButtonText: Language.no_thanks_create_my_event,
-                    onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
-                  }) :
-                  isFreeEvent ?
-                    onSubmit(data)
-                    :
-                    NavigationService.navigate('CreateEvent3',
-                      {
-                        data: {
-                          ...data, ...bodyData,
-                          eventDateTime: eventDateTime.current,
-                          image: uploadedImage?.current,
-                          isUnlimitedCapacity: isUnlimitedCapacity
-                        }
-                      })
-                //   :
-                //  undefined
-              })()}
+              onPress={onPressSubmit}
             />
           </View>
         </View>
@@ -475,8 +485,15 @@ const CreateEvent2: FC<any> = props => {
           //   //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
-          onConfirm={(date: Date) => {
-            const { selectedType } = eventDateTime.current
+          onConfirm={(cDate: Date) => {
+            const { selectedType, eventDate } = eventDateTime.current
+            const date = selectedType == 'eventDate' ? cDate : new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
+            // const utcDate = new Date(eventDate?.getFullYear(), eventDate.getUTCMonth(), eventDate?.getUTCDate(), cDate?.getUTCHours(), cDate?.getUTCMinutes(), cDate?.getUTCSeconds());
+            // console.log(" eventDate", eventDate);
+            // console.log(" Date", date);
+            // console.log(" utcDate", date);
+            // console.log("new Date", new Date());
+
             eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
             let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
             let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
@@ -492,7 +509,6 @@ const CreateEvent2: FC<any> = props => {
               setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
             }
             if (getValues('endTime')) {
-              console.log('endtime selected')
               setTimeout(() => {
                 additionalInfoInputRef.current?.focus()
               }, 500);

@@ -15,6 +15,7 @@ import { isEqual, round } from 'lodash';
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+    Dimensions,
     Image,
     InteractionManager,
     StyleSheet,
@@ -37,6 +38,7 @@ import {
     scaler,
     stringToDate,
     _hidePopUpAlert,
+    _showErrorMessage,
     _showPopUpAlert
 } from 'utils';
 
@@ -66,7 +68,7 @@ type IEventDateTime = {
     startTime: Date,
     endTime: Date,
 }
-
+const defaultTime = new Date(new Date(dateFormat(new Date(), "YYYY-MM-DD")).toISOString().slice(0, -1))
 
 const EditEvent: FC<any> = props => {
     const uploadedImage = useRef('');
@@ -83,9 +85,12 @@ const EditEvent: FC<any> = props => {
     const eventDateTime = useRef<IEventDateTime>({
         selectedType: 'eventDate',
         eventDate: new Date(),
-        startTime: new Date(),
-        endTime: new Date()
+        startTime: defaultTime,
+        endTime: defaultTime,
     });
+    const eventDateRef = useRef<RNTextInput>(null)
+    const scrollViewRef = useRef<ScrollView>(null)
+
     const [userData] = useDatabase("userData")
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
@@ -147,7 +152,6 @@ const EditEvent: FC<any> = props => {
         dispatch(restorePurchase())
     }, [])
 
-
     useLayoutEffect(() => {
         // console.log("payload", props)
         InteractionManager.runAfterInteractions(() => {
@@ -186,13 +190,33 @@ const EditEvent: FC<any> = props => {
                 }
             } : undefined
 
-            // return
-            eventDateTime.current = {
-                eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
-                startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
-                endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : new Date(),
-                selectedType: 'eventDate',
+            if (!props?.route?.params?.copy) {
+                eventDateTime.current = {
+                    eventDate: stringToDate(event?.event_date, "YYYY-MM-DD", "-"),
+                    startTime: stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"),
+                    endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
+                    selectedType: 'eventDate',
+                }
+
+                setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
+                setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
+                setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+            } else {
+                setValue('eventDate', '')
+                setValue('startTime', '')
+                setValue('endTime', '')
+                if (eventDateRef.current) {
+                    eventDateRef.current?.measureInWindow((x, y) => {
+                        scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
+                        setTimeout(() => {
+                            (openDatePicker("eventDate"))
+                        }, 1000)
+                    })
+                    // eventDateRef.current?.blur()
+                }
+
             }
+
             selectedGroupRef.current = event?.event_group
             setPaymentMethods(event?.payment_method ?? []);
             setIsOnlineEvent(event?.is_online_event ? true : false)
@@ -204,9 +228,6 @@ const EditEvent: FC<any> = props => {
             setValue('aboutEvent', event?.short_description)
             setValue('capacity', (event?.capacity || "")?.toString())
             setValue('ticketPrice', (event?.event_fees || "")?.toString())
-            setValue('eventDate', dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY'))
-            setValue('startTime', dateFormat(eventDateTime.current.startTime, 'hh:mm A'))
-            setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
             setValue('additionalInfo', event?.details)
             setValue('currency', event?.event_currency?.toUpperCase())
             setValue('paypalId', event?.payment_email)
@@ -221,23 +242,22 @@ const EditEvent: FC<any> = props => {
         }
     }, [event])
 
-    const onSubmit = useCallback(
-        (data) => {
-            if (!uploadedImage.current && eventImage?.path) {
-                dispatch(
-                    uploadFile({
-                        image: eventImage,
-                        onSuccess: url => {
-                            uploadedImage.current = url;
-                            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
-                        },
-                        prefixType: 'events',
-                    }),
-                );
-            } else {
-                callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
-            }
-        },
+    const onSubmit = useCallback((data) => {
+        if (!uploadedImage.current && eventImage?.path) {
+            dispatch(
+                uploadFile({
+                    image: eventImage,
+                    onSuccess: url => {
+                        uploadedImage.current = url;
+                        callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
+                    },
+                    prefixType: 'events',
+                }),
+            );
+        } else {
+            callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods);
+        }
+    },
         [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods],
     );
 
@@ -276,7 +296,9 @@ const EditEvent: FC<any> = props => {
             event_refund_policy: data?.policy,
             event_tax_rate: data?.taxRate,
             event_tax_amount: data?.taxPrice,
+            is_copied_event: props?.route?.params?.copy ?? "0"
         };
+
         dispatch(
             createEvent({
                 data: payload,
@@ -287,7 +309,7 @@ const EditEvent: FC<any> = props => {
                 },
             }),
         );
-    }, []);
+    }, [props]);
 
 
     const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {
@@ -304,24 +326,28 @@ const EditEvent: FC<any> = props => {
             case "eventDate":
                 return new Date();
             case "startTime":
-                if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
-                    return new Date()
-                } else {
-                    return undefined
-                }
+                return undefined
+            // if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
+            //     return new Date()
+            // } else {
+            //     return undefined
+            // }
             case "endTime":
+                return undefined
                 if (startTime) {
                     return startTime
-                } else
-                    if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
-                        return new Date()
-                    } else {
-                        return undefined
-                    }
+                } else {
+                    return undefined
+                    // if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
+                    //     return new Date()
+                    // } else {
+                    //     return undefined
+                    // }
+                }
+
             default:
                 break;
         }
-
     }, [])
 
     const onSubscriptionSuccess = useCallback(() => {
@@ -344,11 +370,31 @@ const EditEvent: FC<any> = props => {
     }, [])
 
 
+    const onPressSubmit = useCallback(() => handleSubmit((v) => {
+        const { endTime } = v
+        const { eventDate, startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
+        const currentDate = new Date()
+        if (dateFormat(eventDate, "YYYYMMDD") < dateFormat(currentDate, "YYYYMMDD")) {
+            _showErrorMessage(Language.event_date_invalid)
+            return
+        }
+        if (startTimeDate <= currentDate) {
+            _showErrorMessage(Language.start_time_invalid)
+            return
+        }
+        if (endTime && endTimeDate <= startTimeDate) {
+            _showErrorMessage(Language.end_time_invalid)
+            return
+        }
+        onSubmit(v)
+    })(), [eventImage, isFreeEvent, isUnlimitedCapacity, isOnlineEvent, paymentMethods])
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.edit_event} />
             <ScrollView
                 nestedScrollEnabled
+                ref={scrollViewRef}
                 keyboardShouldPersistTaps={'handled'}
                 contentContainerStyle={{ alignItems: 'center' }}>
                 <View>
@@ -460,7 +506,7 @@ const EditEvent: FC<any> = props => {
                         <TextInput
                             placeholder={Language.write_something_about_event}
                             name={'aboutEvent'}
-                            limit={400}
+                            limit={2000}
                             multiline
                             keyboardValues={keyboardValues}
                             style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
@@ -591,6 +637,7 @@ const EditEvent: FC<any> = props => {
                             />
                         </View>
                         <TextInput
+                            ref={eventDateRef}
                             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                             placeholder={Language.select_date}
                             borderColor={colors.colorTextInputBackground}
@@ -747,7 +794,7 @@ const EditEvent: FC<any> = props => {
                             disabled={calculateButtonDisability()}
                             containerStyle={{ marginTop: scaler(20) }}
                             title={Language.done}
-                            onPress={() => handleSubmit((v) => onSubmit(v))()}
+                            onPress={onPressSubmit}
                         />
 
                         <DateTimePickerModal
@@ -795,8 +842,14 @@ const EditEvent: FC<any> = props => {
                             //   maximumDate={sub(new Date(), {
                             //     years: 15,
                             //   })}
-                            onConfirm={(date: Date) => {
-                                const { selectedType } = eventDateTime.current
+                            onConfirm={(cDate: Date) => {
+                                const { selectedType, eventDate } = eventDateTime.current
+                                const date = selectedType == 'eventDate' ? cDate : new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
+                                // const utcDate = new Date(eventDate?.getFullYear(), eventDate.getUTCMonth(), eventDate?.getUTCDate(), cDate?.getUTCHours(), cDate?.getUTCMinutes(), cDate?.getUTCSeconds());
+                                // console.log(" eventDate", eventDate);
+                                // console.log(" Date", date);
+                                // console.log(" utcDate", date);
+                                // console.log("new Date", new Date());
                                 eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
                                 let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
                                 let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();

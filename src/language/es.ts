@@ -327,5 +327,11 @@ export const es = {
     do_you_want_to_restore_your_purchases: "",
     we_have_sent_you_email_verification: "",
     required_information: '',
+    copy: '',
+    new_event_name: '',
+    start_time_invalid: "",
+    end_time_invalid: "",
+    event_date_invalid: "",
+
 
 }
