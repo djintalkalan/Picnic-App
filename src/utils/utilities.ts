@@ -487,7 +487,7 @@ export const getShortAddress = (address: string, state: string, city?: string) =
         }
         return address.substring(0, index) || city || state
     } catch (e) {
-        console.log("E", e);
+        console.log("address error", e, address);
 
         return address
     }

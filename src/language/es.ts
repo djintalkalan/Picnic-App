@@ -332,6 +332,9 @@ export const es = {
     start_time_invalid: "",
     end_time_invalid: "",
     event_date_invalid: "",
-
+    restore_account: '',
+    do_you_want_to_restore: "",
+    yes_restore: '',
+    create_a_new_account: '',
 
 }

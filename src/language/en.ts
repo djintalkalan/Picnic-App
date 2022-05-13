@@ -45,7 +45,7 @@ export const en = {
   privacy_policy: "Privacy policy",
   optional_information: "Optional information",
   choose_a_username: "Choose a username",
-  username: "Username",
+  username: "username",
   phone_including_country: "Phone number including country code",
   phone: "Phone",
   did_you_not_receive: "Did not receive the email? Check your spam filter or",
@@ -332,4 +332,9 @@ export const en = {
   start_time_invalid: "Event start time should be greater than current time",
   end_time_invalid: "Event end time should be greater than start time",
   event_date_invalid: "Event date should be equal or greater than current date",
+  restore_account: 'Restore account',
+  do_you_want_to_restore: 'Do you want to restore your account?',
+  yes_restore: 'Yes, restore',
+  create_a_new_account: 'No, create a new account',
+
 }

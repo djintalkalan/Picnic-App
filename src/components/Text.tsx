@@ -84,7 +84,7 @@ export const Text: FC<TextProps> = (props) => {
                 return getChildren(rest?.children)
             }
         } catch (e) {
-            console.log("E", e)
+            console.log("text error", e)
         }
         return ""
     }, [rest?.children, props?.autoLink])

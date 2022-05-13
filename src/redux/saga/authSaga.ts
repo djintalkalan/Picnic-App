@@ -1,6 +1,6 @@
 import analytics from '@react-native-firebase/analytics';
 import * as ApiProvider from 'api/APIProvider';
-import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import { colors } from 'assets/Colors';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
@@ -8,6 +8,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
+import { store } from '..';
 import ActionTypes, { action } from "../action-types";
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
@@ -22,8 +23,9 @@ DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
+    const { isSignUp = false, ...rest } = payload
     try {
-        let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
+        let res = yield call(isSignUp ? ApiProvider._restoreAccount : ApiProvider._loginApi, { ...rest, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
             yield put(resetStateOnLogin())
@@ -85,20 +87,26 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         const { isSignUp = false, ...rest } = payload
-        let res = yield call(isSignUp ? ApiProvider._verifyEmailOtp : ApiProvider._verifyOtp, rest);
+        let res = yield call(isSignUp ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
             if (isSignUp) {
                 if (res?.data?.resignUp) {
                     yield put(setLoadingAction(false));
-
                     return (
                         _showPopUpAlert({
-                            title: 'Restore account',
-                            message: 'Do you want to restore your account?',
-                            buttonText: 'yes, restore',
+                            title: Language.restore_account,
+                            message: Language.do_you_want_to_restore + "\n",
+                            buttonText: Language.yes_restore,
                             buttonStyle: { backgroundColor: colors.colorPrimary },
-
-                            cancelButtonText: 'No, create a new account'
+                            cancelButtonText: Language.create_a_new_account,
+                            onPressCancel: () => {
+                                _hidePopUpAlert()
+                                NavigationService.replace("SignUp1", rest)
+                            },
+                            onPressButton: () => {
+                                _hidePopUpAlert()
+                                store.dispatch(doLoginAction(payload))
+                            }
                         })
                     )
                 }
@@ -149,6 +157,7 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._checkEmail, { email: payload?.email });
         if (res.status == 200) {
             payload?.onSuccess()
+            return
         } else if (res.status == 400) {
             payload?.onSuccess(res.message)
             // _showErrorMessage(res.message);

@@ -1,9 +1,12 @@
+import { _checkUsername } from 'api';
+import { setLoadingAction } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import {
   ConfirmPasswordValidations, PasswordValidations
 } from 'custom-components/TextInput/rules';
+import { upperFirst } from 'lodash';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, View } from 'react-native';
@@ -50,10 +53,21 @@ const SignUp1: FC<any> = (props) => {
 
   const onSubmit = useCallback(() => handleSubmit(data => {
     const { username, password, confirmPassword } = data
-    NavigationService.navigate("SignUp2", {
-      username: username?.trim(),
-      password: password?.trim(),
-      ...props?.route?.params,
+    dispatch(setLoadingAction(true))
+    _checkUsername({ username: username?.trim() }).then(res => {
+      if (res?.status == 200) {
+        NavigationService.navigate("SignUp2", {
+          username: username?.trim(),
+          password: password?.trim(),
+          ...props?.route?.params,
+        })
+      } else if (res?.message) {
+        setError('username', { message: res?.message });
+      }
+      dispatch(setLoadingAction(false))
+    }).catch(e => {
+      console.log("e", e)
+      dispatch(setLoadingAction(false))
     })
   })(), []);
 
@@ -102,7 +116,7 @@ const SignUp1: FC<any> = (props) => {
             <Image source={Images.ic_logo_name} style={styles.icon} />
           </View>
           <TextInput
-            placeholder={Language.username}
+            placeholder={upperFirst(Language.username)}
             required={Language.username_required}
             name={'username'}
             style={{ fontSize: scaler(13) }}

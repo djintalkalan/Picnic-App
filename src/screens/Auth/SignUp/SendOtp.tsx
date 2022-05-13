@@ -1,5 +1,5 @@
 import { _sendOtp } from 'api/APIProvider';
-import { checkEmail } from 'app-store/actions';
+import { checkEmail, setLoadingAction } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
@@ -37,7 +37,8 @@ const SendOtp: FC = () => {
     const onSubmit = useCallback(
         () =>
             handleSubmit(data => {
-                _sendOtp({ email: data?.email }).then((res) => {
+                _sendOtp({ email: data?.email?.trim()?.toLowerCase() }).then((res) => {
+                    dispatch(setLoadingAction(false))
                     if (res?.status == 200) {
                         _showSuccessMessage(res?.message)
                         NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
@@ -45,7 +46,10 @@ const SendOtp: FC = () => {
                     else {
                         _showErrorMessage(res?.message)
                     }
-                }).catch(e => console.log(e))
+                }).catch(e => {
+                    console.log(e)
+                    dispatch(setLoadingAction(false))
+                })
             })(),
         [],
     );
