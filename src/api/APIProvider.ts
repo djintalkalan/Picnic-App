@@ -477,3 +477,9 @@ export const _setLanguage = async (body: any) => {
     console.log("---------- set language Api Call ---------------")
     return fetchApiData(config.API_URL + 'user/set-language', body, "POST")
 }
+
+export const _copyEvent = async (body: any) => {
+    console.log("---------- copy event Api Call ---------------")
+    return fetchApiData(config.API_URL + 'event/copy-event', body, "POST")
+}
+
