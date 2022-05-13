@@ -424,6 +424,7 @@ const CreateEvent2: FC<any> = props => {
               name={'additionalInfo'}
               ref={additionalInfoInputRef}
               multiline
+              limit={2000}
               keyboardValues={keyboardValues}
               style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
               borderColor={colors.colorTextInputBackground}
