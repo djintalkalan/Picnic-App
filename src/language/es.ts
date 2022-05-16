@@ -330,6 +330,9 @@ export const es = {
     start_time_invalid: "",
     end_time_invalid: "",
     event_date_invalid: "",
-
+    subscribers: "",
+    only_can_send_messages: "",
+    group_is_no_longer_available: "",
+    event_is_no_longer_available: "",
 
 }

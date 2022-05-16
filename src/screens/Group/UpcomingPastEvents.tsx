@@ -42,7 +42,7 @@ const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEve
                 }}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
-                customView={<TicketView {...item} is_event_admin={true} />}
+                customView={<TicketView {...item} is_event_admin={item?.is_event_admin ?? true} />}
             >
 
             </ListItem>

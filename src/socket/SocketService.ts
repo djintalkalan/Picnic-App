@@ -1,5 +1,5 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getEventDetail, getGroupDetail, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { DeviceEventEmitter } from "react-native";
@@ -117,30 +117,41 @@ class Service {
 
     private onLikeUnlike = (e: any) => {
         console.log("on Like Unlike", e)
-        if (e?.data?.data?.length && Array.isArray(e?.data?.data)) {
-            const userId = Database.getStoredValue("userData")?._id
-            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
-            if (e?.liked_by_users?.findIndex((e: any) => (e?.user_id == userId)) > -1) {
-                data[0].is_message_liked_by_me = true
-            } else {
-                data[0].is_message_liked_by_me = false
+        if (e?.status == 200) {
+            if (e?.data?.data?.length && Array.isArray(e?.data?.data)) {
+                const userId = Database.getStoredValue("userData")?._id
+                const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
+                console.log("data", data);
+
+                if (e?.liked_by_users?.findIndex((e: any) => (e?.user_id == userId)) > -1) {
+                    data[0].is_message_liked_by_me = true
+                } else {
+                    data[0].is_message_liked_by_me = false
+                }
+                // e?.liked_by_users?.some((e: any, index: number) => {
+                //     if (e?.user_id == userId) {
+                //         data[0].is_message_liked_by_me = true
+                //         return true
+                //     }
+                // });
+                if (data?.[0]?.group)
+                    this.dispatch(updateChatInGroup({
+                        groupId: data?.[0]?.resource_id,
+                        chat: data?.[0]
+                    }))
+                else
+                    this.dispatch(updateChatInEvent({
+                        eventId: data?.[0]?.resource_id,
+                        chat: data?.[0]
+                    }))
             }
-            // e?.liked_by_users?.some((e: any, index: number) => {
-            //     if (e?.user_id == userId) {
-            //         data[0].is_message_liked_by_me = true
-            //         return true
-            //     }
-            // });
-            if (data?.[0]?.group)
-                this.dispatch(updateChatInGroup({
-                    groupId: data?.[0]?.resource_id,
-                    chat: data?.[0]
-                }))
-            else
-                this.dispatch(updateChatInEvent({
-                    eventId: data?.[0]?.resource_id,
-                    chat: data?.[0]
-                }))
+        }
+
+        else if (e?.status == 400) {
+            if (e?.data?.invalid_resource) {
+                console.log("Invalid Resource Id");
+                this.dispatch((e?.data?.resource_type == 'group' ? getGroupDetail : getEventDetail)(e?.data?.resource_id))
+            }
         }
     }
 
@@ -168,12 +179,20 @@ class Service {
 
     private onGroupMessage = (e: any) => {
         console.log("Group Message received", e)
-        if (e?.data?.data?.length) {
-            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            this.dispatch(setChatInGroup({
-                groupId: data[0]?.resource_id,
-                chats: data
-            }))
+        if (e?.status == 200) {
+            if (e?.data?.data?.length) {
+                const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+                this.dispatch(setChatInGroup({
+                    groupId: data[0]?.resource_id,
+                    chats: data
+                }))
+            }
+        }
+        else if (e?.status == 400) {
+            if (e?.data?.invalid_resource) {
+                console.log("Invalid Resource Id");
+                this.dispatch(getGroupDetail(e?.data?.resource_id))
+            }
         }
 
     }
@@ -260,12 +279,20 @@ class Service {
 
     private onEventMessage = (e: any) => {
         console.log("Event Message received", e)
-        if (e?.data?.data?.length) {
-            const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-            this.dispatch(setChatInEvent({
-                eventId: data?.[0]?.resource_id,
-                chats: data
-            }))
+        if (e?.status == 200) {
+            if (e?.data?.data?.length) {
+                const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+                this.dispatch(setChatInEvent({
+                    eventId: data?.[0]?.resource_id,
+                    chats: data
+                }))
+            }
+        }
+        else if (e?.status == 400) {
+            if (e?.data?.invalid_resource) {
+                console.log("Invalid Resource Id");
+                this.dispatch(getEventDetail(e?.data?.resource_id))
+            }
         }
 
     }

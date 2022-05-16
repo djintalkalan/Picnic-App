@@ -252,6 +252,21 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getGroupDetail, payload);
         if (res.status == 200) {
+
+            if (res?.data?.group?.status == 5) {
+                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
+                    params?.id == payload
+                ) {
+                    _showErrorMessage(Language.getString("this_group_is_deleted"), 5000)
+                    NavigationService.navigate("Home")
+                }
+                yield put(deleteGroupSuccess(payload))
+                return
+            }
+
+
             res.data.group.is_group_member = res.data?.is_group_joined ? true : false
             res.data.group.is_group_admin = res.data?.group?.is_admin ? true : false
             if (res?.data?.group?.is_admin)
