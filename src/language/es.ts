@@ -325,6 +325,8 @@ export const es = {
     select: "",
     group_admin: "",
     do_you_want_to_restore_your_purchases: "",
+    we_have_sent_you_email_verification: "",
+    required_information: '',
     copy: '',
     new_event_name: '',
     start_time_invalid: "",
@@ -334,5 +336,13 @@ export const es = {
     only_can_send_messages: "",
     group_is_no_longer_available: "",
     event_is_no_longer_available: "",
+    restore_account: '',
+    do_you_want_to_restore: "",
+    yes_restore: '',
+    create_a_new_account: '',
+    warning: "",
+    create_new_account_warning: "",
+    yes_continue: "",
+    no_go_back: "",
 
 }

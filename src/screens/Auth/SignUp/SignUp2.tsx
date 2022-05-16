@@ -16,9 +16,13 @@ type FormType = {
     dob: string
 }
 
+const maxDate = sub(new Date(), {
+    years: 15,
+})
+
 const SignUp2: FC<any> = (props) => {
 
-    const birthDate = useRef<Date>(new Date())
+    const birthDate = useRef<Date>(maxDate)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<FormType>({
@@ -52,7 +56,7 @@ const SignUp2: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
 
-            <Stepper isBackButton step={2} totalSteps={3} />
+            <Stepper isBackButton step={3} totalSteps={4} />
 
             <ScrollView keyboardShouldPersistTaps={'handled'} >
 
@@ -133,10 +137,10 @@ const SignUp2: FC<any> = (props) => {
                     </View>
                 )}
                 date={birthDate.current}
-                maximumDate={sub(new Date(), {
-                    years: 15,
-                })}
+                maximumDate={maxDate}
                 onConfirm={(date: Date) => {
+                    console.log("date", date);
+
                     birthDate.current = date
                     setValue("dob", dateFormat(date, "MMM DD, YYYY"), { shouldValidate: true })
                     setDatePickerVisibility(false);

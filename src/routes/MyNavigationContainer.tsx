@@ -22,10 +22,11 @@ import { Rollbar } from 'rollbar-service';
 import CreateNewPassword from 'screens/Auth/CreateNewPassword';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
 import Login from 'screens/Auth/Login';
+import SendOtp from 'screens/Auth/SignUp/SendOtp';
 import SignUp1 from 'screens/Auth/SignUp/SignUp1';
 import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
-import VerifyOTP from 'screens/Auth/VerifyOTP';
+import VerifyOtp from 'screens/Auth/VerifyOtp';
 import EventChats from 'screens/Chat/EventChat/EventChats';
 import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
 import ImagePreview from 'screens/Chat/ImagePreview';
@@ -73,11 +74,12 @@ const commonScreens = {};
 const authScreens = {
   Login: Login,
   ForgotPassword: ForgotPassword,
-  VerifyOTP: VerifyOTP,
+  VerifyOtp: VerifyOtp,
   CreateNewPassword: CreateNewPassword,
   SignUp1: SignUp1,
   SignUp2: SignUp2,
   SignUp3: SignUp3,
+  SendOtp: SendOtp,
 };
 
 const dashboardScreens = {

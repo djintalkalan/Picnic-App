@@ -1,12 +1,14 @@
 import AnalyticService from 'analytics';
 import * as ApiProvider from 'api/APIProvider';
-import { resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { colors } from 'assets/Colors';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
+import { store } from '..';
 import ActionTypes, { action } from "../action-types";
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
@@ -22,8 +24,10 @@ DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
 function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const firebaseToken = Database.getStoredValue('firebaseToken')
+    const { isSignUp = false, ...rest } = payload
     try {
-        let res = yield call(ApiProvider._loginApi, { ...payload, device_token: firebaseToken });
+        let res = yield call(isSignUp ? ApiProvider._restoreAccount : ApiProvider._loginApi, { ...rest, device_token: firebaseToken });
+        yield put(setLoadingAction(false));
         if (res.status == 200) {
             yield put(resetStateOnLogin())
             ApiProvider.TOKEN_EXPIRED.current = false
@@ -62,7 +66,7 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._forgotPassword, payload);
         if (res.status == 200) {
-            NavigationService.navigate("VerifyOTP", payload)
+            NavigationService.navigate("VerifyOtp", payload)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -76,12 +80,50 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+const showRestoreAlert = (payload: any) => {
+    const { isSignUp, ...rest } = payload
+    _showPopUpAlert({
+        title: Language.restore_account,
+        message: Language.do_you_want_to_restore + "\n",
+        buttonText: Language.yes_restore,
+        buttonStyle: { backgroundColor: colors.colorPrimary },
+        cancelButtonText: Language.create_a_new_account,
+        onPressCancel: () => {
+            _showPopUpAlert({
+                title: Language.warning,
+                message: Language.create_new_account_warning,
+                buttonText: Language.yes_continue,
+                cancelButtonText: Language.no_go_back,
+                onPressCancel: () => showRestoreAlert(payload),
+                onPressButton: () => {
+                    _hidePopUpAlert()
+                    NavigationService.replace("SignUp1", rest)
+                }
+            })
+        },
+        onPressButton: () => {
+            _hidePopUpAlert()
+            store.dispatch(doLoginAction(payload))
+        }
+    })
+}
+
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._verifyOtp, payload);
+        const { isSignUp = false, ...rest } = payload
+        let res = yield call(isSignUp ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
-            NavigationService.replace("CreateNewPassword", payload)
+            if (isSignUp) {
+                if (res?.data?.resignUp) {
+                    yield put(setLoadingAction(false));
+                    return showRestoreAlert(payload)
+                }
+                NavigationService.replace("SignUp1", rest)
+                yield put(setLoadingAction(false));
+                return
+            }
+            NavigationService.replace("CreateNewPassword", rest)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -124,6 +166,7 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._checkEmail, { email: payload?.email });
         if (res.status == 200) {
             payload?.onSuccess()
+            return
         } else if (res.status == 400) {
             payload?.onSuccess(res.message)
             // _showErrorMessage(res.message);
@@ -140,9 +183,10 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
 
 function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
+    const { otp, ...rest } = payload
     const firebaseToken = Database.getStoredValue('firebaseToken')
     try {
-        let res = yield call(ApiProvider._signUp, { ...payload, device_token: firebaseToken });
+        let res = yield call(ApiProvider._signUp, { ...rest, device_token: firebaseToken });
         if (res.status == 200) {
             _showSuccessMessage(res?.message);
             yield put(resetStateOnLogin())

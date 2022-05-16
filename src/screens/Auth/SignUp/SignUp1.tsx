@@ -1,28 +1,27 @@
-import { checkEmail } from 'app-store/actions';
+import { _checkUsername } from 'api';
+import { setLoadingAction } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import {
-  ConfirmPasswordValidations,
-  EmailValidations,
-  PasswordValidations,
-  validateEmail
+  ConfirmPasswordValidations, PasswordValidations
 } from 'custom-components/TextInput/rules';
+import { upperFirst } from 'lodash';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { NavigationService, scaler, _showErrorMessage } from 'utils';
+import { NavigationService, scaler } from 'utils';
 
 type FormType = {
-  email: string;
+  username: string;
   password: string;
   confirmPassword: string;
 };
 
-const SignUp1: FC = () => {
+const SignUp1: FC<any> = (props) => {
   const dispatch = useDispatch();
 
   const [isTerms, setTerms] = useState(true);
@@ -36,60 +35,75 @@ const SignUp1: FC = () => {
     formState: { errors },
     setError,
   } = useForm<FormType>({
-    defaultValues: __DEV__ ? {
-      email: "deepakq@testings.com",
-      password: "Dj@123456",
-      confirmPassword: "Dj@123456"
-    } : {},
     mode: 'onChange',
   });
 
-  const onSubmit = useCallback(
-    () =>
-      handleSubmit(data => {
-        if (isTerms) {
-          const { confirmPassword, ...rest } = data;
-          NavigationService.navigate('SignUp2', rest);
-        } else {
-          _showErrorMessage(Language.please_accept_terms);
-        }
-      })(),
-    [isTerms],
-  );
+  // const onSubmit = useCallback(
+  //   () =>
+  //     handleSubmit(data => {
+  //       if (isTerms) {
+  //         const { confirmPassword, ...rest } = data;
+  //         NavigationService.navigate('SignUp2', rest);
+  //       } else {
+  //         _showErrorMessage(Language.please_accept_terms);
+  //       }
+  //     })(),
+  //   [isTerms],
+  // );
+
+  const onSubmit = useCallback(() => handleSubmit(data => {
+    const { username, password, confirmPassword } = data
+    dispatch(setLoadingAction(true))
+    _checkUsername({ username: username?.trim() }).then(res => {
+      if (res?.status == 200) {
+        NavigationService.navigate("SignUp2", {
+          username: username?.trim(),
+          password: password?.trim(),
+          ...props?.route?.params,
+        })
+      } else if (res?.message) {
+        setError('username', { message: res?.message });
+      }
+      dispatch(setLoadingAction(false))
+    }).catch(e => {
+      console.log("e", e)
+      dispatch(setLoadingAction(false))
+    })
+  })(), []);
 
   const calculateButtonDisability = useCallback(() => {
     if (
-      !getValues('email') ||
+      !getValues('username') ||
       !getValues('confirmPassword') ||
       !getValues('password') ||
-      (errors && (errors.confirmPassword || errors.email || errors.password))
+      (errors && (errors.confirmPassword || errors.username || errors.password))
     )
       return true;
     return false;
   }, [errors]);
 
-  const onBlurEmail = useCallback(() => {
-    if (validateEmail(getValues('email'))) {
-      dispatch(
-        checkEmail({
-          email: getValues('email'),
-          onSuccess: (errorMessage: string) => {
-            if (errorMessage) {
-              setError('email', { message: errorMessage });
-              isValidEmail.current = false;
-            } else {
-              isValidEmail.current = true;
-              onSubmit();
-            }
-          },
-        }),
-      );
-    }
-  }, []);
+  // const onBlurEmail = useCallback(() => {
+  //   if (validateEmail(getValues('email'))) {
+  //     dispatch(
+  //       checkEmail({
+  //         email: getValues('email'),
+  //         onSuccess: (errorMessage: string) => {
+  //           if (errorMessage) {
+  //             setError('email', { message: errorMessage });
+  //             isValidEmail.current = false;
+  //           } else {
+  //             isValidEmail.current = true;
+  //             onSubmit();
+  //           }
+  //         },
+  //       }),
+  //     );
+  //   }
+  // }, []);
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <Stepper step={1} totalSteps={3} />
+      <Stepper isBackButton step={2} totalSteps={4} />
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View
           style={{
@@ -98,18 +112,14 @@ const SignUp1: FC = () => {
             paddingVertical: scaler(15),
           }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.welcomeStyle}>{Language.lets_get_started}</Text>
+            <Text style={styles.welcomeStyle}>{Language.required_information}</Text>
             <Image source={Images.ic_logo_name} style={styles.icon} />
           </View>
           <TextInput
-            title={Language.email}
-            placeholder={Language.enter_email_or_password}
-            name={'email'}
-            keyboardType={'email-address'}
-            required={true}
-            onChangeText={(text: string) => { }}
-            // onBlur={onBlurEmail}
-            rules={EmailValidations}
+            placeholder={upperFirst(Language.username)}
+            required={Language.username_required}
+            name={'username'}
+            style={{ fontSize: scaler(13) }}
             control={control}
             errors={errors}
           />
@@ -168,10 +178,10 @@ const SignUp1: FC = () => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={onBlurEmail}
+            onPress={onSubmit}
           />
 
-          <Text style={styles.notAMember}>
+          {/* <Text style={styles.notAMember}>
             {Language.already_a_member}{' '}
             <Text
               onPress={() => {
@@ -180,7 +190,7 @@ const SignUp1: FC = () => {
               style={[styles.notAMember, { color: colors.colorPrimary }]}>
               {Language.log_in}
             </Text>
-          </Text>
+          </Text> */}
         </View>
       </ScrollView>
     </SafeAreaViewWithStatusBar>

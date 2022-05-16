@@ -325,6 +325,8 @@ export const en = {
   select: "-- Select --",
   group_admin: "Group admin",
   do_you_want_to_restore_your_purchases: "Do you want to restore your purchases?",
+  we_have_sent_you_email_verification: "We have sent the email verification code to your email.",
+  required_information: 'Required information',
   copy: 'Copy',
   new_event_name: 'New event name',
   start_time_invalid: "Event start time should be greater than current time",
@@ -334,5 +336,13 @@ export const en = {
   only_can_send_messages: "Only {0} can send messages",
   group_is_no_longer_available: "Group is no longer available",
   event_is_no_longer_available: "Event is no longer available",
+  restore_account: 'Restore account',
+  do_you_want_to_restore: 'Do you want to restore your account?',
+  yes_restore: 'Yes, restore',
+  create_a_new_account: 'No, create a new account',
+  warning: "Warning !!",
+  create_new_account_warning: "If you choose to create new account, your previous data will be deleted completely and there is no way to restore that. Do you want to continue?",
+  yes_continue: "Yes, Continue",
+  no_go_back: "No, Go back",
 
 }

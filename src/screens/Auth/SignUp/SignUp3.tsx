@@ -6,8 +6,7 @@ import {
   CheckBox,
   PhoneInput,
   Stepper,
-  Text,
-  TextInput
+  Text
 } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useRef, useState } from 'react';
@@ -20,7 +19,6 @@ import Language from 'src/language/Language';
 import { openLink, scaler } from 'utils';
 
 type FormType = {
-  username: string;
   phone: string;
   phone_countryCode: string;
   phone_dialCode: string;
@@ -30,6 +28,7 @@ const SignUp3: FC<any> = props => {
   const phoneRef = useRef();
 
   const [isTerms, setTerms] = useState(false);
+  console.log('props', props?.route?.params);
 
   const {
     control,
@@ -51,17 +50,16 @@ const SignUp3: FC<any> = props => {
     () =>
       handleSubmit(data => {
         console.log(data);
-        // return
-        dispatch(
-          doSignUp({
-            username: data?.username?.trim(),
-            dial_code: data?.phone ? data?.phone_dialCode : '',
-            phone_number: data?.phone?.trim(),
-            phone_country_code: data?.phone_countryCode?.trim(),
-            register_platform: Platform.OS,
-            ...props.route?.params,
-          }),
-        );
+        return (
+          dispatch(
+            doSignUp({
+              dial_code: data?.phone ? data?.phone_dialCode : '',
+              phone_number: data?.phone?.trim(),
+              phone_country_code: data?.phone_countryCode?.trim(),
+              register_platform: Platform.OS,
+              ...props.route?.params,
+            }),
+          ))
       })(),
     [],
   );
@@ -76,13 +74,13 @@ const SignUp3: FC<any> = props => {
   // console.log("Database.DefaultCountry", Database.DefaultCountry)
 
   const calculateButtonDisability = useCallback(() => {
-    if (!isTerms || (errors && (errors.username || errors.phone))) return true;
+    if (!isTerms || (errors && errors.phone)) return true;
     return false;
   }, [errors, isTerms]);
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <Stepper isBackButton step={3} totalSteps={3} />
+      <Stepper isBackButton step={4} totalSteps={4} />
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View
           style={{
@@ -96,15 +94,6 @@ const SignUp3: FC<any> = props => {
             </Text>
             <Image source={Images.ic_logo_name} style={styles.icon} />
           </View>
-
-          <TextInput
-            placeholder={Language.username}
-            required={Language.username_required}
-            name={'username'}
-            style={{ fontSize: scaler(13) }}
-            control={control}
-            errors={errors}
-          />
 
           <PhoneInput
             name={'phone'}

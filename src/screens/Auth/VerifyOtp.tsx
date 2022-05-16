@@ -10,11 +10,11 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler, _showErrorMessage } from 'utils'
-const VerifyOTP: FC<any> = (props) => {
+const VerifyOtp: FC<any> = (props) => {
     const [otp, setOtp] = useState("")
     const dispatch = useDispatch()
-
     const disabled = !(otp?.trim()?.length == 4 && validateNumber(otp?.trim()))
+    const isSignUp = props?.route?.params?.isSignUp
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
@@ -39,7 +39,8 @@ const VerifyOTP: FC<any> = (props) => {
                     if (otp.trim().length == 4 && validateNumber(otp.trim())) {
                         dispatch(verifyOtp({
                             otp: otp,
-                            email: props?.route?.params?.email
+                            email: props?.route?.params?.email,
+                            isSignUp: props?.route?.params?.isSignUp,
                         }))
                     } else {
                         _showErrorMessage(Language.invalid_otp)
@@ -47,27 +48,24 @@ const VerifyOTP: FC<any> = (props) => {
 
                 }} />
 
-
-
                 <Image source={Images.ic_email_illustrator} style={{ flex: 1, resizeMode: 'contain', width: '100%', marginVertical: scaler(20) }} />
 
             </ScrollView>
 
             <View style={{ marginVertical: scaler(20), marginHorizontal: '10%' }} >
                 <Text style={styles.check} >{Language.check_your_mail}</Text>
-                <Text style={styles.weHave} >{Language.we_have_sent_you}</Text>
+                <Text style={styles.weHave} >{isSignUp ? Language.we_have_sent_you_email_verification : Language.we_have_sent_you}</Text>
             </View>
 
             <Text style={styles.didYouNot} >{Language.did_you_not_receive}
                 <Text onPress={() => {
                     NavigationService.goBack()
                 }} style={[styles.didYouNot, { color: colors.colorPrimary }]} > {Language.try_another_email}</Text></Text>
-
         </SafeAreaViewWithStatusBar>
     )
 }
 
-export default VerifyOTP
+export default VerifyOtp
 
 const styles = StyleSheet.create({
     container: {
