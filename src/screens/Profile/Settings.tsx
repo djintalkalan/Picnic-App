@@ -1,4 +1,3 @@
-import Intercom, { IntercomEvents } from '@intercom/intercom-react-native'
 import { config, _setLanguage } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -13,6 +12,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
+import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
@@ -42,26 +42,10 @@ const Settings: FC<any> = (props) => {
 
     const passwordRef = useRef("")
 
-    const [unreadCount, setUnreadCount] = useState(0)
 
     useEffect(() => {
         dispatch(getProfile())
     }, [selectedLanguage]);
-
-
-    useEffect(() => {
-
-        const countListener = Intercom.addEventListener(
-            IntercomEvents.IntercomUnreadCountDidChange,
-            (response: any) => {
-                console.log("response", response);
-                setUnreadCount(response?.count as number);
-            }
-        );
-        return () => {
-            countListener.remove();
-        };
-    }, []);
 
     const setLanguage = useCallback((language: any) => {
         dispatch(setLoadingAction(true))
@@ -192,10 +176,10 @@ const Settings: FC<any> = (props) => {
 
                     <SettingButton
                         onPress={() => {
-                            Intercom.displayMessenger();
+                            IntercomService.openMessenger();
                         }}
                         image={helpImageSource}
-                        title={"Help and Support"}// (" + unreadCount + ")"}
+                        title={"Help and Support"}
                     />
 
                     <View style={{}} >

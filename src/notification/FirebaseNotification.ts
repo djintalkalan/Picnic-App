@@ -1,12 +1,12 @@
 
 // import PushNotification from "react-native-push-notification";
-import Intercom from "@intercom/intercom-react-native";
 import notifee, { AndroidColor, AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
 import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
+import IntercomService from "intercom";
 import { Dispatch, useCallback, useEffect } from 'react';
 import { Platform } from "react-native";
 import { useDispatch } from 'react-redux';
@@ -116,7 +116,7 @@ const navigateToPages = async (notification: any) => {
 
         if (data?.receiver == 'intercom_sdk') {
             setTimeout(() => {
-                Intercom.displayMessenger();
+                IntercomService.openMessenger()
             }, 50);
             return
         }

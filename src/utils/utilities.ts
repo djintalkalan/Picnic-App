@@ -1,5 +1,6 @@
 
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import AnalyticService from 'analytics';
 import { config } from 'api';
 import { store } from 'app-store';
 import { IPaginationState, setLoadingAction } from 'app-store/actions';
@@ -8,13 +9,13 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
-import { Keyboard, Linking, Platform, Share } from 'react-native';
+import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
-import Language from 'src/language/Language';
+import Language, { LanguageType } from 'src/language/Language';
 import { StaticHolder } from './StaticHolder';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
@@ -57,14 +58,10 @@ export const launchMap = async (address: string | { lat: number, long: number },
 
 };
 
-export const share = (title: string, message: string, url?: string | undefined) => {
-    try {
-        Share.share({
-            title, message, url
-        })
-    } catch (e) {
-        console.log(e)
-    }
+export const share = async (title: string, message: string, url?: string | undefined) => {
+    return await Share.share({
+        title, message, url
+    })
 };
 
 export const htmlToPlainText = (text: string): string => {
@@ -550,12 +547,35 @@ export const shareDynamicLink = async (name: string, { type, id }: { type: IDyna
         store.dispatch(setLoadingAction(true))
         const link = await buildLink("?t=" + type + "&i=" + id)
         store.dispatch(setLoadingAction(false))
-        setTimeout(() => {
-            share("Share " + name, link)
+        setTimeout(async () => {
+            try {
+                const shareAction = await share("Share " + name, link)
+                handleShareAction(shareAction, type == 'event-detail' ? 'event' : 'group', id)
+            }
+            catch (e) {
+                e && console.log("share error ", e);
+            }
         }, 100);
     }
     catch (e) {
         store.dispatch(setLoadingAction(false))
+    }
+
+}
+
+const handleShareAction = (shareAction: ShareAction | null, type: string, id: string) => {
+    if (shareAction) {
+        console.log(shareAction);
+        switch (shareAction?.action) {
+            case 'dismissedAction':
+
+                break;
+            case 'sharedAction':
+                AnalyticService.logShare(id, type, shareAction?.activityType)
+                break;
+            default:
+                break;
+        }
     }
 
 }
@@ -574,7 +594,15 @@ export const shareAppLink = async (name: string) => {
             forcedRedirectEnabled: true
         }
     });
-    share("Share " + name, link)
+
+    try {
+        const shareAction = await share("Share " + name, link)
+        handleShareAction(shareAction, 'application', Platform.OS)
+    }
+    catch (e) {
+        e && console.log("share error ", e);
+    }
+
 }
 
 export const getDisplayName = (user: {
@@ -675,5 +703,14 @@ export const getChatUsers = (users: Array<any>) => {
     return {
         chatUser: users?.find(_ => _?._id != user?._id),
         loggedInUser: user
+    }
+}
+
+const getLanguageString = (language: LanguageType) => {
+    switch (language) {
+        case 'en':
+            return "English";
+        case 'es':
+            return "Español (Spanish)"
     }
 }
