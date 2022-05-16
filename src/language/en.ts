@@ -336,5 +336,9 @@ export const en = {
   do_you_want_to_restore: 'Do you want to restore your account?',
   yes_restore: 'Yes, restore',
   create_a_new_account: 'No, create a new account',
+  warning: "Warning !!",
+  create_new_account_warning: "If you choose to create new account, your previous data will be deleted completely and there is no way to restore that. Do you want to continue?",
+  yes_continue: "Yes, Continue",
+  no_go_back: "No, Go back",
 
 }

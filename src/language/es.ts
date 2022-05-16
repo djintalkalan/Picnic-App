@@ -336,5 +336,9 @@ export const es = {
     do_you_want_to_restore: "",
     yes_restore: '',
     create_a_new_account: '',
+    warning: "",
+    create_new_account_warning: "",
+    yes_continue: "",
+    no_go_back: "",
 
 }

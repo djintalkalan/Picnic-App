@@ -83,6 +83,34 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+const showRestoreAlert = (payload: any) => {
+    const { isSignUp, ...rest } = payload
+    _showPopUpAlert({
+        title: Language.restore_account,
+        message: Language.do_you_want_to_restore + "\n",
+        buttonText: Language.yes_restore,
+        buttonStyle: { backgroundColor: colors.colorPrimary },
+        cancelButtonText: Language.create_a_new_account,
+        onPressCancel: () => {
+            _showPopUpAlert({
+                title: Language.warning,
+                message: Language.create_new_account_warning,
+                buttonText: Language.yes_continue,
+                cancelButtonText: Language.no_go_back,
+                onPressCancel: () => showRestoreAlert(payload),
+                onPressButton: () => {
+                    _hidePopUpAlert()
+                    NavigationService.replace("SignUp1", rest)
+                }
+            })
+        },
+        onPressButton: () => {
+            _hidePopUpAlert()
+            store.dispatch(doLoginAction(payload))
+        }
+    })
+}
+
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
@@ -92,23 +120,7 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
             if (isSignUp) {
                 if (res?.data?.resignUp) {
                     yield put(setLoadingAction(false));
-                    return (
-                        _showPopUpAlert({
-                            title: Language.restore_account,
-                            message: Language.do_you_want_to_restore + "\n",
-                            buttonText: Language.yes_restore,
-                            buttonStyle: { backgroundColor: colors.colorPrimary },
-                            cancelButtonText: Language.create_a_new_account,
-                            onPressCancel: () => {
-                                _hidePopUpAlert()
-                                NavigationService.replace("SignUp1", rest)
-                            },
-                            onPressButton: () => {
-                                _hidePopUpAlert()
-                                store.dispatch(doLoginAction(payload))
-                            }
-                        })
-                    )
+                    return showRestoreAlert(payload)
                 }
                 NavigationService.replace("SignUp1", rest)
                 yield put(setLoadingAction(false));
