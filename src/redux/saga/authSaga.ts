@@ -30,12 +30,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
             // _showSuccessMessage(res.message);
             const { access_token, notification_settings, ...userData } = res?.data
             // if (!__DEV__) {
-            try {
-                yield call(AnalyticService.setUserData, userData, 1)
-            }
-            catch (e) {
-                console.log("Analytical Error", e);
-            }
+            yield call(AnalyticService.setUserData, userData, 1)
             // }
 
             Database.setMultipleValues({
@@ -148,12 +143,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
             yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
             // if (!__DEV__) {
-            try {
-                yield call(AnalyticService.setUserData, userData, 2)
-            }
-            catch (e) {
-                console.log("Analytical Error", e);
-            }
+            yield call(AnalyticService.setUserData, userData, 2)
             // }
             ApiProvider.TOKEN_EXPIRED.current = false
             Database.setMultipleValues({
@@ -226,18 +216,9 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
     }
     try {
         // if (!__DEV__) {
-
-        try {
-            yield put(setLoadingAction(true));
-            yield call(AnalyticService.clearUserData)
-            yield put(setLoadingAction(false));
-
-
-        }
-        catch (e) {
-            console.log("Analytical Error", e);
-            yield put(setLoadingAction(false));
-        }
+        yield put(setLoadingAction(true));
+        yield call(AnalyticService.clearUserData)
+        yield put(setLoadingAction(false));
         // }
         Database.setMultipleValues({
             isLogin: false,

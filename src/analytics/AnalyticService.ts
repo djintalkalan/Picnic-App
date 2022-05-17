@@ -1,10 +1,7 @@
-
-import analytics, { firebase } from '@react-native-firebase/analytics';
+import analytics from '@react-native-firebase/analytics';
 import { Platform } from 'react-native';
 
 const getAnalyticScreenName = (routeName: string) => {
-    console.log("routeName", routeName);
-
     switch (routeName) {
         case "HomeEventTab":
             return "EventList at Home"
@@ -42,49 +39,66 @@ const getAnalyticScreenName = (routeName: string) => {
 
 const AnalyticService = {
     init: async () => {
-        firebase.analytics().setAnalyticsCollectionEnabled(true).then(() => console.log("Firebase Analytics Enabled"))
-        const instanceId = await analytics().getAppInstanceId()
-        console.log("Instance Id is ", instanceId)
-        return instanceId
+        try {
+            const instanceId = await analytics().getAppInstanceId()
+            console.log("Instance Id is ", instanceId)
+            return instanceId
+        } catch (error) {
+            console.log("Init Error", error)
+
+        }
+
     },
 
     setUserData: async (userData: any, type?: 1 | 2) => {
-        await analytics().setUserId(userData?._id)
-        await analytics().setUserProperties({
-            username: userData?.username,
-            fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-            email: userData?.email
-        })
-        if (type) {
-            const fn = type == 1 ? analytics().logLogin : analytics().logSignUp
-            await fn({ method: Platform.OS + "-app" })
-            return
+        try {
+            const analytic = analytics()
+            await analytic.setUserId(userData?._id)
+            await analytic.setUserProperties({
+                username: userData?.username,
+                fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+                email: userData?.email
+            })
+            type && await analytic[type == 1 ? 'logLogin' : "logSignUp"]({ method: `${Platform.OS}-app` })
+        } catch (error) {
+            console.log("Set UserData Error", error)
         }
+
     },
     clearUserData: async () => {
-        await analytics().setUserId(null)
-        await analytics().setUserProperties({
-            username: null,
-            fullName: null,
-            email: null
-        })
+        try {
+            await analytics().setUserId(null)
+            await analytics().setUserProperties({
+                username: null,
+                fullName: null,
+                email: null
+            })
+        } catch (error) {
+            console.log("clear UserData Error", error)
+        }
     },
     logScreenView: async (currentRouteName: string) => {
-        await analytics().logScreenView({
-            screen_name: getAnalyticScreenName(currentRouteName),
-            screen_class: currentRouteName,
-        });
+        try {
+            await analytics().logScreenView({
+                screen_name: getAnalyticScreenName(currentRouteName),
+                screen_class: currentRouteName,
+            });
+        } catch (error) {
+            console.log("Screen View Log Error", error)
+
+        }
+
     },
     logShare: async (id: string, type: string, method: string = "") => {
-        // console.log("id", id);
-        // console.log("type", type);
-        // console.log("method", method);
-
-        await analytics().logShare({
-            content_type: type,
-            item_id: id,
-            method: method || ""
-        })
+        try {
+            await analytics().logShare({
+                content_type: type,
+                item_id: id,
+                method: method || ""
+            })
+        } catch (error) {
+            console.log("Share Log Error", error)
+        }
     }
 }
 

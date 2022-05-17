@@ -153,13 +153,8 @@ const MyNavigationContainer = () => {
   useEffect(() => {
     if (isLogin) {
       // if (!__DEV__) {
-      try {
-        const userData = Database.getStoredValue("userData")
-        AnalyticService.setUserData(userData)
-      }
-      catch (e) {
-        console.log(e);
-      }
+      const userData = Database.getStoredValue("userData")
+      AnalyticService.setUserData(userData)
       // }
       SocketService.init(dispatch);
     }
