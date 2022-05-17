@@ -23,7 +23,7 @@ const Login: FC = () => {
     const [isTerms, setTerms] = useState(__DEV__);
     const { loadVideo } = useVideoPlayer()
 
-    const { control, handleSubmit, getValues, formState: { errors } } = useForm<LoginFormType>({
+    const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<LoginFormType>({
         defaultValues: __DEV__ ? Platform.OS == 'ios' ? {
             // email: "mukeshkaushal2008@gmail.com",
             // password: "Mukesh@123",
@@ -84,10 +84,18 @@ const Login: FC = () => {
                         title={Language.email}
                         placeholder={Language.enter_email_or_password}
                         name={'email'}
+                        autoCapitalize={'none'}
                         required={true}
                         // onChangeText={onVerify}
                         keyboardType={'email-address'}
-                        rules={EmailValidations}
+                        rules={{
+                            ...EmailValidations,
+                            validate: (v) => {
+                                if (v?.toLowerCase() != v)
+                                    setValue("email", v?.toLowerCase())
+                                return true
+                            }
+                        }}
                         control={control}
                         errors={errors}
                     />
@@ -98,6 +106,7 @@ const Login: FC = () => {
                         name={'password'}
                         onPressIcon={() => setSecure(!isSecure)}
                         secureTextEntry={isSecure}
+                        autoCapitalize={'none'}
                         icon={isSecure ? Images.ic_eye_open : Images.ic_eye_closed}
                         iconSize={scaler(18)}
                         required={true}

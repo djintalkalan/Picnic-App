@@ -79,7 +79,7 @@ export interface ILocation {
     address?: {
         main_text: string,
         secondary_text: string
-    }
+    } | null
     otherData?: {
         city?: string
         state?: string

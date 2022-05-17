@@ -118,6 +118,7 @@ const SignUp1: FC<any> = (props) => {
           <TextInput
             placeholder={upperFirst(Language.username)}
             required={Language.username_required}
+            autoCapitalize={'none'}
             name={'username'}
             style={{ fontSize: scaler(13) }}
             control={control}

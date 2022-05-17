@@ -111,7 +111,7 @@ const SelectLocation: FC<any> = (props) => {
                                     longitude: e.nativeEvent.coordinate.longitude,
                                 }
                                 let { address, otherData } = await getAddressFromLocation(coords)
-                                let newLocation = {
+                                let newLocation: ILocation = {
                                     ...coords, address, otherData
                                 }
                                 // let oldLocation = Database.getStoredValue("currentLocation")
@@ -169,6 +169,7 @@ const SelectLocation: FC<any> = (props) => {
                                     onFocus={() => {
 
                                     }}
+                                    autoCapitalize={'none'}
                                     placeholder={Language.search_location}
                                     placeholderTextColor={colors.colorGreyInactive}
                                 />

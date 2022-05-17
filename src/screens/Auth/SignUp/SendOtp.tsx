@@ -25,6 +25,7 @@ const SendOtp: FC = () => {
         control,
         handleSubmit,
         getValues,
+        setValue,
         formState: { errors },
         setError,
     } = useForm<FormType>({
@@ -96,13 +97,21 @@ const SendOtp: FC = () => {
                     </View>
                     <TextInput
                         title={Language.email}
+                        autoCapitalize={'none'}
                         placeholder={Language.enter_email_or_password}
                         name={'email'}
                         keyboardType={'email-address'}
                         required={true}
                         onChangeText={(text: string) => { }}
                         // onBlur={onBlurEmail}
-                        rules={EmailValidations}
+                        rules={{
+                            ...EmailValidations,
+                            validate: (v) => {
+                                if (v?.toLowerCase() != v)
+                                    setValue("email", v?.toLowerCase())
+                                return true
+                            }
+                        }}
                         control={control}
                         errors={errors}
                     />
