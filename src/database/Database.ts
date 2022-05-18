@@ -280,6 +280,40 @@ export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
     }
     const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey(key), defaultValue);
     return [value, key == 'selectedLanguage' ? () => null : setValue];
+
+    // const oldValueRef = useRef(value)
+
+    // useEffect(() => {
+
+    //     if (!isEqual(oldValueRef.current, value)) {
+    //         if (key == 'userData') {
+    //             console.log("userDatauserData", value);
+    //         }
+    //         oldValueRef.current = value
+    //     }
+    // }, [value])
+
+    // return [oldValueRef.current, key == 'selectedLanguage' ? () => null : setValue];
+
+
+
+    // const databaseReducer = (state: any, newState: any) => {
+    //     if (!isEqual(newState, state)) {
+    //         return newState
+    //     }
+    //     return state
+    // }
+    // const [state, dispatch] = useReducer(databaseReducer, Database.getInstance().getStoredValue(key) || defaultValue)
+    // const updateState: (value: T | ((prevValue: T) => T)) => void = useCallback((value) => {
+    //     if (isFunction(value)) {
+    //         setValue(state(state))
+    //     }
+    //     setValue(value)
+    // }, [state])
+    // useEffect(() => {
+    //     dispatch(value)
+    // }, [value])
+    // return [state, updateState]
     // return [value, setValue];
 }
 
