@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler, _showErrorMessage } from 'utils'
-const VerifyOTP: FC<any> = (props) => {
+const VerifyOtp: FC<any> = (props) => {
     const [otp, setOtp] = useState("")
     const dispatch = useDispatch()
 
@@ -67,7 +67,7 @@ const VerifyOTP: FC<any> = (props) => {
     )
 }
 
-export default VerifyOTP
+export default VerifyOtp
 
 const styles = StyleSheet.create({
     container: {

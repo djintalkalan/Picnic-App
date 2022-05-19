@@ -37,6 +37,14 @@ export const Button = (props: ButtonProps) => {
     //     }
     //     return GTO
     // }, [opacityType])
+    const onPressButton = React.useMemo(() => {
+        return onPress ? (e: GestureResponderEvent) => {
+            requestAnimationFrame(() => {
+                onPress(e);
+            });
+        } : undefined
+    }, [onPress])
+
     const styles = React.useMemo(() => {
         let container = {}
         if (center) {
@@ -71,16 +79,11 @@ export const Button = (props: ButtonProps) => {
             }
         })
     }, [containerStyle, textStyle, fontColor, fontSize, center, width, buttonStyle, backgroundColor, paddingHorizontal, radius, paddingVertical, minWidth, disabled]);
+
     return (
         <View pointerEvents={props.pointerEvents} style={styles.contentContainerStyle}>
             <TouchableOpacity disabled={disabled}
-                onPress={onPress ? (e) => {
-                    requestAnimationFrame(() => {
-                        onPress(e);
-                    });
-                }
-                    : undefined
-                }
+                onPress={onPressButton}
                 style={styles.buttonStyle}>
                 <Text style={styles.textStyle} type={type} >{title}</Text>
             </TouchableOpacity>

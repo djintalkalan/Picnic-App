@@ -328,6 +328,11 @@ export const es = {
     only_can_send_messages: "",
     group_is_no_longer_available: "",
     event_is_no_longer_available: "",
-    do_you_want_to_restore_your_purchases: ""
+    do_you_want_to_restore_your_purchases: "",
+    copy: '',
+    new_event_name: '',
+    start_time_invalid: "",
+    end_time_invalid: "",
+    event_date_invalid: "",
 
 }
