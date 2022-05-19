@@ -57,7 +57,7 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._forgotPassword, payload);
         if (res.status == 200) {
-            NavigationService.navigate("VerifyOTP", payload)
+            NavigationService.navigate("VerifyOtp", payload)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
