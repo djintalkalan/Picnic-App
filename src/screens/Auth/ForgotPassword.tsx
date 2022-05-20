@@ -18,7 +18,7 @@ type FormType = {
 
 const ForgotPassword: FC = () => {
 
-    const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormType>({
+    const { control, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormType>({
         defaultValues: {
             // email: "deepak@shinewebservices.com",
         },
@@ -53,12 +53,20 @@ const ForgotPassword: FC = () => {
                 <TextInput
                     ref={usernameRef}
                     title={Language.email}
+                    autoCapitalize={'none'}
                     placeholder={Language.enter_email_or_password}
                     name={'email'}
                     keyboardType={'email-address'}
                     style={{ fontSize: scaler(13) }}
                     required={true}
-                    rules={EmailValidations}
+                    rules={{
+                        ...EmailValidations,
+                        validate: (v) => {
+                            if (v?.toLowerCase() != v)
+                                setValue("email", v?.toLowerCase())
+                            return true
+                        }
+                    }}
                     control={control}
                     errors={errors}
                 />

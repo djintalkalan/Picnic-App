@@ -122,6 +122,7 @@ const Home: FC = () => {
 
         <TextInput
           ref={inputRef}
+          autoCapitalize={'none'}
           onChangeText={(text) => {
             if (text?.trim()?.length > 2) {
               Database.setOtherString("searchHomeText", text)

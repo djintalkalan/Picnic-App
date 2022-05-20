@@ -106,6 +106,7 @@ const SearchChatScreen: FC<any> = (props) => {
                 marginBottom: scaler(2),
             }} >
                 <TextInput
+                    autoCapitalize={'none'}
                     onChangeText={(text) => {
                         // console.log("Text is ", text);
                         setSearchedText(text?.toLowerCase())
