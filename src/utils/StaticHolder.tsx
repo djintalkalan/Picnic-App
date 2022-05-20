@@ -22,7 +22,7 @@ export class StaticHolder {
   static setDropDown(dropDown: DropdownAlert | null | undefined) { this.dropDown = dropDown; }
   static setModalDropDown(dropDown: DropdownAlert | null | undefined) { this.modalDropDown = dropDown; }
   static getDropDown() { return this.dropDown; }
-  static dropDownAlert(type: AlertType, title: string, message: string, time?: number) { if (message) (this.modalDropDown || this.dropDown)?.alertWithType(type, title, message, {}, time ?? 2000) }
+  static dropDownAlert(type: AlertType, title: string, message: string, time?: number) { if (message) (this.modalDropDown || this.dropDown)?.alertWithType(type, title, message, {}, time ?? 2000, true) }
 
   // PopupAlert Holder
   static popupAlert: PopupAlert | null | undefined;

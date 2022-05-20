@@ -93,6 +93,8 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
         </View>
     }
 
+    console.log('groupDetail', groupDetail);
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <ChatHeader
@@ -108,7 +110,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                 defaultIcon={Images.ic_group_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onPress={() => {
-                        if (!groupDetail?.is_group_member) dispatch(joinGroup(_id))
+                        if (!groupDetail?.is_group_member && groupDetail?.status == 1) dispatch(joinGroup(_id))
                         else {
 
                         }
@@ -121,7 +123,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                                 <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                             </TouchableOpacity>
                             :
-                            <Text style={styles.joinText} >{Language.join}</Text>
+                            <Text style={styles.joinText} >{groupDetail?.status == 1 ? Language.join : ''}</Text>
                         }
                     </TouchableOpacity>
                     {/* <TouchableOpacity onPress={shareGroup} style={{ paddingHorizontal: scaler(5) }}  >

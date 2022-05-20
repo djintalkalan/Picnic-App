@@ -13,6 +13,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
+import Language from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
@@ -212,7 +213,7 @@ const EventChats: FC<any> = (props) => {
                 {...item}
                 event={eventDetail}
                 isAdmin={eventDetail?.is_admin}
-                isMember={eventDetail?.is_event_member}
+                isMember={eventDetail?.status == 1 && eventDetail?.is_event_member}
                 setRepliedMessage={setRepliedMessage}
             />)
     }, [eventDetail])
@@ -289,24 +290,29 @@ const EventChats: FC<any> = (props) => {
                     />
                 </View>
                 {eventDetail?.is_event_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-
-                    <ChatInput
-                        // value={textMessage}
-                        ref={inputRef}
-                        link={link}
-                        disableButton={!socketConnected}
-                        repliedMessage={repliedMessage}
-                        setRepliedMessage={setRepliedMessage}
-                        onChooseImage={_onChooseImage}
-                        onChangeText={_updateTextMessage}
-                        onChooseContacts={_onChooseContacts}
-                        onChooseLocation={_onChooseLocation}
-                        onPressSend={_onPressSend}
-                    />
-                    {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
-                    </View> : null}
+                    {eventDetail?.status == 1 ? <>
+                        <ChatInput
+                            // value={textMessage}
+                            ref={inputRef}
+                            link={link}
+                            disableButton={!socketConnected}
+                            repliedMessage={repliedMessage}
+                            setRepliedMessage={setRepliedMessage}
+                            onChooseImage={_onChooseImage}
+                            onChangeText={_updateTextMessage}
+                            onChooseContacts={_onChooseContacts}
+                            onChooseLocation={_onChooseLocation}
+                            onPressSend={_onPressSend}
+                        />
+                        {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
+                            <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
+                        </View> : null}
+                    </> : <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
+                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{Language.event_is_no_longer_available}</Text>
+                    </View>
+                    }
                 </View> : null}
+
 
             </View >
         </SafeAreaViewWithStatusBar>

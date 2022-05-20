@@ -146,46 +146,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} />
 
-            {/* <BottomButton
-                title={Language.leave_group}
-                icon={Images.ic_leave_group}
-                visibility={group?.is_group_member && !group?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_leave_group,
-                        onPressButton: () => {
-                            dispatch(leaveGroup(group?._id))
-                            _hidePopUpAlert()
-                        },
-                        buttonStyle: { backgroundColor: colors.colorRed },
-                        buttonText: Language.yes_leave
-                    })
-                }} />
-
-            <BottomButton
-                title={Language.join_now}
-                icon={Images.ic_leave_group}
-                visibility={!group?.is_group_member}
-                onPress={() => {
-                    dispatch(joinGroup(group?._id))
-                }} /> */}
-
-            {/* <BottomButton
-                title={Language.report_group}
-                icon={Images.ic_report_group}
-                visibility={!group?.is_admin}
-                onPress={() => {
-                    _showPopUpAlert({
-                        message: Language.are_you_sure_report_group,
-                        onPressButton: () => {
-                            dispatch(reportResource({ resource_id: group?._id, resource_type: 'group' }))
-                            _hidePopUpAlert()
-                        },
-                        buttonText: Language.yes_report
-                    })
-                }} /> */}
-
-            {!group?.is_admin && <SwipeRow ref={swipeRef} disableRightSwipe
+            {(!group?.is_admin || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
@@ -260,11 +221,13 @@ const GroupDetail: FC<any> = (props) => {
                         title={Language.join_now}
                         icon={Images.ic_leave_group}
                         hideBottomBar
+                        visibility={!group?.is_group_member && group?.status == 1}
                         buttonTextColor={colors.colorPrimary}
-                        visibility={!group?.is_group_member}
                         onPress={() => {
                             dispatch(joinGroup(group?._id))
-                        }} />}
+                        }} />
+                    // : undefined
+                }
 
             </SwipeRow>}
         </View>
@@ -343,9 +306,10 @@ const GroupDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
-                    </TouchableOpacity>
+                    {group?.status == 1 ?
+                        <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
+                        </TouchableOpacity> : undefined}
                 </View>
                 {isEditButtonOpened ?
                     <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
@@ -434,12 +398,14 @@ const GroupDetail: FC<any> = (props) => {
                                 <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
                                     <Text style={styles.events} >{(groupMembers?.length - 5)} {Language.more}</Text>
                                     <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
-                                </TouchableOpacity></>}
+                                </TouchableOpacity>
+                            </>}
                         </View>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
                         {renderBottomActionButtons()}
                     </>
                     :
+                    group?.status != 6 &&
                     <>
                         <Text style={{ padding: scaler(15), fontWeight: '500', fontSize: scaler(15) }}>{Language.group_admin}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>
