@@ -214,17 +214,17 @@ function getAge(dob: Date) {
 
 
 
-export const _showErrorMessage = async (msg: string, time?: number) => {
+export const _showErrorMessage = async (msg?: string, time?: number) => {
     if (!msg || !msg.trim()) return
     StaticHolder.dropDownAlert('error', "Error", msg, time)
 }
 
-export const _showWarningMessage = async (msg: string, time?: number) => {
+export const _showWarningMessage = async (msg?: string, time?: number) => {
     if (!msg || !msg.trim()) return
     StaticHolder.dropDownAlert('warn', "Warning", msg, time)
 }
 
-export const _showSuccessMessage = async (msg: string, time?: number) => {
+export const _showSuccessMessage = async (msg?: string, time?: number) => {
     if (!msg || !msg.trim()) return
     StaticHolder.dropDownAlert('success', "Success", msg, time)
 }
