@@ -351,5 +351,7 @@ export const en = {
   end_time: "End time",
   end_date_required: "End date is required",
   end_date_greater_than_start_date: "End date should be greater than start date",
+  accept_donation: "Accept donation from users",
+  donation_description: "Donation description",
 
 }
