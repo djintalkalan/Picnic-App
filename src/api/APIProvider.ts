@@ -15,11 +15,18 @@ interface header {
     "Accept-Language"?: LanguageType
 }
 
+interface IApiResponse {
+    status: number
+    message?: string
+    data?: any
+    [key: string]: any
+}
+
 let uploadRequest: Request
 
 export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
-function interceptResponse(this: AxiosResponse<any>) {
+function interceptResponse(this: AxiosResponse<any>): any {
     try {
         if (!config.REACTOTRON_STATUS) {
             console.log("-----------AXIOS  Api Response is----------- ");
@@ -82,7 +89,7 @@ api.interceptors.response.use(
 );
 
 
-async function callApi(url: string, header: header, body: any, method?: Method) {
+async function callApi(url: string, header: header, body: any, method?: Method): Promise<IApiResponse> {
     return api.request({
         method: method,
         url: url,
