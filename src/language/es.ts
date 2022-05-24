@@ -349,5 +349,7 @@ export const es = {
     end_date: "",
     start_time: "",
     end_time: "",
+    end_date_required: "",
+    end_date_greater_than_start_date: "",
 
 }
