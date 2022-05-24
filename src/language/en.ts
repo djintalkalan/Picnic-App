@@ -344,5 +344,12 @@ export const en = {
   create_new_account_warning: "If you choose to create new account, your previous data will be deleted completely and there is no way to restore that. Do you want to continue?",
   yes_continue: "Yes, Continue",
   no_go_back: "No, Go back",
+  multiday_event: "Multiday Event",
+  start_date: "Start date",
+  end_date: "End date",
+  start_time: "Start time",
+  end_time: "End time",
+  end_date_required: "End date is required",
+  end_date_greater_than_start_date: "End date should be greater than start date",
 
 }

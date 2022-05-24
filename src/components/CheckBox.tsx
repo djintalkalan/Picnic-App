@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Octicons';
 import { scaler } from "utils";
 interface CheckBoxProps {
     checked: boolean,
-    setChecked: (b: boolean) => void
+    setChecked?: (b: boolean) => void
     size?: number
 }
 
@@ -27,7 +27,8 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
     }), [checked, size])
     return (
         <TouchableOpacity
-            onPress={() => setChecked(!checked)}
+            disabled={!setChecked}
+            onPress={setChecked ? () => setChecked(!checked) : undefined}
             style={styles.container} >
             {checked &&
                 <Ionicons size={size - scaler(3)} color={colors.colorWhite} name={'check'} />

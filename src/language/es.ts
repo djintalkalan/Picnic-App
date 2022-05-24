@@ -344,5 +344,10 @@ export const es = {
     create_new_account_warning: "",
     yes_continue: "",
     no_go_back: "",
+    multiday_event: "",
+    start_date: "",
+    end_date: "",
+    start_time: "",
+    end_time: "",
 
 }

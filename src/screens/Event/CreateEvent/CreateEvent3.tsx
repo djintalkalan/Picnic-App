@@ -1,246 +1,273 @@
-import { createEvent, uploadFile } from 'app-store/actions';
 import { colors, Images } from 'assets';
-import { Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database from 'database/Database';
-import { round } from 'lodash';
-import React, { FC, useCallback, useState } from 'react';
+import { useDatabase } from 'database';
+import React, { FC, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet, TouchableOpacity,
+  View
+} from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, scaler } from 'utils';
+import { scaler } from 'utils';
 
 type FormType = {
-  paypalId: string;
-  policy: string;
-  taxRate: string;
-  taxPrice: string;
+  currency: string;
+  ticketPrice: string;
 };
 
+const DropDownData = ['USD', 'EUR', 'GBP'];
+
 const CreateEvent3: FC<any> = props => {
-  const [isPayByCash, setIsPayByCash] = useState(false)
-  const [isPayByPaypal, setIsPayByPaypal] = useState(false)
-  const dispatch = useDispatch()
-  const {
-    control,
-    handleSubmit,
-    getValues,
-    setValue,
-    setError,
-    formState: { errors },
-  } = useForm<FormType>({
-    mode: 'onChange',
-  });
-  const eventDetail = props?.route?.params?.data;
+  const [isFreeEvent, setIsFreeEvent] = useState(false);
+  const uploadedImage = useRef('');
+  const [isDropdown, setDropdown] = useState(false);
+  const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
 
+  const [userData] = useDatabase("userData")
+
+  const {
+    control,
+    getValues,
+    setValue,
+    clearErrors,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormType>({
+    mode: 'onChange', defaultValues: { 'currency': 'USD' }
+  });
+
+  const bodyData = props?.route?.params
+
+  // const onSubmit = useCallback(
+  //   (data) => {
+  //     if (!uploadedImage.current && bodyData?.eventImage?.path) {
+  //       dispatch(
+  //         uploadFile({
+  //           image: bodyData?.eventImage,
+  //           onSuccess: url => {
+  //             uploadedImage.current = url;
+  //             callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
+  //           },
+  //           prefixType: 'events',
+  //         }),
+  //       );
+  //     } else {
+  //       callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
+  //     }
+  //   },
+  //   [bodyData?.eventImage, isFreeEvent, isUnlimitedCapacity],
+  // );
 
 
-  const onSubmit = useCallback(
-    (data) => {
-      if (!data?.policy?.trim()) {
-        setError("policy", { message: Language.write_refund_policy })
-        return
-      }
-      if (!eventDetail?.image && eventDetail?.eventImage?.path) {
-        dispatch(
-          uploadFile({
-            image: eventDetail?.eventImage,
-            onSuccess: url => {
-              eventDetail.image = url;
-              callCreateEventApi(data, isPayByPaypal, isPayByCash);
-            },
-            prefixType: 'events',
-          }),
-        );
-      } else {
-        callCreateEventApi(data, isPayByPaypal, isPayByCash);
-      }
-    },
-    [props, isPayByPaypal, isPayByCash],
-  );
+  // const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity) => {
+  //   const { latitude, longitude, address, otherData } =
+  //     bodyData?.location ?? {};
+
+  //   const { startTime, endTime, eventDate } = eventDateTime.current
+  //   let payload = {
+  //     image: uploadedImage?.current,
+  //     name: bodyData?.eventName,
+  //     group_id: bodyData?.myGroup?.id,
+  //     is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
+  //     short_description: bodyData?.aboutEvent,
+  //     address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
+  //     city: otherData?.city,
+  //     state: otherData?.state,
+  //     country: otherData?.country,
+  //     location: {
+  //       type: 'Point',
+  //       coordinates: [longitude, latitude],
+  //     },
+  //     capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
+  //     capacity: data?.capacity,
+  //     is_free_event: isFreeEvent ? '1' : '0',
+  //     event_fees: round(parseFloat(data?.ticketPrice), 2),
+  //     event_date: dateFormat(eventDate, "YYYY-MM-DD"),
+  //     event_start_time: dateFormat(startTime, "HH:mm:ss"),
+  //     event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
+  //     details: data?.additionalInfo,
+  //     event_currency: data?.currency.toLowerCase(),
+  //     payment_method: [],
+  //     payment_email: "",
+  //     event_refund_policy: ""
+  //   };
+  //   dispatch(
+  //     createEvent({
+  //       data: payload,
+  //       onSuccess: () => {
+  //         Database.setSelectedLocation(Database.getStoredValue<ILocation>('selectedLocation'));
+  //       },
+  //     }),
+  //   );
+  // }, []);
+
+  // const calculateButtonDisability = useCallback(() => {
+  //   if (!getValues('eventDate') ||
+  //     // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
+  //     // (!getValues('capacity')&&!isUnlimitedCapacity) ||
+  //     !getValues('startTime') ||
+  //     (errors && (errors.eventDate || errors.startTime || errors.capacity))
+  //   ) {
+  //     return true;
+  //   }
+  //   return false;
+  // }, [errors]);
 
 
-  const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
-    const { latitude, longitude, address, otherData } =
-      eventDetail?.location ?? {};
+  // const onPressSubmit = useCallback(() => handleSubmit((data) => {
+  //   const { endTime, endDate } = data
+  //   const { startTime: startTimeDate, endTime: endTimeDate, endDate: endEventDate, eventDate } = eventDateTime.current
+  //   const currentDate = new Date()
+  //   if (startTimeDate <= currentDate) {
+  //     _showErrorMessage(Language.start_time_invalid)
+  //     return
+  //   }
+  //   if (endTime && endTimeDate <= startTimeDate) {
+  //     _showErrorMessage(Language.end_time_invalid)
+  //     return
+  //   }
 
-    const { startTime, endTime, eventDate } = eventDetail?.eventDateTime
-    let payload = {
-      image: eventDetail?.image,
-      name: eventDetail?.eventName?.trim(),
-      group_id: eventDetail?.myGroup?.id,
-      is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
-      short_description: eventDetail?.aboutEvent?.trim(),
-      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
-      city: otherData?.city,
-      state: otherData?.state,
-      country: otherData?.country,
-      location: {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      },
-      capacity_type: eventDetail?.isUnlimitedCapacity ? 'unlimited' : 'limited',
-      capacity: eventDetail?.capacity,
-      is_free_event: '0',
-      event_fees: eventDetail?.ticketPrice?.toString(),
-      event_date: dateFormat(eventDate, "YYYY-MM-DD"),
-      event_start_time: dateFormat(startTime, "HH:mm:ss"),
-      event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-      details: eventDetail?.additionalInfo?.trim(),
-      event_currency: eventDetail?.currency.toLowerCase(),
-      payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
-      payment_email: data?.paypalId?.trim(),
-      event_refund_policy: data?.policy?.trim(),
-      event_tax_rate: data?.taxRate,
-      event_tax_amount: data?.taxPrice,
-    };
-    dispatch(
-      createEvent({
-        data: payload,
-        onSuccess: () => {
-          Database.setSelectedLocation(
-            Database.getStoredValue('selectedLocation'),
-          );
-        },
-      }),
-    );
-  }, []);
+  //   if (endDate && endEventDate <= eventDate) {
+  //     _showErrorMessage(Language.end_date_greater_than_start_date)
+  //     return
+  //   }
 
-  const calculateButtonDisability = useCallback(() => {
-    if ((!isPayByPaypal && !isPayByCash) ||
-      (isPayByPaypal && !getValues('paypalId'))
-    ) {
-      return true;
-    }
-
-    return false;
-  }, [isPayByPaypal, isPayByCash]);
-
-  console.log('taxPrice', ((parseFloat(getValues('taxRate')) / 100) * eventDetail?.ticketPrice).toString(), parseFloat(getValues('taxRate')));
-
+  //   // !userData?.is_premium ?
+  //   //   _showPopUpAlert({
+  //   //     message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+  //   //     buttonText: Language.join_now,
+  //   //     onPressButton: () => {
+  //   //       NavigationService.navigate("Subscription", {
+  //   //         onSubscription: onSubmit, data: {
+  //   //           ...data, ...bodyData,
+  //   //           eventDateTime: eventDateTime.current,
+  //   //           image: uploadedImage?.current,
+  //   //           isUnlimitedCapacity: isUnlimitedCapacity,
+  //   //           isFreeEvent: isFreeEvent
+  //   //         }
+  //   //       });
+  //   //       _hidePopUpAlert()
+  //   //     },
+  //   //     cancelButtonText: Language.no_thanks_create_my_event,
+  //   //     onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
+  //   //   }) :
+  //   //   isFreeEvent ?
+  //   //     onSubmit(data)
+  //   //     :
+  //   NavigationService.navigate('CreateEvent3',
+  //     {
+  //       data: {
+  //         ...data, ...bodyData,
+  //         eventDateTime: eventDateTime.current,
+  //         image: uploadedImage?.current,
+  //         isUnlimitedCapacity: isUnlimitedCapacity
+  //       }
+  //     })
+  //   //   :
+  //   //  undefined
+  // })(), [userData, isFreeEvent, isUnlimitedCapacity])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-        <Stepper step={3} totalSteps={3} paddingHorizontal={scaler(20)} />
-
-        <View style={styles.eventView}>
-          <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-            {Language.select_payment_options}
-          </Text>
-          <TouchableOpacity style={styles.payView} onPress={() => setIsPayByCash(!isPayByCash)}>
-            <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
-            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_cash}</Text>
-            <MaterialIcons name={isPayByCash ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
-          </TouchableOpacity>
-          <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-          <TouchableOpacity style={styles.payView} onPress={() => setIsPayByPaypal(!isPayByPaypal)}>
-            <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
-            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{Language.pay_by_paypal}</Text>
-            <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            width: '100%',
-            paddingHorizontal: scaler(20),
-            paddingVertical: scaler(15),
-          }}>
-
-          <Text>{Language.tax_rate} (%)</Text>
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={
-              Language.enter_the_tax_rate
-            }
-            style={{ paddingLeft: scaler(20) }}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'taxRate'}
-            maxLength={5}
-            keyboardType={'decimal-pad'}
-            onChangeText={(_) => {
-              setValue('taxPrice',
-                (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * parseFloat(eventDetail?.ticketPrice)), 2)).toString() : '')
-            }}
-            iconSize={scaler(18)}
-            // icon={Images.ic_ticket}
-            rules={{
-              validate: (v: string) => {
-                v = v?.trim()
-                if (parseFloat(v) > 29.90 || parseFloat(v) < 0) {
-                  return Language.tax_rate_limit
+        <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
+        <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
+          <TouchableOpacity onPress={() => {
+            setIsFreeEvent((b) => {
+              if (!b) {
+                // clearErrors('ticketPrice')
+                // setValue('ticketPrice', "")
+              }
+              return !b
+            })
+          }} style={{ flexDirection: 'row', marginTop: scaler(20), marginVertical: scaler(10) }}>
+            <CheckBox checked={isFreeEvent}
+              setChecked={(b) => {
+                if (b) {
+                  // clearErrors('ticketPrice')
+                  // setValue('ticketPrice', "")
                 }
-                try {
-                  if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                    return Language.tax_rate_limit
+                setIsFreeEvent(b)
+              }}
+            />
+            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>Multiday Event</Text>
+          </TouchableOpacity>
+
+
+          <View style={{ flex: 1, width: '100%' }} >
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+              <TextInput
+                containerStyle={{ marginEnd: scaler(4), width: '30%' }}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'currency'}
+                disabled={isFreeEvent ? true : false}
+                icon={Images.ic_arrow_dropdown}
+                onChangeText={(text) => {
+
+                }}
+                required={isFreeEvent ? undefined : Language.event_name_required}
+                control={control}
+                iconContainerStyle={{ end: scaler(4) }}
+                onPress={() => { setDropdown(_ => !_) }}
+                errors={errors}
+              />
+              <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={
+                  Language.event_ticket_price + ' (' + Language.per_person + ')'
+                }
+                style={{ paddingLeft: scaler(20) }}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'ticketPrice'}
+                keyboardType={'decimal-pad'}
+                disabled={isFreeEvent ? true : false}
+                iconSize={scaler(18)}
+                icon={Images.ic_ticket}
+                rules={{
+                  validate: (v: string) => {
+                    v = v?.trim()
+                    if (parseFloat(v) > 9999.99) {
+                      return Language.event_max_price
+                    }
+                    try {
+                      if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                        return Language.invalid_ticket_price
+                      }
+                    }
+                    catch (e) { }
+
                   }
+                }}
+                required={
+                  isFreeEvent ? undefined : Language.ticket_price_required
                 }
-                catch (e) { }
-
-              }
-            }}
-            control={control}
-            errors={errors}
-          />
-
-          <Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={
-              'Tax Price'
-            }
-            style={{ paddingLeft: scaler(20) }}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'taxPrice'}
-            disabled={true}
-            iconSize={scaler(18)}
-            control={control}
-            errors={errors}
-          />
-
-          {isPayByPaypal ?
-            <TextInput
-              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-              placeholder={Language.paypal_id}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              name={'paypalId'}
-              required={
-                Language.paypal_id_required
-              }
-              control={control}
-              errors={errors}
-            /> : undefined
-          }
-          <View style={{ flex: 1, width: '100%' }}>
-            <TextInput
-              placeholder={Language.write_refund_policy}
-              name={'policy'}
-              multiline
-              keyboardValues={keyboardValues}
-              style={{ minHeight: scaler(200), textAlignVertical: 'top' }}
-              limit={1000}
-              required={Language.refund_policy_required}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              control={control}
-              errors={errors}
+                control={control}
+                errors={errors}
+              />
+            </View>
+            <FixedDropdown
+              containerStyle={{ width: '28%' }}
+              visible={isDropdown}
+              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+              onSelect={data => {
+                setDropdown(false);
+                setValue('currency', data?.title, { shouldValidate: true });
+              }}
+            />
+            <Button
+              // disabled={calculateButtonDisability()}
+              containerStyle={{ marginTop: scaler(20) }}
+              title={Language.next}
+              onPress={() => { }}
             />
           </View>
-
-          <Button
-            disabled={calculateButtonDisability()}
-            containerStyle={{ marginTop: scaler(20) }}
-            title={Language.finish}
-            onPress={handleSubmit((data) => onSubmit(data))}
-          />
         </View>
       </ScrollView>
     </SafeAreaViewWithStatusBar>
@@ -262,13 +289,10 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   eventView: {
-    marginTop: scaler(25),
-    marginHorizontal: scaler(15),
-  },
-  payView: {
+    marginTop: scaler(20),
     flexDirection: 'row',
-    marginVertical: scaler(16),
+    marginHorizontal: scaler(25),
     alignItems: 'center',
-    marginHorizontal: scaler(5)
-  }
+    flex: 1
+  },
 });
