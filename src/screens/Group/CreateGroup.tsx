@@ -12,7 +12,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { formattedAddressToString, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 
 let n = 87.5
 const frequencies: Array<string> = []
@@ -119,7 +119,7 @@ const CreateGroup: FC<any> = (props) => {
       details: data?.about?.trim(),
       radio_frequency: data?.radio_frequency,
       image: uploadedImage.current || undefined,
-      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
+      address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
