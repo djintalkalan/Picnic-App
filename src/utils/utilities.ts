@@ -347,7 +347,6 @@ export const formattedAddressToString = (address?: { main_text?: string, seconda
         addressString = addressString?.trim();
     }
     return addressString
-    address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + (address?.secondary_text || ""))?.trim() || "")
 }
 
 export const getFormattedAddress = (addressComponent: any, formattedAddress: string) => {
