@@ -11,7 +11,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, scaler } from 'utils';
+import { dateFormat, formattedAddressToString, scaler } from 'utils';
 
 type FormType = {
   paypalId: string;
@@ -75,7 +75,7 @@ const CreateEvent3: FC<any> = props => {
       group_id: eventDetail?.myGroup?.id,
       is_online_event: eventDetail?.isOnlineEvent ? '1' : '0',
       short_description: eventDetail?.aboutEvent?.trim(),
-      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
+      address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,

@@ -332,6 +332,24 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
 }
 
+export const formattedAddressToString = (address?: { main_text?: string, secondary_text?: string } | null) => {
+    let addressString = ""
+    if (address) {
+        if (address?.main_text) {
+            addressString += address?.main_text
+            if (address?.secondary_text) {
+                addressString += ", "
+            }
+        }
+        if (address?.secondary_text) {
+            addressString += address?.secondary_text
+        }
+        addressString = addressString?.trim();
+    }
+    return addressString
+    address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + (address?.secondary_text || ""))?.trim() || "")
+}
+
 export const getFormattedAddress = (addressComponent: any, formattedAddress: string) => {
     let main_text = ""
     let secondary_text = ""

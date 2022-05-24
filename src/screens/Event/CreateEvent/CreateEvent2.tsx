@@ -16,7 +16,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, formattedAddressToString, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -107,7 +107,7 @@ const CreateEvent2: FC<any> = props => {
       group_id: bodyData?.myGroup?.id,
       is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
       short_description: bodyData?.aboutEvent,
-      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
+      address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
