@@ -15,7 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, formattedAddressToString, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, stringToDate, _zoomImage } from 'utils'
+import { dateFormat, formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, stringToDate, _zoomImage } from 'utils'
 
 type FormType = {
     about: string
@@ -90,27 +90,11 @@ const ProfileScreen: FC<any> = (props) => {
 
     const setProfileData = useCallback((userData: any) => {
         const { first_name, address, state, city, country, image, last_name, email, username, dial_code, phone_country_code, phone_number, dob, bio, location } = userData
-        console.log("userData", userData);
-        const main_text = getShortAddress(address, state, city)
-        let secondary_text = ((city || "") + (city ? ", " : "") + (state || "") + (state ? ", " : "") + (country || ""))?.trim();
-
-        if (secondary_text?.includes(main_text)) {
-            secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
-        }
-        if (secondary_text?.startsWith(",")) {
-            secondary_text = secondary_text?.replace(",", "")?.trim()
-        }
-        if (secondary_text?.endsWith(",")) {
-            secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
-        }
-
+        const addressObject = getFormattedAddress2(address, city, state, country)
         locationRef.current = (location?.coordinates?.[0] && location?.coordinates?.[1]) ? {
             latitude: location?.coordinates[1],
             longitude: location?.coordinates[0],
-            address: {
-                main_text,
-                secondary_text,
-            },
+            address: addressObject,
             otherData: {
                 city: city,
                 state: state,
