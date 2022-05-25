@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
@@ -53,8 +52,6 @@ const CreateEvent2: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const [isMultidayEvent, setIsMultidayEvent] = useState(false);
   const uploadedImage = useRef('');
-  const [isDropdown, setDropdown] = useState(false);
-  const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
 
   const eventPriceInputRef = useRef<RNInput>(null)
@@ -301,7 +298,7 @@ const CreateEvent2: FC<any> = props => {
       })
     //   :
     //  undefined
-  })(), [userData, isFreeEvent, isUnlimitedCapacity, isMultidayEvent])
+  })(), [userData, isUnlimitedCapacity, isMultidayEvent])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -511,7 +508,7 @@ const CreateEvent2: FC<any> = props => {
             eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
             let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
             let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-            let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
+            let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
             if (selectedType == 'eventDate' || selectedType == 'endDate') {
               console.log('date selected', date);
 
