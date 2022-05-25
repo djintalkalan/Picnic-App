@@ -45,7 +45,6 @@ const initialDateTime: IEventDateTime = {
 
 const CreateEvent2: FC<any> = props => {
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
-  const [isFreeEvent, setIsFreeEvent] = useState(false);
   const [isMultidayEvent, setIsMultidayEvent] = useState(false);
   const uploadedImage = useRef('');
   const keyboardValues = useKeyboardService()
@@ -71,73 +70,8 @@ const CreateEvent2: FC<any> = props => {
 
   const bodyData = props?.route?.params
 
-  // const onSubmit = useCallback(
-  //   (data) => {
-  //     if (!uploadedImage.current && bodyData?.eventImage?.path) {
-  //       dispatch(
-  //         uploadFile({
-  //           image: bodyData?.eventImage,
-  //           onSuccess: url => {
-  //             uploadedImage.current = url;
-  //             callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-  //           },
-  //           prefixType: 'events',
-  //         }),
-  //       );
-  //     } else {
-  //       callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-  //     }
-  //   },
-  //   [bodyData?.eventImage, isFreeEvent, isUnlimitedCapacity],
-  // );
-
-
-  // const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity) => {
-  //   const { latitude, longitude, address, otherData } =
-  //     bodyData?.location ?? {};
-
-  //   const { startTime, endTime, eventDate } = eventDateTime.current
-  //   let payload = {
-  //     image: uploadedImage?.current,
-  //     name: bodyData?.eventName,
-  //     group_id: bodyData?.myGroup?.id,
-  //     is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
-  //     short_description: bodyData?.aboutEvent,
-  //     address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
-  //     city: otherData?.city,
-  //     state: otherData?.state,
-  //     country: otherData?.country,
-  //     location: {
-  //       type: 'Point',
-  //       coordinates: [longitude, latitude],
-  //     },
-  //     capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
-  //     capacity: data?.capacity,
-  //     is_free_event: isFreeEvent ? '1' : '0',
-  //     event_fees: round(parseFloat(data?.ticketPrice), 2),
-  //     event_date: dateFormat(eventDate, "YYYY-MM-DD"),
-  //     event_start_time: dateFormat(startTime, "HH:mm:ss"),
-  //     event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-  //     details: data?.additionalInfo,
-  //     event_currency: data?.currency.toLowerCase(),
-  //     payment_method: [],
-  //     payment_email: "",
-  //     event_refund_policy: ""
-  //   };
-  //   dispatch(
-  //     createEvent({
-  //       data: payload,
-  //       onSuccess: () => {
-  //         Database.setSelectedLocation(Database.getStoredValue<ILocation>('selectedLocation'));
-  //       },
-  //     }),
-  //   );
-  // }, []);
-
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
-      // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
-      // (!getValues('capacity')&&!isUnlimitedCapacity) ||
       !getValues('startTime') ||
       (errors && (errors.eventDate || errors.startTime || errors.capacity))
     ) {
@@ -156,8 +90,6 @@ const CreateEvent2: FC<any> = props => {
 
   const getMinDate = useCallback(() => {
     const { startTime, endTime, eventDate, selectedType, endDate } = eventDateTime.current
-    // const eventDateString = eventDate ? dateFormat(new Date(), "DD-MM-YYYY") : undefined
-    // const currentDateString = dateFormat(new Date(), "DD-MM-YYYY")
 
     switch (selectedType) {
       case "eventDate":
@@ -207,29 +139,6 @@ const CreateEvent2: FC<any> = props => {
       return
     }
 
-
-    // !userData?.is_premium ?
-    //   _showPopUpAlert({
-    //     message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
-    //     buttonText: Language.join_now,
-    //     onPressButton: () => {
-    //       NavigationService.navigate("Subscription", {
-    //         onSubscription: onSubmit, data: {
-    //           ...data, ...bodyData,
-    //           eventDateTime: eventDateTime.current,
-    //           image: uploadedImage?.current,
-    //           isUnlimitedCapacity: isUnlimitedCapacity,
-    //           isFreeEvent: isFreeEvent
-    //         }
-    //       });
-    //       _hidePopUpAlert()
-    //     },
-    //     cancelButtonText: Language.no_thanks_create_my_event,
-    //     onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
-    //   }) :
-    //   isFreeEvent ?
-    //     onSubmit(data)\
-    //     :
     NavigationService.navigate('CreateEvent3',
       {
         data: {

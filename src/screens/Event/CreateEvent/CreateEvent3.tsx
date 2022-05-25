@@ -42,10 +42,7 @@ const CreateEvent3: FC<any> = props => {
 
   const {
     control,
-    getValues,
-
     setValue,
-    clearErrors,
     handleSubmit,
     formState: { errors },
   } = useForm<FormType>({
@@ -206,18 +203,14 @@ const CreateEvent3: FC<any> = props => {
     [],
   )
 
+
   const addTicket = useCallback(() => {
-    let val = ''
+
     setTicketId(ticketId => {
-      val = ticketId[ticketId.length - 1] + 1
+      const val = ticketId[0] + 1
       setValue('currency' + val, 'USD')
       return [val, ...ticketId]
     })
-    setTimeout(() => {
-      setValue('ticketPrice' + val, '')
-      setValue('ticketTitle' + val, '')
-      setValue('ticketDescription' + val, '')
-    }, 20);
 
   }, [])
 
@@ -232,8 +225,6 @@ const CreateEvent3: FC<any> = props => {
             <TouchableOpacity onPress={() => {
               setIsFreeEvent((b) => {
                 if (!b) {
-                  // clearErrors('ticketPrice')
-                  // setValue('ticketPrice', "")
                   selectedTicketType.current = TicketTypeData[0].value
                   setValue('ticketType', TicketTypeData[0].text);
                 }
@@ -274,12 +265,18 @@ const CreateEvent3: FC<any> = props => {
                   if (selectedTicketType.current == 'multiple') setValue('currency1', 'USD')
                 }}
               />
+
+              {/* ----------------------------------- free event flow started here -----------------------------------*/}
+
               {isFreeEvent ?
                 <View>
                   <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
                     <Switch active={isDonatioAccepted} onChange={() => { setIsDonationAccepted(!isDonatioAccepted) }} />
                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '400' }}>{Language.accept_donation}</Text>
                   </View>
+
+                  {/* ----------------------------------- donation flow started here -----------------------------------*/}
+
                   {isDonatioAccepted ?
                     <View style={{ flex: 1, width: '100%', marginTop: scaler(10) }} >
                       <TextInput
@@ -323,13 +320,17 @@ const CreateEvent3: FC<any> = props => {
                     : undefined}
                 </View>
                 :
+
                 <View style={{ flex: 1, width: '100%' }} >
                   {selectedTicketType.current == 'multiple' ?
                     <View style={{ marginTop: scaler(15) }}>
                       <Button title={Language.add_ticket} onPress={addTicket} />
+
+                      {/* ----------------------------------- map function for total tickets started here -----------------------------------*/}
+
                       {ticketId?.map((_, i) => {
                         return (
-                          <View style={styles.ticketView}>
+                          <View key={_} style={styles.ticketView}>
                             {ticketId.length > 1 ?
                               <AntDesign name={'minuscircle'} onPress={() => onDeleteTicket(i)} color={'#EB5757'} size={scaler(25)} style={styles.minusView} /> : undefined}
                             <TextInput
@@ -431,7 +432,6 @@ const CreateEvent3: FC<any> = props => {
                           onChangeText={(text) => {
 
                           }}
-                          required={isFreeEvent ? undefined : Language.event_name_required}
                           control={control}
                           iconContainerStyle={{ end: scaler(4) }}
                           onPress={() => { setDropdown(_ => !_) }}
