@@ -3,13 +3,14 @@ import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, us
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
 import { useDatabase } from 'database';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   StyleSheet, TouchableOpacity,
   View
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { scaler } from 'utils';
@@ -19,10 +20,13 @@ type FormType = {
   ticketPrice: string;
   ticketType: string;
   donationDescription: string;
+  ticketTitle: string;
+  ticketDescription: string;
+  [key: string]: string
 };
 
 const DropDownData = ['USD', 'EUR', 'GBP'];
-const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Multi tickets', value: 'multiple' }]
+const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Multiple tickets', value: 'multiple' }]
 
 const CreateEvent3: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
@@ -33,21 +37,24 @@ const CreateEvent3: FC<any> = props => {
   const [isDonatioAccepted, setIsDonationAccepted] = useState(false)
   const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
-
+  const [ticketId, setTicketId] = useState<Array<any>>([1])
   const [userData] = useDatabase("userData")
 
   const {
     control,
     getValues,
+
     setValue,
     clearErrors,
     handleSubmit,
     formState: { errors },
   } = useForm<FormType>({
-    mode: 'onChange', defaultValues: { 'currency': 'USD', ticketType: TicketTypeData[0].text }
+    mode: 'onChange', defaultValues: { ticketType: TicketTypeData[0].text, currency: 'USD' }
   });
 
   const bodyData = props?.route?.params
+
+
 
   const ticketTypeArray = useMemo(() => {
     if (isFreeEvent) {
@@ -186,6 +193,35 @@ const CreateEvent3: FC<any> = props => {
   //   //  undefined
   // })(), [userData, isFreeEvent, isUnlimitedCapacity])
 
+  const onDeleteTicket = useCallback((i) => {
+    setTicketId(_ => {
+      setValue('ticketPrice' + _[i], '')
+      setValue('ticketTitle' + _[i], '')
+      setValue('ticketDescription' + _[i], '')
+      const t = [..._]
+      t.splice(i, 1)
+      return t
+    })
+  },
+    [],
+  )
+
+  const addTicket = useCallback(() => {
+    let val = ''
+    setTicketId(ticketId => {
+      val = ticketId[ticketId.length - 1] + 1
+      setValue('currency' + val, 'USD')
+      return [val, ...ticketId]
+    })
+    setTimeout(() => {
+      setValue('ticketPrice' + val, '')
+      setValue('ticketTitle' + val, '')
+      setValue('ticketDescription' + val, '')
+    }, 20);
+
+  }, [])
+
+
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
@@ -235,6 +271,7 @@ const CreateEvent3: FC<any> = props => {
                   selectedTicketType.current = data?.data?.value
                   setValue('ticketType', data?.title, { shouldValidate: true });
                   setIsTicketTypeDropdown(false);
+                  if (selectedTicketType.current == 'multiple') setValue('currency1', 'USD')
                 }}
               />
               {isFreeEvent ?
@@ -287,67 +324,164 @@ const CreateEvent3: FC<any> = props => {
                 </View>
                 :
                 <View style={{ flex: 1, width: '100%' }} >
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                    <TextInput
-                      containerStyle={{ marginEnd: scaler(4), width: '30%' }}
-                      borderColor={colors.colorTextInputBackground}
-                      backgroundColor={colors.colorTextInputBackground}
-                      name={'currency'}
-                      disabled={isFreeEvent ? true : false}
-                      icon={Images.ic_arrow_dropdown}
-                      onChangeText={(text) => {
+                  {selectedTicketType.current == 'multiple' ?
+                    <View style={{ marginTop: scaler(15) }}>
+                      <Button title={Language.add_ticket} onPress={addTicket} />
+                      {ticketId?.map((_, i) => {
+                        return (
+                          <View style={styles.ticketView}>
+                            {ticketId.length > 1 ?
+                              <AntDesign name={'minuscircle'} onPress={() => onDeleteTicket(i)} color={'#EB5757'} size={scaler(25)} style={styles.minusView} /> : undefined}
+                            <TextInput
+                              placeholder={Language.ticket_title}
+                              containerStyle={{ marginEnd: scaler(4), width: '100%' }}
+                              borderColor={colors.colorTextInputBackground}
+                              backgroundColor={colors.colorTextInputBackground}
+                              name={'ticketTitle' + _}
+                              required={Language.event_name_required}
+                              control={control}
+                              errors={errors}
+                            />
+                            <View style={{ flex: 1 }}>
+                              <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                                <TextInput
+                                  containerStyle={{ marginEnd: scaler(4), width: '30%' }}
+                                  borderColor={colors.colorTextInputBackground}
+                                  backgroundColor={colors.colorTextInputBackground}
+                                  name={'currency' + _}
+                                  defaultValue={_.currency}
+                                  disabled={isFreeEvent ? true : false}
+                                  icon={Images.ic_arrow_dropdown}
+                                  control={control}
+                                  iconContainerStyle={{ end: scaler(4) }}
+                                  onPress={() => { setDropdown(_ => !_) }}
+                                  errors={errors}
+                                />
+                                <TextInput
+                                  containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                  placeholder={Language.ticket_price}
+                                  style={{ paddingLeft: scaler(20) }}
+                                  borderColor={colors.colorTextInputBackground}
+                                  backgroundColor={colors.colorTextInputBackground}
+                                  name={'ticketPrice' + _}
+                                  keyboardType={'decimal-pad'}
+                                  disabled={isFreeEvent ? true : false}
+                                  iconSize={scaler(18)}
+                                  icon={Images.ic_ticket}
+                                  rules={{
+                                    validate: (v: string) => {
+                                      v = v?.trim()
+                                      if (parseFloat(v) > 9999.99) {
+                                        return Language.event_max_price
+                                      }
+                                      try {
+                                        if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                          return Language.invalid_ticket_price
+                                        }
+                                      }
+                                      catch (e) { }
 
-                      }}
-                      required={isFreeEvent ? undefined : Language.event_name_required}
-                      control={control}
-                      iconContainerStyle={{ end: scaler(4) }}
-                      onPress={() => { setDropdown(_ => !_) }}
-                      errors={errors}
-                    />
-                    <TextInput
-                      containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                      placeholder={
-                        Language.event_ticket_price + ' (' + Language.per_person + ')'
-                      }
-                      style={{ paddingLeft: scaler(20) }}
-                      borderColor={colors.colorTextInputBackground}
-                      backgroundColor={colors.colorTextInputBackground}
-                      name={'ticketPrice'}
-                      keyboardType={'decimal-pad'}
-                      disabled={isFreeEvent ? true : false}
-                      iconSize={scaler(18)}
-                      icon={Images.ic_ticket}
-                      rules={{
-                        validate: (v: string) => {
-                          v = v?.trim()
-                          if (parseFloat(v) > 9999.99) {
-                            return Language.event_max_price
+                                    }
+                                  }}
+                                  required={
+                                    Language.ticket_price_required
+                                  }
+                                  control={control}
+                                  errors={errors}
+                                />
+                              </View>
+                              <FixedDropdown
+                                containerStyle={{ width: '28%' }}
+                                visible={isDropdown}
+                                data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                                onSelect={data => {
+                                  setDropdown(false);
+                                  setValue('currency' + _, data?.title, { shouldValidate: true });
+                                }}
+                              />
+
+                              <TextInput
+                                placeholder={Language.description}
+                                name={'ticketDescription' + _}
+                                multiline
+                                limit={2000}
+                                keyboardValues={keyboardValues}
+                                style={{ minHeight: scaler(80), textAlignVertical: 'top' }}
+                                borderColor={colors.colorTextInputBackground}
+                                backgroundColor={colors.colorTextInputBackground}
+                                control={control}
+                                errors={errors}
+                              />
+                            </View>
+                          </View>
+                        )
+                      })}
+
+                    </View>
+                    :
+                    <View>
+                      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                        <TextInput
+                          containerStyle={{ marginEnd: scaler(4), width: '30%' }}
+                          borderColor={colors.colorTextInputBackground}
+                          backgroundColor={colors.colorTextInputBackground}
+                          name={'currency'}
+                          disabled={isFreeEvent ? true : false}
+                          icon={Images.ic_arrow_dropdown}
+                          onChangeText={(text) => {
+
+                          }}
+                          required={isFreeEvent ? undefined : Language.event_name_required}
+                          control={control}
+                          iconContainerStyle={{ end: scaler(4) }}
+                          onPress={() => { setDropdown(_ => !_) }}
+                          errors={errors}
+                        />
+                        <TextInput
+                          containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                          placeholder={
+                            Language.event_ticket_price + ' (' + Language.per_person + ')'
                           }
-                          try {
-                            if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                              return Language.invalid_ticket_price
+                          style={{ paddingLeft: scaler(20) }}
+                          borderColor={colors.colorTextInputBackground}
+                          backgroundColor={colors.colorTextInputBackground}
+                          name={'ticketPrice'}
+                          keyboardType={'decimal-pad'}
+                          disabled={isFreeEvent ? true : false}
+                          iconSize={scaler(18)}
+                          icon={Images.ic_ticket}
+                          rules={{
+                            validate: (v: string) => {
+                              v = v?.trim()
+                              if (parseFloat(v) > 9999.99) {
+                                return Language.event_max_price
+                              }
+                              try {
+                                if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                  return Language.invalid_ticket_price
+                                }
+                              }
+                              catch (e) { }
+
                             }
+                          }}
+                          required={
+                            isFreeEvent ? undefined : Language.ticket_price_required
                           }
-                          catch (e) { }
-
-                        }
-                      }}
-                      required={
-                        isFreeEvent ? undefined : Language.ticket_price_required
-                      }
-                      control={control}
-                      errors={errors}
-                    />
-                  </View>
-                  <FixedDropdown
-                    containerStyle={{ width: '28%' }}
-                    visible={isDropdown}
-                    data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                    onSelect={data => {
-                      setDropdown(false);
-                      setValue('currency', data?.title, { shouldValidate: true });
-                    }}
-                  />
+                          control={control}
+                          errors={errors}
+                        />
+                      </View>
+                      <FixedDropdown
+                        containerStyle={{ width: '28%' }}
+                        visible={isDropdown}
+                        data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                        onSelect={data => {
+                          setDropdown(false);
+                          setValue('currency', data?.title, { shouldValidate: true });
+                        }}
+                      />
+                    </View>}
                 </View>
               }
             </View>
@@ -380,11 +514,19 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'contain',
   },
-  eventView: {
-    marginTop: scaler(20),
-    flexDirection: 'row',
-    marginHorizontal: scaler(25),
-    alignItems: 'center',
-    flex: 1
+  ticketView: {
+    borderWidth: scaler(1),
+    borderColor: colors.colorPrimary,
+    borderStyle: 'dashed',
+    paddingHorizontal: scaler(10),
+    paddingBottom: scaler(10),
+    marginVertical: scaler(15),
+    borderRadius: scaler(2)
   },
+  minusView: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    top: scaler(-12),
+    right: scaler(-12)
+  }
 });

@@ -353,5 +353,9 @@ export const en = {
   end_date_greater_than_start_date: "End date should be greater than start date",
   accept_donation: "Accept donation from users",
   donation_description: "Donation description",
+  add_ticket: "Add ticket",
+  ticket_title: "Ticket Type (Title)",
+  ticket_price: "Ticket price",
+  description: "Description",
 
 }
