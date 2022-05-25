@@ -79,6 +79,11 @@ export const getEventDetail = (payload: any) => ({
     payload
 })
 
+export const getEditEventDetail = (payload: any) => ({
+    type: ActionTypes.GET_EDIT_EVENT_DETAIL,
+    payload
+})
+
 export const setEventDetail = (payload: { eventId: string, data: any }) => ({
     type: ActionTypes.SET_EVENT_DETAIL,
     payload

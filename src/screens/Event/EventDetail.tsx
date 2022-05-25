@@ -211,7 +211,8 @@ const EventDetail: FC<any> = (props) => {
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     setEditButtonOpened(false)
-                                    NavigationService.navigate('EditEvent', { id: event?._id })
+                                    NavigationService.navigate('CreateEvent1', { id: event?._id })
+                                    // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                         setEditButtonOpened(false)

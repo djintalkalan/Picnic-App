@@ -1,20 +1,21 @@
+import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useDatabase } from 'database';
-import React, { FC, useCallback, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  Dimensions,
   StyleSheet,
-  TextInput as RNInput,
-  TouchableOpacity,
+  TextInput as RNInput, TextInput as RNTextInput, TouchableOpacity,
   View
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _showErrorMessage } from 'utils';
+import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
 type FormType = {
   capacity: string;
@@ -45,6 +46,9 @@ const initialDateTime: IEventDateTime = {
 }
 
 const CreateEvent2: FC<any> = props => {
+  const eventDateRef = useRef<RNTextInput>(null)
+  const scrollViewRef = useRef<ScrollView>(null)
+
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const [isMultidayEvent, setIsMultidayEvent] = useState(false);
@@ -59,6 +63,49 @@ const CreateEvent2: FC<any> = props => {
   const eventDateTime = useRef<IEventDateTime>(initialDateTime);
 
   const [userData] = useDatabase("userData")
+
+  const { current: event } = useRef(store.getState().createEventState)
+
+  useEffect(() => {
+    setEventValues()
+  }, [])
+
+  const setEventValues = useCallback(() => {
+
+    if (!props?.route?.params?.copy) {
+      eventDateTime.current = {
+        eventDate: event?.event_date ? stringToDate(event?.event_date, "YYYY-MM-DD", "-") : new Date(),
+        startTime: event?.event_date ? stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-") : defaultTime,
+        endDate: event?.event_end_date ? stringToDate(event?.event_end_date, "YYYY-MM-DD", "-") : new Date(),
+        endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
+        selectedType: 'eventDate',
+      }
+      setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
+      setValue('endDate', event?.event_end_date ? dateFormat(eventDateTime.current.endDate, 'MMM DD, YYYY') : '')
+      setValue('startTime', event?.event_date ? dateFormat(eventDateTime.current.startTime, 'hh:mm A') : '')
+      setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+    } else {
+      setValue('eventDate', '')
+      setValue('startTime', '')
+      setValue('endTime', '')
+      if (eventDateRef.current) {
+        eventDateRef.current?.measureInWindow((x, y) => {
+          scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
+          setTimeout(() => {
+            (openDatePicker("eventDate"))
+          }, 1000)
+        })
+      }
+    }
+
+    console.log(event);
+    setValue('capacity', (event?.capacity || "")?.toString())
+    setValue('additionalInfo', event?.details || "")
+    setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
+    setIsMultidayEvent(event?.is_multi_day_event ? true : false)
+
+
+  }, [])
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
@@ -233,6 +280,15 @@ const CreateEvent2: FC<any> = props => {
     //   isFreeEvent ?
     //     onSubmit(data)\
     //     :
+    console.log({
+      ...data, ...bodyData,
+      eventDateTime: eventDateTime.current,
+      image: uploadedImage?.current,
+      isUnlimitedCapacity,
+      isMultidayEvent
+    })
+    return
+
     NavigationService.navigate('CreateEvent3',
       {
         data: {
@@ -250,7 +306,7 @@ const CreateEvent2: FC<any> = props => {
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+      <ScrollView ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <TouchableOpacity onPress={() => {

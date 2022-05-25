@@ -1,5 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
 import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { setCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
@@ -136,6 +137,12 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
         payload?.setLoader && payload?.setLoader(false)
 
         if (res.status == 200) {
+            for (const index in res?.data?.data) {
+                if (res?.data?.data[index].ticket_type == 'multiple') {
+                    res.data.data[index].event_fees = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (Math.min((p.amount || p), c.amount)))
+                }
+            }
+
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -162,7 +169,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
 function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
     let event = store.getState()?.eventDetails?.[payload]?.event
-    if (!event)
+    if (!event || type == ActionTypes.GET_EDIT_EVENT_DETAIL)
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
@@ -180,13 +187,20 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
                 return
             }
 
-
             res.data.event.is_event_admin = res.data?.event?.is_admin ? true : false
+            if (res?.data?.event?.ticket_type == 'multiple') {
+                res.data.event.event_fees = res?.data?.event?.ticket_plans?.reduce((p: any, c: any) => (Math.min((p.amount || p), c.amount)))
+            }
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))
             yield put(setEventDetail({ eventId: payload, data: res?.data }))
+            if (type == ActionTypes.GET_EDIT_EVENT_DETAIL) {
+                yield put(setCreateEvent(res?.data?.event))
+            }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
+            if (type == ActionTypes.GET_EDIT_EVENT_DETAIL)
+                NavigationService.goBack()
         } else {
             _showErrorMessage(Language.something_went_wrong);
             NavigationService.goBack()
@@ -196,6 +210,8 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
     catch (error) {
         console.log("Catch Error", error);
         yield put(setLoadingAction(false));
+        if (type == ActionTypes.GET_EDIT_EVENT_DETAIL)
+            NavigationService.goBack()
     }
 }
 
@@ -394,6 +410,7 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.CREATE_EVENT, _createEvent);
     yield takeLatest(ActionTypes.GET_ALL_EVENTS, _getAllEvents);
     yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
+    yield takeLatest(ActionTypes.GET_EDIT_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.DELETE_EVENT, _deleteEvent);
     yield takeLatest(ActionTypes.PIN_EVENT, _pinUnpinEvent);
     yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
