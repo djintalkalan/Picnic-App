@@ -3,6 +3,7 @@ import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -132,50 +133,59 @@ const CreateEvent3: FC<any> = props => {
                         paddingVertical: scaler(15),
                     }}>
 
-                    {!event.is_donation_enabled ? <><Text>{Language.tax_rate} (%)</Text><TextInput
-                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={Language.enter_the_tax_rate}
-                        style={{ paddingLeft: scaler(20) }}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        name={'taxRate'}
-                        maxLength={5}
-                        keyboardType={'decimal-pad'}
-                        // onChangeText={(_) => {
-                        //     setValue('taxPrice',
-                        //         (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * parseFloat(event?.ticketPrice)), 2)).toString() : '');
-                        // }}
-                        iconSize={scaler(18)}
-                        // icon={Images.ic_ticket}
-                        rules={{
-                            validate: (v: string) => {
-                                v = v?.trim();
-                                if (parseFloat(v) > 29.90 || parseFloat(v) < 0) {
-                                    return Language.tax_rate_limit;
-                                }
-                                try {
-                                    if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                                        return Language.tax_rate_limit;
-                                    }
-                                }
-                                catch (e) { }
-
-                            }
-                        }}
-                        control={control}
-                        errors={errors} />
-                        {!event.is_multi_day_event ?
-                            <><Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text><TextInput
+                    {!event.is_donation_enabled ?
+                        <><Text>{Language.tax_rate} (%)</Text>
+                            <TextInput
                                 containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                placeholder={'Tax Price'}
+                                placeholder={Language.enter_the_tax_rate}
                                 style={{ paddingLeft: scaler(20) }}
                                 borderColor={colors.colorTextInputBackground}
                                 backgroundColor={colors.colorTextInputBackground}
-                                name={'taxPrice'}
-                                disabled={true}
+                                name={'taxRate'}
+                                maxLength={5}
+                                keyboardType={'decimal-pad'}
+                                onChangeText={event.is_multi_day_event == 0 ? (_) => {
+                                    setValue('taxPrice',
+                                        // (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * event?.event_fees), 2)).toString() : '');
+                                        // onChangeText={(_) => {
+
+                                        (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * parseFloat(event?.event_fees.toString())), 2)).toString() : '');
+
+                                } : undefined}
                                 iconSize={scaler(18)}
+                                // icon={Images.ic_ticket}
+                                rules={{
+                                    validate: (v: string) => {
+                                        v = v?.trim();
+                                        if (parseFloat(v) > 29.90 || parseFloat(v) < 0) {
+                                            return Language.tax_rate_limit;
+                                        }
+                                        try {
+                                            if ((v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".")) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                                return Language.tax_rate_limit;
+                                            }
+                                        }
+                                        catch (e) { }
+
+                                    }
+                                }}
                                 control={control}
-                                errors={errors} /></> : undefined}</> : undefined}
+                                errors={errors} />
+                            {event.is_multi_day_event == 0 ?
+                                <><Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
+                                    <TextInput
+                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                        placeholder={'Tax Price'}
+                                        style={{ paddingLeft: scaler(20) }}
+                                        borderColor={colors.colorTextInputBackground}
+                                        backgroundColor={colors.colorTextInputBackground}
+                                        name={'taxPrice'}
+                                        disabled={true}
+                                        iconSize={scaler(18)}
+                                        control={control}
+                                        errors={errors} /></>
+                                : undefined}</>
+                        : undefined}
 
                     {isPayByPaypal ?
                         <TextInput

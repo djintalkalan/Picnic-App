@@ -265,7 +265,7 @@ const CreateEvent3: FC<any> = props => {
       }
     } else {
       payload.ticket_type = ticketTypeRef.current
-      payload.ticket_price = 0
+      payload.event_fees = 0
       payload.currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => ({
@@ -279,7 +279,7 @@ const CreateEvent3: FC<any> = props => {
           status: _.status == 2 ? 2 : undefined
         }))
       } else {
-        payload.ticket_price = data.ticketPrice
+        payload.event_fees = data.ticketPrice
       }
     }
     dispatch(updateCreateEvent(payload))
