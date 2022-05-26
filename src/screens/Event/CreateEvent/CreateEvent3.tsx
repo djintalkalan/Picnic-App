@@ -1,9 +1,9 @@
 import { store } from 'app-store';
-import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
+import Database from 'database/Database';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
@@ -14,7 +14,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { scaler } from 'utils';
+import { NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
   currency: string;
@@ -55,6 +55,7 @@ const CreateEvent3: FC<any> = props => {
 
   useEffect(() => {
     setEventValues()
+    Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
   }, [])
 
   const setEventValues = useCallback(() => {
@@ -238,11 +239,20 @@ const CreateEvent3: FC<any> = props => {
       remove(i);
   }, [])
 
+  const next = useCallback((payload: any) => {
+    if (payload?.is_free_event) {
+      console.log("Calling api to create free event")
+    } else {
+      NavigationService.navigate("CreateEvent4")
+    }
+  }, []);
+
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
       is_free_event: false,
       is_donation_accepted: false
     }
+
     if (isFreeEvent) {
       payload.is_free_event = true
       if (isDonationAccepted) {
@@ -271,7 +281,27 @@ const CreateEvent3: FC<any> = props => {
         payload.ticket_price = data.ticketPrice
       }
     }
-    dispatch(updateCreateEvent(payload))
+    // dispatch(updateCreateEvent(payload))
+
+    const userData = Database.getStoredValue("userData")
+
+    if (!userData?.is_premium) {
+      _showPopUpAlert({
+        message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        buttonText: Language.join_now,
+        onPressButton: () => {
+          NavigationService.navigate("Subscription", {
+            onSubscription: () => {
+              NavigationService.goBack();
+              next(payload);
+            },
+          });
+          _hidePopUpAlert()
+        },
+        cancelButtonText: Language.no_thanks_create_my_event,
+        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
+      })
+    } else next(payload)
 
   }, [isFreeEvent, isDonationAccepted, ticketPlans])
 

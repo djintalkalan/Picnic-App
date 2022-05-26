@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getEditEventDetail, getMyGroups, setLoadingAction, uploadFile } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups, restorePurchase, setLoadingAction, uploadFile } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import {
@@ -112,6 +112,7 @@ const CreateEvent1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
+    dispatch(restorePurchase())
     if (eventId) {
       dispatch(getEditEventDetail(eventId))
     }
