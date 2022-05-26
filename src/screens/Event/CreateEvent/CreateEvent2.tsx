@@ -97,7 +97,7 @@ const CreateEvent2: FC<any> = props => {
     setValue('capacity', (event?.capacity || "")?.toString())
     setValue('additionalInfo', event?.details || "")
     setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
-    setIsMultidayEvent(event?.is_multi_day_event ? true : false)
+    setIsMultidayEvent(event?.is_multi_day_event == 1 ? true : false)
     forceRender(_ => !_)
   }, [])
 
@@ -183,7 +183,7 @@ const CreateEvent2: FC<any> = props => {
     }
 
     const payload = {
-      capacity_type: isUnlimitedCapacity ? 'limited' : 'unlimited',
+      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
       capacity: data.capacity,
       is_multi_day_event: isMultidayEvent ? '1' : '0',
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
