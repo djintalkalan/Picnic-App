@@ -126,7 +126,7 @@ const CreateEvent3: FC<any> = props => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.host_an_event} />
-            <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+            <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
                 <Stepper step={3} totalSteps={3} paddingHorizontal={scaler(20)} />
 
                 <View style={styles.eventView}>

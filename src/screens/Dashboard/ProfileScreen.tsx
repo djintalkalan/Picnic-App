@@ -170,7 +170,7 @@ const ProfileScreen: FC<any> = (props) => {
                 title={isEditEnabled ? Language.edit_profile : Language.profile} />
             {/* <View> */}
 
-            <ScrollView extraScrollHeight={40} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
+            <ScrollView enableResetScrollToCoords={false} extraScrollHeight={40} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
 
                 <View>
                     <View style={styles.imageContainer} >

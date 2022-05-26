@@ -51,6 +51,7 @@ const CreateEvent2: FC<any> = props => {
   const scrollViewRef = useRef<ScrollView>(null)
   const dispatch = useDispatch();
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
+  const [, forceRender] = useState(false);
   const [isMultidayEvent, setIsMultidayEvent] = useState(false);
   const keyboardValues = useKeyboardService()
   const eventPriceInputRef = useRef<RNInput>(null)
@@ -97,7 +98,7 @@ const CreateEvent2: FC<any> = props => {
     setValue('additionalInfo', event?.details || "")
     setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
     setIsMultidayEvent(event?.is_multi_day_event ? true : false)
-
+    forceRender(_ => !_)
   }, [])
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -120,7 +121,7 @@ const CreateEvent2: FC<any> = props => {
       return true;
     }
     return false;
-  }, [errors]);
+  }, [errors, isUnlimitedCapacity]);
 
   const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime" | "endDate") => {
     eventDateTime.current.selectedType = type
@@ -200,7 +201,7 @@ const CreateEvent2: FC<any> = props => {
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={Language.host_an_event} />
-      <ScrollView ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+      <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <TouchableOpacity onPress={() => {

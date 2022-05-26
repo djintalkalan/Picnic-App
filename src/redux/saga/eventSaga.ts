@@ -140,6 +140,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
             for (const index in res?.data?.data) {
                 if (res?.data?.data[index].ticket_type == 'multiple') {
                     res.data.data[index].event_fees = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (Math.min((p.amount || p), c.amount)))
+                    res.data.data[index].currency = res?.data?.data[index]?.ticket_plans[0].currency
                 }
             }
 

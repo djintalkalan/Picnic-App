@@ -357,5 +357,8 @@ export const en = {
   ticket_title: "Ticket Type (Title)",
   ticket_price: "Ticket price",
   description: "Description",
+  title_required: "Title is required",
+  description_required: "Description is required",
+
 
 }

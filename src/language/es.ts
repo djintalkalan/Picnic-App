@@ -357,5 +357,7 @@ export const es = {
     ticket_title: "",
     ticket_price: "",
     description: "",
+    title_required: "",
+    description_required: "",
 
 }

@@ -81,7 +81,7 @@ const SignUp3: FC<any> = props => {
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <Stepper isBackButton step={4} totalSteps={4} />
-      <ScrollView keyboardShouldPersistTaps={'handled'}>
+      <ScrollView enableResetScrollToCoords={false} keyboardShouldPersistTaps={'handled'}>
         <View
           style={{
             width: '100%',

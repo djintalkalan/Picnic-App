@@ -171,7 +171,7 @@ const CreateGroup: FC<any> = (props) => {
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
       <MyHeader title={group ? Language.update_group : Language.create_group} />
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
+      <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
         <View>
           <View style={styles.imageContainer} >
             <Image onError={(err) => {

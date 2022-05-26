@@ -18,7 +18,7 @@ const VerifyOtp: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
-            <ScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: scaler(20) }} >
+            <ScrollView enableResetScrollToCoords={false} contentContainerStyle={{ flex: 1, paddingHorizontal: scaler(20) }} >
 
                 <Text style={styles.heading} >{Language.enter_verification_code}</Text>
                 <Text style={styles.content} >{Language.enter_otp_sent}</Text>

@@ -58,7 +58,7 @@ const SignUp2: FC<any> = (props) => {
 
             <Stepper isBackButton step={3} totalSteps={4} />
 
-            <ScrollView keyboardShouldPersistTaps={'handled'} >
+            <ScrollView enableResetScrollToCoords={false} keyboardShouldPersistTaps={'handled'} >
 
                 <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15) }} >
 

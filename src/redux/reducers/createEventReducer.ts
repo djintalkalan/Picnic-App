@@ -9,12 +9,14 @@ interface Location {
 }
 
 export interface TicketPlan {
+    _id: string
     name: string;
     amount: number;
     event_tax_rate: number;
     event_tax_amount: number;
     currency: string;
     description: string;
+    status: number;
 }
 
 export interface ICreateEventReducer {
