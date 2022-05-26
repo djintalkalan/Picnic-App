@@ -359,5 +359,8 @@ export const es = {
     description: "",
     title_required: "",
     description_required: "",
+    select_donation_options: "",
+    accept_in_cash: "",
+    accept_in_paypal: "",
 
 }

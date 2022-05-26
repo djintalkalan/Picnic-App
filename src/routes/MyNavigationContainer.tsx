@@ -38,6 +38,7 @@ import BookEvent from 'screens/Event/BookEvent';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
+import CreateEvent4 from 'screens/Event/CreateEvent/CreateEvent4';
 import EditEvent from 'screens/Event/EditEvent';
 import EventDetail from 'screens/Event/EventDetail';
 import EventMembers from 'screens/Event/EventMembers';
@@ -100,6 +101,7 @@ const dashboardScreens = {
   CreateEvent1: CreateEvent1,
   CreateEvent2: CreateEvent2,
   CreateEvent3: CreateEvent3,
+  CreateEvent4: CreateEvent4,
   EventDetail: EventDetail,
   EditEvent: EditEvent,
   Subscription: Subscription,

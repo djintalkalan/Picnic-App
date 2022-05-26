@@ -54,6 +54,8 @@ export interface ICreateEventReducer {
     is_multi_day_event: number;
     ticket_type: string;
     ticket_plans: TicketPlan[];
+    is_donation_enabled: number;
+    donation_description: string;
 
 }
 

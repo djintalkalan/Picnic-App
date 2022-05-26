@@ -359,6 +359,9 @@ export const en = {
   description: "Description",
   title_required: "Title is required",
   description_required: "Description is required",
+  select_donation_options: "Select donation options",
+  accept_in_cash: "Accept in cash",
+  accept_in_paypal: "Accept in paypal",
 
 
 }

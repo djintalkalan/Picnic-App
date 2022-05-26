@@ -1,4 +1,5 @@
 import { store } from 'app-store';
+import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
@@ -59,13 +60,12 @@ const CreateEvent3: FC<any> = props => {
   }, [])
 
   const setEventValues = useCallback(() => {
-    console.log("event", event);
 
     if (event.is_free_event) {
 
 
-      // setValue('donationDescription', event.donation_description);
-      // setIsDonationAccepted(event?.is_donation_accepted);
+      setValue('donationDescription', event.donation_description);
+      setIsDonationAccepted(event?.is_donation_enabled == 1);
 
     } else {
       if (event.ticket_type == 'multiple') {
@@ -227,11 +227,10 @@ const CreateEvent3: FC<any> = props => {
   // })(), [userData, isFreeEvent, isUnlimitedCapacity])
 
   const addTicket = useCallback(() => {
-    insert(0, emptyTicketType)
+    insert(0, { ...emptyTicketType, currency: getValues('ticketPlans')[0].currency })
   }, [])
 
   const deleteTicket = useCallback((i: number, _: any) => {
-    console.log(_);
 
     if (_?.plan_id) {
       update(i, { ..._, status: 2 })
@@ -241,7 +240,11 @@ const CreateEvent3: FC<any> = props => {
 
   const next = useCallback((payload: any) => {
     if (payload?.is_free_event) {
-      console.log("Calling api to create free event")
+      if (payload.is_donation_enabled) {
+        NavigationService.navigate('CreateEvent4')
+      }
+      else
+        console.log("Calling api to create free event")
     } else {
       NavigationService.navigate("CreateEvent4")
     }
@@ -250,24 +253,22 @@ const CreateEvent3: FC<any> = props => {
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
       is_free_event: false,
-      is_donation_accepted: false
+      is_donation_enabled: false
     }
 
     if (isFreeEvent) {
       payload.is_free_event = true
       if (isDonationAccepted) {
-        payload.is_donation_accepted = true
+        payload.is_donation_enabled = true
         payload.donation_description = data.donationDescription
         payload.currency = data.currency?.toLowerCase()
       }
-      // setValue('donationDescription', event.donation_description);
-      // setIsDonationAccepted(event?.is_donation_accepted);
     } else {
       payload.ticket_type = ticketTypeRef.current
       payload.ticket_price = 0
       payload.currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
-        payload.ticket_plans = ticketPlans.map(_ => ({
+        payload.ticket_plans = data.ticketPlans?.map(_ => ({
           _id: _?.plan_id || undefined,
           name: _.ticketTitle,
           amount: _.ticketPrice,
@@ -281,7 +282,7 @@ const CreateEvent3: FC<any> = props => {
         payload.ticket_price = data.ticketPrice
       }
     }
-    // dispatch(updateCreateEvent(payload))
+    dispatch(updateCreateEvent(payload))
 
     const userData = Database.getStoredValue("userData")
 
@@ -361,7 +362,7 @@ const CreateEvent3: FC<any> = props => {
               {isFreeEvent ?
                 <View>
                   <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
-                    <Switch active={isDonationAccepted} onChange={() => { setIsDonationAccepted(!isDonationAccepted) }} />
+                    <Switch active={isDonationAccepted} onChange={() => { setValue('donationDescription', ''); setIsDonationAccepted(!isDonationAccepted) }} />
                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '400' }}>{Language.accept_donation}</Text>
                   </View>
 
@@ -490,7 +491,7 @@ const CreateEvent3: FC<any> = props => {
                                   onSelect={data => {
                                     setMultiTicketCurrencyIndex(-1);
                                     // const a = getValues('ticketPlans')[i]
-                                    replace(ticketPlans.map(_ => ({ ..._, currency: data.title })))
+                                    replace(getValues('ticketPlans').map(_ => ({ ..._, currency: data.title })))
                                     // update(i, { ...a, currency: data.title })
                                   }}
                                 />
