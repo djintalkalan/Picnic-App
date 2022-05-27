@@ -74,11 +74,11 @@ const CreateEvent3: FC<any> = props => {
             payment_email: data?.paypalId?.trim() ?? ''
         };
         if (event.is_free_event != 1) {
+            payload.event_tax_rate = data?.taxRate || '0'
             payload.event_refund_policy = data?.policy?.trim()
             if (event.ticket_type == 'single') {
-                payload.event_tax_rate = data?.taxRate,
-                    payload.event_tax_amount = data?.taxPrice,
-                    payload.ticket_plans = []
+                payload.event_tax_amount = data?.taxPrice
+                payload.ticket_plans = []
             }
             else {
                 payload.ticket_plans = event.ticket_plans?.map(_ => ({
@@ -86,6 +86,8 @@ const CreateEvent3: FC<any> = props => {
                     event_tax_rate: data?.taxRate,
                     event_tax_amount: (round(((parseFloat(data?.taxRate) / 100) * parseFloat(_?.amount.toString())), 2)).toString(),
                 }))
+                payload.event_tax_amount = '0'
+                payload.event_currency = payload.ticket_plans[0].currency
             }
         }
         dispatch(updateCreateEvent(payload))

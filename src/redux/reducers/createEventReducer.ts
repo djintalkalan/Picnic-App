@@ -56,7 +56,7 @@ export interface ICreateEventReducer {
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {
     switch (action.type) {
         case ActionTypes.SET_CREATE_EVENT_DATA:
-            return deleteExtraKeys(action.payload)
+            return deleteExtraKeys({ ...action.payload })
         case ActionTypes.UPDATE_CREATE_EVENT_DATA:
             return { ...state, ...action.payload }
         case ActionTypes.RESET_CREATE_EVENT_DATA:
