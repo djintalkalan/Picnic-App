@@ -304,20 +304,48 @@ const EventDetail: FC<any> = (props) => {
 
                     <View style={{ flexDirection: 'row', width: '100%' }} >
                         <View style={{ flex: 1 }} >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                                    source={Images.ic_group_events} />
-                                <Text style={styles.events} >
-                                    {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
-                                </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                                    source={Images.ic_event_time} />
-                                <Text style={styles.events} >
-                                    {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
-                                </Text>
-                            </View>
+
+                            {event?.is_multi_day_event != 1 ?
+                                <><View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                                    <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                        source={Images.ic_group_events} />
+                                    <Text style={styles.events}>
+                                        {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
+                                    </Text>
+                                </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                            source={Images.ic_event_time} />
+                                        <Text style={styles.events}>
+                                            {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                        </Text>
+                                    </View></>
+                                : <>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(16), marginBottom: scaler(8), }}>
+                                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                            source={Images.ic_group_events} />
+                                        <View>
+                                            <Text style={styles.dateTitle}>
+                                                {Language.start_date}
+                                            </Text>
+                                            <Text style={styles.events}>
+                                                {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}  {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                            </Text>
+                                        </View>
+
+                                    </View><View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(16) }}>
+                                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                            source={Images.ic_group_events} />
+                                        <View>
+                                            <Text style={styles.dateTitle}>
+                                                {Language.end_date}
+                                            </Text>
+                                            <Text style={styles.events}>
+                                                {dateFormat(stringToDate((event?.event_end_date || event?.event_date), 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}  {dateFormat(stringToDate((event?.event_end_date || event?.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                            </Text>
+                                        </View>
+
+                                    </View></>}
+
 
                         </View>
 
@@ -587,6 +615,10 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.colorBlackText,
         flex: 1
+    },
+    dateTitle: {
+        fontSize: scaler(12),
+        color: colors.colorPrimary,
     },
     members: {
         fontSize: scaler(15),
