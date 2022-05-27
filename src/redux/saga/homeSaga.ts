@@ -15,6 +15,16 @@ function* _searchAtHome({ type, payload, }: action): Generator<any, any, any> {
         const location = Database?.getStoredValue("selectedLocation", defaultLocation)
         let res = yield call(ApiProvider._searchAtHome, { ...payload, ...location });
         if (res.status == 200) {
+            if (payload?.type == 'events') {
+                for (const index in res?.data?.data) {
+                    if (res?.data?.data[index].ticket_type == 'multiple') {
+                        const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+                        res.data.data[index].event_fees = leastTicket.amount?.toString()
+                        res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
+                        res.data.data[index].event_currency = leastTicket.currency
+                    }
+                }
+            }
             yield put(setSearchedData({ data: Database.getOtherString("searchHomeText") ? res?.data?.data : null, type: payload?.type }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

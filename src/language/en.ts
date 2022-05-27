@@ -362,6 +362,8 @@ export const en = {
   select_donation_options: "Select donation options",
   accept_in_cash: "Accept in cash",
   accept_in_paypal: "Accept in paypal",
-  copy_event: "Copy event"
+  select_ticket: "Select Ticket",
+  ticket_type: "Ticket type",
+  copy_event: "Copy event",
 
 }
