@@ -1,4 +1,5 @@
 import { store } from 'app-store';
+import { createEvent } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
@@ -31,7 +32,7 @@ const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Mul
 const CreateEvent3: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const uploadedImage = useRef('');
-  const ticketTypeRef = useRef<string>()
+  const ticketTypeRef = useRef<string>('single')
   const [isDropdown, setDropdown] = useState(false);
   const [multiTicketCurrencyIndex, setMultiTicketCurrencyIndex] = useState(-1);
   const [isTicketTypeDropdown, setIsTicketTypeDropdown] = useState(false);
@@ -56,7 +57,7 @@ const CreateEvent3: FC<any> = props => {
 
   useEffect(() => {
     setEventValues()
-    Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+    // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
   }, [])
 
   const setEventValues = useCallback(() => {
@@ -85,7 +86,7 @@ const CreateEvent3: FC<any> = props => {
         setValue('currency', event?.event_currency?.toUpperCase() || "USD")
       }
     }
-    setIsFreeEvent(event?.is_free_event ? true : false)
+    setIsFreeEvent(event?.is_free_event == 1 ? true : false)
   }, [])
 
 
@@ -239,27 +240,26 @@ const CreateEvent3: FC<any> = props => {
   }, [])
 
   const next = useCallback((payload: any) => {
-    if (payload?.is_free_event) {
-      if (payload.is_donation_enabled) {
-        NavigationService.navigate('CreateEvent4')
-      }
-      else
-        console.log("Calling api to create free event")
+    if (payload?.is_free_event && payload.is_donation_enabled || !payload?.is_free_event) {
+      NavigationService.navigate('CreateEvent4')
     } else {
-      NavigationService.navigate("CreateEvent4")
+      setTimeout(() => {
+        dispatch(createEvent())
+      }, 0);
     }
+
   }, []);
 
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
-      is_free_event: false,
-      is_donation_enabled: false
+      is_free_event: '0',
+      is_donation_enabled: '0'
     }
 
     if (isFreeEvent) {
-      payload.is_free_event = true
+      payload.is_free_event = '1'
       if (isDonationAccepted) {
-        payload.is_donation_enabled = true
+        payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
         payload.currency = data.currency?.toLowerCase()
       }
@@ -280,6 +280,7 @@ const CreateEvent3: FC<any> = props => {
         }))
       } else {
         payload.event_fees = data.ticketPrice
+        payload.ticket_plans = []
       }
     }
     dispatch(updateCreateEvent(payload))

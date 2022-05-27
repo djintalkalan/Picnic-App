@@ -1,3 +1,4 @@
+import { createEvent } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
@@ -47,7 +48,7 @@ const CreateEvent3: FC<any> = props => {
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
         event?.payment_method && event?.payment_method?.includes('paypal') && setIsPayByPaypal(true)
         setValue('paypalId', event?.payment_email ?? '')
-        if (!event.is_donation_enabled) {
+        if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
             setValue('taxPrice', event?.event_tax_amount?.toString() || '')
             setValue('policy', event?.event_refund_policy ?? '')
@@ -56,7 +57,7 @@ const CreateEvent3: FC<any> = props => {
 
     const onSubmit = useCallback(
         (data) => {
-            if (!data?.policy?.trim() && !event?.is_donation_enabled) {
+            if (!data?.policy?.trim() && event.is_donation_enabled != 1) {
                 setError("policy", { message: Language.write_refund_policy })
                 return
             }
@@ -68,28 +69,42 @@ const CreateEvent3: FC<any> = props => {
 
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
 
-        let payload = {
+        const payload: any = {
             payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
-            payment_email: data?.paypalId?.trim(),
-            event_refund_policy: data?.policy?.trim(),
-            event_tax_rate: data?.taxRate,
-            event_tax_amount: data?.taxPrice,
+            payment_email: data?.paypalId?.trim() ?? ''
         };
+        if (event.is_free_event != 1) {
+            payload.event_refund_policy = data?.policy?.trim()
+            if (event.ticket_type == 'single') {
+                payload.event_tax_rate = data?.taxRate,
+                    payload.event_tax_amount = data?.taxPrice,
+                    payload.ticket_plans = []
+            }
+            else {
+                payload.ticket_plans = event.ticket_plans?.map(_ => ({
+                    ..._,
+                    event_tax_rate: data?.taxRate,
+                    event_tax_amount: (round(((parseFloat(data?.taxRate) / 100) * parseFloat(_?.amount.toString())), 2)).toString(),
+                }))
+            }
+        }
         dispatch(updateCreateEvent(payload))
         setTimeout(() => {
             console.log('store.getState().createEventState', store.getState().createEventState);
+            dispatch(
+                createEvent(
+                    // {
+                    // data: {payload},
+                    // onSuccess: () => {
+                    //     Database.setSelectedLocation(
+                    //         Database.getStoredValue('selectedLocation'),
+                    //     );
+                    // },
+                    // }
+                ),
+            );
 
-        }, 1000);
-        // dispatch(
-        //     createEvent({
-        //         data: payload,
-        //         onSuccess: () => {
-        //             Database.setSelectedLocation(
-        //                 Database.getStoredValue('selectedLocation'),
-        //             );
-        //         },
-        //     }),
-        // );
+        }, 0);
     }, []);
 
     const calculateButtonDisability = useCallback(() => {
@@ -112,17 +127,17 @@ const CreateEvent3: FC<any> = props => {
 
                 <View style={styles.eventView}>
                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                        {event.is_donation_enabled ? Language.select_donation_options : Language.select_payment_options}
+                        {event.is_donation_enabled == 1 ? Language.select_donation_options : Language.select_payment_options}
                     </Text>
                     <TouchableOpacity style={styles.payView} onPress={() => setIsPayByCash(!isPayByCash)}>
                         <Image source={Images.ic_empty_wallet} style={{ height: scaler(16), width: scaler(19) }} />
-                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled ? Language.accept_in_cash : Language.pay_by_cash}</Text>
+                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_cash : Language.pay_by_cash}</Text>
                         <MaterialIcons name={isPayByCash ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                     </TouchableOpacity>
                     <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
                     <TouchableOpacity style={styles.payView} onPress={() => setIsPayByPaypal(!isPayByPaypal)}>
                         <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
-                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled ? Language.accept_in_paypal : Language.pay_by_paypal}</Text>
+                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_paypal : Language.pay_by_paypal}</Text>
                         <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                     </TouchableOpacity>
                 </View>
@@ -133,7 +148,7 @@ const CreateEvent3: FC<any> = props => {
                         paddingVertical: scaler(15),
                     }}>
 
-                    {!event.is_donation_enabled ?
+                    {event.is_donation_enabled != 1 ?
                         <><Text>{Language.tax_rate} (%)</Text>
                             <TextInput
                                 containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -144,7 +159,7 @@ const CreateEvent3: FC<any> = props => {
                                 name={'taxRate'}
                                 maxLength={5}
                                 keyboardType={'decimal-pad'}
-                                onChangeText={event.is_multi_day_event == 0 ? (_) => {
+                                onChangeText={event.ticket_type == 'single' ? (_) => {
                                     setValue('taxPrice',
                                         // (0 < parseFloat(_) && parseFloat(_) < 29.9) ? (round(((parseFloat(_) / 100) * event?.event_fees), 2)).toString() : '');
                                         // onChangeText={(_) => {
@@ -171,7 +186,7 @@ const CreateEvent3: FC<any> = props => {
                                 }}
                                 control={control}
                                 errors={errors} />
-                            {event.is_multi_day_event == 0 ?
+                            {event.ticket_type == 'single' ?
                                 <><Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
                                     <TextInput
                                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -201,7 +216,7 @@ const CreateEvent3: FC<any> = props => {
                             errors={errors}
                         /> : undefined
                     }
-                    {!event.is_donation_enabled ?
+                    {event.is_donation_enabled != 1 ?
                         <View style={{ flex: 1, width: '100%' }}>
                             <TextInput
                                 placeholder={Language.write_refund_policy}

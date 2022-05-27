@@ -149,7 +149,7 @@ const CreateEvent1: FC<any> = props => {
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
-
+    setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
     if (event?.image) {
       setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
     } else {
@@ -187,13 +187,14 @@ const CreateEvent1: FC<any> = props => {
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
+      is_online_event: isOnlineEvent ? '1' : '0',
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
       image: uploadedImage?.current || undefined,
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }, [event])
+  }, [event, isOnlineEvent])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>

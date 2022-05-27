@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { setCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
@@ -96,10 +96,11 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(payload?.data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, payload?.data);
+        const data = store.getState().createEventState
+        let res = yield call(data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
-            if (payload?.data?._id) {
+            if (data?._id) {
                 yield put(updateEventDetail(res?.data))
             } else {
                 SocketService?.emit(EMIT_JOIN_ROOM, {
@@ -107,7 +108,8 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
                 })
             }
             NavigationService.navigate('HomeEventTab')
-            if (payload.onSuccess) payload.onSuccess(res?.data)
+            // if (payload.onSuccess) payload.onSuccess(res?.data)
+            yield put(getAllEvents({ page: 1 }))
 
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

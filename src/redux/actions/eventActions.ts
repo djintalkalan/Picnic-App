@@ -14,7 +14,7 @@ export const getAllCurrencies = () => ({
     type: ActionTypes.GET_ALL_CURRENCIES,
 })
 
-export const createEvent = (payload: any) => ({
+export const createEvent = (payload?: any) => ({
     type: ActionTypes.CREATE_EVENT,
     payload
 })
