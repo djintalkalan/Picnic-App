@@ -43,6 +43,7 @@ import EditEvent from 'screens/Event/EditEvent';
 import EventDetail from 'screens/Event/EventDetail';
 import EventMembers from 'screens/Event/EventMembers';
 import Payment from 'screens/Event/Payment';
+import SelectTicket from 'screens/Event/SelectTicket';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
@@ -115,7 +116,8 @@ const dashboardScreens = {
   SearchChatScreen: SearchChatScreen,
   SelectContacts: SelectContacts,
   ImagePreview: ImagePreview,
-  PersonChat: PersonChat
+  PersonChat: PersonChat,
+  SelectTicket: SelectTicket
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

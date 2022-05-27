@@ -362,5 +362,7 @@ export const es = {
     select_donation_options: "",
     accept_in_cash: "",
     accept_in_paypal: "",
+    select_ticket: "",
+    ticket_type: "",
 
 }
