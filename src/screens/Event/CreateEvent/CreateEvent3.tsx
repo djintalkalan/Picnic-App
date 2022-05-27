@@ -62,8 +62,7 @@ const CreateEvent3: FC<any> = props => {
 
   const setEventValues = useCallback(() => {
 
-    if (event.is_free_event) {
-
+    if (event.is_free_event == 1) {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
@@ -240,10 +239,11 @@ const CreateEvent3: FC<any> = props => {
   }, [])
 
   const next = useCallback((payload: any) => {
-    if (payload?.is_free_event && payload.is_donation_enabled || !payload?.is_free_event) {
+    if (payload?.is_free_event == 1 && payload.is_donation_enabled == 1 || payload?.is_free_event == 0) {
       NavigationService.navigate('CreateEvent4')
     } else {
       setTimeout(() => {
+        return console.log('store.getState().createEventState', store.getState().createEventState);
         dispatch(createEvent())
       }, 0);
     }

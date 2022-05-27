@@ -50,7 +50,7 @@ const CreateEvent3: FC<any> = props => {
         setValue('paypalId', event?.payment_email ?? '')
         if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
-            setValue('taxPrice', event?.event_tax_amount?.toString() || '')
+            setValue('taxPrice', event?.event_tax_rate ? (round(((parseFloat(event?.event_tax_rate?.toString()) / 100) * parseFloat(event?.event_fees.toString())), 2)).toString() : '')
             setValue('policy', event?.event_refund_policy ?? '')
         }
     }, [])
@@ -90,7 +90,7 @@ const CreateEvent3: FC<any> = props => {
         }
         dispatch(updateCreateEvent(payload))
         setTimeout(() => {
-            console.log('store.getState().createEventState', store.getState().createEventState);
+            return console.log('store.getState().createEventState', store.getState().createEventState);
             dispatch(
                 createEvent(
                     // {
