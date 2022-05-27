@@ -141,9 +141,10 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             for (const index in res?.data?.data) {
                 if (res?.data?.data[index].ticket_type == 'multiple') {
-                    const leastTicket = res?.data?.event?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
-                    res.data.event.event_fees = leastTicket.amount?.toString()
-                    res.data.event.event_tax_rate = leastTicket.event_tax_rate?.toString()
+                    const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+
+                    res.data.data[index].event_fees = leastTicket.amount?.toString()
+                    res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
                     res.data.data[index].event_currency = leastTicket.currency
 
                 }
