@@ -200,7 +200,7 @@ const CreateEvent2: FC<any> = props => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.host_an_event} />
+      <MyHeader title={event?._id ? Language.edit_event : Language.host_an_event} />
       <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
