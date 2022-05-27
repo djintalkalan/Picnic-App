@@ -242,6 +242,7 @@ const CreateEvent3: FC<any> = props => {
     if (payload?.is_free_event == 1 && payload.is_donation_enabled == 1 || payload?.is_free_event == 0) {
       NavigationService.navigate('CreateEvent4')
     } else {
+      dispatch(updateCreateEvent(removePaymentKeys(payload)))
       setTimeout(() => {
         return console.log('store.getState().createEventState', store.getState().createEventState);
         dispatch(createEvent())
@@ -627,3 +628,16 @@ const styles = StyleSheet.create({
     right: scaler(-12)
   }
 });
+
+const removePaymentKeys = (payload: any) => {
+  payload.ticket_type = ""
+  payload.event_fees = ""
+  payload.event_currency = ""
+  payload.ticket_plans = []
+  payload.payment_method = []
+  payload.payment_email = ""
+  payload.event_refund_policy = ""
+  payload.event_tax_rate = ""
+  payload.event_tax_amount = ""
+  return payload
+}
