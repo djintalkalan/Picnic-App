@@ -364,5 +364,6 @@ export const en = {
   accept_in_paypal: "Accept in paypal",
   select_ticket: "Select Ticket",
   ticket_type: "Ticket type",
+  copy_event: "Copy event",
 
 }

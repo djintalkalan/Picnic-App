@@ -66,8 +66,7 @@ const CreateEvent2: FC<any> = props => {
   }, [])
 
   const setEventValues = useCallback(() => {
-
-    if (!props?.route?.params?.copy) {
+    if (event?.is_copied_event != '1') {
       eventDateTime.current = {
         eventDate: event?.event_date ? stringToDate(event?.event_date, "YYYY-MM-DD", "-") : new Date(),
         startTime: event?.event_date ? stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-") : defaultTime,
@@ -81,16 +80,21 @@ const CreateEvent2: FC<any> = props => {
       setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
     } else {
       setValue('eventDate', '')
+      setValue('endDate', '')
       setValue('startTime', '')
       setValue('endTime', '')
+
       if (eventDateRef.current) {
         eventDateRef.current?.measureInWindow((x, y) => {
+          console.log("eventDateRef", x, y);
+
           scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
           setTimeout(() => {
             (openDatePicker("eventDate"))
           }, 1000)
         })
       }
+
     }
 
     console.log(event);
@@ -111,6 +115,7 @@ const CreateEvent2: FC<any> = props => {
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange',
+    shouldFocusError: false
   });
 
   const calculateButtonDisability = useCallback(() => {
@@ -200,7 +205,7 @@ const CreateEvent2: FC<any> = props => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.host_an_event} />
+      <MyHeader title={event?._id ? event?.is_copied_event ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
@@ -280,6 +285,7 @@ const CreateEvent2: FC<any> = props => {
                 backgroundColor={colors.colorTextInputBackground}
                 style={{ fontSize: scaler(13) }}
                 name={'eventDate'}
+                ref={eventDateRef}
                 onPress={() => (openDatePicker("eventDate"))}
                 required={Language.date_required}
                 icon={Images.ic_calender}
@@ -416,6 +422,8 @@ const CreateEvent2: FC<any> = props => {
               if (!isMultidayEvent) {
                 setValue('startTime', "")
                 setValue('endTime', "")
+              } else {
+                setValue(selectedType == 'endDate' ? 'endTime' : "startTime", "")
               }
             }
             else {

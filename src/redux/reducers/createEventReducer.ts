@@ -51,6 +51,7 @@ export interface ICreateEventReducer {
     ticket_plans: TicketPlan[];
     is_donation_enabled: number;
     donation_description: string;
+    is_copied_event: string;
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {
