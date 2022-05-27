@@ -30,7 +30,8 @@ const SignUp2: FC<any> = (props) => {
             firstName: "Deepak",
             lastName: "Jaglan"
         } : {},
-        mode: 'onChange'
+        mode: 'onChange',
+        shouldFocusError: false
     })
 
     const onSubmit = useCallback(() => handleSubmit(data => {

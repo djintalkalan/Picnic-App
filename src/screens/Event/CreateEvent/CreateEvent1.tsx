@@ -191,7 +191,8 @@ const CreateEvent1: FC<any> = props => {
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
       image: uploadedImage?.current || undefined,
-      event_group: undefined
+      event_group: undefined,
+      is_copied_event: props?.route?.params?.copy ?? "0",
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
@@ -199,12 +200,12 @@ const CreateEvent1: FC<any> = props => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={eventId ? Language.edit_event : Language.host_an_event} />
+      <MyHeader title={eventId ? props?.route?.params?.copy ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <ScrollView
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
         contentContainerStyle={{ alignItems: 'center' }}>
-        <Stepper step={1} totalSteps={3} paddingHorizontal={scaler(20)} />
+        <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View>
           <View style={styles.imageContainer}>
             <Image

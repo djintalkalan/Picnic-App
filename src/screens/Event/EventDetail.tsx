@@ -121,6 +121,8 @@ const EventDetail: FC<any> = (props) => {
     }, [event])
 
     const onConfirmCopy = useCallback(() => {
+        // _hidePopUpAlert()
+        // return NavigationService.navigate('CreateEvent1', { id: '6290baf6c3a91bc2b5a6bbfe', copy: "1" })
         if (!eventNameRef.current?.trim()) {
             _showErrorMessage(Language.event_name_required)
             return
@@ -135,7 +137,7 @@ const EventDetail: FC<any> = (props) => {
                 dispatch(setLoadingAction(false))
                 _hidePopUpAlert()
                 if (res?.status == 200) {
-                    NavigationService.navigate('EditEvent', { id: res?.data, copy: "1" })
+                    NavigationService.navigate('CreateEvent1', { id: res?.data, copy: "1" })
                     eventNameRef.current = ''
                 }
                 else {

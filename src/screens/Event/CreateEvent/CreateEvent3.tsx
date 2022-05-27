@@ -311,7 +311,7 @@ const CreateEvent3: FC<any> = props => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={event?._id ? Language.edit_event : Language.host_an_event} />
+      <MyHeader title={event?._id ? event?.is_copied_event ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <View style={{ flex: 1 }}>
         <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
           <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
@@ -450,7 +450,7 @@ const CreateEvent3: FC<any> = props => {
                                     icon={Images.ic_arrow_dropdown}
                                     control={control}
                                     iconContainerStyle={{ end: scaler(4) }}
-                                    onPress={() => { setMultiTicketCurrencyIndex(i) }}
+                                    onPress={() => { setMultiTicketCurrencyIndex(_ => (_ != -1 ? -1 : i)) }}
                                     errors={errors.ticketPlans?.[i]}
                                   />
                                   <TextInput

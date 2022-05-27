@@ -44,6 +44,7 @@ const SignUp3: FC<any> = props => {
       // phone_dialCode: "+91"
     },
     mode: 'onChange',
+    shouldFocusError: false
   });
   const dispatch = useDispatch();
   const onSubmit = useCallback(

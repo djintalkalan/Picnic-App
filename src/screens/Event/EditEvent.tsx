@@ -111,7 +111,8 @@ const EditEvent: FC<any> = props => {
         clearErrors,
         formState: { errors },
     } = useForm<FormType>({
-        mode: 'onChange', defaultValues: { 'currency': 'USD' }
+        mode: 'onChange', defaultValues: { 'currency': 'USD' },
+        shouldFocusError: false
     });
 
 

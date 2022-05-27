@@ -123,10 +123,12 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                         <>
                             <RNTextInput {...rest}
                                 ref={(r) => {
-                                    if (typeof ref == 'function') {
-                                        ref(r)
-                                    } else {
-                                        ref?.current == r
+                                    if (ref) {
+                                        if (typeof ref == 'function') {
+                                            ref(r)
+                                        } else {
+                                            ref.current = r
+                                        }
                                     }
                                     cRef(r)
                                 }}
