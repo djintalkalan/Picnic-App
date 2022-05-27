@@ -191,6 +191,7 @@ const CreateEvent1: FC<any> = props => {
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
       image: uploadedImage?.current || undefined,
+      event_group: undefined
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
