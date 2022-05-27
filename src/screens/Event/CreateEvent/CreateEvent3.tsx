@@ -244,7 +244,7 @@ const CreateEvent3: FC<any> = props => {
     } else {
       dispatch(updateCreateEvent(removePaymentKeys(payload)))
       setTimeout(() => {
-        return console.log('store.getState().createEventState', store.getState().createEventState);
+        // return console.log('store.getState().createEventState', store.getState().createEventState);
         dispatch(createEvent())
       }, 0);
     }

@@ -90,7 +90,7 @@ const CreateEvent3: FC<any> = props => {
         }
         dispatch(updateCreateEvent(payload))
         setTimeout(() => {
-            return console.log('store.getState().createEventState', store.getState().createEventState);
+            // return console.log('store.getState().createEventState', store.getState().createEventState);
             dispatch(
                 createEvent(
                     // {
