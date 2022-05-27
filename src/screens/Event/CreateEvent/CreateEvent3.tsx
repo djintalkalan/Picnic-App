@@ -261,12 +261,12 @@ const CreateEvent3: FC<any> = props => {
       if (isDonationAccepted) {
         payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
-        payload.currency = data.currency?.toLowerCase()
+        payload.event_currency = data.currency?.toLowerCase()
       }
     } else {
       payload.ticket_type = ticketTypeRef.current
       payload.event_fees = 0
-      payload.currency = data.currency?.toLowerCase()
+      payload.event_currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => ({
           _id: _?.plan_id || undefined,
