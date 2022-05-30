@@ -192,7 +192,7 @@ const CreateEvent1: FC<any> = props => {
       short_description: data?.aboutEvent,
       image: uploadedImage?.current || undefined,
       event_group: undefined,
-      is_copied_event: props?.route?.params?.copy ?? "0",
+      is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
