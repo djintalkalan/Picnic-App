@@ -8,6 +8,7 @@ import { getSymbol, NavigationService, scaler } from 'utils'
 
 const SelectTicket: FC = (props: any) => {
     const [selectedTicket, setSelectedTicket] = useState<any>()
+
     const ticketArray = (props?.route?.params.data || [])
 
     const onTicketSelect = useCallback((item: any) => {
