@@ -8,14 +8,11 @@ import { getSymbol, NavigationService, scaler } from 'utils'
 
 const SelectTicket: FC = (props: any) => {
     const [selectedTicket, setSelectedTicket] = useState<any>()
-    const ticketArray = (props?.route?.params.data?.filter((_: any) => { return _.status != 2 }))
+    const ticketArray = (props?.route?.params.data || [])
 
     const onTicketSelect = useCallback((item: any) => {
         setSelectedTicket(item)
     }, [])
-
-    console.log(selectedTicket)
-
 
     const onNextPress = useCallback(() => {
         NavigationService.navigate('BookEvent', { id: props?.route?.params.id, selectedTicket: selectedTicket })
@@ -37,8 +34,11 @@ const SelectTicket: FC = (props: any) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.select_ticket} backEnabled />
-            <View style={{ flex: 1, margin: scaler(15) }}>
+            <View style={{ flex: 1, }}>
                 <FlatList
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ padding: scaler(15) }}
+                    keyExtractor={_ => _?._id}
                     data={ticketArray}
                     renderItem={renderTicket}
                 />

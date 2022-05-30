@@ -57,6 +57,7 @@ function interceptResponse(this: AxiosResponse<any>): any {
 
 const api = axios.create({
     baseURL: config.API_URL,
+    timeout: 1000 * 30,
     headers: {
         'Accept': "application/json",
         'X-Platform-Type': 'app',

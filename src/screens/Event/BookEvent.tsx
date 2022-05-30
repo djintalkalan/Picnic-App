@@ -41,7 +41,6 @@ const BookEvent: FC = (props: any) => {
         }
     }, [])
 
-    console.log('event', props?.route?.params.selectedTicket)
     const {
         handleSubmit,
         control,

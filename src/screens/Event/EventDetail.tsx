@@ -497,7 +497,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     onPress={() => {
-                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans, id: event?._id }) :
+                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })
                                     }}
                                 />
