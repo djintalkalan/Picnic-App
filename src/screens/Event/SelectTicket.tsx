@@ -42,6 +42,9 @@ const SelectTicket: FC = (props: any) => {
                     keyExtractor={_ => _?._id}
                     data={ticketArray}
                     renderItem={renderTicket}
+                    ItemSeparatorComponent={() => (
+                        <View style={{ flex: 1, height: scaler(10) }} />
+                    )}
                 />
             </View>
             <View style={{ marginHorizontal: scaler(10) }}>
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
         padding: scaler(15),
         borderRadius: scaler(8),
-        marginBottom: scaler(15)
+        // marginBottom: scaler(15)
     },
     mainText: {
         fontSize: scaler(17),

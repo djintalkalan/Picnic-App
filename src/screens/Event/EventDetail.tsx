@@ -381,7 +381,7 @@ const EventDetail: FC<any> = (props) => {
                                     source={Images.ic_event_location} />
                                 <Text onPress={() => {
                                     launchMap({ lat: region?.latitude, long: region?.longitude })
-                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400' }]} >
+                                }} style={[styles.events, { color: colors.colorLink, fontWeight: '400', flex: 1 }]} >
                                     {/* {event?.city + ", " + (event?.state ? (event?.state + ", ") : "") + event?.country} */}
                                     {event?.address}
                                 </Text>
@@ -410,7 +410,7 @@ const EventDetail: FC<any> = (props) => {
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                             <View style={{ flex: 1, }}>
                                 <Text style={styles.ticketInfo}>
-                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic' }]}>{activeTicket?.ticket_name || "Default"}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || "Default"}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
                                 </Text>
                                 <Text style={styles.ticketInfo}>
                                     Tax ({activeTicket?.event_tax_rate}%)
@@ -426,7 +426,7 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <View style={{ height: 1, flex: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
+                        <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                             <Text style={[{ flex: 1, }, styles.ticketInfo]}>
                                 Total
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
         fontSize: scaler(13),
         fontWeight: '500',
         color: colors.colorBlackText,
-        flex: 1
+        // flex: 1
     },
     dateTitle: {
         fontSize: scaler(12),
