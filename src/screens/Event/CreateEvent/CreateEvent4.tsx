@@ -77,14 +77,14 @@ const CreateEvent3: FC<any> = props => {
             payload.event_tax_rate = data?.taxRate || '0'
             payload.event_refund_policy = data?.policy?.trim()
             if (event.ticket_type == 'single') {
-                payload.event_tax_amount = data?.taxPrice
+                payload.event_tax_amount = data?.taxPrice || '0'
                 payload.ticket_plans = []
             }
             else {
                 payload.ticket_plans = event.ticket_plans?.map(_ => ({
                     ..._,
-                    event_tax_rate: data?.taxRate,
-                    event_tax_amount: (round(((parseFloat(data?.taxRate) / 100) * parseFloat(_?.amount.toString())), 2)).toString(),
+                    event_tax_rate: data?.taxRate || '0',
+                    event_tax_amount: (round(((parseFloat(data?.taxRate || 0) / 100) * parseFloat(_?.amount.toString())), 2)).toString(),
                 }))
                 payload.event_tax_amount = '0'
                 payload.event_currency = payload.ticket_plans[0].currency

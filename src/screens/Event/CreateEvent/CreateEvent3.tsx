@@ -273,8 +273,8 @@ const CreateEvent3: FC<any> = props => {
           _id: _?.plan_id || undefined,
           name: _.ticketTitle,
           amount: _.ticketPrice,
-          event_tax_rate: "",
-          event_tax_amount: "",
+          event_tax_rate: "0",
+          event_tax_amount: "0",
           currency: _.currency?.toLowerCase(),
           description: _.ticketDescription,
           status: _.status == 2 ? 2 : undefined
@@ -637,7 +637,7 @@ const removePaymentKeys = (payload: any) => {
   payload.payment_method = []
   payload.payment_email = ""
   payload.event_refund_policy = ""
-  payload.event_tax_rate = ""
+  payload.event_tax_rate = "0"
   payload.event_tax_amount = ""
   return payload
 }
