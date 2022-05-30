@@ -365,5 +365,6 @@ export const en = {
   select_ticket: "Select Ticket",
   ticket_type: "Ticket type",
   copy_event: "Copy event",
+  ticket_purchased: "Ticket purchased",
 
 }
