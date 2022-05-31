@@ -13,6 +13,7 @@ import {
   useKeyboardService
 } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,14 +27,12 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
-  NavigationService,
-  ProfileImagePickerOptions,
-  scaler
+  NavigationService, scaler
 } from 'utils';
 
 type FormType = {
@@ -43,10 +42,20 @@ type FormType = {
   aboutEvent: string;
 };
 
+const videoProps = {
+  forceJpg: true,
+  compressImageQuality: 0.8,
+  // loadingLabelText: Language.processing,
+  enableRotationGesture: true,
+  compressVideoPreset: "MediumQuality",
+  mediaType: 'any'
+}
+
 const { width } = Dimensions.get('screen')
 
 const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
+  const { loadVideo } = useVideoPlayer()
   const [eventImage, setEventImage] = useState<any>();
   const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
@@ -91,7 +100,13 @@ const CreateEvent1: FC<any> = props => {
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
-      ImagePicker.openPicker({ ...ProfileImagePickerOptions, multiple: isMultiImage })
+      ImagePicker.openPicker({
+        multiple: isMultiImage,
+        maxFiles: 10 - multiImageArray?.length,
+        mediaType: 'any',
+        forceJpg: true,
+        compressVideoPreset: "MediumQuality",
+      })
         .then(image => {
           uploadedImage.current = '';
           if (isMultiImage) {
@@ -104,7 +119,7 @@ const CreateEvent1: FC<any> = props => {
           console.log(e);
         });
     }, 200);
-  }, []);
+  }, [multiImageArray]);
   console.log('multiImageArray', multiImageArray)
 
   useEffect(() => {
@@ -241,12 +256,19 @@ const CreateEvent1: FC<any> = props => {
               <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), flex: 1 }}>Additional Photos and Videos </Text>
               <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), color: colors.colorPlaceholder }}>{'(' + multiImageArray?.length + '/10)'} </Text>
             </View>
-            <View style={{ flexDirection: 'row', flex: 1, display: 'flex', flexWrap: 'wrap', marginHorizontal: -scaler(2.5) }}>
+            <View style={{ flexDirection: 'row', flex: 1, flexWrap: 'wrap', marginHorizontal: -scaler(2.5) }}>
               {multiImageArray?.map((_, i) => {
                 return (
                   <View key={i}>
-                    <AntDesign name={'minuscircle'} onPress={() => { }} color={'#EB5757'} size={scaler(20)} style={styles.minusView} />
-                    <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?.path }} />
+                    <TouchableOpacity onPress={() => setMultiImageArray(_ => _.filter((_, index) => i != index))} style={styles.minusView}>
+                      <Image source={Images.ic_delete_red} style={{ height: scaler(20), width: scaler(20) }} />
+                    </TouchableOpacity>
+                    {_.mime?.includes('video') ?
+                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5) }]} onPress={() => loadVideo && loadVideo(_?.path)}>
+                        <Ionicons color={colors.colorGreyText} name="play-circle" size={scaler(35)} />
+                      </TouchableOpacity> :
+                      <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?.path }} />
+                    }
                   </View>
                 )
               })}
@@ -328,8 +350,8 @@ const styles = StyleSheet.create({
   minusView: {
     position: 'absolute',
     alignSelf: 'flex-end',
-    top: scaler(-11),
+    top: scaler(-9),
     right: scaler(-3),
-    zIndex: 1
+    zIndex: 1,
   }
 });
