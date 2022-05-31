@@ -17,6 +17,7 @@ import { ILocation } from 'database';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  Dimensions,
   Image,
   StyleSheet,
   TextInput as RNTextInput,
@@ -25,6 +26,8 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
@@ -40,6 +43,8 @@ type FormType = {
   aboutEvent: string;
 };
 
+const { width } = Dimensions.get('screen')
+
 const CreateEvent1: FC<any> = props => {
   const uploadedImage = useRef('');
   const [eventImage, setEventImage] = useState<any>();
@@ -49,6 +54,7 @@ const CreateEvent1: FC<any> = props => {
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
   const keyboardValues = useKeyboardService()
+  const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
 
   const { myGroups } = useSelector((state: RootState) => ({
     myGroups: state?.group?.myGroups
@@ -83,19 +89,23 @@ const CreateEvent1: FC<any> = props => {
     return false;
   }, [errors]);
 
-  const pickImage = useCallback(() => {
+  const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
-      ImagePicker.openPicker(ProfileImagePickerOptions)
+      ImagePicker.openPicker({ ...ProfileImagePickerOptions, multiple: isMultiImage })
         .then(image => {
           uploadedImage.current = '';
-          setEventImage(image);
+          if (isMultiImage) {
+            setMultiImageArray((_) => [..._, ...image])
+          }
+          else
+            setEventImage(image);
         })
         .catch(e => {
           console.log(e);
         });
     }, 200);
   }, []);
-
+  console.log('multiImageArray', multiImageArray)
 
   useEffect(() => {
     dispatch(getMyGroups())
@@ -125,7 +135,7 @@ const CreateEvent1: FC<any> = props => {
               }
             />
           </View>
-          <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
+          <TouchableOpacity onPress={() => pickImage(false)} style={styles.cameraButton}>
             <Image style={styles.image} source={Images.ic_camera} />
           </TouchableOpacity>
         </View>
@@ -227,6 +237,23 @@ const CreateEvent1: FC<any> = props => {
               control={control}
               errors={errors}
             />
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), flex: 1 }}>Additional Photos and Videos </Text>
+              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), color: colors.colorPlaceholder }}>{'(' + multiImageArray?.length + '/10)'} </Text>
+            </View>
+            <View style={{ flexDirection: 'row', flex: 1, display: 'flex', flexWrap: 'wrap', marginHorizontal: -scaler(2.5) }}>
+              {multiImageArray?.map((_, i) => {
+                return (
+                  <View key={i}>
+                    <AntDesign name={'minuscircle'} onPress={() => { }} color={'#EB5757'} size={scaler(20)} style={styles.minusView} />
+                    <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?.path }} />
+                  </View>
+                )
+              })}
+              <TouchableOpacity style={styles.multiImageView} onPress={() => { pickImage(true) }}>
+                <Entypo name='plus' size={scaler(40)} color={colors.colorWhite} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Button
@@ -288,4 +315,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft: scaler(5),
   },
+  multiImageView: {
+    height: scaler(90),
+    width: (width - scaler(65)) / 3,
+    marginLeft: scaler(5),
+    borderRadius: scaler(5),
+    backgroundColor: colors.colorPrimary,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  minusView: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    top: scaler(-11),
+    right: scaler(-3),
+    zIndex: 1
+  }
 });
