@@ -115,6 +115,7 @@ const ImageLoader = (props: IImageLoader) => {
 
                     {(loaded && placeholderSource && (!loading && error)) || !source ?
                         <Image
+                            //@ts-ignore
                             style={placeholderStyle ?? styles?.mainStyle}
                             source={placeholderSource ?? null}
                         /> : null}

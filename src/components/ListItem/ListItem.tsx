@@ -36,6 +36,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, s
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorWhite} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
+                        //@ts-ignore
                         source={icon}
                         style={styles.iconStyle} />
                 </TouchableHighlight>
@@ -44,6 +45,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, s
                     <Text numberOfLines={2} style={style.subtitle}>{subtitle}</Text>
                 </View>
                 {CustomView ? React.isValidElement(CustomView) ?
+                    //@ts-ignore
                     CustomView : <CustomView /> : null}
             </View>
         </TouchableHighlight>
@@ -70,6 +72,7 @@ export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, 
                 <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
+                        //@ts-ignore
                         source={icon}
                         style={[styles.iconStyle, {
                             height: scaler(40),

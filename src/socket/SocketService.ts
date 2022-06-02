@@ -487,7 +487,7 @@ class Service {
 
     private listenErrors = () => {
         this.socket?.on("connect_error", (err: Error) => {
-            console.log("connect_error", err); // prints the message associated with the error
+            // console.log("connect_error", err); // prints the message associated with the error
         });
 
         this.socket?.on('reconnecting', function () {
@@ -496,7 +496,7 @@ class Service {
         });
 
         this.socket?.io.on("reconnect_attempt", () => {
-            console.log("reconnect_attempt", 'Attempting to re-connect to the server'); // prints the message associated with the error
+            // console.log("reconnect_attempt", 'Attempting to re-connect to the server'); // prints the message associated with the error
 
         });
 

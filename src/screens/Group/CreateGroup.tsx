@@ -12,7 +12,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { formattedAddressToString, getImageUrl, getShortAddress, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
 
 let n = 87.5
 const frequencies: Array<string> = []
@@ -69,27 +69,13 @@ const CreateGroup: FC<any> = (props) => {
 
   useEffect(() => {
     if (group) {
-      const main_text = getShortAddress(group?.address, group?.state, group?.city)
-      let secondary_text = group?.city + ", " + group?.state + ", " + group?.country
-
-      if (secondary_text?.includes(main_text)) {
-        secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
-      }
-      if (secondary_text?.startsWith(",")) {
-        secondary_text = secondary_text?.replace(",", "")?.trim()
-      }
-      if (secondary_text?.endsWith(",")) {
-        secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
-      }
+      const addressObj = getFormattedAddress2(group?.address, group?.city, group?.state, group?.country)
 
       console.log(group)
       locationRef.current = (group?.location?.coordinates[0] && group?.location?.coordinates[1]) ? {
         latitude: group?.location?.coordinates[1],
         longitude: group?.location?.coordinates[0],
-        address: {
-          main_text,
-          secondary_text,
-        },
+        address: addressObj,
         otherData: {
           city: group?.city,
           state: group?.state,
@@ -185,7 +171,7 @@ const CreateGroup: FC<any> = (props) => {
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
       <MyHeader title={group ? Language.update_group : Language.create_group} />
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
+      <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
         <View>
           <View style={styles.imageContainer} >
             <Image onError={(err) => {

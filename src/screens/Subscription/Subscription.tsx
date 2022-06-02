@@ -170,7 +170,6 @@ const Subscription: FC = (props: any) => {
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                     _showErrorMessage(Language.you_are_not_a_member)
                 } else continueToMemberShip(Language.purchase_successfully_restored)
-
             }
         }).catch(e => {
             console.log(e);
@@ -202,7 +201,7 @@ const Subscription: FC = (props: any) => {
     }, [])
 
 
-    const continueToMemberShip = useCallback((message: string) => {
+    const continueToMemberShip = useCallback((message?: string) => {
         _showSuccessMessage(message)
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
         if (props?.route?.params?.from == 'editEvent' || props?.route?.params?.from == 'settings') {
@@ -210,9 +209,7 @@ const Subscription: FC = (props: any) => {
             props?.route?.params?.onSuccess && props?.route?.params?.onSuccess();
         }
         else {
-            props?.route?.params?.data?.isFreeEvent ?
-                (props?.route?.params?.onSubscription && props?.route?.params?.onSubscription(props?.route?.params?.data)) :
-                NavigationService.replace('CreateEvent3', { data: props?.route?.params?.data })
+            (props?.route?.params?.onSubscription && props?.route?.params?.onSubscription())
         }
     }, [])
 

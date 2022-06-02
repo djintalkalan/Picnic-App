@@ -36,13 +36,13 @@ const EventList: FC<any> = (props) => {
                 title: Language.edit_event, onPress: () => {
                     dispatch(setActiveEvent(item))
                     setTimeout(() => {
-                        NavigationService.navigate('EditEvent', { id: _id })
+                        NavigationService.navigate('CreateEvent1', { id: _id })
                     }, 0);
                 }
             })
             buttons.push({
                 title: Language.share_event, onPress: () => {
-                    NavigationService.navigate('EditEvent', { id: _id })
+                    NavigationService.navigate('CreateEvent1', { id: _id })
                 }
             })
         }

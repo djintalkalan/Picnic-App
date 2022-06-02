@@ -1,5 +1,6 @@
 import { RootState } from 'app-store';
-import { getMyGroups } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups, restorePurchase, setLoadingAction, uploadFile } from 'app-store/actions';
+import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import {
   Button,
@@ -15,6 +16,7 @@ import {
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
+import { isEmpty } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -32,6 +34,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
+  formattedAddressToString,
+  getFormattedAddress2,
+  getImageUrl,
   NavigationService, scaler
 } from 'utils';
 
@@ -64,6 +69,14 @@ const CreateEvent1: FC<any> = props => {
   const [isDropdown, setDropdown] = useState(false);
   const keyboardValues = useKeyboardService()
   const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
+  const eventId = props?.route?.params?.id || null
+
+  const event = useSelector((state: RootState) => {
+    return state?.createEventState
+  })
+
+  const loaded = useRef(false);
+
 
   const { myGroups } = useSelector((state: RootState) => ({
     myGroups: state?.group?.myGroups
@@ -124,16 +137,100 @@ const CreateEvent1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
+    dispatch(restorePurchase())
+    if (eventId) {
+      dispatch(getEditEventDetail(eventId))
+    }
+
+    return () => {
+      dispatch(resetCreateEvent())
+    }
   }, [])
+
+  useEffect(() => {
+    if (eventId && !isEmpty(event)) {
+      setEventValues(event);
+    }
+  }, [event])
+
+  const setEventValues = useCallback((event: any) => {
+    if (loaded.current) return
+    loaded.current = true
+    const addressObject = getFormattedAddress2(event?.address, event?.city, event?.state, event?.country)
+    locationRef.current = (event?.location?.coordinates[0] && event?.location?.coordinates[1]) ? {
+      latitude: event?.location?.coordinates[1],
+      longitude: event?.location?.coordinates[0],
+      address: addressObject,
+      otherData: {
+        city: event?.city,
+        state: event?.state,
+        country: event?.country
+      }
+    } : null
+
+    selectedGroupRef.current = event?.event_group
+    uploadedImage.current = event?.image || ""
+    setValue('eventName', event?.name)
+    setValue('location', event?.address)
+    setValue('selectGroup', event?.event_group?.name)
+    setValue('aboutEvent', event?.short_description)
+    setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
+    if (event?.image) {
+      setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
+    } else {
+      setEventImage(null)
+    }
+
+  }, [])
+
+  const onSubmit = useCallback(handleSubmit((data) => {
+    if (!uploadedImage.current && eventImage?.path) {
+      dispatch(
+        uploadFile({
+          image: eventImage,
+          onSuccess: url => {
+            dispatch(setLoadingAction(false))
+            uploadedImage.current = url;
+            next(data);
+          },
+          prefixType: 'events',
+        }),
+      );
+    } else
+      next(data);
+  }), [eventImage])
+
+  const next = useCallback((data) => {
+    const { latitude, longitude, address, otherData } = locationRef.current ?? {};
+    const payload = {
+      name: data.eventName?.trim(),
+      location: {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      },
+      address: formattedAddressToString(address),
+      city: otherData?.city,
+      state: otherData?.state,
+      country: otherData?.country,
+      is_online_event: isOnlineEvent ? '1' : '0',
+      group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
+      short_description: data?.aboutEvent,
+      image: uploadedImage?.current || undefined,
+      event_group: undefined,
+      is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
+    }
+    dispatch(updateCreateEvent(payload))
+    NavigationService.navigate('CreateEvent2')
+  }, [event, isOnlineEvent])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.host_an_event} />
+      <MyHeader title={eventId ? props?.route?.params?.copy ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <ScrollView
         nestedScrollEnabled
         keyboardShouldPersistTaps={'handled'}
         contentContainerStyle={{ alignItems: 'center' }}>
-        <Stepper step={1} totalSteps={3} paddingHorizontal={scaler(20)} />
+        <Stepper step={1} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View>
           <View style={styles.imageContainer}>
             <Image
@@ -282,13 +379,7 @@ const CreateEvent1: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={
-              handleSubmit(
-                (defaultValues) => NavigationService.navigate('CreateEvent2',
-                  {
-                    eventName: defaultValues?.eventName, myGroup: selectedGroupRef.current, isOnlineEvent: isOnlineEvent,
-                    location: locationRef.current, aboutEvent: defaultValues?.aboutEvent, eventImage: eventImage
-                  }))}
+            onPress={onSubmit}
           />
         </View>
       </ScrollView>

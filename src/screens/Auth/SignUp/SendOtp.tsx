@@ -84,7 +84,7 @@ const SendOtp: FC = () => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <Stepper step={1} totalSteps={4} />
-            <ScrollView keyboardShouldPersistTaps={'handled'}>
+            <ScrollView enableResetScrollToCoords={false} keyboardShouldPersistTaps={'handled'}>
                 <View
                     style={{
                         width: '100%',
