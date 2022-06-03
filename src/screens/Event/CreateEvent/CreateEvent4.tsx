@@ -1,4 +1,4 @@
-import { createEvent } from 'app-store/actions';
+import { createEvent, setLoadingAction, uploadFile } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
@@ -23,6 +23,8 @@ type FormType = {
 
 const CreateEvent3: FC<any> = props => {
     const [isPayByCash, setIsPayByCash] = useState(false)
+    const uploadedImage = useRef('');
+    const uploadedImageArray = useRef<Array<any>>([]);
     const [isPayByPaypal, setIsPayByPaypal] = useState(false)
     const { current: event } = useRef(store.getState().createEventState)
     const dispatch = useDispatch()
@@ -38,7 +40,6 @@ const CreateEvent3: FC<any> = props => {
     });
     const keyboardValues = useKeyboardService()
 
-    console.log('event', event)
 
     useEffect(() => {
         setEventValues()
@@ -56,15 +57,52 @@ const CreateEvent3: FC<any> = props => {
     }, [])
 
     const onSubmit = useCallback(
-        (data) => {
+        async (data) => {
+
             if (!data?.policy?.trim() && event.is_donation_enabled != 1) {
                 setError("policy", { message: Language.write_refund_policy })
                 return
             }
-            callCreateEventApi(data, isPayByPaypal, isPayByCash);
+            if (event.image?.path || event.multiple_images) {
+                if (event.image?.path) {
+                    dispatch(
+                        uploadFile({
+                            image: event.image,
+                            onSuccess: url => {
+                                dispatch(setLoadingAction(false))
+                                uploadedImage.current = url;
+                                console.log('uploadedImage.current', uploadedImage.current);
+
+                                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
+                            },
+                            prefixType: 'events',
+                        }),
+                    )
+                }
+                if (event.multiple_images) {
+                    dispatch(
+                        uploadFile({
+                            image: event.multiple_images,
+                            onSuccess: url => {
+                                dispatch(setLoadingAction(false))
+                                uploadedImageArray.current = [...uploadedImageArray.current, url];
+                                console.log('uploadedImageArray.current', uploadedImageArray.current);
+
+                                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
+                            },
+                            prefixType: 'events',
+                        }),
+                    )
+                }
+            } else {
+                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
+            }
         },
-        [isPayByPaypal, isPayByCash],
+
+        [isPayByPaypal, isPayByCash, event],
     );
+
+
 
 
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {

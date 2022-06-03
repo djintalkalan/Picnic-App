@@ -60,6 +60,8 @@ const CreateEvent3: FC<any> = props => {
     // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
   }, [])
 
+  console.log('event', event)
+
   const setEventValues = useCallback(() => {
 
     if (event.is_free_event == 1) {

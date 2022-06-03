@@ -1,5 +1,5 @@
 import { RootState } from 'app-store';
-import { getEditEventDetail, getMyGroups, restorePurchase, setLoadingAction, uploadFile } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import {
@@ -37,7 +37,7 @@ import {
   formattedAddressToString,
   getFormattedAddress2,
   getImageUrl,
-  NavigationService, scaler
+  NavigationService, ProfileImagePickerOptions, scaler
 } from 'utils';
 
 type FormType = {
@@ -113,13 +113,13 @@ const CreateEvent1: FC<any> = props => {
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
-      ImagePicker.openPicker({
+      ImagePicker.openPicker(isMultiImage ? {
         multiple: isMultiImage,
         maxFiles: 10 - multiImageArray?.length,
         mediaType: 'any',
         forceJpg: true,
         compressVideoPreset: "MediumQuality",
-      })
+      } : ProfileImagePickerOptions)
         .then(image => {
           uploadedImage.current = '';
           if (isMultiImage) {
@@ -133,7 +133,7 @@ const CreateEvent1: FC<any> = props => {
         });
     }, 200);
   }, [multiImageArray]);
-  console.log('multiImageArray', multiImageArray)
+
 
   useEffect(() => {
     dispatch(getMyGroups())
@@ -183,24 +183,25 @@ const CreateEvent1: FC<any> = props => {
 
   }, [])
 
-  const onSubmit = useCallback(handleSubmit((data) => {
-    if (!uploadedImage.current && eventImage?.path) {
-      dispatch(
-        uploadFile({
-          image: eventImage,
-          onSuccess: url => {
-            dispatch(setLoadingAction(false))
-            uploadedImage.current = url;
-            next(data);
-          },
-          prefixType: 'events',
-        }),
-      );
-    } else
-      next(data);
-  }), [eventImage])
+  // const onSubmit = useCallback(handleSubmit((data) => {
+  //   // if (!uploadedImage.current && eventImage?.path) {
+  //   //   dispatch(
+  //   //     uploadFile({
+  //   //       image: eventImage,
+  //   //       onSuccess: url => {
+  //   //         dispatch(setLoadingAction(false))
+  //   //         uploadedImage.current = url;
+  //   //         next(data);
+  //   //       },
+  //   //       prefixType: 'events',
+  //   //     }),
+  //   //   );
+  //   // } else
+  //   next(data);
+  // }), [])
 
-  const next = useCallback((data) => {
+  const next = useCallback(handleSubmit((data) => {
+    console.log('multiImageArray', eventImage, multiImageArray)
     const { latitude, longitude, address, otherData } = locationRef.current ?? {};
     const payload = {
       name: data.eventName?.trim(),
@@ -215,13 +216,14 @@ const CreateEvent1: FC<any> = props => {
       is_online_event: isOnlineEvent ? '1' : '0',
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
-      image: uploadedImage?.current || undefined,
+      image: eventImage,
+      multiple_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }, [event, isOnlineEvent])
+  }), [event, isOnlineEvent, eventImage, multiImageArray])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -379,7 +381,7 @@ const CreateEvent1: FC<any> = props => {
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={onSubmit}
+            onPress={next}
           />
         </View>
       </ScrollView>
