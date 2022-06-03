@@ -366,5 +366,6 @@ export const es = {
     ticket_type: "",
     copy_event: "",
     ticket_purchased: "",
-
+    standard: "",
+    plan_name: "",
 }

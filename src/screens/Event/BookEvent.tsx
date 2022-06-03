@@ -139,7 +139,7 @@ const BookEvent: FC = (props: any) => {
                     <>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         {selectedTicket?.name ? <><Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                            {Language.ticket_type}
+                            {Language.plan_name}
                         </Text><Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
                                 {selectedTicket?.name}
                             </Text><View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /></> : null}
@@ -147,7 +147,7 @@ const BookEvent: FC = (props: any) => {
                             {Language.applicable_tax}
                         </Text>
                         <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                            {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + parseInt(noOfTickets) * parseFloat(selectedTicket.event_tax_amount) : getSymbol(selectedTicket.currency) + 0}
+                            {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + round((parseInt(noOfTickets) * parseFloat(selectedTicket.event_tax_amount)), 2) : getSymbol(selectedTicket.currency) + 0}
                         </Text>
                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
