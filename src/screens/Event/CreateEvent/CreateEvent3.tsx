@@ -363,10 +363,10 @@ const CreateEvent3: FC<any> = props => {
 
               {isFreeEvent ?
                 <View>
-                  <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
+                  {false && <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
                     <Switch active={isDonationAccepted} onChange={() => { setValue('donationDescription', ''); setIsDonationAccepted(!isDonationAccepted) }} />
                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '400' }}>{Language.accept_donation}</Text>
-                  </View>
+                  </View>}
 
                   {/* ----------------------------------- donation flow started here -----------------------------------*/}
 
