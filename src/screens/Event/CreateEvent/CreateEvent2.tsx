@@ -203,9 +203,10 @@ const CreateEvent2: FC<any> = props => {
 
   })(), [userData, isUnlimitedCapacity, isMultidayEvent])
 
+
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={event?._id ? event?.is_copied_event ? Language.copy_event : Language.edit_event : Language.host_an_event} />
+      <MyHeader title={event?._id ? event?.is_copied_event != '0' ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>

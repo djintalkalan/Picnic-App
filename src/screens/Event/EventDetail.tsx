@@ -28,6 +28,7 @@ const DefaultDelta = {
 const EventDetail: FC<any> = (props) => {
 
     const [isEditButtonOpened, setEditButtonOpened] = useState(false)
+    const [ticketPlansVisible, setTicketPlansVisible] = useState(false)
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
 
@@ -306,12 +307,24 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <View >
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
-                            </Text>
+                        <View style={{}} >
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                    {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
+                                </Text>
+                                {event?.ticket_plans?.length > 0 ?
+                                    <TouchableOpacity onPress={() => { setTicketPlansVisible(_ => !_) }}>
+                                        <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
+                                    </TouchableOpacity>
+                                    : undefined}
+                            </View>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
                         </View>
+                        {ticketPlansVisible ? <View style={styles.planView}>
+                            {event?.ticket_plans?.map((_: any, i: number) => {
+                                return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                            })}
+                        </View> : undefined}
                     </View>
 
                     <View style={{ flexDirection: 'row', width: '100%' }} >
@@ -410,7 +423,7 @@ const EventDetail: FC<any> = (props) => {
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                             <View style={{ flex: 1, }}>
                                 <Text style={styles.ticketInfo}>
-                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || "Default"}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
                                 </Text>
                                 <Text style={styles.ticketInfo}>
                                     Tax ({activeTicket?.event_tax_rate}%)
@@ -604,6 +617,16 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
     ) : null
 }
 
+const TicketPlans = (props: { key: number, name: string, currency: string, price: string }) => {
+    const { name, currency, price, key } = props;
+    return <View key={key} style={{ padding: scaler(5), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
+        <Text style={{ fontSize: scaler(13), fontWeight: '600', marginRight: scaler(8) }}>{name}</Text>
+        <Text style={{ fontSize: scaler(13), fontWeight: '600' }}>
+            {getSymbol(currency) + price}
+        </Text>
+    </View>
+}
+
 export default EventDetail
 
 const styles = StyleSheet.create({
@@ -714,5 +737,16 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.colorPlaceholder,
         lineHeight: scaler(23)
+    },
+    planView: {
+        position: 'absolute',
+        zIndex: 1,
+        borderWidth: scaler(1),
+        borderRadius: scaler(5),
+        backgroundColor: colors.colorBackground,
+        borderColor: colors.colorGreyText,
+        bottom: scaler(-70),
+        right: scaler(5),
+        elevation: 3
     }
 })

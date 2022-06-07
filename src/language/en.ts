@@ -366,5 +366,7 @@ export const en = {
   ticket_type: "Ticket type",
   copy_event: "Copy event",
   ticket_purchased: "Ticket purchased",
+  standard: "Standard",
+  plan_name: "Plan name"
 
 }
