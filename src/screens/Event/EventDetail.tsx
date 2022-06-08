@@ -307,27 +307,33 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <View style={{}} >
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View>
+                            <TouchableOpacity disabled={!event?.ticket_plans?.length} onPress={() => setTicketPlansVisible(_ => !_)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                     {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
                                 </Text>
                                 {event?.ticket_plans?.length > 0 ?
-                                    <TouchableOpacity onPress={() => { setTicketPlansVisible(_ => !_) }}>
-                                        <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
-                                    </TouchableOpacity>
+                                    <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
-                            </View>
+                            </TouchableOpacity>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
+
                         </View>
-                        {ticketPlansVisible ? <View style={styles.planView}>
-                            {event?.ticket_plans?.map((_: any, i: number) => {
-                                return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
-                            })}
-                        </View> : undefined}
                     </View>
 
-                    <View style={{ flexDirection: 'row', width: '100%' }} >
+                    {ticketPlansVisible ?
+                        <View>
+                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
+                                <View style={{ borderRadius: scaler(5) }}>
+                                    {event?.ticket_plans?.map((_: any, i: number) => {
+                                        return <TicketPlans key={i} name={i ? "VIP" : _?.name} currency={_?.currency} price={_?.amount} />
+                                    })}
+                                </View>
+                            </Card>
+                        </View>
+                        : undefined}
+
+                    <View style={{ flexDirection: 'row', width: '100%', zIndex: -1 }} >
                         <View style={{ flex: 1 }} >
 
                             {event?.is_multi_day_event != 1 ?
@@ -619,9 +625,9 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
 
 const TicketPlans = (props: { key: number, name: string, currency: string, price: string }) => {
     const { name, currency, price, key } = props;
-    return <View key={key} style={{ padding: scaler(5), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
-        <Text style={{ fontSize: scaler(13), fontWeight: '600', marginRight: scaler(8) }}>{name}</Text>
-        <Text style={{ fontSize: scaler(13), fontWeight: '600' }}>
+    return <View key={key} style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
+        <Text style={{ flexGrow: 1, fontSize: scaler(14), fontWeight: '500', marginRight: scaler(10) }}>{name}</Text>
+        <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
             {getSymbol(currency) + price}
         </Text>
     </View>
@@ -740,13 +746,8 @@ const styles = StyleSheet.create({
     },
     planView: {
         position: 'absolute',
-        zIndex: 1,
-        borderWidth: scaler(1),
-        borderRadius: scaler(5),
-        backgroundColor: colors.colorBackground,
-        borderColor: colors.colorGreyText,
-        bottom: scaler(-70),
+        backgroundColor: colors.colorWhite,
         right: scaler(5),
-        elevation: 3
+        top: -scaler(20)
     }
 })

@@ -3,43 +3,21 @@ import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
-import {
-  Button,
-  CheckBox,
-  defaultLocation,
-  FixedDropdown,
-  MyHeader,
-  Stepper,
-  Text,
-  TextInput,
-  useKeyboardService
-} from 'custom-components';
+import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
-import { isEmpty } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  TextInput as RNTextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import {
-  formattedAddressToString,
-  getFormattedAddress2,
-  getImageUrl,
-  NavigationService, ProfileImagePickerOptions, scaler
-} from 'utils';
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler } from 'utils';
 
 type FormType = {
   eventName: string;
@@ -121,7 +99,7 @@ const CreateEvent1: FC<any> = props => {
         compressVideoPreset: "MediumQuality",
       } : ProfileImagePickerOptions)
         .then(image => {
-          if (isMultiImage) {
+          if (isMultiImage && isArray(image)) {
             setMultiImageArray((_) => [..._, ...image])
           }
           else
@@ -131,7 +109,7 @@ const CreateEvent1: FC<any> = props => {
           console.log(e);
         });
     }, 200);
-  }, [multiImageArray]);
+  }, [multiImageArray?.length]);
 
 
   useEffect(() => {
@@ -181,23 +159,6 @@ const CreateEvent1: FC<any> = props => {
     }
 
   }, [])
-
-  // const onSubmit = useCallback(handleSubmit((data) => {
-  //   // if (!uploadedImage.current && eventImage?.path) {
-  //   //   dispatch(
-  //   //     uploadFile({
-  //   //       image: eventImage,
-  //   //       onSuccess: url => {
-  //   //         dispatch(setLoadingAction(false))
-  //   //         uploadedImage.current = url;
-  //   //         next(data);
-  //   //       },
-  //   //       prefixType: 'events',
-  //   //     }),
-  //   //   );
-  //   // } else
-  //   next(data);
-  // }), [])
 
   const next = useCallback(handleSubmit((data) => {
     console.log('multiImageArray', eventImage, multiImageArray)
