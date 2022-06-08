@@ -30,7 +30,7 @@ export interface ICreateEventReducer {
     state: string;
     country: string;
     image: any;
-    multiple_images: [];
+    event_images: [];
     group_id: string;
     is_online_event: number;
     is_free_event: number;

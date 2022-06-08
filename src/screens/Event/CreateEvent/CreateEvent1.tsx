@@ -1,3 +1,4 @@
+import { config } from 'api';
 import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
@@ -59,7 +60,6 @@ const videoProps = {
 const { width } = Dimensions.get('screen')
 
 const CreateEvent1: FC<any> = props => {
-  const uploadedImage = useRef('');
   const { loadVideo } = useVideoPlayer()
   const [eventImage, setEventImage] = useState<any>();
   const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
@@ -121,7 +121,6 @@ const CreateEvent1: FC<any> = props => {
         compressVideoPreset: "MediumQuality",
       } : ProfileImagePickerOptions)
         .then(image => {
-          uploadedImage.current = '';
           if (isMultiImage) {
             setMultiImageArray((_) => [..._, ...image])
           }
@@ -169,7 +168,7 @@ const CreateEvent1: FC<any> = props => {
     } : null
 
     selectedGroupRef.current = event?.event_group
-    uploadedImage.current = event?.image || ""
+    setMultiImageArray(event.event_images)
     setValue('eventName', event?.name)
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
@@ -216,8 +215,8 @@ const CreateEvent1: FC<any> = props => {
       is_online_event: isOnlineEvent ? '1' : '0',
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
-      image: eventImage,
-      multiple_images: multiImageArray,
+      image: eventImage?.path ? eventImage : event?.image,
+      event_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
     }
@@ -362,11 +361,11 @@ const CreateEvent1: FC<any> = props => {
                     <TouchableOpacity onPress={() => setMultiImageArray(_ => _.filter((_, index) => i != index))} style={styles.minusView}>
                       <Image source={Images.ic_delete_red} style={{ height: scaler(20), width: scaler(20) }} />
                     </TouchableOpacity>
-                    {_.mime?.includes('video') ?
-                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5) }]} onPress={() => loadVideo && loadVideo(_?.path)}>
+                    {_.mime?.includes('video') || _?.type == 'video' ?
+                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5) }]} onPress={() => loadVideo && loadVideo(_?.path ?? config.VIDEO_URL + _.name)}>
                         <Ionicons color={colors.colorGreyText} name="play-circle" size={scaler(35)} />
                       </TouchableOpacity> :
-                      <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?.path }} />
+                      <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?._id ? getImageUrl(_?.name, { type: 'events', width: scaler(100) }) : _?.path }} />
                     }
                   </View>
                 )

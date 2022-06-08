@@ -23,15 +23,58 @@ const transcoderClient = new ElasticTranscoderClient({
     region: config.AWS3_REGION,
 });
 
-
 function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     let fileName = "";
+    const { image, onSuccess, prefixType } = payload
+    if (!image?.path) return
+    const date = new Date()
+    // fileName = image?.path?.substring(image?.path?.lastIndexOf('/') + 1, image?.path?.length)
+    fileName = (prefixType == 'video' ? "VID-" : "IMG-") + dateFormat(date, "YYYYMMDD") + "-PG" + Date.now() + "" + random(111, 999) + image?.path?.substring(image?.path?.lastIndexOf('.'));
+    const file = {
+        uri: image?.path,
+        name: fileName,
+        type: image?.mime ?? (prefixType != 'video' ? (fileName?.toLowerCase().endsWith("png") ? 'image/png' : 'image/jpeg') : "*/*")
+    }
+    yield put(setLoadingAction(true))
+    try {
+        let res = yield call(ApiProvider.uploadFileAWS, file, prefixType, uploadProgress);
+        console.log("Upload", res);
+
+        if (res && res.status == 201) {
+            let location: string = res?.body?.postResponse?.location ?? res?.headers?.Location
+            if (location) {
+                // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))
+                // return
+                if (prefixType == 'video') {
+                    let res = yield call(transcodeVideo, fileName)
+                    console.log("Completed", res);
+                    onSuccess && onSuccess(fileName, fileName.substring(0, fileName.lastIndexOf(".")) + "-00001.png")
+                    return
+                }
+                onSuccess && onSuccess(fileName,)
+            }
+        } else {
+            yield put(setLoadingAction(false))
+        }
+    }
+    catch (e) {
+        console.log("Error Catch", e)
+        yield put(setLoadingAction(false))
+    }
+
+};
+
+
+function* uploadImageArray({ type, payload }: action): Generator<any, any, any> {
+    let fileName = "";
+    let imageArray: Array<any> = [];
+    let profileImage: string = '';
     let { image, onSuccess, prefixType } = payload
 
-    if (!Array.isArray(image)) {
-        image = [image]
-    }
+    if (!Array.isArray(image)) return [image]
+
     for (let i = 0; i < image.length; i++) {
+        if (!image[i]?.path) return
         const date = new Date()
         // fileName = image?.path?.substring(image?.path?.lastIndexOf('/') + 1, image?.path?.length)
         fileName = (prefixType == 'video' ? "VID-" : "IMG-") + dateFormat(date, "YYYYMMDD") + "-PG" + Date.now() + "" + random(111, 999) + image[i]?.path?.substring(image[i]?.path?.lastIndexOf('.'));
@@ -53,10 +96,13 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
                     if (prefixType == 'video') {
                         let res = yield call(transcodeVideo, fileName)
                         console.log("Completed", res);
-                        onSuccess && onSuccess(fileName, fileName.substring(0, fileName.lastIndexOf(".")) + "-00001.png")
+                        imageArray = [...imageArray, { type: 'video', name: fileName }]
+                        // onSuccess && onSuccess(fileName, fileName.substring(0, fileName.lastIndexOf(".")) + "-00001.png")
                         return
                     }
-                    onSuccess && onSuccess(fileName,)
+                    if (image[i]?.isProfile) profileImage = fileName;
+                    else imageArray = [...imageArray, { type: image[i]?.mime?.includes('video') ? 'video' : 'image', name: fileName }];
+                    // onSuccess && onSuccess(fileName, image[i]?.isProfile ?? false)
                 }
             } else {
                 yield put(setLoadingAction(false))
@@ -69,8 +115,11 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
             yield put(setLoadingAction(false))
         }
     }
+    onSuccess && onSuccess(imageArray, profileImage)
 
 };
+
+
 
 function* cancelUpload({ type, payload }: action): Generator<any, any, any> {
     ApiProvider._cancelUpload()
@@ -170,5 +219,6 @@ const waitForCompleteJob = async (id?: string) => {
 export default function* watchUploadSaga() {
     // Take Last Action Only
     yield takeLatest(ActionTypes.UPLOAD_FILE, uploadImage);
+    yield takeLatest(ActionTypes.UPLOAD_FILE_ARRAY, uploadImageArray);
     yield takeLatest(ActionTypes.CANCEL_UPLOAD, cancelUpload);
 };

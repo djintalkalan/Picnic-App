@@ -1,4 +1,4 @@
-import { createEvent, setLoadingAction, uploadFile } from 'app-store/actions';
+import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
@@ -49,6 +49,7 @@ const CreateEvent3: FC<any> = props => {
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
         event?.payment_method && event?.payment_method?.includes('paypal') && setIsPayByPaypal(true)
         setValue('paypalId', event?.payment_email ?? '')
+        uploadedImage.current = event?.image?.path ? '' : event.image
         if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
             setValue('taxPrice', event?.event_tax_rate ? (round(((parseFloat(event?.event_tax_rate?.toString()) / 100) * parseFloat(event?.event_fees.toString())), 2)).toString() : '')
@@ -63,39 +64,23 @@ const CreateEvent3: FC<any> = props => {
                 setError("policy", { message: Language.write_refund_policy })
                 return
             }
-            if (event.image?.path || event.multiple_images) {
-                if (event.image?.path) {
-                    dispatch(
-                        uploadFile({
-                            image: event.image,
-                            onSuccess: url => {
-                                dispatch(setLoadingAction(false))
-                                uploadedImage.current = url;
-                                console.log('uploadedImage.current', uploadedImage.current);
-
-                                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
-                            },
-                            prefixType: 'events',
-                        }),
-                    )
-                }
-                if (event.multiple_images) {
-                    dispatch(
-                        uploadFile({
-                            image: event.multiple_images,
-                            onSuccess: url => {
-                                dispatch(setLoadingAction(false))
-                                uploadedImageArray.current = [...uploadedImageArray.current, url];
-                                console.log('uploadedImageArray.current', uploadedImageArray.current);
-
-                                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
-                            },
-                            prefixType: 'events',
-                        }),
-                    )
-                }
+            let tempArray = event.event_images.filter(_ => !_?._id)
+            if (event.image?.path || tempArray.length > 0) {
+                dispatch(
+                    uploadFileArray({
+                        image: [...tempArray, ...(event.image?.path ? [{ ...event.image, isProfile: true }] : [])],
+                        onSuccess: (imageArray, profileImage) => {
+                            dispatch(setLoadingAction(false))
+                            if (profileImage)
+                                uploadedImage.current = profileImage
+                            uploadedImageArray.current = [...imageArray];
+                            callCreateEventApi(data, isPayByPaypal, isPayByCash);
+                        },
+                        prefixType: 'events',
+                    }),
+                )
             } else {
-                // callCreateEventApi(data, isPayByPaypal, isPayByCash);
+                callCreateEventApi(data, isPayByPaypal, isPayByCash);
             }
         },
 
@@ -103,13 +88,15 @@ const CreateEvent3: FC<any> = props => {
     );
 
 
-
+    console.log('event', event)
 
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
 
         const payload: any = {
             payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
-            payment_email: data?.paypalId?.trim() ?? ''
+            payment_email: data?.paypalId?.trim() ?? '',
+            image: uploadedImage.current,
+            event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
         if (event.is_free_event != 1) {
             payload.event_tax_rate = data?.taxRate || '0'
