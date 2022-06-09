@@ -8,7 +8,7 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem } from 'custom-components/ListItem/ListItem'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
@@ -27,8 +27,6 @@ const DefaultDelta = {
 
 const EventDetail: FC<any> = (props) => {
 
-    const [isEditButtonOpened, setEditButtonOpened] = useState(false)
-    const [ticketPlansVisible, setTicketPlansVisible] = useState(false)
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
 
@@ -452,7 +450,7 @@ const EventDetail: FC<any> = (props) => {
                         </View> : <View style={{ marginBottom: scaler(15) }} />
                     }
                     {/* <View style={{ height: 1, width: '100%', backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(5) }} /> */}
-                    {activeTicket ? <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text><View style={{ marginBottom: scaler(15) }}>
+                    {activeTicket?.amount ? <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text><View style={{ marginBottom: scaler(15) }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                             <View style={{ flex: 1, }}>
                                 <Text style={styles.ticketInfo}>
@@ -650,9 +648,9 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
     ) : null
 }
 
-const TicketPlans = (props: { key: number, name: string, currency: string, price: string }) => {
-    const { name, currency, price, key } = props;
-    return <View key={key} style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
+const TicketPlans = (props: { name: string, currency: string, price: string }) => {
+    const { name, currency, price } = props;
+    return <View style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
         <Text style={{ flexGrow: 1, fontSize: scaler(14), fontWeight: '500', marginRight: scaler(10) }}>{name}</Text>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
             {getSymbol(currency) + price}

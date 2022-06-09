@@ -90,8 +90,6 @@ const GroupDetail: FC<any> = (props) => {
     }, [language])
 
     const [isOpened, setOpened] = useState(false)
-    const [isEditButtonOpened, setEditButtonOpened] = useState(false)
-    const flatListHeightRef = useRef(0)
     const dispatch = useDispatch()
 
     const { group, groupMembers, } = useSelector((state: RootState) => ({
