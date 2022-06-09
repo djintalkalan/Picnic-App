@@ -9,13 +9,13 @@ import { ListItem } from 'custom-components/ListItem/ListItem'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -188,40 +188,21 @@ const EventDetail: FC<any> = (props) => {
         )
     }, [event?.name, onConfirmCopy])
 
-    if (!event) {
-        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
-            <View style={styles.placeholder}>
-                <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
-            </View>
-            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-        </SafeAreaViewWithStatusBar>
-    }
-    return (
-        <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
-            <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                    <ImageLoader
-                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
-                        //@ts-ignore
-                        style={{ width: width, height: width, resizeMode: 'cover' }}
-                        placeholderSource={Images.ic_event_placeholder}
-                        placeholderStyle={{}}
-                        source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
-                </View>
+    const dotMenuButtonRef = useRef<TouchableOpacity>(null)
+    const priceButtonRef = useRef<TouchableOpacity>(null)
 
-                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-                <View style={styles.subHeading} >
-                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={Images.ic_back_group} />
-                    </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
-                        <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={Images.ic_more_group} />
-                        </TouchableOpacity>
-                        : undefined}
-                </View>
-                {isEditButtonOpened ?
-                    <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
+    const openEditButton = useCallback((e?: GestureResponderEvent) => {
+        dotMenuButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    // top,
+                    // right: width - left,
+                    top: y + h + scaler(5) + (StatusBar.currentHeight || 0),
+                    right: width - (w + x)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
@@ -292,10 +273,69 @@ const EventDetail: FC<any> = (props) => {
                                 </>
                             }
                         </Card>
-
-                    </View> : null
-
+                    )
                 }
+            })
+        })
+    }, [event])
+
+    const showAllTicketVisible = useCallback((e?: GestureResponderEvent) => {
+        priceButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    top: y + h + scaler(20) + (StatusBar.currentHeight || 0),
+                    right: width - (x + w)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
+                        <View>
+                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
+                                <View style={{ borderRadius: scaler(5) }}>
+                                    {event?.ticket_plans?.map((_: any, i: number) => {
+                                        return <TicketPlans key={i} name={i ? "VIP" : _?.name} currency={_?.currency} price={_?.amount} />
+                                    })}
+                                </View>
+                            </Card>
+                        </View>
+                    )
+                }
+            })
+        })
+    }, [event])
+
+    if (!event) {
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
+            <View style={styles.placeholder}>
+                <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
+            </View>
+            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+        </SafeAreaViewWithStatusBar>
+    }
+    return (
+        <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
+            <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                    <ImageLoader
+                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
+                        //@ts-ignore
+                        style={{ width: width, height: width, resizeMode: 'cover' }}
+                        placeholderSource={Images.ic_event_placeholder}
+                        placeholderStyle={{}}
+                        source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
+                </View>
+
+                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+                <View style={styles.subHeading} >
+                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
+                        <Image style={styles.imgBack} source={Images.ic_back_group} />
+                    </TouchableOpacity>
+                    {eventDate >= new Date() && event.status == 1 ?
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={Images.ic_more_group} />
+                        </TouchableOpacity>
+                        : undefined}
+                </View>
                 <View style={styles.infoContainer} >
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
@@ -308,7 +348,7 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View>
                         <View>
-                            <TouchableOpacity disabled={!event?.ticket_plans?.length} onPress={() => setTicketPlansVisible(_ => !_)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={showAllTicketVisible} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                     {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
                                 </Text>
@@ -320,19 +360,6 @@ const EventDetail: FC<any> = (props) => {
 
                         </View>
                     </View>
-
-                    {ticketPlansVisible ?
-                        <View>
-                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
-                                <View style={{ borderRadius: scaler(5) }}>
-                                    {event?.ticket_plans?.map((_: any, i: number) => {
-                                        return <TicketPlans key={i} name={i ? "VIP" : _?.name} currency={_?.currency} price={_?.amount} />
-                                    })}
-                                </View>
-                            </Card>
-                        </View>
-                        : undefined}
-
                     <View style={{ flexDirection: 'row', width: '100%', zIndex: -1 }} >
                         <View style={{ flex: 1 }} >
 
