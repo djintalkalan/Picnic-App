@@ -206,17 +206,17 @@ const EventDetail: FC<any> = (props) => {
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                    setEditButtonOpened(false)
+                                    _hidePopUpAlert()
                                     NavigationService.navigate('CreateEvent1', { id: event?._id })
                                     // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                        setEditButtonOpened(false)
+                                        _hidePopUpAlert()
                                         onCopyEvent()
                                     }} title={Language.copy} />
                                     <InnerButton onPress={() => {
                                         shareEvent();
-                                        setEditButtonOpened(false)
+                                        _hidePopUpAlert()
                                     }} title={Language.share} />
                                     <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
@@ -231,13 +231,13 @@ const EventDetail: FC<any> = (props) => {
                                             buttonStyle: { backgroundColor: colors.colorErrorRed },
                                             buttonText: Language.yes_cancel,
                                         })
-                                        setEditButtonOpened(false)
+                                        _hidePopUpAlert()
                                     }
                                     } hideBorder /></>
                                 :
                                 <><InnerButton onPress={() => {
                                     shareEvent();
-                                    setEditButtonOpened(false)
+                                    _hidePopUpAlert()
                                 }} title={Language.share} />
                                     <InnerButton title={Language.mute} onPress={() => {
                                         _showPopUpAlert({
@@ -252,7 +252,7 @@ const EventDetail: FC<any> = (props) => {
                                             buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        setEditButtonOpened(false)
+                                        _hidePopUpAlert()
                                     }} /><InnerButton title={Language.report} onPress={() => {
                                         _showPopUpAlert({
                                             message: Language.are_you_sure_report_event,
@@ -263,12 +263,12 @@ const EventDetail: FC<any> = (props) => {
                                             buttonText: Language.yes_report,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        setEditButtonOpened(false)
+                                        _hidePopUpAlert()
                                     }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showCancellationPolicy()
-                                            setEditButtonOpened(false)
+                                            _hidePopUpAlert()
                                         }} hideBorder /> : undefined}
                                 </>
                             }
