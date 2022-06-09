@@ -450,36 +450,64 @@ const EventDetail: FC<any> = (props) => {
                         </View> : <View style={{ marginBottom: scaler(15) }} />
                     }
                     {/* <View style={{ height: 1, width: '100%', backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(5) }} /> */}
-                    {activeTicket?.amount ? <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text><View style={{ marginBottom: scaler(15) }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                            <View style={{ flex: 1, }}>
-                                <Text style={styles.ticketInfo}>
-                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
-                                </Text>
-                                <Text style={styles.ticketInfo}>
-                                    Tax ({activeTicket?.event_tax_rate}%)
-                                </Text>
+                    {activeTicket?.amount ? !activeTicket?.is_donation ?
+                        <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                            <View style={{ marginBottom: scaler(15) }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                    <View style={{ flex: 1, }}>
+                                        <Text style={styles.ticketInfo}>
+                                            <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                        </Text>
+                                        <Text style={styles.ticketInfo}>
+                                            Tax ({activeTicket?.event_tax_rate}%)
+                                        </Text>
 
-                            </View>
-                            <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
-                                <Text style={styles.ticketInfo}>
-                                    {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
-                                </Text>
-                                <Text style={styles.ticketInfo}>
-                                    {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
-                                </Text>
+                                    </View>
+                                    <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
+                                        <Text style={styles.ticketInfo}>
+                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                        </Text>
+                                        <Text style={styles.ticketInfo}>
+                                            {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
+                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                    <Text style={[{ flex: 1, }, styles.ticketInfo]}>
+                                        Total
+                                    </Text>
+                                    <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
+                                        {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
+                                    </Text>
+                                </View>
+                            </View></> :
+                        <View style={{ marginBottom: scaler(10) }}>
+                            <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                            <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                <View style={{ flex: 1, }}>
+                                    <Text style={styles.ticketInfo}>
+                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                    </Text>
+                                </View>
+                                <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                                    <Text style={[styles.ticketInfo, { flex: 1 }]}>
+                                        Donation
+                                    </Text>
+                                    <Text style={styles.ticketInfo}>
+                                        {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                        <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                            <Text style={[{ flex: 1, }, styles.ticketInfo]}>
-                                Total
-                            </Text>
-                            <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
-                            </Text>
-                        </View>
-                    </View></> : null}
+                        : <View style={{ marginBottom: scaler(10) }}>
+                            <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                            <View style={{ flex: 1, paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                <Text style={styles.ticketInfo}>
+                                    <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                </Text>
+                            </View>
+                        </View>}
 
                     {event.status == 1 && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
