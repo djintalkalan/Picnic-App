@@ -70,7 +70,7 @@ const BookEvent: FC = (props: any) => {
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
             donation_amount: event.is_donation_enabled && isPayByPaypal ? data.donationAmount : '0',
-            is_donation: isUserDonating ? '1' : '0',
+            is_donation: event?.is_free_event && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
             payment_method: event?.is_free_event ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal

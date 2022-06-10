@@ -15,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -61,6 +61,8 @@ const EventDetail: FC<any> = (props) => {
             activeTicket: null
         }
     }, [event?.my_tickets])
+
+    console.log('my tickets')
 
     useLayoutEffect(() => {
         setTimeout(() => {
@@ -204,24 +206,28 @@ const EventDetail: FC<any> = (props) => {
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                    _hidePopUpAlert()
+                                    // _hidePopUpAlert()
+                                    _hideTouchAlert()
                                     NavigationService.navigate('CreateEvent1', { id: event?._id })
                                     // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                        _hidePopUpAlert()
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                         onCopyEvent()
                                     }} title={Language.copy} />
                                     <InnerButton onPress={() => {
                                         shareEvent();
-                                        _hidePopUpAlert()
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                     }} title={Language.share} />
                                     <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
                                             message: Language.are_you_sure_cancel_event,
                                             onPressButton: () => {
                                                 dispatch(deleteEvent(event?._id))
-                                                _hidePopUpAlert()
+                                                // _hidePopUpAlert()
+                                                _hideTouchAlert()
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
@@ -229,13 +235,15 @@ const EventDetail: FC<any> = (props) => {
                                             buttonStyle: { backgroundColor: colors.colorErrorRed },
                                             buttonText: Language.yes_cancel,
                                         })
-                                        _hidePopUpAlert()
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                     }
                                     } hideBorder /></>
                                 :
                                 <><InnerButton onPress={() => {
                                     shareEvent();
-                                    _hidePopUpAlert()
+                                    // _hidePopUpAlert()
+                                    _hideTouchAlert()
                                 }} title={Language.share} />
                                     <InnerButton title={Language.mute} onPress={() => {
                                         _showPopUpAlert({
@@ -245,28 +253,33 @@ const EventDetail: FC<any> = (props) => {
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
-                                                _hidePopUpAlert()
+                                                // _hidePopUpAlert()
+                                                _hideTouchAlert()
                                             },
                                             buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        _hidePopUpAlert()
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                     }} /><InnerButton title={Language.report} onPress={() => {
                                         _showPopUpAlert({
                                             message: Language.are_you_sure_report_event,
                                             onPressButton: () => {
                                                 dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                                                _hidePopUpAlert()
+                                                // _hidePopUpAlert()
+                                                _hideTouchAlert()
                                             },
                                             buttonText: Language.yes_report,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        _hidePopUpAlert()
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                     }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showCancellationPolicy()
-                                            _hidePopUpAlert()
+                                            // _hidePopUpAlert()
+                                            _hideTouchAlert()
                                         }} hideBorder /> : undefined}
                                 </>
                             }
@@ -450,64 +463,67 @@ const EventDetail: FC<any> = (props) => {
                         </View> : <View style={{ marginBottom: scaler(15) }} />
                     }
                     {/* <View style={{ height: 1, width: '100%', backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(5) }} /> */}
-                    {activeTicket?.amount ? !activeTicket?.is_donation ?
-                        <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
-                            <View style={{ marginBottom: scaler(15) }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                                    <View style={{ flex: 1, }}>
-                                        <Text style={styles.ticketInfo}>
-                                            <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
-                                        </Text>
-                                        <Text style={styles.ticketInfo}>
-                                            Tax ({activeTicket?.event_tax_rate}%)
-                                        </Text>
+                    {activeTicket?.amount ?
+                        !activeTicket?.is_donation ?
+                            <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                <View style={{ marginBottom: scaler(15) }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                        <View style={{ flex: 1, }}>
+                                            <Text style={styles.ticketInfo}>
+                                                <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                            </Text>
+                                            <Text style={styles.ticketInfo}>
+                                                Tax ({activeTicket?.event_tax_rate}%)
+                                            </Text>
 
+                                        </View>
+                                        <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
+                                            <Text style={styles.ticketInfo}>
+                                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                            </Text>
+                                            <Text style={styles.ticketInfo}>
+                                                {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                            </Text>
+                                        </View>
                                     </View>
-                                    <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
-                                        <Text style={styles.ticketInfo}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                    <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                        <Text style={[{ flex: 1, }, styles.ticketInfo]}>
+                                            Total
                                         </Text>
-                                        <Text style={styles.ticketInfo}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                        <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
+                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
                                         </Text>
                                     </View>
+                                </View></> :
+                            activeTicket?.is_donation ?
+                                <View style={{ marginBottom: scaler(10) }}>
+                                    <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                    <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                        <View style={{ flex: 1, }}>
+                                            <Text style={styles.ticketInfo}>
+                                                <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                            </Text>
+                                        </View>
+                                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                                            <Text style={[styles.ticketInfo, { flex: 1 }]}>
+                                                Donation
+                                            </Text>
+                                            <Text style={styles.ticketInfo}>
+                                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                            </Text>
+                                        </View>
+                                    </View>
                                 </View>
-                                <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
-                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                                    <Text style={[{ flex: 1, }, styles.ticketInfo]}>
-                                        Total
-                                    </Text>
-                                    <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                        {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
-                                    </Text>
-                                </View>
-                            </View></> :
-                        <View style={{ marginBottom: scaler(10) }}>
-                            <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
-                            <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
-                                <View style={{ flex: 1, }}>
-                                    <Text style={styles.ticketInfo}>
-                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
-                                    </Text>
-                                </View>
-                                <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                    <Text style={[styles.ticketInfo, { flex: 1 }]}>
-                                        Donation
-                                    </Text>
-                                    <Text style={styles.ticketInfo}>
-                                        {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-                        : <View style={{ marginBottom: scaler(10) }}>
-                            <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
-                            <View style={{ flex: 1, paddingStart: scaler(10), paddingEnd: scaler(30) }}>
-                                <Text style={styles.ticketInfo}>
-                                    <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
-                                </Text>
-                            </View>
-                        </View>}
+                                :
+                                <View style={{ marginBottom: scaler(10) }}>
+                                    <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                    <View style={{ flex: 1, paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                        <Text style={styles.ticketInfo}>
+                                            <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                        </Text>
+                                    </View>
+                                </View> : null}
 
                     {event.status == 1 && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
