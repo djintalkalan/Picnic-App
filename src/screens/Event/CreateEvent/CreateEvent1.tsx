@@ -146,7 +146,7 @@ const CreateEvent1: FC<any> = props => {
     } : null
 
     selectedGroupRef.current = event?.event_group
-    setMultiImageArray(event.event_images)
+    setMultiImageArray(event.event_images || [])
     setValue('eventName', event?.name)
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
