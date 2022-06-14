@@ -93,7 +93,7 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
                 if (location) {
                     // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))
                     // return
-                    if (prefixType == 'video') {
+                    if (prefixType == 'video' || image[i]?.mime?.includes('video')) {
                         let res = yield call(transcodeVideo, fileName)
                         console.log("Completed", res);
                         imageArray = [...imageArray, { type: 'video', name: fileName }]

@@ -10,7 +10,7 @@ import { ListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
@@ -30,13 +30,13 @@ const DefaultDelta = {
     latitudeDelta: 0.3,
     longitudeDelta: 0.3 * ASPECT_RATIO,
 }
-let imageArray: Array<any> = [];
+
 const EventDetail: FC<any> = (props) => {
 
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
     const { loadVideo } = useVideoPlayer()
-
+    const [imageArray, setImageArray] = useState<Array<any>>([])
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
@@ -79,10 +79,10 @@ const EventDetail: FC<any> = (props) => {
     }, [])
 
     useEffect(() => {
-        imageArray = event?.image && event?.event_images ?
-            [{ type: 'image', name: event?.image }, ...event?.event_images] :
-            event?.event_images ? [...event?.event_images] : event?.image ? [{ type: 'image', name: event?.image }] : []
-        console.log('imageArray', imageArray)
+        if (event?.image || event?.event_images)
+            setImageArray(event?.image && event?.event_images ?
+                [{ type: 'image', name: event?.image }, ...event?.event_images] :
+                event?.event_images ? [...event?.event_images] : [{ type: 'image', name: event?.image }])
     }, [event])
 
     const _showCancellationPolicy = useCallback(() => {
@@ -329,15 +329,6 @@ const EventDetail: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                {/* <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                    <ImageLoader
-                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
-                        //@ts-ignore
-                        style={{ width: width, height: width, resizeMode: 'cover' }}
-                        placeholderSource={Images.ic_event_placeholder}
-                        placeholderStyle={{}}
-                        source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
-                </View> */}
                 <View style={{ width: width, height: width, backgroundColor: colors?.colorFadedPrimary }}>
                     {imageArray?.length > 0 ?
                         <Carousel
@@ -349,7 +340,7 @@ const EventDetail: FC<any> = (props) => {
                                 // console.log('imageArray', _, config.VIDEO_URL + _.name)
                                 return (
                                     <TouchableOpacity style={styles.customSlide}
-                                        onPress={() => _.type == 'image' ? _zoomImage(getImageUrl(event?.image, { type: 'events' })) : loadVideo && loadVideo(config.VIDEO_URL + _.name)}>
+                                        onPress={() => _.type == 'image' ? _zoomImage(getImageUrl(_?.name, { type: 'events' })) : loadVideo && loadVideo(config.VIDEO_URL + _.name)}>
                                         <Image style={styles.customImage}
                                             source={{ uri: _.type == 'image' ? getImageUrl(_?.name, { width: width, type: 'events' }) : config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png" }} />
                                         {/* <ImageLoader
