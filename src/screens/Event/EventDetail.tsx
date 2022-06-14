@@ -1,3 +1,4 @@
+import { config } from 'api'
 import { _copyEvent } from 'api/APIProvider'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
@@ -6,16 +7,21 @@ import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem } from 'custom-components/ListItem/ListItem'
+import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
+//@ts-ignore
+import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+
+
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -24,17 +30,19 @@ const DefaultDelta = {
     latitudeDelta: 0.3,
     longitudeDelta: 0.3 * ASPECT_RATIO,
 }
-
+let imageArray: Array<any> = [];
 const EventDetail: FC<any> = (props) => {
 
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
+    const { loadVideo } = useVideoPlayer()
 
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
+
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
@@ -69,6 +77,13 @@ const EventDetail: FC<any> = (props) => {
 
         }, 200);
     }, [])
+
+    useEffect(() => {
+        imageArray = event?.image && event?.event_images ?
+            [{ type: 'image', name: event?.image }, ...event?.event_images] :
+            event?.event_images ? [...event?.event_images] : event?.image ? [{ type: 'image', name: event?.image }] : []
+        console.log('imageArray', imageArray)
+    }, [event])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
@@ -314,7 +329,7 @@ const EventDetail: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
+                {/* <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
                     <ImageLoader
                         onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
                         //@ts-ignore
@@ -322,6 +337,38 @@ const EventDetail: FC<any> = (props) => {
                         placeholderSource={Images.ic_event_placeholder}
                         placeholderStyle={{}}
                         source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
+                </View> */}
+                <View style={{ width: width, height: width, backgroundColor: colors?.colorFadedPrimary }}>
+                    {imageArray?.length > 0 ?
+                        <Carousel
+                            delay={5000}
+                            style={{ flex: 1 }}
+                            autoplay={true}
+                        >
+                            {imageArray?.map((_: any, i: number) => {
+                                // console.log('imageArray', _, config.VIDEO_URL + _.name)
+                                return (
+                                    <TouchableOpacity style={styles.customSlide}
+                                        onPress={() => _.type == 'image' ? _zoomImage(getImageUrl(event?.image, { type: 'events' })) : loadVideo && loadVideo(config.VIDEO_URL + _.name)}>
+                                        <Image style={styles.customImage}
+                                            source={{ uri: _.type == 'image' ? getImageUrl(_?.name, { width: width, type: 'events' }) : config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png" }} />
+                                        {/* <ImageLoader
+                                        // onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
+                                        //@ts-ignore
+                                        style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                                        placeholderSource={Images.ic_event_placeholder}
+                                        placeholderStyle={{}}
+                                        source={{ uri: _.type == 'image' ? getImageUrl(_?.name, { width: width, type: 'events' }) : config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png" }} /> */}
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </Carousel>
+                        :
+                        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                            <Image source={Images.ic_event_placeholder} style={{}} />
+                        </View>
+
+                    }
                 </View>
 
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
@@ -802,5 +849,23 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorWhite,
         right: scaler(5),
         top: -scaler(20)
-    }
+    },
+    customSlide: {
+        backgroundColor: colors?.colorFadedPrimary,
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        overflow: 'hidden',
+        // marginHorizontal: scaler(2),
+        width: width,
+        height: width,
+        aspectRatio: 1 / 1,
+        // borderRadius: scaler(10),
+        // height: width*5/9
+    },
+    customImage: {
+        // backgroundColor:'red',
+        height: '100%',
+        width: '100%',
+        resizeMode: 'cover'
+    },
 })
