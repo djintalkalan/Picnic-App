@@ -81,7 +81,8 @@ const EventDetail: FC<any> = (props) => {
 
     useEffect(() => {
         if (event?.image || event?.event_images) {
-            setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
+            const arr = ([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
+            setImageArray([...arr, ...arr])
         }
     }, [event])
 
@@ -332,9 +333,12 @@ const EventDetail: FC<any> = (props) => {
                 <View style={{ width: width, height: width, backgroundColor: colors?.colorFadedPrimary }}>
                     {imageArray?.length > 0 ?
                         <Carousel
-                            delay={5000}
+                            delay={4000}
                             style={{ flex: 1 }}
                             autoplay={true}
+                            bullets={false}
+                            bulletStyle={{ backgroundColor: colors.colorPrimary, borderWidth: 0 }}
+                            chosenBulletStyle={{ width: scaler(20), backgroundColor: colors.colorPrimary, borderWidth: 0 }}
                         >
                             {imageArray?.map((_: any, i: number) => {
                                 return (
@@ -376,6 +380,13 @@ const EventDetail: FC<any> = (props) => {
                 </View>
 
                 <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+                <View style={styles.bulletContainer} >
+                    {imageArray?.map((item, index) => {
+                        return <View style={styles.bulletStyle} >
+
+                        </View>
+                    })}
+                </View>
                 <View style={styles.subHeading} >
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
@@ -878,5 +889,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         alignSelf: 'center',
         top: width / 2 - scaler(40),
+    },
+    bulletContainer: {
+        position: 'absolute',
+        flexDirection: 'row',
+        alignSelf: 'center',
+        top: -scaler(80),
+        zIndex: 2,
+        backgroundColor: 'red'
+    },
+    bulletStyle: {
+        width: 20,
+        height: 20,
+        backgroundColor: 'black',
+        borderRadius: 20,
+
     }
 })
