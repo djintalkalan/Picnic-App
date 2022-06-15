@@ -89,9 +89,13 @@ const ChatItem = (props: IChatItem) => {
     }), [user])
     const [userData] = useDatabase<any>("userData");
 
-    const is_message_liked_by_me = props?.is_message_liked_by_me || false
+    let is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
-    // const is_message_liked_by_me = message_recently_liked_user_ids?.includes(userData?._id)
+
+    // if (is_message_liked_by_me == false && message_liked_by_users?.findIndex(_ => _?.user_id == userData?._id) != -1) {
+    //     is_message_liked_by_me = true
+    // }
+
     useEffect(() => {
         if (message_type == 'text') {
             const matches = findUrl(message?.toLowerCase())

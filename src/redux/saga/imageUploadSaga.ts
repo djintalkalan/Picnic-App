@@ -71,21 +71,23 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
     let profileImage: string = '';
     let { image, onSuccess, prefixType } = payload
 
+
     if (!Array.isArray(image)) return [image]
 
     for (let i = 0; i < image.length; i++) {
         if (!image[i]?.path) return
+        const isImage = image[i]?.mime?.includes("image")
         const date = new Date()
         // fileName = image?.path?.substring(image?.path?.lastIndexOf('/') + 1, image?.path?.length)
-        fileName = (prefixType == 'video' ? "VID-" : "IMG-") + dateFormat(date, "YYYYMMDD") + "-PG" + Date.now() + "" + random(111, 999) + image[i]?.path?.substring(image[i]?.path?.lastIndexOf('.'));
+        fileName = (!isImage ? "VID-" : "IMG-") + dateFormat(date, "YYYYMMDD") + "-PG" + Date.now() + "" + random(111, 999) + image[i]?.path?.substring(image[i]?.path?.lastIndexOf('.'));
         const file = {
             uri: image[i]?.path,
             name: fileName,
-            type: image[i]?.mime ?? (prefixType != 'video' ? (fileName?.toLowerCase().endsWith("png") ? 'image/png' : 'image/jpeg') : "*/*")
+            type: image[i]?.mime || "*/*"
         }
         yield put(setLoadingAction(true))
         try {
-            let res = yield call(ApiProvider.uploadFileAWS, file, prefixType, uploadProgress);
+            let res = yield call(ApiProvider.uploadFileAWS, file, isImage ? prefixType : 'video', uploadProgress);
             console.log("Upload", res);
 
             if (res && res.status == 201) {
@@ -93,22 +95,21 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
                 if (location) {
                     // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))
                     // return
-                    if (prefixType == 'video' || image[i]?.mime?.includes('video')) {
+                    if (!isImage) {
                         let res = yield call(transcodeVideo, fileName)
                         console.log("Completed", res);
                         imageArray = [...imageArray, { type: 'video', name: fileName }]
                         // onSuccess && onSuccess(fileName, fileName.substring(0, fileName.lastIndexOf(".")) + "-00001.png")
-                        return
+                        // return
+                    } else {
+                        if (image[i]?.isProfile) profileImage = fileName;
+                        else imageArray = [...imageArray, { type: !isImage ? 'video' : 'image', name: fileName }];
+                        // onSuccess && onSuccess(fileName, image[i]?.isProfile ?? false)
                     }
-                    if (image[i]?.isProfile) profileImage = fileName;
-                    else imageArray = [...imageArray, { type: image[i]?.mime?.includes('video') ? 'video' : 'image', name: fileName }];
-                    // onSuccess && onSuccess(fileName, image[i]?.isProfile ?? false)
                 }
             } else {
                 yield put(setLoadingAction(false))
             }
-            yield put(setLoadingAction(false))
-
         }
         catch (e) {
             console.log("Error Catch", e)
@@ -116,7 +117,7 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
         }
     }
     onSuccess && onSuccess(imageArray, profileImage)
-
+    yield put(setLoadingAction(false))
 };
 
 
