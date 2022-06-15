@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
 import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
@@ -80,20 +81,8 @@ const EventDetail: FC<any> = (props) => {
 
     useEffect(() => {
         if (event?.image || event?.event_images) {
-            // const array = []
-            // if (event?.image) {
-            //     array.push({ type: 'image', name: event?.image })
-            // }
-            // if (event?.event_images?.length) {
-            //     array.push(event?.event_images)
-            // }
-            // setImageArray(array)
             setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
         }
-        // }
-        //     setImageArray(event?.image && event?.event_images ?
-        //         [{ type: 'image', name: event?.image }, ...event?.event_images] :
-        //         event?.event_images ? [...event?.event_images] : [{ type: 'image', name: event?.image }])
     }, [event])
 
     const _showCancellationPolicy = useCallback(() => {
@@ -348,16 +337,25 @@ const EventDetail: FC<any> = (props) => {
                             autoplay={true}
                         >
                             {imageArray?.map((_: any, i: number) => {
-                                // console.log('imageArray', _, config.VIDEO_URL + _.name)
                                 return (
                                     <TouchableOpacity style={styles.customSlide}
+                                        key={i}
                                         onPress={() => {
                                             _.type == 'image' ?
                                                 _zoomImage(getImageUrl(_?.name, { type: 'events' })) :
                                                 loadVideo && loadVideo(config.VIDEO_URL + _.name)
                                         }}>
                                         <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : {}]}
-                                            source={{ uri: _.type == 'image' ? getImageUrl(_?.name, { width: width, type: 'events' }) : config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png" }} />
+                                            source={{
+                                                uri: _.type == 'image' ?
+                                                    getImageUrl(_?.name, { width: width, type: 'events' }) :
+                                                    config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
+                                            }} />
+                                        {_.type == 'video' ?
+                                            <TouchableOpacity style={styles.playButton} onPress={() => { loadVideo && loadVideo(config.VIDEO_URL + _.name) }} >
+                                                <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
+                                            </TouchableOpacity> : undefined}
+
                                         {/* <ImageLoader
                                         // onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
                                         //@ts-ignore
@@ -874,4 +872,11 @@ const styles = StyleSheet.create({
         width: '100%',
         resizeMode: 'cover'
     },
+    playButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        alignSelf: 'center',
+        top: width / 2 - scaler(40),
+    }
 })
