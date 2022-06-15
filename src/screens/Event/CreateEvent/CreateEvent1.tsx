@@ -323,7 +323,7 @@ const CreateEvent1: FC<any> = props => {
                       <Image source={Images.ic_delete_red} style={{ height: scaler(20), width: scaler(20) }} />
                     </TouchableOpacity>
                     {_.mime?.includes('video') || _?.type == 'video' ?
-                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5) }]} onPress={() => loadVideo && loadVideo(_?.path ?? config.VIDEO_URL + _.name)}>
+                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5), marginBottom: scaler(10) }]} onPress={() => loadVideo && loadVideo(_?.path ?? config.VIDEO_URL + _.name)}>
                         <Ionicons color={colors.colorGreyText} name="play-circle" size={scaler(35)} />
                       </TouchableOpacity> :
                       <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?._id ? getImageUrl(_?.name, { type: 'events', width: scaler(100) }) : _?.path }} />

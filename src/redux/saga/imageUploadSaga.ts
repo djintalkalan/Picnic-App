@@ -72,7 +72,7 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
     let { image, onSuccess, prefixType } = payload
 
 
-    if (!Array.isArray(image)) return [image]
+    if (!Array.isArray(image)) image = [image];
 
     for (let i = 0; i < image.length; i++) {
         if (!image[i]?.path) return
@@ -87,7 +87,7 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
         }
         yield put(setLoadingAction(true))
         try {
-            let res = yield call(ApiProvider.uploadFileAWS, file, isImage ? prefixType : 'video', uploadProgress);
+            let res = yield call(ApiProvider.uploadFileAWS, file, isImage ? prefixType : 'video', (p, id) => uploadProgress(p, id, i + 1, image?.length));
             console.log("Upload", res);
 
             if (res && res.status == 201) {
@@ -127,21 +127,29 @@ function* cancelUpload({ type, payload }: action): Generator<any, any, any> {
     yield put(setLoadingAction(false))
 }
 
+interface IProgress extends Progress {
+    currentCount: number
+    length: number
+}
 
-
-const uploadProgress = async (progress: Progress, id: string) => {
+const uploadProgress = async (progress: Progress, id: string, currentCount = 0, length = 0) => {
     console.log("Progress", progress);
-    await showNotification(id, progress)
+    await showNotification(id, progress as IProgress, currentCount, length)
 }
 
 
 
-const showNotification = async (id: string, p: Progress) => {
+const showNotification = async (id: string, p: IProgress, currentCount: number, length: number) => {
     let title = "Uploading file"
+    if (currentCount) {
+        p.currentCount = currentCount
+        p.length = length
+    }
+
     let progress: AndroidProgress = {
         indeterminate: true,
     }
-    let finalize = p?.loaded == p?.total
+    let finalize = p?.loaded == p?.total && currentCount == length
     if (!activeUploads.includes(id)) {
         store.dispatch(setLoadingAction(true))
         activeUploads.push(id)
