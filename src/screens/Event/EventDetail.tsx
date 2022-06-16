@@ -342,6 +342,7 @@ const EventDetail: FC<any> = (props) => {
                                 return (
                                     <TouchableOpacity style={styles.customSlide}
                                         key={i}
+                                        activeOpacity={0.7}
                                         onPress={() => {
                                             _.type == 'image' ?
                                                 _zoomImage(getImageUrl(_?.name, { type: 'events' })) :
