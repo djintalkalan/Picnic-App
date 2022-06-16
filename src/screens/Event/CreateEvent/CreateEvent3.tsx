@@ -68,6 +68,7 @@ const CreateEvent3: FC<any> = props => {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
+      setValue('currency', event?.event_currency?.toUpperCase() || "USD")
 
     } else {
       if (event.ticket_type == 'multiple') {
