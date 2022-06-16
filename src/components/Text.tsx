@@ -47,30 +47,40 @@ export const Text: FC<TextProps> = (props) => {
     const { style, type = "regular", autoLink = false, autoLinkProps, ...rest } = props
     const styles = useMemo(() => {
         const styles = StyleSheet.flatten(style ?? {})
-        let fontType = type;
-        if (styles?.fontWeight) {
-            switch (styles?.fontWeight) {
-                case "500":
-                    fontType = "medium"
-                    break;
+        let fontType = type
+        if (Platform.OS == 'android') {
+            fontType = type;
+            if (styles?.fontWeight) {
+                switch (styles?.fontWeight) {
+                    case "500":
+                        fontType = `medium`
+                        break;
 
-                case "600":
-                    fontType = "semiBold"
-                    break;
+                    case "600":
+                        fontType = "semiBold"
+                        break;
 
-                case "700":
-                    fontType = "bold"
-                    break;
+                    case "700":
+                        fontType = "bold"
+                        break;
 
-                case "800":
-                    fontType = "extraBold"
-                    break;
+                    case "800":
+                        fontType = "extraBold"
+                        break;
 
+                }
+            }
+            if (styles?.fontStyle == 'italic' && fontType != 'regular') {
+                //@ts-ignore
+                fontType = fontType.replace("Italic", '') + "Italic"
+                console.log("fontType", fontType);
+                delete styles.fontStyle
             }
         }
 
         return StyleSheet.create({
             textStyle: {
+                color: colors.colorBlackText,
                 fontFamily: Fonts?.[Platform.OS == 'android' ? fontType : type],
                 fontWeight: Platform.OS == 'android' ? undefined : styles?.fontWeight,
                 ...styles

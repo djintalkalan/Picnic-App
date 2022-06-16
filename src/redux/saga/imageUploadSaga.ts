@@ -1,8 +1,8 @@
+import { CreateJobCommand, CreateJobCommandInput, ElasticTranscoderClient, waitUntilJobComplete } from "@aws-sdk/client-elastic-transcoder";
 import notifee, { AndroidProgress } from "@notifee/react-native";
 import { config } from 'api';
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction, setLoadingMsg } from "app-store/actions";
-import AWS from 'aws-sdk/dist/aws-sdk-react-native';
 import { random } from "lodash";
 import { Platform } from "react-native";
 import { Progress } from 'react-native-aws3';
@@ -15,23 +15,14 @@ let activeUploads: Array<string> = []
 
 const isAndroid = Platform.OS == 'android'
 
-AWS.config.update({
-    accessKeyId: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
-    secretAccessKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
+const transcoderClient = new ElasticTranscoderClient({
+    credentials: {
+        accessKeyId: config.AWS3_ACCESS_K + config.AWS3_ACCESS_E + config.AWS3_ACCESS_Y,
+        secretAccessKey: config.AWS3_SECRET_K + config.AWS3_SECRET_E + config.AWS3_SECRET_Y,
+    },
     region: config.AWS3_REGION,
-    videoBucket: config.AWS3_VIDEO_BUCKET,
-    transcode: {
-        video: {
-            pipelineId: config.AWS3_PIPELINE_ID,
-            outputKeyPrefix: '', // put the video into the transcoded folder
-            presets: [ // Comes from AWS console
-                { presetId: '1351620000001-000001' }
-            ]
-        }
-    }
-})
+});
 
-const transcoder = new AWS.ElasticTranscoder();
 
 function* uploadImage({ type, payload }: action): Generator<any, any, any> {
     let fileName = "";
@@ -56,9 +47,7 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
                 // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))
                 // return
                 if (prefixType == 'video') {
-                    let res = yield call(transcodeVideo, fileName, (res) => {
-                        console.log("Completed", res);
-                    });
+                    let res = yield call(transcodeVideo, fileName)
                     console.log("Completed", res);
                     onSuccess && onSuccess(fileName, fileName.substring(0, fileName.lastIndexOf(".")) + "-00001.png")
                     return
@@ -125,9 +114,9 @@ const showNotification = async (id: string, p: Progress) => {
     }
 }
 
-const transcodeVideo = async (key: string, callback: (obj: any) => void) => {
+export const transcodeVideo = async (key: string) => {
     // presets: http://docs.aws.amazon.com/elastictranscoder/latest/developerguide/system-presets.html
-    let params = {
+    const params: CreateJobCommandInput = {
         PipelineId: config.AWS3_PIPELINE_ID, // specifies output/input buckets in S3 
         Input: {
             Key: key,
@@ -141,15 +130,34 @@ const transcodeVideo = async (key: string, callback: (obj: any) => void) => {
         }]
     };
 
-    transcoder.createJob(params, function (err: any, data: any) {
-        if (!!err) {
-            console.log("Error", err);
-            return;
-        }
-        let jobId = data.Job.Id;
+    const command = new CreateJobCommand(params)
+    try {
+        console.log("Starting transcode");
+
+        const res = await transcoderClient.send(command)
+        const jobId = res.Job?.Id
         console.log('AWS transcoder job created (' + jobId + ')');
-        transcoder.waitFor('jobComplete', { Id: jobId }, callback);
-    });
+        waitForCompleteJob(res?.Job?.Id)
+    }
+    catch (e) {
+        console.log("Error in transcoding", e);
+    }
+}
+
+const waitForCompleteJob = async (id?: string) => {
+    waitUntilJobComplete({
+        client: transcoderClient,
+        minDelay: 4,
+        maxDelay: 10,
+        maxWaitTime: 30
+    }, {
+        Id: id
+    }).then((waiterResult) => {
+        console.log("Transcoding complete", waiterResult);
+
+    }).catch((reason) => {
+        console.log("Reason", reason);
+    })
 }
 // Watcher: watch auth request
 export default function* watchUploadSaga() {

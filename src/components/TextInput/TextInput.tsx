@@ -38,6 +38,15 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
     const [isFocused, setFocused] = useState(false)
     const { iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
     const openKeyboardAccessory = props?.keyboardValues?.openKeyboardAccessory
+
+    const errorName = useMemo(() => {
+        if (name.includes(".")) {
+            return name.substring(name.lastIndexOf('.') + 1)
+        } else {
+            return name
+        }
+    }, [name])
+
     const styles = useMemo(() => {
 
         return StyleSheet.create({
@@ -110,10 +119,19 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     name={name}
                     rules={{ required: required, ...rules }}
                     defaultValue=""
-                    render={({ field: { onChange, onBlur: onBlurC, value } }) => (
+                    render={({ field: { onChange, onBlur: onBlurC, value, ref: cRef } }) => (
                         <>
                             <RNTextInput {...rest}
-                                ref={ref}
+                                ref={(r) => {
+                                    if (ref) {
+                                        if (typeof ref == 'function') {
+                                            ref(r)
+                                        } else {
+                                            ref.current = r
+                                        }
+                                    }
+                                    cRef(r)
+                                }}
                                 // onContentSizeChange={(e) => {
                                 //     console.log(e.nativeEvent.contentSize)
                                 // }}
@@ -221,14 +239,15 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     </>}
             </View>
             {/* {console.log("errors", errors)} */}
-            {(errors && errors[name]) && <Text type={fontFamily} style={{
+            {(errors && errors[errorName]) && <Text type={fontFamily} style={{
                 paddingLeft: scaler(5),
                 paddingVertical: scaler(4),
                 color: colors.colorRed,
                 fontSize: scaler(10),
             }}>
-                {errors?.[name]?.message || (capitalize(name) + " " + Language.is_required)}
+                {errors?.[errorName]?.message || (capitalize(errorName) + " " + Language.is_required)}
             </Text>}
+
         </TouchableOpacity>
     )
 })

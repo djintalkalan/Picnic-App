@@ -67,7 +67,7 @@ const Login: FC = () => {
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
-            <ScrollView contentContainerStyle={{ flex: 1 }} keyboardShouldPersistTaps={'handled'} >
+            <ScrollView enableResetScrollToCoords={false} contentContainerStyle={{ flex: 1 }} keyboardShouldPersistTaps={'handled'} >
 
                 <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(20) }} >
 

@@ -1,65 +1,109 @@
-import { createEvent, uploadFile } from 'app-store/actions';
+import { updateCreateEvent } from 'app-store/actions/createEventActions';
+import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
-import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database, { ILocation, useDatabase } from 'database';
-import { round } from 'lodash';
-import React, { FC, useCallback, useRef, useState } from 'react';
+import { useDatabase } from 'database';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  Dimensions,
   StyleSheet,
-  TextInput as RNInput,
-  TouchableOpacity,
+  TextInput as RNInput, TextInput as RNTextInput, TouchableOpacity,
   View
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
 type FormType = {
   capacity: string;
-  ticketPrice: string;
   eventDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   additionalInfo: string;
-  currency: string;
 };
 
-const DropDownData = ['USD', 'EUR', 'GBP'];
 
 type IEventDateTime = {
-  selectedType: "eventDate" | "startTime" | "endTime",
+  selectedType: "eventDate" | 'endDate' | "startTime" | "endTime",
   eventDate: Date,
+  endDate: Date,
   startTime: Date,
   endTime: Date,
 }
 
 const defaultTime = new Date(new Date(dateFormat(new Date(), "YYYY-MM-DD")).toISOString().slice(0, -1))
 
-const CreateEvent2: FC<any> = props => {
-  const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
-  const [isFreeEvent, setIsFreeEvent] = useState(false);
-  const uploadedImage = useRef('');
-  const [isDropdown, setDropdown] = useState(false);
-  const dispatch = useDispatch();
-  const keyboardValues = useKeyboardService()
+const initialDateTime: IEventDateTime = {
+  selectedType: 'eventDate',
+  eventDate: new Date(),
+  endDate: new Date(),
+  startTime: defaultTime,
+  endTime: defaultTime,
+}
 
+const CreateEvent2: FC<any> = props => {
+  const eventDateRef = useRef<RNTextInput>(null)
+  const scrollViewRef = useRef<ScrollView>(null)
+  const dispatch = useDispatch();
+  const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
+  const [, forceRender] = useState(false);
+  const [isMultidayEvent, setIsMultidayEvent] = useState(false);
+  const keyboardValues = useKeyboardService()
   const eventPriceInputRef = useRef<RNInput>(null)
   const additionalInfoInputRef = useRef<RNInput>(null)
   const capacityInputRef = useRef<RNInput>(null)
-  const eventDateTime = useRef<IEventDateTime>({
-    selectedType: 'eventDate',
-    eventDate: new Date(),
-    startTime: defaultTime,
-    endTime: defaultTime,
-    // startTime: new Date(),
-    // endTime: new Date(),
-  });
-
+  const eventDateTime = useRef<IEventDateTime>(initialDateTime);
   const [userData] = useDatabase("userData")
+  const { current: event } = useRef(store.getState().createEventState)
+
+  useEffect(() => {
+    setEventValues()
+  }, [])
+
+  const setEventValues = useCallback(() => {
+    if (event?.is_copied_event != '1') {
+      eventDateTime.current = {
+        eventDate: event?.event_date ? stringToDate(event?.event_date, "YYYY-MM-DD", "-") : new Date(),
+        startTime: event?.event_date ? stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-") : defaultTime,
+        endDate: event?.event_end_date ? stringToDate(event?.event_end_date, "YYYY-MM-DD", "-") : new Date(),
+        endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
+        selectedType: 'eventDate',
+      }
+      setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
+      setValue('endDate', event?.event_end_date ? dateFormat(eventDateTime.current.endDate, 'MMM DD, YYYY') : '')
+      setValue('startTime', event?.event_date ? dateFormat(eventDateTime.current.startTime, 'hh:mm A') : '')
+      setValue('endTime', event?.event_end_time ? dateFormat(eventDateTime.current.endTime, 'hh:mm A') : '')
+    } else {
+      setValue('eventDate', '')
+      setValue('endDate', '')
+      setValue('startTime', '')
+      setValue('endTime', '')
+
+      if (eventDateRef.current) {
+        eventDateRef.current?.measureInWindow((x, y) => {
+          console.log("eventDateRef", x, y);
+
+          scrollViewRef?.current?.scrollToPosition(x, y - (Dimensions.get('screen').height / 3), true)
+          setTimeout(() => {
+            (openDatePicker("eventDate"))
+          }, 1000)
+        })
+      }
+
+    }
+
+    console.log(event);
+    setValue('capacity', (event?.capacity || "")?.toString())
+    setValue('additionalInfo', event?.details || "")
+    setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
+    setIsMultidayEvent(event?.is_multi_day_event == 1 ? true : false)
+    forceRender(_ => !_)
+  }, [])
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const {
@@ -70,88 +114,21 @@ const CreateEvent2: FC<any> = props => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormType>({
-    mode: 'onChange', defaultValues: { 'currency': 'USD' }
+    mode: 'onChange',
+    shouldFocusError: false
   });
-
-  const bodyData = props?.route?.params
-
-  const onSubmit = useCallback(
-    (data) => {
-      if (!uploadedImage.current && bodyData?.eventImage?.path) {
-        dispatch(
-          uploadFile({
-            image: bodyData?.eventImage,
-            onSuccess: url => {
-              uploadedImage.current = url;
-              callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-            },
-            prefixType: 'events',
-          }),
-        );
-      } else {
-        callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-      }
-    },
-    [bodyData?.eventImage, isFreeEvent, isUnlimitedCapacity],
-  );
-
-
-  const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity) => {
-    const { latitude, longitude, address, otherData } =
-      bodyData?.location ?? {};
-
-    const { startTime, endTime, eventDate } = eventDateTime.current
-    let payload = {
-      image: uploadedImage?.current,
-      name: bodyData?.eventName,
-      group_id: bodyData?.myGroup?.id,
-      is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
-      short_description: bodyData?.aboutEvent,
-      address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
-      city: otherData?.city,
-      state: otherData?.state,
-      country: otherData?.country,
-      location: {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      },
-      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
-      capacity: data?.capacity,
-      is_free_event: isFreeEvent ? '1' : '0',
-      event_fees: round(parseFloat(data?.ticketPrice), 2),
-      event_date: dateFormat(eventDate, "YYYY-MM-DD"),
-      event_start_time: dateFormat(startTime, "HH:mm:ss"),
-      event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-      details: data?.additionalInfo,
-      event_currency: data?.currency.toLowerCase(),
-      payment_method: [],
-      payment_email: "",
-      event_refund_policy: ""
-    };
-    dispatch(
-      createEvent({
-        data: payload,
-        onSuccess: () => {
-          Database.setSelectedLocation(Database.getStoredValue<ILocation>('selectedLocation'));
-        },
-      }),
-    );
-  }, []);
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
-      // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
-      // (!getValues('capacity')&&!isUnlimitedCapacity) ||
-      !getValues('currency') ||
       !getValues('startTime') ||
-      (errors && (errors.eventDate || errors.ticketPrice || errors.currency || errors.startTime || errors.capacity))
+      (errors && (errors.eventDate || errors.startTime || errors.capacity))
     ) {
       return true;
     }
     return false;
-  }, [errors, isUnlimitedCapacity, isFreeEvent]);
+  }, [errors, isUnlimitedCapacity]);
 
-  const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime") => {
+  const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime" | "endDate") => {
     eventDateTime.current.selectedType = type
     setDatePickerVisibility(true);
     eventPriceInputRef.current?.blur()
@@ -160,12 +137,12 @@ const CreateEvent2: FC<any> = props => {
   }, []);
 
   const getMinDate = useCallback(() => {
-    const { startTime, endTime, eventDate, selectedType } = eventDateTime.current
-    // const eventDateString = eventDate ? dateFormat(new Date(), "DD-MM-YYYY") : undefined
-    // const currentDateString = dateFormat(new Date(), "DD-MM-YYYY")
+    const { startTime, endTime, eventDate, selectedType, endDate } = eventDateTime.current
 
     switch (selectedType) {
       case "eventDate":
+        return new Date();
+      case "endDate":
         return new Date();
       case "startTime":
         return undefined
@@ -194,58 +171,44 @@ const CreateEvent2: FC<any> = props => {
   }, [])
 
   const onPressSubmit = useCallback(() => handleSubmit((data) => {
-    const { endTime } = data
-    const { startTime: startTimeDate, endTime: endTimeDate } = eventDateTime.current
+    const { endTime, endDate } = data
+    const { startTime: startTimeDate, endTime: endTimeDate, endDate: endEventDate, eventDate } = eventDateTime.current
     const currentDate = new Date()
     if (startTimeDate <= currentDate) {
       _showErrorMessage(Language.start_time_invalid)
       return
     }
-    if (endTime && endTimeDate <= startTimeDate) {
+    if (endDate && dateFormat(endEventDate, 'YYYYMMDD') <= dateFormat(eventDate, 'YYYYMMDD')) {
+      _showErrorMessage(Language.end_date_greater_than_start_date)
+      return
+    }
+    if (endTime && !isMultidayEvent && endTimeDate <= startTimeDate) {
       _showErrorMessage(Language.end_time_invalid)
       return
     }
 
-    !userData?.is_premium ?
-      _showPopUpAlert({
-        message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
-        buttonText: Language.join_now,
-        onPressButton: () => {
-          NavigationService.navigate("Subscription", {
-            onSubscription: onSubmit, data: {
-              ...data, ...bodyData,
-              eventDateTime: eventDateTime.current,
-              image: uploadedImage?.current,
-              isUnlimitedCapacity: isUnlimitedCapacity,
-              isFreeEvent: isFreeEvent
-            }
-          });
-          _hidePopUpAlert()
-        },
-        cancelButtonText: Language.no_thanks_create_my_event,
-        onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
-      }) :
-      isFreeEvent ?
-        onSubmit(data)
-        :
-        NavigationService.navigate('CreateEvent3',
-          {
-            data: {
-              ...data, ...bodyData,
-              eventDateTime: eventDateTime.current,
-              image: uploadedImage?.current,
-              isUnlimitedCapacity: isUnlimitedCapacity
-            }
-          })
-    //   :
-    //  undefined
-  })(), [userData, isFreeEvent, isUnlimitedCapacity])
+    const payload = {
+      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
+      capacity: data.capacity,
+      is_multi_day_event: isMultidayEvent ? '1' : '0',
+      event_date: dateFormat(eventDate, "YYYY-MM-DD"),
+      event_end_date: isMultidayEvent ? dateFormat(endEventDate, "YYYY-MM-DD") : '',
+      event_start_time: dateFormat(startTimeDate, "HH:mm:ss"),
+      event_end_time: data.endTime ? dateFormat(endTimeDate, "HH:mm") : "",
+      details: data.additionalInfo
+    }
+
+    dispatch(updateCreateEvent(payload))
+    NavigationService.navigate('CreateEvent3')
+
+  })(), [userData, isUnlimitedCapacity, isMultidayEvent])
+
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.host_an_event} />
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
-        <Stepper step={2} totalSteps={3} paddingHorizontal={scaler(20)} />
+      <MyHeader title={event?._id ? event?.is_copied_event != '0' ? Language.copy_event : Language.edit_event : Language.host_an_event} />
+      <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
+        <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={styles.eventView}>
           <TouchableOpacity onPress={() => {
             setIsUnlimitedCapacity((b) => {
@@ -269,26 +232,6 @@ const CreateEvent2: FC<any> = props => {
             <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
               {Language.unlimited_capacity}
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            setIsFreeEvent((b) => {
-              if (!b) {
-                clearErrors('ticketPrice')
-                setValue('ticketPrice', "")
-              }
-              return !b
-            })
-          }} style={{ flexDirection: 'row' }}>
-            <CheckBox checked={isFreeEvent}
-              setChecked={(b) => {
-                if (b) {
-                  clearErrors('ticketPrice')
-                  setValue('ticketPrice', "")
-                }
-                setIsFreeEvent(b)
-              }}
-            />
-            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
@@ -315,109 +258,82 @@ const CreateEvent2: FC<any> = props => {
             control={control}
             errors={errors}
           />
-          <View style={{ flex: 1, width: '100%' }} >
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-              <TextInput
-                containerStyle={{ marginEnd: scaler(4), width: '30%' }}
-                borderColor={colors.colorTextInputBackground}
-                backgroundColor={colors.colorTextInputBackground}
-                name={'currency'}
-                disabled={isFreeEvent ? true : false}
-                icon={Images.ic_arrow_dropdown}
-                onChangeText={(text) => {
+          <TouchableOpacity onPress={() => {
+            setIsMultidayEvent((b) => {
+              eventDateTime.current = initialDateTime
+              setValue('eventDate', "")
+              setValue('startTime', "")
+              setValue('endTime', "")
+              setValue('endDate', "")
+              clearErrors('eventDate')
+              clearErrors('startTime')
+              clearErrors('endTime')
+              clearErrors('endDate')
+              return !b
+            })
+          }} style={{ flexDirection: 'row', marginTop: scaler(20), marginVertical: scaler(10) }}>
+            <CheckBox checked={isMultidayEvent}
+            />
+            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.multiday_event}</Text>
+          </TouchableOpacity>
 
-                }}
-                required={isFreeEvent ? undefined : Language.event_name_required}
-                control={control}
-                iconContainerStyle={{ end: scaler(4) }}
-                onPress={() => { setDropdown(_ => !_) }}
-                errors={errors}
-              />
+          <View style={{ flex: 1, width: '100%' }} >
+            <View style={{ flexDirection: isMultidayEvent ? 'row' : undefined }}>
               <TextInput
                 containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={
-                  Language.event_ticket_price + ' (' + Language.per_person + ')'
-                }
-                ref={eventPriceInputRef}
-                style={{ paddingLeft: scaler(20) }}
+                placeholder={isMultidayEvent ? Language.start_date : Language.select_date}
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
-                name={'ticketPrice'}
-                keyboardType={'decimal-pad'}
-                disabled={isFreeEvent ? true : false}
-                iconSize={scaler(18)}
-                icon={Images.ic_ticket}
-                rules={{
-                  validate: (v: string) => {
-                    v = v?.trim()
-                    if (parseFloat(v) > 9999.99) {
-                      return Language.event_max_price
-                    }
-                    try {
-                      if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                        return Language.invalid_ticket_price
-                      }
-                    }
-                    catch (e) { }
-
-                  }
-                }}
-                required={
-                  isFreeEvent ? undefined : Language.ticket_price_required
-                }
+                style={{ fontSize: scaler(13) }}
+                name={'eventDate'}
+                ref={eventDateRef}
+                onPress={() => (openDatePicker("eventDate"))}
+                required={Language.date_required}
+                icon={Images.ic_calender}
+                iconSize={scaler(20)}
                 control={control}
-                errors={errors}
-              />
-            </View>
-            <FixedDropdown
-              containerStyle={{ width: '28%' }}
-              visible={isDropdown}
-              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-              onSelect={data => {
-                setDropdown(false);
-                setValue('currency', data?.title, { shouldValidate: true });
-              }}
-            />
-            <TextInput
-              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-              placeholder={Language.select_date}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              style={{ fontSize: scaler(13) }}
-              name={'eventDate'}
-              onPress={() => (openDatePicker("eventDate"))}
-              required={Language.date_required}
-              icon={Images.ic_calender}
-              iconSize={scaler(20)}
-              control={control}
-              errors={errors}
-            />
+                errors={errors} />
 
-            <TextInput
-              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-              placeholder={Language.select_start_time}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              name={'startTime'}
-              iconSize={scaler(18)}
-              required={Language.start_time_required}
-              onPress={() => (openDatePicker("startTime"))}
-              icon={Images.ic_clock}
-              control={control}
-              errors={errors}
-            />
-            <TextInput
-              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-              placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
-              borderColor={colors.colorTextInputBackground}
-              backgroundColor={colors.colorTextInputBackground}
-              name={'endTime'}
-              onPress={() => (openDatePicker("endTime"))}
-              iconSize={scaler(18)}
-              icon={Images.ic_clock}
-              control={control}
-              errors={errors}
-            />
+              <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={isMultidayEvent ? Language.start_time : Language.select_start_time}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'startTime'}
+                iconSize={scaler(18)}
+                required={Language.start_time_required}
+                onPress={() => (openDatePicker("startTime"))}
+                icon={Images.ic_clock}
+                control={control}
+                errors={errors} />
+            </View>
+            <View style={{ flexDirection: isMultidayEvent ? 'row' : undefined }}>
+              {isMultidayEvent ? <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={Language.end_date}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                style={{ fontSize: scaler(13) }}
+                name={'endDate'}
+                onPress={() => (openDatePicker("endDate"))}
+                required={Language.date_required}
+                icon={Images.ic_calender}
+                iconSize={scaler(20)}
+                control={control}
+                errors={errors} /> : undefined}
+              <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={isMultidayEvent ? Language.end_time : Language.select_end_time + ' (' + Language.optional + ")"}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'endTime'}
+                required={isMultidayEvent ? Language.end_date_required : false}
+                onPress={() => (openDatePicker("endTime"))}
+                iconSize={scaler(18)}
+                icon={Images.ic_clock}
+                control={control}
+                errors={errors} />
+            </View>
 
             <TextInput
               placeholder={Language.write_additional_information_about_event}
@@ -444,7 +360,7 @@ const CreateEvent2: FC<any> = props => {
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
           minimumDate={getMinDate()}
-          mode={(eventDateTime.current?.selectedType == 'eventDate') ? 'date' : "time"}
+          mode={(eventDateTime.current?.selectedType?.includes('Date')) ? 'date' : "time"}
           customConfirmButtonIOS={props => (
             <Text
               onPress={props.onPress}
@@ -487,7 +403,7 @@ const CreateEvent2: FC<any> = props => {
           //   })}
           onConfirm={(cDate: Date) => {
             const { selectedType, eventDate } = eventDateTime.current
-            const date = selectedType == 'eventDate' ? cDate : new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
+            const date = selectedType?.includes('Date') ? cDate : new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
             // const utcDate = new Date(eventDate?.getFullYear(), eventDate.getUTCMonth(), eventDate?.getUTCDate(), cDate?.getUTCHours(), cDate?.getUTCMinutes(), cDate?.getUTCSeconds());
             // console.log(" eventDate", eventDate);
             // console.log(" Date", date);
@@ -497,15 +413,23 @@ const CreateEvent2: FC<any> = props => {
             eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
             let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
             let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-            let isAMPM = date?.getHours() > 12 ? 'PM' : 'AM'
-            if (selectedType == 'eventDate') {
-              setValue('eventDate', dateFormat(date, 'MMM DD, YYYY'), {
+            let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
+            if (selectedType == 'eventDate' || selectedType == 'endDate') {
+              console.log('date selected', date);
+
+              setValue(selectedType, dateFormat(date, 'MMM DD, YYYY'), {
                 shouldValidate: true,
               });
-              setValue('startTime', "");
-              setValue('endTime', "");
-            } else {
-              setValue('endTime', "");
+              if (!isMultidayEvent) {
+                setValue('startTime', "")
+                setValue('endTime', "")
+              } else {
+                setValue(selectedType == 'endDate' ? 'endTime' : "startTime", "")
+              }
+            }
+            else {
+              if (!isMultidayEvent)
+                setValue('endTime', "");
               setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
             }
             if (getValues('endTime')) {

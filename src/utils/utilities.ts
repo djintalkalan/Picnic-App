@@ -332,6 +332,23 @@ export const getAddressFromLocation = async (region: ILocation) => {
     }
 }
 
+export const formattedAddressToString = (address?: { main_text?: string, secondary_text?: string } | null) => {
+    let addressString = ""
+    if (address) {
+        if (address?.main_text) {
+            addressString += address?.main_text
+            if (address?.secondary_text) {
+                addressString += ", "
+            }
+        }
+        if (address?.secondary_text) {
+            addressString += address?.secondary_text
+        }
+        addressString = addressString?.trim();
+    }
+    return addressString
+}
+
 export const getFormattedAddress = (addressComponent: any, formattedAddress: string) => {
     let main_text = ""
     let secondary_text = ""
@@ -476,7 +493,7 @@ export const InitialPaginationState: IPaginationState = {
     perPage: 20
 }
 
-export const getShortAddress = (address: string, state: string, city?: string) => {
+const getShortAddress = (address: string, state: string, city?: string) => {
     try {
         let index = address?.indexOf(city || state) - 2
         if (index < 0) {
@@ -487,6 +504,23 @@ export const getShortAddress = (address: string, state: string, city?: string) =
         console.log("address error", e, address);
 
         return address
+    }
+}
+
+export const getFormattedAddress2 = (address: string, city: string, state: string, country?: string) => {
+    const main_text = getShortAddress(address, state, city)
+    let secondary_text = city + ", " + state + ", " + country
+    if (secondary_text?.includes(main_text)) {
+        secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
+    }
+    if (secondary_text?.startsWith(",")) {
+        secondary_text = secondary_text?.replace(",", "")?.trim()
+    }
+    if (secondary_text?.endsWith(",")) {
+        secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
+    }
+    return {
+        main_text, secondary_text
     }
 }
 

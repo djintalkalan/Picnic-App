@@ -38,10 +38,12 @@ import BookEvent from 'screens/Event/BookEvent';
 import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
+import CreateEvent4 from 'screens/Event/CreateEvent/CreateEvent4';
 import EditEvent from 'screens/Event/EditEvent';
 import EventDetail from 'screens/Event/EventDetail';
 import EventMembers from 'screens/Event/EventMembers';
 import Payment from 'screens/Event/Payment';
+import SelectTicket from 'screens/Event/SelectTicket';
 import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
@@ -100,6 +102,7 @@ const dashboardScreens = {
   CreateEvent1: CreateEvent1,
   CreateEvent2: CreateEvent2,
   CreateEvent3: CreateEvent3,
+  CreateEvent4: CreateEvent4,
   EventDetail: EventDetail,
   EditEvent: EditEvent,
   Subscription: Subscription,
@@ -113,7 +116,8 @@ const dashboardScreens = {
   SearchChatScreen: SearchChatScreen,
   SelectContacts: SelectContacts,
   ImagePreview: ImagePreview,
-  PersonChat: PersonChat
+  PersonChat: PersonChat,
+  SelectTicket: SelectTicket
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

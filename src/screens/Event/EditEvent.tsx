@@ -31,9 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import {
     dateFormat,
-    getImageUrl,
-    getShortAddress,
-    NavigationService,
+    formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService,
     ProfileImagePickerOptions,
     scaler,
     stringToDate,
@@ -113,7 +111,8 @@ const EditEvent: FC<any> = props => {
         clearErrors,
         formState: { errors },
     } = useForm<FormType>({
-        mode: 'onChange', defaultValues: { 'currency': 'USD' }
+        mode: 'onChange', defaultValues: { 'currency': 'USD' },
+        shouldFocusError: false
     });
 
 
@@ -163,26 +162,11 @@ const EditEvent: FC<any> = props => {
     useEffect(() => {
         if (event) {
 
-            const main_text = getShortAddress(event?.address, event?.state, event?.city)
-            let secondary_text = event?.city + ", " + event?.state + ", " + event?.country
-
-            if (secondary_text?.includes(main_text)) {
-                secondary_text = secondary_text?.replace(main_text + ",", "")?.trim();
-            }
-            if (secondary_text?.startsWith(",")) {
-                secondary_text = secondary_text?.replace(",", "")?.trim()
-            }
-            if (secondary_text?.endsWith(",")) {
-                secondary_text = secondary_text.substring(0, secondary_text.lastIndexOf(","))?.trim();
-            }
-
+            const addressObject = getFormattedAddress2(event?.address, event?.city, event?.state, event?.country)
             locationRef.current = (event?.location?.coordinates[0] && event?.location?.coordinates[1]) ? {
                 latitude: event?.location?.coordinates[1],
                 longitude: event?.location?.coordinates[0],
-                address: {
-                    main_text,
-                    secondary_text,
-                },
+                address: addressObject,
                 otherData: {
                     city: event?.city,
                     state: event?.state,
@@ -274,7 +258,7 @@ const EditEvent: FC<any> = props => {
             group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
             is_online_event: isOnlineEvent ? '1' : '0',
             short_description: data?.aboutEvent,
-            address: (address?.main_text ? (address?.main_text + ', ') : "") + address?.secondary_text,
+            address: formattedAddressToString(address),
             city: otherData?.city,
             state: otherData?.state,
             country: otherData?.country,

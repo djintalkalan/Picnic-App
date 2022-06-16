@@ -25,16 +25,20 @@ export const defaultLocation: ILocation = __DEV__ ? {
         state: "Punjab",
         country: "India"
     }
-} : {
-    latitude: 39.744655,
-    longitude: -75.5483909,
-    address: { main_text: "Wilmington", secondary_text: "Delaware, USA" },
-    otherData: {
-        city: "Wilmington",
-        state: "Delaware",
-        country: "USA"
+} :
+    {
+        latitude: 18.220833,
+        longitude: -66.590149,
+        address: {
+            main_text: "Puerto Rico",
+            secondary_text: "",
+        },
+        otherData: {
+            city: "Puerto Rico",
+            state: "",
+            country: ""
+        }
     }
-}
 
 interface LocationServiceValues {
     isLocationEnabled: boolean
