@@ -154,7 +154,7 @@ const CreateEvent3: FC<any> = props => {
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
       is_free_event: '0',
-      is_donation_enabled: '0'
+      // is_donation_enabled: '0'
     }
 
     if (isFreeEvent) {
