@@ -231,7 +231,7 @@ const CreateEvent3: FC<any> = props => {
             </TouchableOpacity>
 
 
-            <View style={{ flex: 1, width: '100%' }} >
+            <View style={{ flex: 1, width: '100%', paddingBottom: scaler(10) }} >
               <TextInput
                 containerStyle={{ marginEnd: scaler(4), width: '100%' }}
                 borderColor={colors.colorTextInputBackground}
@@ -248,7 +248,7 @@ const CreateEvent3: FC<any> = props => {
                 errors={errors}
               />
               <FixedDropdown
-                containerStyle={{ width: '100%' }}
+                containerStyle={{ width: '100%', }}
                 visible={isTicketTypeDropdown}
                 data={ticketTypeArray}
                 onSelect={data => {
@@ -419,21 +419,32 @@ const CreateEvent3: FC<any> = props => {
                     :
                     <View>
                       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                        <TextInput
-                          containerStyle={{ marginEnd: scaler(4), width: '30%' }}
-                          borderColor={colors.colorTextInputBackground}
-                          backgroundColor={colors.colorTextInputBackground}
-                          name={'currency'}
-                          disabled={isFreeEvent ? true : false}
-                          icon={Images.ic_arrow_dropdown}
-                          onChangeText={(text) => {
+                        <View style={{ marginEnd: scaler(4), width: '30%' }} >
+                          <TextInput
+                            containerStyle={{ width: '100%' }}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            name={'currency'}
+                            disabled={isFreeEvent ? true : false}
+                            icon={Images.ic_arrow_dropdown}
+                            onChangeText={(text) => {
 
-                          }}
-                          control={control}
-                          iconContainerStyle={{ end: scaler(4) }}
-                          onPress={() => { setDropdown(_ => !_) }}
-                          errors={errors}
-                        />
+                            }}
+                            control={control}
+                            iconContainerStyle={{ end: scaler(4) }}
+                            onPress={() => { setDropdown(_ => !_) }}
+                            errors={errors}
+                          />
+                          <FixedDropdown
+                            containerStyle={{ width: '98%', position: 'relative', top: 0 }}
+                            visible={isDropdown}
+                            data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                            onSelect={data => {
+                              setDropdown(false);
+                              setValue('currency', data?.title, { shouldValidate: true });
+                            }}
+                          />
+                        </View>
                         <TextInput
                           containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                           placeholder={
@@ -469,15 +480,7 @@ const CreateEvent3: FC<any> = props => {
                           errors={errors}
                         />
                       </View>
-                      <FixedDropdown
-                        containerStyle={{ width: '28%' }}
-                        visible={isDropdown}
-                        data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                        onSelect={data => {
-                          setDropdown(false);
-                          setValue('currency', data?.title, { shouldValidate: true });
-                        }}
-                      />
+
                     </View>}
                 </View>
               }
