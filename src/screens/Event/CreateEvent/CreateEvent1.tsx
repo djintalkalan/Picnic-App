@@ -331,9 +331,9 @@ const CreateEvent1: FC<any> = props => {
                   </View>
                 )
               })}
-              <TouchableOpacity style={styles.multiImageView} onPress={() => { pickImage(true) }}>
+              {multiImageArray?.length < 10 ? <TouchableOpacity style={styles.multiImageView} onPress={() => { pickImage(true) }}>
                 <Entypo name='plus' size={scaler(40)} color={colors.colorWhite} />
-              </TouchableOpacity>
+              </TouchableOpacity> : null}
             </View>
           </View>
 
