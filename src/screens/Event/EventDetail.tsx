@@ -309,7 +309,8 @@ const EventDetail: FC<any> = (props) => {
                             <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
                                 <View style={{ borderRadius: scaler(5) }}>
                                     {event?.ticket_plans?.map((_: any, i: number) => {
-                                        return <TicketPlans key={i} name={i ? "VIP" : _?.name} currency={_?.currency} price={_?.amount} />
+                                        if (_.status == 1)
+                                            return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
                                     })}
                                 </View>
                             </Card>
