@@ -372,4 +372,5 @@ export const es = {
     donate_by_paypal: "",
     donation_price: "",
     donation_price_required: "",
+    maximum_file_size_allowed:""
 }

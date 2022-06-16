@@ -9,6 +9,7 @@ import { isEqual, round } from 'lodash';
 import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
@@ -103,141 +104,144 @@ const BookEvent: FC = (props: any) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
-
-            <View style={{ margin: scaler(20), flex: 1 }}>
-                <View style={styles.nameContainer}>
-                    <View style={{ flex: 1, marginEnd: scaler(12) }} >
-                        <Text style={styles.name} >{event?.name}</Text>
-                        <Text style={styles.address} >{event?.event_group?.name}</Text>
-                    </View>
-                    <View >
-                        {event?.is_free_event ?
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                {Language.free}
-                            </Text> :
-                            <><Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                {getSymbol(selectedTicket?.currency) + selectedTicket?.amount}
-                            </Text><Text style={styles.address}>{Language.per_person}</Text></>
-                        }
-                    </View>
-                </View>
-                <View style={{ width: '100%', marginTop: scaler(10) }}>
-                    <TextInput
-                        placeholder={Language.how_many_seats + '?'}
-                        name={'noOfSeats'}
-                        required={Language.number_of_seats_is_required}
-                        keyboardType='number-pad'
-                        multiline={Platform.OS == 'ios' ? true : false}
-                        borderColor={colors.colorTextInputBackground}
-                        backgroundColor={colors.colorTextInputBackground}
-                        maxLength={5}
-                        rules={{
-                            validate: (v: string) => {
-                                if ((event?.capacity_type != 'unlimited' && parseInt(v) > (event?.capacity - event?.total_sold_tickets)) || parseInt(v) == 0) {
-                                    return Language.invalid_seat_quantity
-                                }
+            <ScrollView enableResetScrollToCoords={false} >
+                <View style={{ margin: scaler(20), flex: 1 }}>
+                    <View style={styles.nameContainer}>
+                        <View style={{ flex: 1, marginEnd: scaler(12) }} >
+                            <Text style={styles.name} >{event?.name}</Text>
+                            <Text style={styles.address} >{event?.event_group?.name}</Text>
+                        </View>
+                        <View >
+                            {event?.is_free_event ?
+                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                    {Language.free}
+                                </Text> :
+                                <><Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                    {getSymbol(selectedTicket?.currency) + selectedTicket?.amount}
+                                </Text><Text style={styles.address}>{Language.per_person}</Text></>
                             }
-                        }}
-                        control={control}
-                        //@ts-ignore
-                        onChangeText={setNoOfTickets}
-                        errors={errors}
-                    />
-                </View>
-                <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
-                    {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
-                        undefined)}
-                </Text>
+                        </View>
+                    </View>
+                    <View style={{ width: '100%', marginTop: scaler(10) }}>
+                        <TextInput
+                            placeholder={Language.how_many_seats + '?'}
+                            name={'noOfSeats'}
+                            required={Language.number_of_seats_is_required}
+                            keyboardType='number-pad'
+                            returnKeyType={'done'}
+                            multiline={Platform.OS == 'ios' ? true : false}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            maxLength={5}
+                            rules={{
+                                validate: (v: string) => {
+                                    if ((event?.capacity_type != 'unlimited' && parseInt(v) > (event?.capacity - event?.total_sold_tickets)) || parseInt(v) == 0) {
+                                        return Language.invalid_seat_quantity
+                                    }
+                                }
+                            }}
+                            control={control}
+                            //@ts-ignore
+                            onChangeText={setNoOfTickets}
+                            errors={errors}
+                        />
+                    </View>
+                    <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
+                        {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
+                            undefined)}
+                    </Text>
 
-                {(!event?.is_free_event) ?
-                    <>
-                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                        {selectedTicket?.name ? <><Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                            {Language.plan_name}
-                        </Text><Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {selectedTicket?.name}
-                            </Text><View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /></> : null}
-                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                            {Language.applicable_tax}
-                        </Text>
-                        <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                            {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + round((parseInt(noOfTickets) * parseFloat(selectedTicket.event_tax_amount)), 2) : getSymbol(selectedTicket.currency) + 0}
-                        </Text>
-                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                        <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                            {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
-                        </Text>
-                        {event?.payment_method.map((_: any, i: any) => {
-                            return <Fragment key={i}>
-                                <PaymentMethod
-                                    type={_}
-                                    isPayByPaypal={isPayByPaypal}
-                                    setPayMethodSelected={setPayMethodSelected}
-                                    setIsPayByPaypal={setIsPayByPaypal}
-                                    isDonation={event.is_donation_enabled} />
-                                {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
-                            </Fragment>
-                        })}
-                    </>
-                    : event.is_donation_enabled ?
-                        <View>
+                    {(!event?.is_free_event) ?
+                        <>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                            <TouchableOpacity style={styles.eventView} onPress={() => setIsUserDonation(!isUserDonating)}>
-                                <CheckBox checked={isUserDonating} setChecked={setIsUserDonation} />
-                                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), fontWeight: '500' }}>
-                                    {'Donate to ' + event.name}
-                                </Text>
-                            </TouchableOpacity>
-
-                            {/* <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>{Language.donation_description}</Text> */}
-                            <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {event?.donation_description}
+                            {selectedTicket?.name ? <><Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                                {Language.plan_name}
+                            </Text><Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                                    {selectedTicket?.name}
+                                </Text><View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} /></> : null}
+                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                                {Language.applicable_tax}
+                            </Text>
+                            <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                                {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + round((parseInt(noOfTickets) * parseFloat(selectedTicket.event_tax_amount)), 2) : getSymbol(selectedTicket.currency) + 0}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                            {isUserDonating && event?.payment_method.map((_: any, i: any) => {
+                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                                {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
+                            </Text>
+                            {event?.payment_method.map((_: any, i: any) => {
                                 return <Fragment key={i}>
                                     <PaymentMethod
                                         type={_}
                                         isPayByPaypal={isPayByPaypal}
                                         setPayMethodSelected={setPayMethodSelected}
                                         setIsPayByPaypal={setIsPayByPaypal}
-                                        isDonation={event.is_donation_enabled}
-                                    />
+                                        isDonation={event.is_donation_enabled} />
                                     {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                                 </Fragment>
                             })}
-                            {isPayByPaypal ?
-                                <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                                    <TextInput
-                                        containerStyle={{ marginEnd: scaler(4), width: '30%' }}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'currency'}
-                                        disabled={true}
-                                        control={control}
-                                    />
-                                    <TextInput
-                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                        placeholder={Language.donation_price}
-                                        style={{ paddingLeft: scaler(20) }}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'donationAmount'}
-                                        keyboardType={'decimal-pad'}
-                                        iconSize={scaler(18)}
-                                        icon={Images.ic_ticket}
-                                        required={
-                                            Language.donation_price_required
-                                        }
-                                        control={control}
-                                        errors={errors}
-                                    />
-                                </View>
-                                : undefined}
-                        </View> : null
-                }
+                        </>
+                        : event.is_donation_enabled ?
+                            <View>
+                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
+                                <TouchableOpacity style={styles.eventView} onPress={() => setIsUserDonation(!isUserDonating)}>
+                                    <CheckBox checked={isUserDonating} setChecked={setIsUserDonation} />
+                                    <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), fontWeight: '500' }}>
+                                        {'Donate to ' + event.name}
+                                    </Text>
+                                </TouchableOpacity>
 
-            </View>
+                                {/* <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>{Language.donation_description}</Text> */}
+                                <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                                    {event?.donation_description}
+                                </Text>
+                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
+                                {isUserDonating && event?.payment_method.map((_: any, i: any) => {
+                                    return <Fragment key={i}>
+                                        <PaymentMethod
+                                            type={_}
+                                            isPayByPaypal={isPayByPaypal}
+                                            setPayMethodSelected={setPayMethodSelected}
+                                            setIsPayByPaypal={setIsPayByPaypal}
+                                            isDonation={event.is_donation_enabled}
+                                        />
+                                        {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
+                                    </Fragment>
+                                })}
+                                {isPayByPaypal ?
+                                    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                                        <TextInput
+                                            containerStyle={{ marginEnd: scaler(4), width: '30%' }}
+                                            borderColor={colors.colorTextInputBackground}
+                                            backgroundColor={colors.colorTextInputBackground}
+                                            name={'currency'}
+                                            disabled={true}
+                                            control={control}
+                                        />
+                                        <TextInput
+                                            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                            placeholder={Language.donation_price}
+                                            style={{ paddingLeft: scaler(20) }}
+                                            borderColor={colors.colorTextInputBackground}
+                                            backgroundColor={colors.colorTextInputBackground}
+                                            name={'donationAmount'}
+                                            returnKeyType={'done'}
+                                            keyboardType={'decimal-pad'}
+                                            iconSize={scaler(18)}
+                                            icon={Images.ic_ticket}
+                                            required={
+                                                Language.donation_price_required
+                                            }
+                                            control={control}
+                                            errors={errors}
+                                        />
+                                    </View>
+                                    : undefined}
+                            </View> : null
+                    }
+
+                </View>
+            </ScrollView>
             <KeyboardHideView>
                 <View style={{ marginBottom: scaler(10), marginHorizontal: scaler(15) }}>
                     {!event?.is_free_event && event?.event_refund_policy ?

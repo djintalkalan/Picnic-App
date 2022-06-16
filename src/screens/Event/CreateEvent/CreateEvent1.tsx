@@ -17,7 +17,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler } from 'utils';
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _showErrorMessage } from 'utils';
 
 type FormType = {
   eventName: string;
@@ -99,8 +99,12 @@ const CreateEvent1: FC<any> = props => {
         compressVideoPreset: "MediumQuality",
       } : ProfileImagePickerOptions)
         .then(image => {
+          console.log("image", image);
+          const maxSizeInMb = 100
           if (isMultiImage && isArray(image)) {
-            setMultiImageArray((_) => [..._, ...image])
+            const index = image?.findIndex(({ size }) => (size > maxSizeInMb * 1000000))
+            if (index == -1) setMultiImageArray((_) => [..._, ...image])
+            else _showErrorMessage(Language.formatString(Language.maximum_file_size_allowed, maxSizeInMb?.toString())?.toString())
           }
           else
             setEventImage(image);

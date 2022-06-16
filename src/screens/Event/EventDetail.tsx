@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
 import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
@@ -348,12 +349,21 @@ const EventDetail: FC<any> = (props) => {
                                                 _zoomImage(getImageUrl(_?.name, { type: 'events' })) :
                                                 loadVideo && loadVideo(config.VIDEO_URL + _.name)
                                         }}>
-                                        <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : {}]}
-                                            source={{
-                                                uri: _.type == 'image' ?
-                                                    getImageUrl(_?.name, { width: width, type: 'events' }) :
-                                                    config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
-                                            }} />
+                                        {i > (event?.image ? 0 : -1) && _.type == 'image' ?
+                                            <SafeAreaView edges={['top', 'bottom']} >
+                                                <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : { resizeMode: 'contain' }]}
+                                                    source={{
+                                                        uri: _.type == 'image' ?
+                                                            getImageUrl(_?.name, { width: width, type: 'events' }) :
+                                                            config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
+                                                    }} />
+                                            </SafeAreaView> :
+                                            <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : { resizeMode: 'contain' }]}
+                                                source={{
+                                                    uri: _.type == 'image' ?
+                                                        getImageUrl(_?.name, { width: width, type: 'events' }) :
+                                                        config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
+                                                }} />}
                                         {_.type == 'video' ?
                                             <TouchableOpacity style={styles.playButton} onPress={() => { loadVideo && loadVideo(config.VIDEO_URL + _.name) }} >
                                                 <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
