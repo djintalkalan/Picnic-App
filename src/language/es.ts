@@ -368,4 +368,9 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    donate_by_cash: "",
+    donate_by_paypal: "",
+    donation_price: "",
+    donation_price_required: "",
+    maximum_file_size_allowed:""
 }

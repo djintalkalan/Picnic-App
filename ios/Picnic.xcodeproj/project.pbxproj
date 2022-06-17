@@ -11,7 +11,6 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1428386828116FA100B29854 /* exportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1428386728116FA100B29854 /* exportOptions.plist */; };
 		1443904527859AC1001D23C3 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 1443904427859AC1001D23C3 /* Configuration.storekit */; };
 		148E7115278EB637007A4D32 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 148E7114278EB637007A4D32 /* GoogleService-Info.plist */; };
 		14A09BCF26E72CDA00C5D92E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */; };
@@ -63,7 +62,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Picnic/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Picnic/main.m; sourceTree = "<group>"; };
 		1412104426E5F5D000F96F90 /* rnuc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rnuc.xcconfig; sourceTree = "<group>"; };
-		1428386728116FA100B29854 /* exportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = exportOptions.plist; path = Picnic/exportOptions.plist; sourceTree = "<group>"; };
 		1443904427859AC1001D23C3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		148E7114278EB637007A4D32 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		148E7116278EBB57007A4D32 /* Picnic.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Picnic.entitlements; path = Picnic/Picnic.entitlements; sourceTree = "<group>"; };
@@ -138,7 +136,6 @@
 		13B07FAE1A68108700A75B9A /* Picnic */ = {
 			isa = PBXGroup;
 			children = (
-				1428386728116FA100B29854 /* exportOptions.plist */,
 				148E7116278EBB57007A4D32 /* Picnic.entitlements */,
 				1443904427859AC1001D23C3 /* Configuration.storekit */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -349,7 +346,6 @@
 				2CA27FA9A3D44FDDA45EC86B /* Poppins-MediumItalic.ttf in Resources */,
 				F1E9220B3DE74A7188FBE043 /* Poppins-Regular.ttf in Resources */,
 				9A649A508B3745EAAA434E6D /* Poppins-SemiBold.ttf in Resources */,
-				1428386828116FA100B29854 /* exportOptions.plist in Resources */,
 				148E7115278EB637007A4D32 /* GoogleService-Info.plist in Resources */,
 				D8005F7E732A42E79757D4C3 /* Poppins-SemiBoldItalic.ttf in Resources */,
 				F6B1BFD1037A4577A5486CE5 /* Poppins-Thin.ttf in Resources */,

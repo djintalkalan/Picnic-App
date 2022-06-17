@@ -9,7 +9,7 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SwipeRow } from 'react-native-swipe-list-view'
@@ -18,7 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage, _zoomImage } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showBottomMenu, _showErrorMessage, _showPopUpAlert, _showSuccessMessage, _showTouchAlert, _zoomImage } from 'utils'
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 const GroupDetail: FC<any> = (props) => {
@@ -90,8 +90,6 @@ const GroupDetail: FC<any> = (props) => {
     }, [language])
 
     const [isOpened, setOpened] = useState(false)
-    const [isEditButtonOpened, setEditButtonOpened] = useState(false)
-    const flatListHeightRef = useRef(0)
     const dispatch = useDispatch()
 
     const { group, groupMembers, } = useSelector((state: RootState) => ({
@@ -276,8 +274,57 @@ const GroupDetail: FC<any> = (props) => {
         shareDynamicLink(group?.name, {
             type: "group-detail",
             id: group?._id
+        }).then(() => {
+            _hideTouchAlert();
+        }).catch(() => {
+            _hideTouchAlert()
         });
     }, [group])
+
+    const openEditButton = useCallback((e) => {
+        dotMenuButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    // top,
+                    // right: width - left,
+                    top: y + h + scaler(5) + (StatusBar.currentHeight || 0),
+                    right: w - scaler(5)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
+                        <Card cardElevation={2} style={styles.fabActionContainer} >
+                            <InnerButton visible={group?.is_admin ? true : false} onPress={() => {
+                                NavigationService.navigate("CreateGroup", { group })
+                                _hideTouchAlert()
+                            }} title={Language.edit} />
+                            <InnerButton onPress={shareGroup} title={Language.share} />
+                            {/* <InnerButton title={Language.export_chat} /> */}
+                            <InnerButton onPress={() => {
+                                _showBottomMenu({
+                                    buttons: [{
+                                        title: Language.whatsapp,
+                                        iconSource: Images.ic_whatsapp,
+                                        onPress: () => pickFile('whatsapp')
+
+                                    }, {
+                                        title: Language.telegram,
+                                        iconSource: Images.ic_telegram,
+                                        onPress: () => pickFile('telegram')
+                                    }]
+                                })
+                                _hideTouchAlert()
+                            }} title={Language.import_chat}
+                                hideBorder
+                            />
+                        </Card>
+                    )
+                }
+            })
+        })
+    }, [group])
+
+    const dotMenuButtonRef = useRef<TouchableOpacity>(null)
 
     // if (group)
     if (!group) {
@@ -307,39 +354,10 @@ const GroupDetail: FC<any> = (props) => {
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
                     {group?.status == 1 ?
-                        <TouchableOpacity onPress={() => group?.is_admin ? setEditButtonOpened(!isEditButtonOpened) : shareGroup()} style={styles.backButton} >
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => group?.is_admin ? openEditButton(e) : shareGroup()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
                         </TouchableOpacity> : undefined}
                 </View>
-                {isEditButtonOpened ?
-                    <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
-                        <Card cardElevation={2} style={styles.fabActionContainer} >
-                            <InnerButton visible={group?.is_admin ? true : false} onPress={() => {
-                                NavigationService.navigate("CreateGroup", { group })
-                                setEditButtonOpened(false)
-                            }} title={Language.edit} />
-                            <InnerButton onPress={shareGroup} title={Language.share} />
-                            {/* <InnerButton title={Language.export_chat} /> */}
-                            <InnerButton onPress={() => {
-                                _showBottomMenu({
-                                    buttons: [{
-                                        title: Language.whatsapp,
-                                        iconSource: Images.ic_whatsapp,
-                                        onPress: () => pickFile('whatsapp')
-
-                                    }, {
-                                        title: Language.telegram,
-                                        iconSource: Images.ic_telegram,
-                                        onPress: () => pickFile('telegram')
-                                    }]
-                                })
-                                setEditButtonOpened(false)
-                            }} title={Language.import_chat}
-                                hideBorder
-                            />
-                        </Card>
-                    </View> : null
-                }
                 <View style={styles.infoContainer} >
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
@@ -460,8 +478,8 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
     const { onPress, title, icon, visible = true } = props
     return visible ? (
         <TouchableOpacity onPress={onPress} style={{
-            flexDirection: 'row', alignItems: 'center',
-            justifyContent: 'flex-end', paddingHorizontal: scaler(15), paddingVertical: scaler(8),
+            flexDirection: 'row',
+            paddingHorizontal: scaler(15), paddingVertical: scaler(8),
             borderBottomColor: colors.colorGreyText,
             borderBottomWidth: props?.hideBorder ? 0 : 0.7,
         }} >

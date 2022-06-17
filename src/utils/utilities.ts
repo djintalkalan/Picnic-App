@@ -7,6 +7,7 @@ import { IPaginationState, setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
+import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat } from 'date-fns';
 import { decode } from 'html-entities';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
@@ -238,6 +239,17 @@ export const _showPopUpAlert = (data: IAlertType) => {
 
 export const _hidePopUpAlert = () => {
     StaticHolder.hide()
+}
+
+export const _showTouchAlert = (data: TouchAlertType) => {
+    Keyboard.dismiss()
+    setTimeout(() => {
+        StaticHolder.showTouchAlert(data)
+    }, 0);
+}
+
+export const _hideTouchAlert = () => {
+    StaticHolder.hideTouchAlert()
 }
 
 export const _showBottomMenu = (data: IBottomMenu) => {
