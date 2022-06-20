@@ -461,7 +461,7 @@ PODS:
     - React-Core
   - react-native-contacts (7.0.4):
     - React-Core
-  - react-native-document-picker (8.1.0):
+  - react-native-document-picker (8.1.1):
     - React-Core
   - react-native-geolocation-service (5.3.0-beta.4):
     - React
@@ -579,19 +579,19 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBAnalytics (14.11.0):
+  - RNFBAnalytics (14.11.1):
     - Firebase/Analytics (= 8.15.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (14.11.0):
+  - RNFBApp (14.11.1):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
-  - RNFBDynamicLinks (14.11.0):
+  - RNFBDynamicLinks (14.11.1):
     - Firebase/DynamicLinks (= 8.15.0)
     - GoogleUtilities/AppDelegateSwizzler
     - React-Core
     - RNFBApp
-  - RNFBMessaging (14.11.0):
+  - RNFBMessaging (14.11.1):
     - Firebase/Messaging (= 8.15.0)
     - React-Core
     - RNFBApp
@@ -612,7 +612,7 @@ PODS:
     - React-Core
   - RNLaunchNavigator (1.0.8):
     - React
-  - RNLocalize (2.2.1):
+  - RNLocalize (2.2.2):
     - React-Core
   - RNNotifee (4.1.0):
     - React-Core
@@ -1047,7 +1047,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-contacts: 1bff4c47816d611f26b06fa8b3eaf2db4d1b2c86
-  react-native-document-picker: 5663fe4bcdb646200683a41790464d2793307ac8
+  react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
   react-native-geolocation-service: c0efb872258ed9240f1003a70fca9e9757e5c785
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-google-maps: 4fa56492c7f4323edfa4574a2e5ca3eaa71dc62f
@@ -1081,16 +1081,16 @@ SPEC CHECKSUMS:
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
   RNExitApp: c4e052df2568b43bec8a37c7cd61194d4cfee2c3
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBAnalytics: c26f7580934cb1563eb2239b4997c6aa62f7ccfc
-  RNFBApp: b1b5a80a676a07dea17e778bda7c1e8b69b2f5ec
-  RNFBDynamicLinks: ba0a67362140581aa1745ae1fec40a288c3d6443
-  RNFBMessaging: 3f327c8019ec2578b9da937ba6c01db48c81a457
+  RNFBAnalytics: e332a2d0b4c28884dbeacbe21fe68688abdf34b9
+  RNFBApp: 9646e09d041ea159b84584865212e4cf33acd179
+  RNFBDynamicLinks: 2434510762fc77614d2f4044427c0b0ea38db413
+  RNFBMessaging: 3e2682ea5e15fe86da24d16d16019395a881f33c
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNIap: d248609d1b8937e63bd904e865c318e9b1457eff
   RNImageCropPicker: 44e2807bc410741f35d4c45b6586aedfe3da39d2
   RNInAppBrowser: 3ff3a3b8f458aaf25aaee879d057352862edf357
   RNLaunchNavigator: 058ccdb86a80a9424d5e37f6ec54379e3018c52b
-  RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
+  RNLocalize: 95a43f85e41a966be7bc9cff2437128911c52da0
   RNNotifee: f1ba270897bd7491f889a1a257d0c038a43376f7
   RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
   RNReanimated: 46cdb89ca59ab7181334f4ed05a70e82ddb36751
