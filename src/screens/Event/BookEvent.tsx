@@ -10,10 +10,13 @@ import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from '
 import { useForm } from 'react-hook-form';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+//@ts-ignore
+import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import { getSymbol, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+
 
 type FormType = {
     noOfSeats: string;
@@ -100,6 +103,27 @@ const BookEvent: FC = (props: any) => {
             availableSeats: ((event?.capacity - event?.total_sold_tickets) - (parseInt(noOfTickets || '0')))
         }
     }, [noOfTickets])
+
+
+    const _renderTruncatedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Read more
+            </Text>
+        );
+    }
+
+    const _renderRevealedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Show less
+            </Text>
+        );
+    }
+
+    const _handleTextReady = () => {
+        // ...
+    }
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
@@ -192,9 +216,16 @@ const BookEvent: FC = (props: any) => {
                                 </TouchableOpacity>
 
                                 {/* <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>{Language.donation_description}</Text> */}
-                                <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                    {event?.donation_description}
-                                </Text>
+                                <ReadMore
+                                    numberOfLines={4}
+                                    renderTruncatedFooter={_renderTruncatedFooter}
+                                    renderRevealedFooter={_renderRevealedFooter}
+                                    onReady={_handleTextReady}>
+                                    <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                                        {event?.donation_description}
+                                    </Text>
+                                </ReadMore>
+
                                 <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                                 {isUserDonating && event?.payment_method.map((_: any, i: any) => {
                                     return <Fragment key={i}>

@@ -111,6 +111,7 @@
     "react-native-progress": "^5.0.0",
     "react-native-qrcode-scanner": "^1.5.4",
     "react-native-qrcode-svg": "^6.1.2",
+    "react-native-read-more-text": "^1.1.2",
     "react-native-reanimated": "^2.4.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
