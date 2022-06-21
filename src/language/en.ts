@@ -179,7 +179,7 @@ export const en = {
   pay_by_cash: 'Pay by cash',
   pay_by_paypal: 'Pay by paypal',
   write_refund_policy: 'Write refund policy',
-  paypal_id: 'Paypal Id',
+  paypal_id: 'Paypal email',
   paypal_id_required: 'Paypal id is required',
   join_now_to_access_payment_processing: 'Join now to access payment processing',
   no_thanks_create_my_event: 'No, Thanks Create my event',
@@ -367,6 +367,13 @@ export const en = {
   copy_event: "Copy event",
   ticket_purchased: "Ticket purchased",
   standard: "Standard",
-  plan_name: "Plan name"
+  plan_name: "Plan name",
+  paypal_details: "Paypal Details",
+  api_username: "Live api username",
+  api_password: "Live api password",
+  api_signature: "Live api signature",
+  api_username_required: "Live api username is required",
+  api_password_required: "Live api password is required",
+  api_signature_required: "Live api signature is required",
 
 }

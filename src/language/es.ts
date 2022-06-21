@@ -368,4 +368,12 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    paypal_details: "",
+    api_username: "",
+    api_password: "",
+    api_signature: "",
+    api_username_required: "",
+    api_password_required: "",
+    api_signature_required: "",
+
 }
