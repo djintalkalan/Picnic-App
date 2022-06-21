@@ -367,6 +367,7 @@ export const en = {
   copy_event: "Copy event",
   ticket_purchased: "Ticket purchased",
   standard: "Standard",
-  plan_name: "Plan name"
+  plan_name: "Plan name",
+  two_factor_auth: "Two factor authentication",
 
 }

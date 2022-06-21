@@ -368,4 +368,5 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    two_factor_auth: "",
 }

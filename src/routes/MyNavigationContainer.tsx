@@ -55,6 +55,7 @@ import PrivacyScreen from 'screens/Profile/PrivacyScreen';
 import ProfileEvents from 'screens/Profile/ProfileEvents';
 import ProfileGroups from 'screens/Profile/ProfileGroups';
 import Settings from 'screens/Profile/Settings';
+import TwoFactorAuth from 'screens/Profile/TwoFactorAuth';
 import UpdatePassword from 'screens/Profile/UpdatePassword';
 import Scanner from 'screens/Scanner/Scanner';
 import SelectContacts from 'screens/SelectContacts';
@@ -117,7 +118,8 @@ const dashboardScreens = {
   SelectContacts: SelectContacts,
   ImagePreview: ImagePreview,
   PersonChat: PersonChat,
-  SelectTicket: SelectTicket
+  SelectTicket: SelectTicket,
+  TwoFactorAuth: TwoFactorAuth,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

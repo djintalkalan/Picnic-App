@@ -498,3 +498,7 @@ export const _checkUsername = async (body: any) => {
     return fetchApiData('auth/check-username', "POST", body)
 }
 
+export const _enableDisable2FA = async (body: any) => {
+    console.log("---------- _enableDisable2FA Api Call ---------------")
+    return fetchApiData('two-factor/enable-2fa', "POST", body)
+}
