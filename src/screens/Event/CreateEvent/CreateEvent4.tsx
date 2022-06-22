@@ -4,6 +4,7 @@ import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import ImageLoader from 'custom-components/ImageLoader';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -55,6 +56,9 @@ const CreateEvent3: FC<any> = props => {
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
         event?.payment_method && event?.payment_method?.includes('paypal') && setIsPayByPaypal(true)
         setValue('paypalEmail', event?.payment_email ?? '')
+        setValue('apiUserName', event?.payment_api_username ?? '')
+        setValue('apiPassword', event?.payment_api_password ?? '')
+        setValue('apiSignature', event?.payment_api_signature ?? '')
         if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
             setValue('taxPrice', event?.event_tax_rate ? (round(((parseFloat(event?.event_tax_rate?.toString()) / 100) * parseFloat(event?.event_fees.toString())), 2)).toString() : '')
@@ -129,18 +133,18 @@ const CreateEvent3: FC<any> = props => {
         ) {
             return true;
         }
-
         return false;
     }, [isPayByPaypal, isPayByCash]);
-
-
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             {infoVisible ? <View style={{ flex: 1 }}>
-                <BackButton />
-                <View style={{ flex: 1, backgroundColor: "#fbfbfb" }} >
-                    <Image style={{ height, width: width, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_paypal_info} />
+                <BackButton onPress={() => setInfoVisible(false)} />
+                <View style={{ flex: 1 }} >
+                    <ImageLoader
+                        style={{ height, width, alignSelf: 'center' }}
+                        resizeMode={'contain'}
+                        source={Images.ic_paypal_info} />
                 </View>
             </View> :
                 <><MyHeader title={event?._id ? event?.is_copied_event != '0' ? Language.copy_event : Language.edit_event : Language.host_an_event} /><ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
