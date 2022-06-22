@@ -1,15 +1,25 @@
 import { _enableDisable2FA } from 'api';
+import { getProfile } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { MyHeader, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
-import React, { FC, useCallback, useState } from 'react';
+import { useDatabase } from 'database/Database';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { scaler, _showErrorMessage, _showSuccessMessage } from 'utils';
 
 const TwoFactorAuth: FC = () => {
     const [authEnabled, setAuthEnabled] = useState<boolean>(false)
+    const dispatch = useDispatch()
+    const [userData] = useDatabase("userData")
+
+    useEffect(() => {
+        setAuthEnabled(userData?.is_two_factor_enabled == '1' ? true : false)
+    }, [userData])
+
 
     const onChangePermission = useCallback((permissionEnabled: boolean) => {
         try {
@@ -21,10 +31,10 @@ const TwoFactorAuth: FC = () => {
                     if (res && res?.status == 200) {
                         _showSuccessMessage(res?.message)
                         setAuthEnabled(permissionEnabled)
+                        dispatch(getProfile())
                     }
                     else _showErrorMessage(res?.message)
-                })
-                .catch(e => console.log(e))
+                }).catch(e => console.log(e))
         }
         catch { (e: any) => console.log(e) }
     }, [])
