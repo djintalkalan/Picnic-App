@@ -351,7 +351,7 @@ export const en = {
   end_time: "End time",
   end_date_required: "End date is required",
   end_date_greater_than_start_date: "End date should be greater than start date",
-  accept_donation: "Accept donation from users",
+  accept_donation: "Accept donation",
   donation_description: "Donation description",
   add_ticket: "Add ticket",
   ticket_title: "Ticket Type (Title)",
@@ -375,5 +375,10 @@ export const en = {
   api_username_required: "Live api username is required",
   api_password_required: "Live api password is required",
   api_signature_required: "Live api signature is required",
+  donate_by_cash: "Donate by cash",
+  donate_by_paypal: "Donate by paypal",
+  donation_price: "Donation price",
+  donation_price_required: "Donation price required",
+  maximum_file_size_allowed: "Maximum file size allowed is {0} MB"
 
 }

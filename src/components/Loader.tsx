@@ -20,6 +20,11 @@ interface LoaderProps {
     loading?: boolean;
 }
 
+export interface IProgress extends S3Progress {
+    currentCount: number
+    length: number
+}
+
 export const Loader: FC<LoaderProps> = (props) => {
     const { isLoading, loadingMsg, type } = useSelector((state: RootState) => ({
         isLoading: state.isLoading,
@@ -52,7 +57,7 @@ export const Loader: FC<LoaderProps> = (props) => {
     return null
 }
 
-const ProgressIndicator = ({ progress: { loaded, total, percent } }: { progress: S3Progress }) => {
+const ProgressIndicator = ({ progress: { loaded, total, percent, currentCount = 0, length = 0 } }: { progress: IProgress }) => {
     percent = percent * 100
     let stringText = "Byte"
     let divider = 1
@@ -85,9 +90,15 @@ const ProgressIndicator = ({ progress: { loaded, total, percent } }: { progress:
             useNativeDriver
             color={colors.colorPrimary}
             progress={toNumber(percent) / 100} />
-        <Text style={{ fontSize: scaler(14), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
-            toNumber(percent) < 10 ? "Starting upload" : toNumber(percent) == 100 ? "Finalizing upload" : "Uploading file"
-        }</Text>
+        <View style={{ alignItems: 'center', flexDirection: 'row', width: width / 1.5, paddingHorizontal: scaler(5), justifyContent: currentCount ? 'space-between' : 'center' }} >
+            <Text style={{ fontSize: scaler(14), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
+                toNumber(percent) < 10 ? "Starting upload" : toNumber(percent) == 100 ? "Finalizing upload" : "Uploading file"
+            }</Text>
+            {currentCount ? <Text style={{ fontSize: scaler(12), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
+                currentCount + "/" + length
+            }</Text> : undefined}
+        </View>
+
         <Button containerStyle={{ marginTop: scaler(20) }} textStyle={{ fontWeight: '400' }} paddingVertical={scaler(5)} paddingHorizontal={scaler(10)} fontSize={scaler(12)}
             onPress={() => dispatch(cancelUpload())}
             title='Cancel Upload' />

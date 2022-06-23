@@ -23,6 +23,11 @@ export const uploadFile = (payload: { image: any, onSuccess?: (url: string, thum
   payload
 })
 
+export const uploadFileArray = (payload: { image: Array<any>, onSuccess?: (imageArray: Array<any>, profileImage?: string) => void, prefixType: 'users' | 'events' | 'groups' | 'messages' | 'video' }): action => ({
+  type: ActionTypes.UPLOAD_FILE_ARRAY,
+  payload
+})
+
 export const cancelUpload = (): action => ({
   type: ActionTypes.CANCEL_UPLOAD
 })

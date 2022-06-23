@@ -375,5 +375,9 @@ export const es = {
     api_username_required: "",
     api_password_required: "",
     api_signature_required: "",
-
+    donate_by_cash: "",
+    donate_by_paypal: "",
+    donation_price: "",
+    donation_price_required: "",
+    maximum_file_size_allowed: ""
 }

@@ -1,5 +1,5 @@
 import { store } from 'app-store';
-import { createEvent } from 'app-store/actions';
+import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
@@ -31,7 +31,8 @@ const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Mul
 
 const CreateEvent3: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
-  const uploadedImage = useRef('');
+  const uploadedImage = useRef<string>('');
+  const uploadedImageArray = useRef<Array<any>>([]);
   const ticketTypeRef = useRef<string>('single')
   const [isDropdown, setDropdown] = useState(false);
   const [multiTicketCurrencyIndex, setMultiTicketCurrencyIndex] = useState(-1);
@@ -60,12 +61,14 @@ const CreateEvent3: FC<any> = props => {
     // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
   }, [])
 
+
   const setEventValues = useCallback(() => {
 
     if (event.is_free_event == 1) {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
+      setValue('currency', event?.event_currency?.toUpperCase() || "USD")
 
     } else {
       if (event.ticket_type == 'multiple') {
@@ -86,6 +89,7 @@ const CreateEvent3: FC<any> = props => {
       }
     }
     setIsFreeEvent(event?.is_free_event == 1 ? true : false)
+    uploadedImage.current = event?.image?.path ? '' : event.image
   }, [])
 
 
@@ -96,135 +100,6 @@ const CreateEvent3: FC<any> = props => {
     else
       return TicketTypeData.map((_, i) => ({ id: i, data: _, title: _.text }))
   }, [isFreeEvent])
-
-  // const onSubmit = useCallback(
-  //   (data) => {
-  //     if (!uploadedImage.current && bodyData?.eventImage?.path) {
-  //       dispatch(
-  //         uploadFile({
-  //           image: bodyData?.eventImage,
-  //           onSuccess: url => {
-  //             uploadedImage.current = url;
-  //             callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-  //           },
-  //           prefixType: 'events',
-  //         }),
-  //       );
-  //     } else {
-  //       callCreateEventApi(data, isFreeEvent, isUnlimitedCapacity);
-  //     }
-  //   },
-  //   [bodyData?.eventImage, isFreeEvent, isUnlimitedCapacity],
-  // );
-
-
-  // const callCreateEventApi = useCallback((data, isFreeEvent, isUnlimitedCapacity) => {
-  //   const { latitude, longitude, address, otherData } =
-  //     bodyData?.location ?? {};
-
-  //   const { startTime, endTime, eventDate } = eventDateTime.current
-  //   let payload = {
-  //     image: uploadedImage?.current,
-  //     name: bodyData?.eventName,
-  //     group_id: bodyData?.myGroup?.id,
-  //     is_online_event: bodyData?.isOnlineEvent ? '1' : '0',
-  //     short_description: bodyData?.aboutEvent,
-  //     address: address?.main_text + (((address?.main_text && address?.secondary_text ? ", " : "") + address?.secondary_text)?.trim() || ""),
-  //     city: otherData?.city,
-  //     state: otherData?.state,
-  //     country: otherData?.country,
-  //     location: {
-  //       type: 'Point',
-  //       coordinates: [longitude, latitude],
-  //     },
-  //     capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
-  //     capacity: data?.capacity,
-  //     is_free_event: isFreeEvent ? '1' : '0',
-  //     event_fees: round(parseFloat(data?.ticketPrice), 2),
-  //     event_date: dateFormat(eventDate, "YYYY-MM-DD"),
-  //     event_start_time: dateFormat(startTime, "HH:mm:ss"),
-  //     event_end_time: data?.endTime ? dateFormat(endTime, "HH:mm") : "",
-  //     details: data?.additionalInfo,
-  //     event_currency: data?.currency.toLowerCase(),
-  //     payment_method: [],
-  //     payment_email: "",
-  //     event_refund_policy: ""
-  //   };
-  //   dispatch(
-  //     createEvent({
-  //       data: payload,
-  //       onSuccess: () => {
-  //         Database.setSelectedLocation(Database.getStoredValue<ILocation>('selectedLocation'));
-  //       },
-  //     }),
-  //   );
-  // }, []);
-
-  // const calculateButtonDisability = useCallback(() => {
-  //   if (!getValues('eventDate') ||
-  //     // ((!getValues('ticketPrice')&& !isFreeEvent)) ||
-  //     // (!getValues('capacity')&&!isUnlimitedCapacity) ||
-  //     !getValues('startTime') ||
-  //     (errors && (errors.eventDate || errors.startTime || errors.capacity))
-  //   ) {
-  //     return true;
-  //   }
-  //   return false;
-  // }, [errors]);
-
-
-  // const onPressSubmit = useCallback(() => handleSubmit((data) => {
-  //   const { endTime, endDate } = data
-  //   const { startTime: startTimeDate, endTime: endTimeDate, endDate: endEventDate, eventDate } = eventDateTime.current
-  //   const currentDate = new Date()
-  //   if (startTimeDate <= currentDate) {
-  //     _showErrorMessage(Language.start_time_invalid)
-  //     return
-  //   }
-  //   if (endTime && endTimeDate <= startTimeDate) {
-  //     _showErrorMessage(Language.end_time_invalid)
-  //     return
-  //   }
-
-  //   if (endDate && endEventDate <= eventDate) {
-  //     _showErrorMessage(Language.end_date_greater_than_start_date)
-  //     return
-  //   }
-
-  //   // !userData?.is_premium ?
-  //   //   _showPopUpAlert({
-  //   //     message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
-  //   //     buttonText: Language.join_now,
-  //   //     onPressButton: () => {
-  //   //       NavigationService.navigate("Subscription", {
-  //   //         onSubscription: onSubmit, data: {
-  //   //           ...data, ...bodyData,
-  //   //           eventDateTime: eventDateTime.current,
-  //   //           image: uploadedImage?.current,
-  //   //           isUnlimitedCapacity: isUnlimitedCapacity,
-  //   //           isFreeEvent: isFreeEvent
-  //   //         }
-  //   //       });
-  //   //       _hidePopUpAlert()
-  //   //     },
-  //   //     cancelButtonText: Language.no_thanks_create_my_event,
-  //   //     onPressCancel: () => { isFreeEvent ? onSubmit(data) : _showErrorMessage('You need subscription for a paid event.') }
-  //   //   }) :
-  //   //   isFreeEvent ?
-  //   //     onSubmit(data)
-  //   //     :
-  //   NavigationService.navigate('CreateEvent3',
-  //     {
-  //       data: {
-  //         ...data, ...bodyData,
-  //         eventDateTime: eventDateTime.current,
-  //         image: uploadedImage?.current,
-  //         isUnlimitedCapacity: isUnlimitedCapacity
-  //       }
-  //     })
-  //   //   :
-  //   //  undefined
-  // })(), [userData, isFreeEvent, isUnlimitedCapacity])
 
   const addTicket = useCallback(() => {
     insert(0, { ...emptyTicketType, currency: getValues('ticketPlans')[0].currency })
@@ -242,11 +117,36 @@ const CreateEvent3: FC<any> = props => {
     if (payload?.is_free_event == 1 && payload.is_donation_enabled == 1 || payload?.is_free_event == 0) {
       NavigationService.navigate('CreateEvent4')
     } else {
-      dispatch(updateCreateEvent(removePaymentKeys(payload)))
-      setTimeout(() => {
-        // return console.log('store.getState().createEventState', store.getState().createEventState);
-        dispatch(createEvent())
-      }, 0);
+      let tempArray = event.event_images.filter(_ => !_?._id)
+      if (event.image?.path || tempArray.length > 0) {
+        dispatch(
+          uploadFileArray({
+            image: [...tempArray, ...(event.image?.path ? [{ ...event.image, isProfile: true }] : [])],
+            onSuccess: (imageArray, profileImage) => {
+              dispatch(setLoadingAction(false))
+              if (profileImage)
+                uploadedImage.current = profileImage
+              uploadedImageArray.current = [...imageArray];
+              const payload = {
+                image: uploadedImage.current,
+                event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
+              }
+              // dispatch(updateCreateEvent(payload))
+              dispatch(updateCreateEvent(removePaymentKeys(payload)))
+              setTimeout(() => {
+                dispatch(createEvent())
+              }, 0)
+            },
+            prefixType: 'events',
+          }),
+        )
+      }
+      else {
+        dispatch(updateCreateEvent(removePaymentKeys(payload)))
+        setTimeout(() => {
+          dispatch(createEvent())
+        }, 0)
+      }
     }
 
   }, []);
@@ -254,7 +154,7 @@ const CreateEvent3: FC<any> = props => {
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
       is_free_event: '0',
-      // is_donation_enabled: '0'
+      is_donation_enabled: '0'
     }
 
     if (isFreeEvent) {
@@ -332,7 +232,7 @@ const CreateEvent3: FC<any> = props => {
             </TouchableOpacity>
 
 
-            <View style={{ flex: 1, width: '100%' }} >
+            <View style={{ flex: 1, width: '100%', paddingBottom: scaler(10) }} >
               <TextInput
                 containerStyle={{ marginEnd: scaler(4), width: '100%' }}
                 borderColor={colors.colorTextInputBackground}
@@ -349,7 +249,7 @@ const CreateEvent3: FC<any> = props => {
                 errors={errors}
               />
               <FixedDropdown
-                containerStyle={{ width: '100%' }}
+                containerStyle={{ width: '100%', }}
                 visible={isTicketTypeDropdown}
                 data={ticketTypeArray}
                 onSelect={data => {
@@ -363,10 +263,10 @@ const CreateEvent3: FC<any> = props => {
 
               {isFreeEvent ?
                 <View>
-                  {false && <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
+                  <View style={{ flexDirection: 'row', marginTop: scaler(30), flex: 1 }}>
                     <Switch active={isDonationAccepted} onChange={() => { setValue('donationDescription', ''); setIsDonationAccepted(!isDonationAccepted) }} />
                     <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '400' }}>{Language.accept_donation}</Text>
-                  </View>}
+                  </View>
 
                   {/* ----------------------------------- donation flow started here -----------------------------------*/}
 
@@ -520,21 +420,32 @@ const CreateEvent3: FC<any> = props => {
                     :
                     <View>
                       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                        <TextInput
-                          containerStyle={{ marginEnd: scaler(4), width: '30%' }}
-                          borderColor={colors.colorTextInputBackground}
-                          backgroundColor={colors.colorTextInputBackground}
-                          name={'currency'}
-                          disabled={isFreeEvent ? true : false}
-                          icon={Images.ic_arrow_dropdown}
-                          onChangeText={(text) => {
+                        <View style={{ marginEnd: scaler(4), width: '30%' }} >
+                          <TextInput
+                            containerStyle={{ width: '100%' }}
+                            borderColor={colors.colorTextInputBackground}
+                            backgroundColor={colors.colorTextInputBackground}
+                            name={'currency'}
+                            disabled={isFreeEvent ? true : false}
+                            icon={Images.ic_arrow_dropdown}
+                            onChangeText={(text) => {
 
-                          }}
-                          control={control}
-                          iconContainerStyle={{ end: scaler(4) }}
-                          onPress={() => { setDropdown(_ => !_) }}
-                          errors={errors}
-                        />
+                            }}
+                            control={control}
+                            iconContainerStyle={{ end: scaler(4) }}
+                            onPress={() => { setDropdown(_ => !_) }}
+                            errors={errors}
+                          />
+                          <FixedDropdown
+                            containerStyle={{ width: '98%', position: 'relative', top: 0 }}
+                            visible={isDropdown}
+                            data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                            onSelect={data => {
+                              setDropdown(false);
+                              setValue('currency', data?.title, { shouldValidate: true });
+                            }}
+                          />
+                        </View>
                         <TextInput
                           containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                           placeholder={
@@ -570,15 +481,7 @@ const CreateEvent3: FC<any> = props => {
                           errors={errors}
                         />
                       </View>
-                      <FixedDropdown
-                        containerStyle={{ width: '28%' }}
-                        visible={isDropdown}
-                        data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                        onSelect={data => {
-                          setDropdown(false);
-                          setValue('currency', data?.title, { shouldValidate: true });
-                        }}
-                      />
+
                     </View>}
                 </View>
               }
