@@ -49,7 +49,7 @@ const App: FC = () => {
                             {
                                 text: Language.update, onPress: () => {
                                     if (Platform.OS == 'android')
-                                        Linking.openURL("http://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('dev', 'app'))
+                                        Linking.openURL("https://play.google.com/store/apps/details?id=" + config.BUNDLE_ID_PACKAGE_NAME?.replace('dev', 'app'))
                                     else
                                         Linking.openURL('itms-apps://apps.apple.com/app/picnic-groups/id1561013758')
                                     setTimeout(() => {
