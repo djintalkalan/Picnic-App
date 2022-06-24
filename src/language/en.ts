@@ -180,7 +180,7 @@ export const en = {
   pay_by_paypal: 'Pay by paypal',
   write_refund_policy: 'Write refund policy',
   paypal_id: 'Paypal email',
-  paypal_id_required: 'Paypal id is required',
+  paypal_id_required: 'Paypal email is required',
   join_now_to_access_payment_processing: 'Join now to access payment processing',
   no_thanks_create_my_event: 'No, Thanks Create my event',
   no_events_close: "No events are close to you,",
