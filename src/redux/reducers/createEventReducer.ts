@@ -53,6 +53,9 @@ export interface ICreateEventReducer {
     is_donation_enabled: number;
     donation_description: string;
     is_copied_event: string;
+    payment_api_username: string;
+    payment_api_password: string;
+    payment_api_signature: string;
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {

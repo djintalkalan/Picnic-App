@@ -179,8 +179,8 @@ export const es = {
     pay_by_cash: "Pagar en Efectivo",
     pay_by_paypal: "Pagar con Paypal",
     write_refund_policy: "Escribir la política de reembolsos",
-    paypal_id: "ID. de Paypal",
-    paypal_id_required: "ID. de Paypal es un campo obligatorio",
+    paypal_id: "Correo electrónico de Paypal",
+    paypal_id_required: "Correo electrónico de Paypal es un campo obligatorio",
     join_now_to_access_payment_processing: "Únete ahora para acceder al procesamiento de pagos",
     no_thanks_create_my_event: "No, gracias. Crear mi evento",
     no_events_close: "No hay eventos cerca,",
@@ -368,9 +368,16 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    paypal_details: "",
+    api_username: "",
+    api_password: "",
+    api_signature: "",
+    api_username_required: "",
+    api_password_required: "",
+    api_signature_required: "",
     donate_by_cash: "",
     donate_by_paypal: "",
     donation_price: "",
     donation_price_required: "",
-    maximum_file_size_allowed:""
+    maximum_file_size_allowed: ""
 }
