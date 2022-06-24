@@ -4,7 +4,6 @@ import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import ImageLoader from 'custom-components/ImageLoader';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -166,10 +165,15 @@ const CreateEvent3: FC<any> = props => {
         <SafeAreaViewWithStatusBar style={styles.container}>
             {infoVisible ? <View style={{ flex: 1 }}>
                 <BackButton onPress={() => setInfoVisible(false)} />
-                <View style={{ flex: 1 }} >
-                    <ImageLoader
-                        style={{ height, width, alignSelf: 'center' }}
-                        resizeMode={'contain'}
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                    <Image
+                        style={{
+                            height: width,
+                            aspectRatio: 1800 / 1118,
+                            resizeMode: 'contain',
+                            alignSelf: 'center',
+                            transform: [{ rotate: '90deg' }]
+                        }}
                         source={Images.ic_paypal_info} />
                 </View>
             </View> :
