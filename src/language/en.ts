@@ -368,7 +368,7 @@ export const en = {
   ticket_purchased: "Ticket purchased",
   standard: "Standard",
   plan_name: "Plan name",
-  paypal_details: "Paypal Details",
+  paypal_details: "Paypal details",
   api_username: "Live api username",
   api_password: "Live api password",
   api_signature: "Live api signature",
