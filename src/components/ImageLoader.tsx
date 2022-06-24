@@ -6,7 +6,7 @@ import FastImage, { ImageStyle, ResizeMode, Source } from 'react-native-fast-ima
 interface IImageLoader {
     isShowActivity?: boolean,
     style?: StyleProp<ImageStyle>,
-    source: Source | null,
+    source: Source | null | undefined,
     resizeMode?: ResizeMode
     borderRadius?: number
     backgroundColor?: ColorValue

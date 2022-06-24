@@ -1,15 +1,17 @@
 import { colors } from 'assets/Colors'
 import { Text } from 'custom-components'
 import ImageLoader from 'custom-components/ImageLoader'
+import { isFunction } from 'lodash'
 import React, { FC, memo, ReactElement, useMemo } from 'react'
 import { GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TextStyle, TouchableHighlight, View, ViewStyle } from 'react-native'
+import { Source } from 'react-native-fast-image'
 import Language from 'src/language/Language'
 import { scaler } from 'utils'
 
 interface EventProps {
     title: string
     subtitle: string
-    icon?: ImageSourcePropType
+    icon?: Source
     defaultIcon: ImageSourcePropType
     isSelected?: boolean
     customView?: FC<any> | ReactElement<any, any> | null
@@ -43,7 +45,7 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, ic
                         <View style={{ flexShrink: 1, alignItems: 'flex-end' }}>
                             <View  >
                                 {CustomView ? React.isValidElement(CustomView) ?
-                                    CustomView : <CustomView /> : null}
+                                    CustomView : isFunction(CustomView) ? <CustomView /> : null : null}
                             </View>
                             <Text style={styles.date} >{date}</Text>
                         </View>

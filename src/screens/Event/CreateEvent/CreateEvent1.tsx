@@ -1,42 +1,23 @@
+import { config } from 'api';
 import { RootState } from 'app-store';
-import { getEditEventDetail, getMyGroups, restorePurchase, setLoadingAction, uploadFile } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
-import {
-  Button,
-  CheckBox,
-  defaultLocation,
-  FixedDropdown,
-  MyHeader,
-  Stepper,
-  Text,
-  TextInput,
-  useKeyboardService
-} from 'custom-components';
+import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
-import { isEmpty } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  Image,
-  StyleSheet,
-  TextInput as RNTextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import {
-  formattedAddressToString,
-  getFormattedAddress2,
-  getImageUrl,
-  NavigationService,
-  ProfileImagePickerOptions,
-  scaler
-} from 'utils';
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _showErrorMessage } from 'utils';
 
 type FormType = {
   eventName: string;
@@ -45,8 +26,19 @@ type FormType = {
   aboutEvent: string;
 };
 
+const videoProps = {
+  forceJpg: true,
+  compressImageQuality: 0.8,
+  // loadingLabelText: Language.processing,
+  enableRotationGesture: true,
+  compressVideoPreset: "MediumQuality",
+  mediaType: 'any'
+}
+
+const { width } = Dimensions.get('screen')
+
 const CreateEvent1: FC<any> = props => {
-  const uploadedImage = useRef('');
+  const { loadVideo } = useVideoPlayer()
   const [eventImage, setEventImage] = useState<any>();
   const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
@@ -54,6 +46,7 @@ const CreateEvent1: FC<any> = props => {
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
   const keyboardValues = useKeyboardService()
+  const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
   const eventId = props?.route?.params?.id || null
 
   const event = useSelector((state: RootState) => {
@@ -96,18 +89,31 @@ const CreateEvent1: FC<any> = props => {
     return false;
   }, [errors]);
 
-  const pickImage = useCallback(() => {
+  const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
-      ImagePicker.openPicker(ProfileImagePickerOptions)
+      ImagePicker.openPicker(isMultiImage ? {
+        multiple: isMultiImage,
+        maxFiles: 10 - multiImageArray?.length,
+        mediaType: 'any',
+        forceJpg: true,
+        compressVideoPreset: "MediumQuality",
+      } : ProfileImagePickerOptions)
         .then(image => {
-          uploadedImage.current = '';
-          setEventImage(image);
+          console.log("image", image);
+          const maxSizeInMb = 100
+          if (isMultiImage && isArray(image)) {
+            const index = image?.findIndex(({ size }) => (size > maxSizeInMb * 1000000))
+            if (index == -1) setMultiImageArray((_) => [..._, ...image])
+            else _showErrorMessage(Language.formatString(Language.maximum_file_size_allowed, maxSizeInMb?.toString())?.toString())
+          }
+          else
+            setEventImage(image);
         })
         .catch(e => {
           console.log(e);
         });
     }, 200);
-  }, []);
+  }, [multiImageArray?.length]);
 
 
   useEffect(() => {
@@ -144,7 +150,7 @@ const CreateEvent1: FC<any> = props => {
     } : null
 
     selectedGroupRef.current = event?.event_group
-    uploadedImage.current = event?.image || ""
+    setMultiImageArray(event.event_images || [])
     setValue('eventName', event?.name)
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
@@ -158,24 +164,8 @@ const CreateEvent1: FC<any> = props => {
 
   }, [])
 
-  const onSubmit = useCallback(handleSubmit((data) => {
-    if (!uploadedImage.current && eventImage?.path) {
-      dispatch(
-        uploadFile({
-          image: eventImage,
-          onSuccess: url => {
-            dispatch(setLoadingAction(false))
-            uploadedImage.current = url;
-            next(data);
-          },
-          prefixType: 'events',
-        }),
-      );
-    } else
-      next(data);
-  }), [eventImage])
-
-  const next = useCallback((data) => {
+  const next = useCallback(handleSubmit((data) => {
+    console.log('multiImageArray', eventImage, multiImageArray)
     const { latitude, longitude, address, otherData } = locationRef.current ?? {};
     const payload = {
       name: data.eventName?.trim(),
@@ -190,13 +180,14 @@ const CreateEvent1: FC<any> = props => {
       is_online_event: isOnlineEvent ? '1' : '0',
       group_id: selectedGroupRef.current?.id ?? selectedGroupRef.current?._id,
       short_description: data?.aboutEvent,
-      image: uploadedImage?.current || undefined,
+      image: eventImage?.path ? eventImage : event?.image,
+      event_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }, [event, isOnlineEvent])
+  }), [event, isOnlineEvent, eventImage, multiImageArray])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -222,7 +213,7 @@ const CreateEvent1: FC<any> = props => {
               }
             />
           </View>
-          <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
+          <TouchableOpacity onPress={() => pickImage(false)} style={styles.cameraButton}>
             <Image style={styles.image} source={Images.ic_camera} />
           </TouchableOpacity>
         </View>
@@ -324,13 +315,37 @@ const CreateEvent1: FC<any> = props => {
               control={control}
               errors={errors}
             />
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), flex: 1 }}>Additional Photos and Videos </Text>
+              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), color: colors.colorPlaceholder }}>{'(' + multiImageArray?.length + '/10)'} </Text>
+            </View>
+            <View style={{ flexDirection: 'row', flex: 1, flexWrap: 'wrap', marginHorizontal: -scaler(2.5) }}>
+              {multiImageArray?.map((_, i) => {
+                return (
+                  <View key={i}>
+                    <TouchableOpacity onPress={() => setMultiImageArray(_ => _.filter((_, index) => i != index))} style={styles.minusView}>
+                      <Image source={Images.ic_delete_red} style={{ height: scaler(20), width: scaler(20) }} />
+                    </TouchableOpacity>
+                    {_.mime?.includes('video') || _?.type == 'video' ?
+                      <TouchableOpacity style={[styles.multiImageView, { backgroundColor: colors.colorBlack, marginHorizontal: scaler(5), marginBottom: scaler(10) }]} onPress={() => loadVideo && loadVideo(_?.path ?? config.VIDEO_URL + _.name)}>
+                        <Ionicons color={colors.colorGreyText} name="play-circle" size={scaler(35)} />
+                      </TouchableOpacity> :
+                      <Image style={{ height: scaler(90), width: (width - scaler(65)) / 3, borderRadius: scaler(5), marginHorizontal: scaler(5), marginBottom: scaler(10) }} source={{ uri: _?._id ? getImageUrl(_?.name, { type: 'events', width: scaler(100) }) : _?.path }} />
+                    }
+                  </View>
+                )
+              })}
+              {multiImageArray?.length < 10 ? <TouchableOpacity style={styles.multiImageView} onPress={() => { pickImage(true) }}>
+                <Entypo name='plus' size={scaler(40)} color={colors.colorWhite} />
+              </TouchableOpacity> : null}
+            </View>
           </View>
 
           <Button
             disabled={calculateButtonDisability()}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
-            onPress={onSubmit}
+            onPress={next}
           />
         </View>
       </ScrollView>
@@ -379,4 +394,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft: scaler(5),
   },
+  multiImageView: {
+    height: scaler(90),
+    width: (width - scaler(65)) / 3,
+    marginLeft: scaler(5),
+    borderRadius: scaler(5),
+    backgroundColor: colors.colorPrimary,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  minusView: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    top: scaler(-9),
+    right: scaler(-3),
+    zIndex: 1,
+  }
 });

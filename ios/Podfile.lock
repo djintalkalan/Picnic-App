@@ -473,7 +473,7 @@ PODS:
     - React-Core
   - react-native-maps (0.30.2):
     - React-Core
-  - react-native-mmkv-storage (0.6.8):
+  - react-native-mmkv-storage (0.7.6):
     - MMKV (= 1.2.10)
     - React-Core
   - react-native-netinfo (7.1.12):
@@ -1052,7 +1052,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-google-maps: 4fa56492c7f4323edfa4574a2e5ca3eaa71dc62f
   react-native-maps: df7b9fca1b1c8d356fadbf5b8a63a5f8cf32fc73
-  react-native-mmkv-storage: 97ec49dd76cd9823120376677f59f34508ebf708
+  react-native-mmkv-storage: ba38e5e813ea3d5d37af834a9d867b1ce10aa96d
   react-native-netinfo: c023b7c36ff34e3b607d1446002b5b39089a860b
   react-native-pager-view: 95d0418c3c74279840abec6926653d32447bafb6
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9

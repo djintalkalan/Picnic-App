@@ -56,7 +56,7 @@ const App: FC = () => {
                                         RNExitApp?.exitApp();
                                     }, 200)
                                 }
-                            }
+                            },
                         ], {
                             cancelable: false
                         }

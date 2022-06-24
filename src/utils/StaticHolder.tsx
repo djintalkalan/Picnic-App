@@ -1,6 +1,7 @@
 import { IAlertType, PopupAlert } from "custom-components";
 import { BottomMenu, IBottomMenu } from "custom-components/BottomMenu";
 import { ImageZoom } from "custom-components/ImageZoom";
+import { TouchAlert, TouchAlertType } from "custom-components/TouchAlert";
 import DropdownAlert from "dj-react-native-dropdown-alert";
 import React from "react";
 
@@ -49,6 +50,12 @@ export class StaticHolder {
   static getImageZoom() { return this.imageZoom; }
   static showImage(imageUrl: string) { this.imageZoom?.showImage(imageUrl) }
   static hideImage() { this.imageZoom?.showImage("") }
+
+  // TouchAlertHolder
+  static touchAlert: (TouchAlert) | null | undefined;
+  static setTouchAlert(touchAlert: (TouchAlert) | null | undefined) { this.touchAlert = touchAlert; }
+  static showTouchAlert(data: TouchAlertType) { this.touchAlert?.showTouchAlert(data) }
+  static hideTouchAlert() { this.touchAlert?.hideTouchAlert() }
 }
 
 export class KeyboardAccessoryView extends React.Component {

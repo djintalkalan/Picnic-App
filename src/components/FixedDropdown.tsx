@@ -10,6 +10,7 @@ interface IFixedDropdown {
     data: Array<IFixedDropdownItem>
     selectedId?: number
     onSelect?: (selectedItem: IFixedDropdownItem) => void
+    relative?: boolean
 }
 
 interface IFixedDropdownItem {
@@ -19,7 +20,7 @@ interface IFixedDropdownItem {
 }
 
 export const FixedDropdown: FC<IFixedDropdown> = (props) => {
-    const { containerStyle = {}, visible, data, selectedId, onSelect } = props
+    const { containerStyle = {}, visible, data, selectedId, onSelect, relative = false } = props
 
 
     const _renderDropdownItem = useCallback(({ item, index }) => {
@@ -31,7 +32,7 @@ export const FixedDropdown: FC<IFixedDropdown> = (props) => {
     }, [onSelect])
 
     return visible ? (
-        <Card style={[styles.dropDownContainer, { ...StyleSheet.flatten(containerStyle) }]}
+        <Card style={[relative ? styles.dropDownContainer : styles.fixDropDownContainer, { ...StyleSheet.flatten(containerStyle) }]}
             cardMaxElevation={3}
             cardElevation={2}
             cornerRadius={scaler(10)} >
@@ -48,7 +49,7 @@ export const FixedDropdown: FC<IFixedDropdown> = (props) => {
 }
 
 const styles = StyleSheet.create({
-    dropDownContainer: {
+    fixDropDownContainer: {
         left: scaler(4),
         position: 'absolute',
         top: scaler(62),
@@ -56,6 +57,10 @@ const styles = StyleSheet.create({
         // elevation: 3,
         backgroundColor: colors.colorWhite,
         width: '96%'
+    },
+    dropDownContainer: {
+        backgroundColor: colors.colorWhite,
+
     },
     title: {
         color: colors.colorBlackText,
