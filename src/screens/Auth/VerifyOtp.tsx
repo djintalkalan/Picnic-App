@@ -10,11 +10,13 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler, _showErrorMessage } from 'utils'
+
 const VerifyOtp: FC<any> = (props) => {
     const [otp, setOtp] = useState("")
     const dispatch = useDispatch()
     const disabled = !(otp?.trim()?.length == 4 && validateNumber(otp?.trim()))
-    const isSignUp = props?.route?.params?.isSignUp
+
+    const { is2FA = false, email, isSignUp = false } = props?.route?.params ?? {}
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
@@ -38,9 +40,11 @@ const VerifyOtp: FC<any> = (props) => {
                 <Button disabled={disabled} title={Language.verify} onPress={() => {
                     if (otp.trim().length == 4 && validateNumber(otp.trim())) {
                         dispatch(verifyOtp({
-                            otp: otp,
-                            email: props?.route?.params?.email,
-                            isSignUp: props?.route?.params?.isSignUp,
+                            otp,
+                            email,
+                            isSignUp,
+                            is2FA,
+                            otp_type: is2FA ? "2fa_otp" : "signup_otp",
                         }))
                     } else {
                         _showErrorMessage(Language.invalid_otp)
