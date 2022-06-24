@@ -321,6 +321,16 @@ const EventDetail: FC<any> = (props) => {
         })
     }, [event])
 
+
+    const calculateButtonDisability = useCallback(() => {
+        if (!event?.payment_api_username &&
+            (!event?.payment_method?.includes('cash') &&
+                !event?.is_free_event)) {
+            return true;
+        }
+        return false;
+    }, [event]);
+
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
             <View style={styles.placeholder}>
@@ -680,6 +690,7 @@ const EventDetail: FC<any> = (props) => {
                             (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                    disabled={calculateButtonDisability()}
                                     onPress={() => {
                                         event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })

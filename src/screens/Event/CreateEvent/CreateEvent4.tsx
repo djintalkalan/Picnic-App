@@ -1,3 +1,4 @@
+import { _getMerchantInfo } from 'api';
 import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
@@ -49,6 +50,26 @@ const CreateEvent3: FC<any> = props => {
 
 
     useEffect(() => {
+        if (isPayByPaypal && !event?.payment_api_username) {
+            try {
+                _getMerchantInfo().then(
+                    res => {
+                        if (res?.status == 200) {
+                            setValue('paypalEmail', res?.data?.payment_email ?? '')
+                            setValue('apiUserName', res?.data?.payment_api_username ?? '')
+                            setValue('apiPassword', res?.data?.payment_api_password ?? '')
+                            setValue('apiSignature', res?.data?.payment_api_signature ?? '')
+                        }
+                    }
+                ).catch(e => console.log(e))
+            }
+            catch {
+                (e: any) => console.log(e);
+            }
+        }
+    }, [isPayByPaypal, event])
+
+    useEffect(() => {
         setEventValues()
     }, [])
 
@@ -59,7 +80,6 @@ const CreateEvent3: FC<any> = props => {
         setValue('apiUserName', event?.payment_api_username ?? '')
         setValue('apiPassword', event?.payment_api_password ?? '')
         setValue('apiSignature', event?.payment_api_signature ?? '')
-        setValue('paypalEmail', event?.payment_email ?? '')
         uploadedImage.current = event?.image?.path ? '' : event.image
         if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
@@ -292,10 +312,7 @@ const CreateEvent3: FC<any> = props => {
                                     backgroundColor={colors.colorTextInputBackground}
                                     name={'apiPassword'}
                                     onPressIcon={() => setSecure(!isSecure)}
-                                    secureTextEntry={isSecure}
                                     autoCapitalize={'none'}
-                                    icon={isSecure ? Images.ic_eye_open : Images.ic_eye_closed}
-                                    iconSize={scaler(18)}
                                     required={Language.api_password_required}
                                     control={control}
                                     errors={errors} />
