@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(120)
 const { width, height } = Dimensions.get('screen')
@@ -29,7 +29,7 @@ const EventList: FC<any> = (props) => {
     }, [])
 
     const getButtons = useCallback((item: any) => {
-        const { is_event_member, _id, is_event_admin } = item
+        const { is_event_member, _id, is_event_admin, name } = item
         const buttons: Array<IBottomMenuButton> = []
         if (is_event_admin) {
             buttons.push({
@@ -42,7 +42,10 @@ const EventList: FC<any> = (props) => {
             })
             buttons.push({
                 title: Language.share_event, onPress: () => {
-                    NavigationService.navigate('CreateEvent1', { id: _id })
+                    shareDynamicLink(name, {
+                        type: "event-detail",
+                        id: _id
+                    });
                 }
             })
         }

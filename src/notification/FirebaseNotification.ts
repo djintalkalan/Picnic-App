@@ -138,6 +138,7 @@ const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) =>
     if (link && link.url) {
         const { id, type } = getDetailsFromDynamicUrl(link.url)
         if (id && type) {
+            console.log("DetailsFromDynamicUrl", id, type);
             NavigationService.navigate("Home");
             switch (type) {
                 case "group-detail":
