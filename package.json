@@ -37,12 +37,12 @@
     "diawi-d": "run-s env-d clean-ios archive-diawi",
     "diawi-b": "run-s env-b clean-ios archive-diawi",
     "diawi-p": "run-s env-p clean-ios archive-diawi",
-    "archive": "run-s generate-archive generate-ipa",
+    "archive": "run-s generate-archive yarn generate-ipa generate-ipa-diawi",
     "archive-diawi": "run-s generate-archive generate-ipa-diawi",
     "clean-ios": "xcodebuild clean -workspace ios/Picnic.xcworkspace -scheme Picnic && xcodebuild clean -project ios/Picnic.xcodeproj -scheme Picnic && rm -rf ios/build && rm -rf ios/output",
     "generate-archive": "xcodebuild -sdk iphoneos -workspace ios/Picnic.xcworkspace -scheme Picnic -configuration Release -archivePath ios/build/Picnic.xcarchive archive",
     "generate-ipa": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptions.plist -exportPath ios/output -allowProvisioningUpdates",
-    "generate-ipa-diawi": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptionsDiawi.plist -exportPath ios/output -allowProvisioningUpdates"
+    "generate-ipa-diawi": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptionsDiawi.plist -exportPath ios/output/diawi -allowProvisioningUpdates"
   },
   "dependencies": {
     "@aws-sdk/client-elastic-transcoder": "^3.100.0",
