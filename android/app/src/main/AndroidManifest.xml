@@ -58,7 +58,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="picnicapp.page.link"/>
+                <!-- <data android:host="picnicapp.page.link"/> -->
+                <data android:host="picnicgroups.page.link"/>
                 <data android:scheme="http"/>
                 <data android:scheme="https"/>
             </intent-filter>
