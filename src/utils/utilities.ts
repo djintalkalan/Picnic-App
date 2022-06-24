@@ -576,14 +576,16 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
 
 const buildLink = async (l: string) => {
     const link = await dynamicLinks().buildShortLink({
-        link: 'https://www.picnicapp.link/' + l,
+        link: 'http://www.picnicapp.link/download' + l,
+        // link: config.SOCKET_URL.replace("ws://", "http://") + '/download' + l,
         domainUriPrefix: 'https://picnicgroups.page.link',
         android: {
-            packageName: config.BUNDLE_ID_PACKAGE_NAME
+            packageName: config.BUNDLE_ID_PACKAGE_NAME,
         },
         ios: {
-            bundleId: config.BUNDLE_ID_PACKAGE_NAME
+            bundleId: config.BUNDLE_ID_PACKAGE_NAME,
         }
+
     });
     return link;
 }
@@ -628,7 +630,8 @@ const handleShareAction = (shareAction: ShareAction | null, type: string, id: st
 
 export const shareAppLink = async (name: string) => {
     const link = await dynamicLinks().buildShortLink({
-        link: 'https://picnicapp.com/',
+        link: 'http://www.picnicapp.link/download',
+        // link: config.SOCKET_URL.replace("ws://", "http://") + '/download',
         domainUriPrefix: 'https://picnicgroups.page.link',
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME
@@ -636,9 +639,9 @@ export const shareAppLink = async (name: string) => {
         ios: {
             bundleId: config.BUNDLE_ID_PACKAGE_NAME
         },
-        navigation: {
-            forcedRedirectEnabled: true
-        }
+        // navigation: {
+        //     forcedRedirectEnabled: true
+        // }
     });
 
     try {
