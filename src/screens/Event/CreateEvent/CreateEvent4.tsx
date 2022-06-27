@@ -118,9 +118,6 @@ const CreateEvent3: FC<any> = props => {
         [isPayByPaypal, isPayByCash, event],
     );
 
-
-    console.log('event', event)
-
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
 
         const payload: any = {
@@ -169,12 +166,7 @@ const CreateEvent3: FC<any> = props => {
     }, []);
 
     const calculateButtonDisability = useCallback(() => {
-        if ((!isPayByPaypal && !isPayByCash) ||
-            (isPayByPaypal &&
-                !getValues('paypalEmail') &&
-                !getValues('apiUserName') &&
-                !getValues('apiPassword') &&
-                !getValues('apiSignature'))
+        if ((!isPayByPaypal && !isPayByCash)
         ) {
             return true;
         }
