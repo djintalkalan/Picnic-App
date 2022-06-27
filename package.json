@@ -37,7 +37,7 @@
     "diawi-d": "run-s env-d clean-ios archive-diawi",
     "diawi-b": "run-s env-b clean-ios archive-diawi",
     "diawi-p": "run-s env-p clean-ios archive-diawi",
-    "archive": "run-s generate-archive yarn generate-ipa generate-ipa-diawi",
+    "archive": "run-s generate-archive generate-ipa generate-ipa-diawi",
     "archive-diawi": "run-s generate-archive generate-ipa-diawi",
     "clean-ios": "xcodebuild clean -workspace ios/Picnic.xcworkspace -scheme Picnic && xcodebuild clean -project ios/Picnic.xcodeproj -scheme Picnic && rm -rf ios/build && rm -rf ios/output",
     "generate-archive": "xcodebuild -sdk iphoneos -workspace ios/Picnic.xcworkspace -scheme Picnic -configuration Release -archivePath ios/build/Picnic.xcarchive archive",
