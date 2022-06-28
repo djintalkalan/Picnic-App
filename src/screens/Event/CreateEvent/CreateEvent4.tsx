@@ -224,6 +224,7 @@ const CreateEvent3: FC<any> = props => {
                                     backgroundColor={colors.colorTextInputBackground}
                                     name={'taxRate'}
                                     maxLength={5}
+                                    returnKeyType={'done'}
                                     keyboardType={'decimal-pad'}
                                     onChangeText={event.ticket_type == 'single' ? (_) => {
                                         setValue('taxPrice',

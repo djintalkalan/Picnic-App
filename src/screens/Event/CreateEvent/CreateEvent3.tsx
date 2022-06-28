@@ -356,6 +356,7 @@ const CreateEvent3: FC<any> = props => {
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                     placeholder={Language.ticket_price}
+                                    returnKeyType={'done'}
                                     style={{ paddingLeft: scaler(20) }}
                                     borderColor={colors.colorTextInputBackground}
                                     backgroundColor={colors.colorTextInputBackground}
@@ -458,6 +459,7 @@ const CreateEvent3: FC<any> = props => {
                           keyboardType={'decimal-pad'}
                           disabled={isFreeEvent ? true : false}
                           iconSize={scaler(18)}
+                          returnKeyType={'done'}
                           icon={Images.ic_ticket}
                           rules={{
                             validate: (v: string) => {

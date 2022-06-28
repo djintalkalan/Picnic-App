@@ -304,6 +304,7 @@ const CreateGroup: FC<any> = (props) => {
               placeholder={Language.radio_freq}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
+              returnKeyType={'done'}
               keyboardType={'decimal-pad'}
               name={'radio_frequency'}
               rules={{
