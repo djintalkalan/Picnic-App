@@ -29,7 +29,7 @@
     "resetIos": "yarn env-d && cd ios && pod deintegrate && rm -rf Podfile.lock && rm -rf Pods && pod install && cd .. && yarn run ios",
     "resetAndroid": "yarn env-d && cd android && ./gradlew clean && cd .. && yarn run android",
     "fix-sdk": "(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
-    "postinstall": "yarn env-d && npx pod-install",
+    "postinstall": "node scripts/fix-browser.js && yarn env-d && npx pod-install",
     "kill-all": "((pkill -f '.*GradleDaemon.*' || ./android/gradlew gradle --stop) && (rm -rf ~/.gradle/daemon || true))",
     "w-tcp": "adb tcpip 5555",
     "w-co": "adb connect ",
