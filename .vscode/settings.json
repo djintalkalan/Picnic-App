@@ -60,5 +60,8 @@
         "xcodebuild",
         "xcodeproj",
         "xcworkspace"
-    ]
+    ],
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
 }

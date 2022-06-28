@@ -66,9 +66,9 @@
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
-      <StoreKitConfigurationFileReference
+      <!-- <StoreKitConfigurationFileReference
          identifier = "../Configuration.storekit">
-      </StoreKitConfigurationFileReference>
+      </StoreKitConfigurationFileReference> -->
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

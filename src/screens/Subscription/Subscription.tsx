@@ -8,31 +8,32 @@ import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
-import { requestPurchase } from 'react-native-iap';
+import { requestSubscription } from 'react-native-iap';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage, _showSuccessMessage } from 'utils';
 
-const productIds = Platform.OS == 'ios' ? [
-    'y_subscription',
-    'm_subscription'
-] : [
-    "y_payment",
-    "m_payment"
-];
-
-// const subscriptionIds = [
-//     'ct_member',
+// const productIds = Platform.OS == 'ios' ? [
+//     'y_subscription',
+//     'm_subscription'
+// ] : [
+//     "y_payment",
+//     "m_payment"
 // ];
+
+const subscriptionIds = [
+    'yearly_subscription',
+    'monthly_subscription'
+];
 
 
 const Subscription: FC = (props: any) => {
 
     const dispatch = useDispatch();
 
-    // const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
-    const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
+    const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
+    // const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -57,18 +58,20 @@ const Subscription: FC = (props: any) => {
 
     const getItems = useCallback(async () => {
         try {
-            // const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
-            // console.log('ALL SUBSCRIPTIONS ', subscriptions);
-            // if (subscriptions?.length) {
-            //     setSubscriptions(subscriptions)
-            // }
-            const products = await InAppPurchases.getProducts(productIds);
-            console.log('ALL PRODUCTS ', products);
-            if (products?.length) {
-                setProducts(products)
+            const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
+            console.log('ALL SUBSCRIPTIONS ', subscriptions);
+            if (subscriptions?.length) {
+                setSubscriptions(subscriptions)
             } else {
-                setProducts([])
+                setSubscriptions([])
             }
+            // const products = await InAppPurchases.getProducts(productIds);
+            // console.log('ALL PRODUCTS ', products);
+            // if (products?.length) {
+            //     setProducts(products)
+            // } else {
+            //     setProducts([])
+            // }
         } catch (err) {
             console.log("IAP error", err);
         }
@@ -80,6 +83,18 @@ const Subscription: FC = (props: any) => {
         const purchaseUpdateSubscription: EmitterSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
         const purchaseErrorSubscription: EmitterSubscription = InAppPurchases.purchaseErrorListener(handleError);
         initializeIAPConnection();
+        // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+
+        InAppPurchases.getAvailablePurchases().then((products) => {
+            console.log("products" + JSON.stringify(products));
+        })
+
+
+
+        InAppPurchases.getPurchaseHistory().then((history) => {
+            console.log("history", history);
+        })
+
         return () => {
             closeConnection();
             purchaseUpdateSubscription?.remove();
@@ -87,24 +102,38 @@ const Subscription: FC = (props: any) => {
         }
     }, []);
 
-    const handlePurchase = useCallback(async (purchase: InAppPurchases.ProductPurchase) => {
-        console.log("purchase", purchase);
+    const handlePurchase = useCallback(async (purchase: InAppPurchases.SubscriptionPurchase) => {
         const receipt = purchase?.transactionReceipt;
+
+
         if (receipt) {
+            const data = await InAppPurchases.validateReceiptIos({
+                'receipt-data': receipt,
+                password: 'ff5e2205868f4032beb5ea586d73892e'
+            }, true)
             try {
                 const consumeItem = Platform.OS === "ios";
                 dispatch(setLoadingAction(true))
+                const isMonthly = purchase?.productId.includes('monthly')
+                // if (consumeItem) {
+                //     if (purchase.originalTransactionDateIOS) {
+                //         return continueToMemberShip()
+                //     }
+                // }
                 _authorizeMembership({
                     transaction_id: purchase?.transactionId,
                     transaction_receipt: purchase?.transactionReceipt,
-                    type: purchase?.productId == productIds[1] ? "monthly" : "yearly",
-                    expire_at: dateFormat(add(new Date(), purchase?.productId == productIds[1] ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
+                    type: isMonthly ? "monthly" : "yearly",
+                    expire_at: dateFormat(add(new Date(), { [isMonthly ? 'months' : 'years']: 1 }), "YYYY-MM-DD"),
                     payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
-                    // transaction_date:purchase?.transactionDate,
+                    transaction_date: purchase?.transactionDate,
+                    original_transaction_date: purchase?.originalTransactionDateIOS,
+                    receipt_data: data,
                     device: Platform.OS
                 }).then(async (res) => {
                     if (res?.status == 200 && res?.data) {
-                        await InAppPurchases.finishTransaction(purchase, consumeItem);
+                        const data = await InAppPurchases.finishTransaction(purchase) // ,consumeItem);
+                        console.log("finishTransaction data", data);
                         _captureMembership({
                             _id: res?.data?._id
                         }).then((res) => {
@@ -186,11 +215,10 @@ const Subscription: FC = (props: any) => {
                 const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
                 // if (expireAt >= new Date()) {
                 console.log("Calculating purchase");
-
+                // res.data = null
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                     console.log("Requesting purchase");
-
-                    requestPurchase(productIds[i], false)
+                    requestSubscription(subscriptionIds[i], false)
                 } else continueToMemberShip(Language.you_are_already_a_member)
 
             }
@@ -239,14 +267,17 @@ const Subscription: FC = (props: any) => {
                         <Text style={styles.listText}> {Language.and_other_exclusive_offers}</Text>
                     </View>
                 </View>
-
-                {/* {subscriptions?.map((subscription, index) => {
-                return <View key={index} style={{ flex: 1 }} >
-                    <Text>{subscription?.productId}</Text>
-                    <Button title='Subscribe now' onPress={() => requestSubscription(subscription?.productId, true)} />
-                </View>
-            })} */}
-                {products?.length ? <>
+                {subscriptions?.length ? <>
+                    <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
+                        <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
+                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
+                    </View>
+                </> :
+                    subscriptions && <View style={{ flex: 1 }} >
+                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
+                    </View>
+                }
+                {/* {products?.length ? <>
                     <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
                         <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
                         <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
@@ -255,7 +286,7 @@ const Subscription: FC = (props: any) => {
                     products && <View style={{ flex: 1 }} >
                         <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
                     </View>
-                }
+                } */}
                 <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
                     restorePurchase()
                 }} />
