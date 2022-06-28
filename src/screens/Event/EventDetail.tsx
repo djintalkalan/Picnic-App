@@ -238,7 +238,7 @@ const EventDetail: FC<any> = (props) => {
                                             message: Language.are_you_sure_cancel_event,
                                             onPressButton: () => {
                                                 dispatch(deleteEvent(event?._id))
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
@@ -263,7 +263,7 @@ const EventDetail: FC<any> = (props) => {
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                             },
                                             buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
@@ -274,7 +274,7 @@ const EventDetail: FC<any> = (props) => {
                                             message: Language.are_you_sure_report_event,
                                             onPressButton: () => {
                                                 dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                             },
                                             buttonText: Language.yes_report,
                                             // cancelButtonText: Language.cancel
