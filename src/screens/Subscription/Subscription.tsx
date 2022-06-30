@@ -73,7 +73,7 @@ const Subscription: FC = (props: any) => {
 
 
     useEffect(() => {
-        InAppPurchases.clearProductsIOS().finally(initializeIAPConnection);
+        // InAppPurchases?.clearProductsIOS && InAppPurchases?.clearProductsIOS()?.finally(initializeIAPConnection);
         let purchaseUpdateSubscription: EmitterSubscription
         let purchaseErrorSubscription: EmitterSubscription
         setTimeout(async () => {
@@ -81,8 +81,8 @@ const Subscription: FC = (props: any) => {
             purchaseUpdateSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
             purchaseErrorSubscription = InAppPurchases.purchaseErrorListener(handleError);
         }, 1000);
-        // initializeIAPConnection();
-        // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+        initializeIAPConnection();
+        Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
         return () => {
             closeConnection();
             purchaseUpdateSubscription?.remove && purchaseUpdateSubscription?.remove();
