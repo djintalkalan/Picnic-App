@@ -4,7 +4,7 @@ import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
 import { requestSubscription } from 'react-native-iap';
@@ -30,6 +30,7 @@ const subscriptionIds = [
 const Subscription: FC = (props: any) => {
 
     const dispatch = useDispatch();
+    const loadingRef = useRef(false)
     const [restorable, setRestorable] = useState(true)
 
     const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
@@ -72,19 +73,20 @@ const Subscription: FC = (props: any) => {
 
 
     useEffect(() => {
-        const purchaseUpdateSubscription: EmitterSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
-        const purchaseErrorSubscription: EmitterSubscription = InAppPurchases.purchaseErrorListener(handleError);
-        initializeIAPConnection();
+        InAppPurchases.clearProductsIOS().finally(initializeIAPConnection);
+        let purchaseUpdateSubscription: EmitterSubscription
+        let purchaseErrorSubscription: EmitterSubscription
+        setTimeout(async () => {
+            await InAppPurchases.clearTransactionIOS();
+            purchaseUpdateSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
+            purchaseErrorSubscription = InAppPurchases.purchaseErrorListener(handleError);
+        }, 1000);
+        // initializeIAPConnection();
         // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
-
-
-
-
-
         return () => {
             closeConnection();
-            purchaseUpdateSubscription?.remove();
-            purchaseErrorSubscription?.remove();
+            purchaseUpdateSubscription?.remove && purchaseUpdateSubscription?.remove();
+            purchaseErrorSubscription?.remove && purchaseErrorSubscription?.remove();
         }
     }, []);
     const getData = async (purchase: InAppPurchases.SubscriptionPurchase) => {
@@ -115,8 +117,9 @@ const Subscription: FC = (props: any) => {
     }
 
     const handlePurchase = useCallback(async (purchase: InAppPurchases.SubscriptionPurchase | null) => {
-        if (!purchase) return
+        if (!purchase || loadingRef.current) return
         try {
+            loadingRef.current = true
             dispatch(setLoadingAction(true))
             const payload = {
                 transaction_receipt: purchase.transactionReceipt,
@@ -140,14 +143,17 @@ const Subscription: FC = (props: any) => {
                     }
                 }
                 dispatch(setLoadingAction(false))
+                loadingRef.current = false
             }).catch(e => {
                 console.log(e)
                 dispatch(setLoadingAction(false))
+                loadingRef.current = false
             })
 
         } catch (ackErr) {
             console.log('ackErr IN-APP >>>>', ackErr);
             dispatch(setLoadingAction(false))
+            loadingRef.current = false
         }
     }, [])
 
