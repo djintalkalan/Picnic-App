@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native'
 import { config, _setLanguage } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -11,7 +12,7 @@ import DeviceInfo from 'react-native-device-info'
 import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
-import { useDatabase } from 'src/database/Database'
+import Database, { useDatabase } from 'src/database/Database'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
@@ -35,12 +36,19 @@ const Settings: FC<any> = (props) => {
     const selectedLanguage = useLanguage()
 
     const [userData] = useDatabase("userData")
-    console.log('userData', userData);
+    // console.log('userData', userData);
 
 
     const dispatch = useDispatch()
 
     const passwordRef = useRef("")
+
+
+    useFocusEffect(useCallback(() => {
+        setTimeout(() => {
+            false && Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+        }, 2000)
+    }, []))
 
 
     useEffect(() => {

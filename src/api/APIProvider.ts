@@ -33,7 +33,7 @@ function interceptResponse(this: AxiosResponse<any>): any {
             console.log("url string ", this.config?.url);
             console.log("header ", this.config?.headers);
             console.log("body ", this.config?.data);
-            console.log("methodType ", this.config?.data)
+            console.log("methodType ", this.config?.method)
         }
         if (JSON.stringify(this.data).startsWith("<") || JSON.stringify(this.data).startsWith("\"<")) {
             DeviceEventEmitter.emit("STOP_LOADER_EVENT");
@@ -48,6 +48,7 @@ function interceptResponse(this: AxiosResponse<any>): any {
             }
         }
         else {
+            console.log(JSON.stringify(this?.data));
             return this?.data
         }
     } finally {
@@ -72,6 +73,7 @@ api.interceptors.request.use(async function (requestConfig) {
             console.log("header ", requestConfig?.headers);
             console.log("body ", requestConfig?.data);
             console.log("methodType ", requestConfig?.method)
+
         }
 
     } finally {
@@ -379,7 +381,7 @@ export const _leaveEvent = async (body: any) => {
 
 export const _authorizeMembership = async (body: any) => {
     console.log("---------- _authorizeMembership Api Call ---------------")
-    return fetchApiData('membership/authrise', "POST", body)
+    return fetchApiData('membership/authorise', "POST", body)
 }
 
 export const _captureMembership = async (body: any) => {
