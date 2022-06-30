@@ -31,7 +31,7 @@ const VerifyOtp: FC<any> = (props) => {
                     style={{ width: '100%', marginVertical: scaler(20), height: scaler(50), alignSelf: 'center' }}
                     codeInputFieldStyle={styles.underlineStyleBase}
                     codeInputHighlightStyle={styles.underlineStyleHighLighted}
-                    secureTextEntry={true}
+                    // secureTextEntry={true}
                     onCodeChanged={(code) => {
                         setOtp(code.trim().toString())
                     }}
@@ -58,7 +58,7 @@ const VerifyOtp: FC<any> = (props) => {
 
             <View style={{ marginVertical: scaler(20), marginHorizontal: '10%' }} >
                 <Text style={styles.check} >{Language.check_your_mail}</Text>
-                <Text style={styles.weHave} >{isSignUp ? Language.we_have_sent_you_email_verification : Language.we_have_sent_you}</Text>
+                <Text style={styles.weHave} >{isSignUp || is2FA ? Language.we_have_sent_you_email_verification : Language.we_have_sent_you}</Text>
             </View>
 
             <Text style={styles.didYouNot} >{Language.did_you_not_receive}
