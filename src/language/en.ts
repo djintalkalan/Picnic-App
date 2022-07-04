@@ -367,6 +367,7 @@ export const en = {
   copy_event: "Copy event",
   ticket_purchased: "Ticket purchased",
   standard: "Standard",
-  plan_name: "Plan name"
+  plan_name: "Plan name",
+  we_recommend_you_to_update: "You can update application to try new features",
 
 }

@@ -368,4 +368,5 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    we_recommend_you_to_update: "",
 }

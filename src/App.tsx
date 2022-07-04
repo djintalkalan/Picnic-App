@@ -37,15 +37,32 @@ const App: FC = () => {
         }
         _getAppVersion().then((res: any) => {
             if (res && res.status == 200) {
-                const serverVersion = res?.data?.[Platform.OS]
+                let serverVersion = res?.data?.[Platform.OS]
                 const currentVersion = (Platform.OS == 'ios' ? config.APP_STORE_VERSION : config.APP_VERSION)
-                const isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
+                let isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
+                let forceUpdate = true
+                if (isUpdateAvailable && res?.data?.versions) {
+                    res?.data?.versions?.[Platform.OS].some(({ version, force_update, text }: any) => {
+                        if (version == currentVersion) {
+                            forceUpdate = force_update == 1 ? true : false
+                            return true
+                        }
+                    })
+                }
                 // console.log("currentVersion", currentVersion);
                 console.log("isUpdateAvailable", isUpdateAvailable);
                 if (isUpdateAvailable == 1) {
                     setTimeout(() => {
                         setGif(false)
-                        Alert.alert(Language.update_available, Language.must_update_app, [
+                        const buttons = []
+                        if (!forceUpdate) {
+                            buttons.push({
+                                text: Language.close, onPress: () => {
+
+                                }
+                            })
+                        }
+                        buttons.push(
                             {
                                 text: Language.update, onPress: () => {
                                     if (Platform.OS == 'android')
@@ -57,10 +74,9 @@ const App: FC = () => {
                                     }, 200)
                                 }
                             }
-                        ], {
-                            cancelable: false
-                        }
                         )
+
+                        Alert.alert(Language.update_available, forceUpdate ? Language.must_update_app : Language.we_recommend_you_to_update, buttons, { cancelable: !forceUpdate })
                     }, __DEV__ ? 0 : 3000);
                     return
                 }
