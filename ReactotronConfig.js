@@ -7,9 +7,24 @@ if (__DEV__ && config.REACTOTRON_STATUS) {
         .configure() // controls connection & communication settings
         .useReactNative() // add all built-in react native plugins
         .connect() // let's connect!
-    console.log = Reactotron.log
-    console.warn = Reactotron.warn
-    console.error = Reactotron.error
+
+    const originalLog = console.log
+    console.log = (message, ...optionalParams) => {
+        originalLog(message, ...optionalParams);
+        Reactotron.log(message, ...optionalParams)
+    }
+
+    const originalWarn = console.warn
+    console.warn = (message, ...optionalParams) => {
+        originalWarn(message, ...optionalParams);
+        Reactotron.warn(message, ...optionalParams)
+    }
+
+    const originalError = console.error
+    console.error = (message, ...optionalParams) => {
+        originalError(message, ...optionalParams);
+        Reactotron.error(message, ...optionalParams)
+    }
     console.log('Reactotron Configured');
 } else {
     console.log('Running without Reactotron');
