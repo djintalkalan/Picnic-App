@@ -1,38 +1,40 @@
-import { _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
+import { config, _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
-import { add } from 'date-fns';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
-import { requestPurchase } from 'react-native-iap';
+import { requestSubscription } from 'react-native-iap';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage, _showSuccessMessage } from 'utils';
 
-const productIds = Platform.OS == 'ios' ? [
-    'y_subscription',
-    'm_subscription'
-] : [
-    "y_payment",
-    "m_payment"
-];
-
-// const subscriptionIds = [
-//     'ct_member',
+// const productIds = Platform.OS == 'ios' ? [
+//     'y_subscription',
+//     'm_subscription'
+// ] : [
+//     "y_payment",
+//     "m_payment"
 // ];
+
+const subscriptionIds = [
+    'yearly_subscription',
+    'monthly_subscription'
+];
 
 
 const Subscription: FC = (props: any) => {
 
     const dispatch = useDispatch();
+    const loadingRef = useRef(false)
+    const [restorable, setRestorable] = useState(true)
 
-    // const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
-    const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
+    const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
+    // const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
 
     const initializeIAPConnection = useCallback(async () => {
         await InAppPurchases.initConnection()
@@ -57,75 +59,103 @@ const Subscription: FC = (props: any) => {
 
     const getItems = useCallback(async () => {
         try {
-            // const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
-            // console.log('ALL SUBSCRIPTIONS ', subscriptions);
-            // if (subscriptions?.length) {
-            //     setSubscriptions(subscriptions)
-            // }
-            const products = await InAppPurchases.getProducts(productIds);
-            console.log('ALL PRODUCTS ', products);
-            if (products?.length) {
-                setProducts(products)
+            const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
+            console.log('ALL SUBSCRIPTIONS ', subscriptions);
+            if (subscriptions?.length) {
+                setSubscriptions(subscriptions)
             } else {
-                setProducts([])
+                setSubscriptions([])
             }
         } catch (err) {
             console.log("IAP error", err);
         }
-
     }, [])
 
 
     useEffect(() => {
-        const purchaseUpdateSubscription: EmitterSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
-        const purchaseErrorSubscription: EmitterSubscription = InAppPurchases.purchaseErrorListener(handleError);
+        // InAppPurchases?.clearProductsIOS && InAppPurchases?.clearProductsIOS()?.finally(initializeIAPConnection);
+        let purchaseUpdateSubscription: EmitterSubscription
+        let purchaseErrorSubscription: EmitterSubscription
+        setTimeout(async () => {
+            await InAppPurchases.clearTransactionIOS();
+            purchaseUpdateSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
+            purchaseErrorSubscription = InAppPurchases.purchaseErrorListener(handleError);
+        }, 1000);
         initializeIAPConnection();
+        Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
         return () => {
             closeConnection();
-            purchaseUpdateSubscription?.remove();
-            purchaseErrorSubscription?.remove();
+            purchaseUpdateSubscription?.remove && purchaseUpdateSubscription?.remove();
+            purchaseErrorSubscription?.remove && purchaseErrorSubscription?.remove();
         }
     }, []);
-
-    const handlePurchase = useCallback(async (purchase: InAppPurchases.ProductPurchase) => {
-        console.log("purchase", purchase);
+    const getData = async (purchase: InAppPurchases.SubscriptionPurchase) => {
         const receipt = purchase?.transactionReceipt;
+        let expiryDateMs = null
+        let receiptData
+        let originalTransactionId
         if (receipt) {
-            try {
-                const consumeItem = Platform.OS === "ios";
-                dispatch(setLoadingAction(true))
-                _authorizeMembership({
-                    transaction_id: purchase?.transactionId,
-                    transaction_receipt: purchase?.transactionReceipt,
-                    type: purchase?.productId == productIds[1] ? "monthly" : "yearly",
-                    expire_at: dateFormat(add(new Date(), purchase?.productId == productIds[1] ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
-                    payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
-                    // transaction_date:purchase?.transactionDate,
-                    device: Platform.OS
-                }).then(async (res) => {
-                    if (res?.status == 200 && res?.data) {
-                        await InAppPurchases.finishTransaction(purchase, consumeItem);
-                        _captureMembership({
-                            _id: res?.data?._id
-                        }).then((res) => {
-                            if (res?.status == 200) {
-                                continueToMemberShip(res?.message)
-                            }
-                        })
-                        dispatch(setLoadingAction(false))
-                    }
-                }).catch(e => {
-                    console.log(e)
-                    dispatch(setLoadingAction(false))
-                })
-
-            } catch (ackErr) {
-                console.log('ackErr IN-APP >>>>', ackErr);
-                dispatch(setLoadingAction(false))
+            receiptData = await InAppPurchases.validateReceiptIos({
+                'receipt-data': receipt,
+                password: 'ff5e2205868f4032beb5ea586d73892e',
+                'exclude-old-transactions': true
+            }, __DEV__ || config.APP_TYPE != 'production')
+            if (receiptData) {
+                purchase.transactionReceipt = ""
+                receiptData.latest_receipt = ""
+                console.log("Purchase", purchase);
+                console.log("Receipt Data", receiptData);
+                const currentReceiptData: any = receiptData?.latest_receipt_info?.find((_: any) => _.transaction_id == purchase.transactionId || (parseInt(_?.purchase_date_ms?.toString() || "0") == parseInt(purchase.transactionDate?.toString())))
+                console.log("currentReceiptDataPurchase", currentReceiptData);
+                if (currentReceiptData?.expires_date_ms)
+                    currentReceiptData.expires_date_ms = parseInt(currentReceiptData?.expires_date_ms)
+                expiryDateMs = currentReceiptData?.expires_date_ms
+                originalTransactionId = currentReceiptData?.original_transaction_id
             }
         }
-    }, []
-    )
+        return { expiryDateMs, receipt, receiptData, originalTransactionId }
+    }
+
+    const handlePurchase = useCallback(async (purchase: InAppPurchases.SubscriptionPurchase | null) => {
+        if (!purchase || loadingRef.current) return
+        try {
+            loadingRef.current = true
+            dispatch(setLoadingAction(true))
+            const payload = {
+                transaction_receipt: purchase.transactionReceipt,
+                device: Platform.OS
+            }
+            console.log("payload", payload);
+
+            _authorizeMembership(payload).then(async (res) => {
+                if (res?.status == 200 && res?.data) {
+                    await InAppPurchases.finishTransaction(purchase) // ,consumeItem);
+                    _captureMembership({
+                        _id: res?.data?._id
+                    }).then((res) => {
+                        if (res?.status == 200) {
+                            continueToMemberShip(res?.message)
+                        }
+                    })
+                } else {
+                    if (res?.status == 400) {
+                        _showErrorMessage(res?.message)
+                    }
+                }
+                dispatch(setLoadingAction(false))
+                loadingRef.current = false
+            }).catch(e => {
+                console.log(e)
+                dispatch(setLoadingAction(false))
+                loadingRef.current = false
+            })
+
+        } catch (ackErr) {
+            console.log('ackErr IN-APP >>>>', ackErr);
+            dispatch(setLoadingAction(false))
+            loadingRef.current = false
+        }
+    }, [])
 
     const handleError = useCallback((error: InAppPurchases.PurchaseError) => {
         switch (error?.code) {
@@ -163,9 +193,16 @@ const Subscription: FC = (props: any) => {
         dispatch(setLoadingAction(true))
         _getActiveMembership().then(res => {
             dispatch(setLoadingAction(false))
+            console.log("Res", res);
+
             if (res?.status == 200) {
-                const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-                const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+                let thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+
+                let expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+                if (res?.data?.expire_at_unix) {
+                    expireAt = new Date(parseInt(res?.data?.expire_at_unix))
+                    thisDate = new Date()
+                }
                 // if (expireAt >= new Date()) {
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                     _showErrorMessage(Language.you_are_not_a_member)
@@ -177,28 +214,58 @@ const Subscription: FC = (props: any) => {
         })
     }, [])
 
-    const callPurchase = useCallback((i) => {
+    const callPurchase = useCallback(async (i) => {
         dispatch(setLoadingAction(true))
+        // let restorable = false
+        // await InAppPurchases.getAvailablePurchases().then(async (products) => {
+        //     console.log("getAvailablePurchases", products?.length);
+        // const lastProduct = products?.length > 1 ? products.reduce((p, c) => {
+        //     if (p.transactionDate > c.transactionDate) {
+        //         return p
+        //     } else return c
+        // }) : products?.length == 1 ? products[0] : null
+        // if (!lastProduct) return
+        // const { expiryDateMs } = await getData(lastProduct)
+        // if (expiryDateMs) {
+        //     if (new Date(expiryDateMs) >= new Date()) {
+        //         restorable = true
+        //     }
+        // }
+        // })
         _getActiveMembership().then(res => {
             dispatch(setLoadingAction(false))
             if (res?.status == 200) {
-                const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-                const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+
+                let thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+                let expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+
+                if (res?.data?.expire_at_unix) {
+                    expireAt = new Date(parseInt(res?.data?.expire_at_unix))
+                    thisDate = new Date()
+                }
                 // if (expireAt >= new Date()) {
                 console.log("Calculating purchase");
-
-                if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
+                // res.data = null
+                if ((expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium))) {
                     console.log("Requesting purchase");
+                    if (true) {
+                        requestSubscription(subscriptionIds[i], false)
+                        // .then(handlePurchase, handleError).catch((r) => {
+                        //     console.log("catch", r);
+                        //     dispatch(setLoadingAction(false))
+                        // }).finally(() => {
+                        //     console.log("Complete");
+                        //     dispatch(setLoadingAction(false))
 
-                    requestPurchase(productIds[i], false)
+                        // })
+                    }
                 } else continueToMemberShip(Language.you_are_already_a_member)
-
             }
         }).catch(e => {
             console.log(e);
             dispatch(setLoadingAction(false))
         })
-    }, [])
+    }, [handlePurchase])
 
 
     const continueToMemberShip = useCallback((message?: string) => {
@@ -239,14 +306,17 @@ const Subscription: FC = (props: any) => {
                         <Text style={styles.listText}> {Language.and_other_exclusive_offers}</Text>
                     </View>
                 </View>
-
-                {/* {subscriptions?.map((subscription, index) => {
-                return <View key={index} style={{ flex: 1 }} >
-                    <Text>{subscription?.productId}</Text>
-                    <Button title='Subscribe now' onPress={() => requestSubscription(subscription?.productId, true)} />
-                </View>
-            })} */}
-                {products?.length ? <>
+                {subscriptions?.length ? <>
+                    <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
+                        <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
+                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
+                    </View>
+                </> :
+                    subscriptions && <View style={{ flex: 1 }} >
+                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
+                    </View>
+                }
+                {/* {products?.length ? <>
                     <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
                         <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
                         <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
@@ -255,7 +325,7 @@ const Subscription: FC = (props: any) => {
                     products && <View style={{ flex: 1 }} >
                         <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
                     </View>
-                }
+                } */}
                 <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
                     restorePurchase()
                 }} />

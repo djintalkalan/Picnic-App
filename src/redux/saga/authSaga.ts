@@ -1,6 +1,6 @@
 import AnalyticService from 'analytics';
 import * as ApiProvider from 'api/APIProvider';
-import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import { colors } from 'assets/Colors';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
@@ -10,6 +10,7 @@ import Language from 'src/language/Language';
 import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
 import { store } from '..';
 import ActionTypes, { action } from "../action-types";
+
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     console.log("installerPackageName", installerPackageName);
@@ -29,19 +30,28 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(isSignUp ? ApiProvider._restoreAccount : ApiProvider._loginApi, { ...rest, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
-            yield put(resetStateOnLogin())
-            ApiProvider.TOKEN_EXPIRED.current = false
-            // _showSuccessMessage(res.message);
-            const { access_token, notification_settings, ...userData } = res?.data
-            // if (!__DEV__) {
-            yield call(AnalyticService.setUserData, userData, 1)
-            // }
+            if (res?.data?.is_two_factor_enabled == '1') {
+                NavigationService.navigate('VerifyOtp', { is2FA: true, ...rest });
+            }
+            else {
+                yield put(resetStateOnLogin())
+                ApiProvider.TOKEN_EXPIRED.current = false
+                // _showSuccessMessage(res.message);
+                const { access_token, notification_settings, ...userData } = res?.data
+                // if (!__DEV__) {
+                yield call(AnalyticService.setUserData, userData, 1)
+                // }
 
-            Database.setMultipleValues({
-                authToken: access_token,
-                userData: { ...userData, is_premium: false },
-                isLogin: true
-            })
+                Database.setMultipleValues({
+                    authToken: access_token,
+                    userData: { ...userData, is_premium: false },
+                    isLogin: true
+                })
+                const isRestored = Database.getOtherBool(userData?._id)
+                if (isRestored && false) {
+                    yield put(restorePurchaseAction({ noAlert: true }))
+                }
+            }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -106,8 +116,9 @@ const showRestoreAlert = (payload: any) => {
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        const { isSignUp = false, ...rest } = payload
-        let res = yield call(isSignUp ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
+        const { isSignUp = false, is2FA = false, ...rest } = payload
+        if (is2FA) rest.device_token = Database.getStoredValue('firebaseToken')
+        let res = yield call(isSignUp || is2FA ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
             if (isSignUp) {
                 if (res?.data?.resignUp) {
@@ -116,6 +127,22 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
                 }
                 NavigationService.replace("SignUp1", rest)
                 yield put(setLoadingAction(false));
+                return
+            }
+            if (is2FA) {
+                yield put(resetStateOnLogin())
+                ApiProvider.TOKEN_EXPIRED.current = false
+                // _showSuccessMessage(res.message);
+                const { access_token, notification_settings, ...userData } = res?.data
+                // if (!__DEV__) {
+                yield call(AnalyticService.setUserData, userData, 1)
+                // }
+
+                Database.setMultipleValues({
+                    authToken: access_token,
+                    userData: { ...userData, is_premium: false },
+                    isLogin: true
+                })
                 return
             }
             NavigationService.replace("CreateNewPassword", rest)
@@ -284,25 +311,35 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getActiveMembership);
         if (res?.status == 200) {
-            const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-            const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            let thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+            let expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            if (res?.data?.expire_at_unix) {
+                expireAt = new Date(parseInt(res?.data?.expire_at_unix))
+                thisDate = new Date()
+            }
             // if (expireAt >= new Date()) {
             if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                 // _showErrorMessage(Language.you_are_not_a_member)
             } else {
                 const oldUserData = Database.getStoredValue("userData")
 
-                if (!oldUserData?.is_premium)
-                    _showPopUpAlert({
-                        title: Language.restore_purchase,
-                        message: Language.do_you_want_to_restore_your_purchases,
-                        buttonText: Language.restore,
-                        onPressButton: () => {
-                            _hidePopUpAlert()
-                            _showSuccessMessage(Language.purchase_successfully_restored)
-                            Database.setUserData({ ...oldUserData, is_premium: true })
-                        }
-                    })
+                if (!oldUserData?.is_premium) {
+                    if (payload?.noAlert) {
+                        Database.setUserData({ ...oldUserData, is_premium: true })
+                    } else {
+                        _showPopUpAlert({
+                            title: Language.restore_purchase,
+                            message: Language.do_you_want_to_restore_your_purchases,
+                            buttonText: Language.restore,
+                            onPressButton: () => {
+                                _hidePopUpAlert()
+                                _showSuccessMessage(Language.purchase_successfully_restored)
+                                Database.setUserData({ ...oldUserData, is_premium: true })
+                                Database.setOtherBool(oldUserData?._id, true)
+                            }
+                        })
+                    }
+                }
             }
 
         } else if (res.status == 400) {
