@@ -1,6 +1,6 @@
 import AnalyticService from 'analytics';
 import * as ApiProvider from 'api/APIProvider';
-import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
+import { doLogin as doLoginAction, resetStateOnLogin, resetStateOnLogout, restorePurchase as restorePurchaseAction, setLoadingAction, setLoadingMsg, tokenExpired as tokenExpiredAction } from "app-store/actions";
 import { colors } from 'assets/Colors';
 import DeviceInfo from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
@@ -47,6 +47,10 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                     userData: { ...userData, is_premium: false },
                     isLogin: true
                 })
+                const isRestored = Database.getOtherBool(userData?._id)
+                if (isRestored && false) {
+                    yield put(restorePurchaseAction({ noAlert: true }))
+                }
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -307,25 +311,35 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getActiveMembership);
         if (res?.status == 200) {
-            const thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
-            const expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            let thisDate = stringToDate(dateFormat(new Date(), "YYYY-MM-DD"));
+            let expireAt = res?.data?.expire_at ? stringToDate(res?.data?.expire_at, "YYYY-MM-DD") : thisDate;
+            if (res?.data?.expire_at_unix) {
+                expireAt = new Date(parseInt(res?.data?.expire_at_unix))
+                thisDate = new Date()
+            }
             // if (expireAt >= new Date()) {
             if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                 // _showErrorMessage(Language.you_are_not_a_member)
             } else {
                 const oldUserData = Database.getStoredValue("userData")
 
-                if (!oldUserData?.is_premium)
-                    _showPopUpAlert({
-                        title: Language.restore_purchase,
-                        message: Language.do_you_want_to_restore_your_purchases,
-                        buttonText: Language.restore,
-                        onPressButton: () => {
-                            _hidePopUpAlert()
-                            _showSuccessMessage(Language.purchase_successfully_restored)
-                            Database.setUserData({ ...oldUserData, is_premium: true })
-                        }
-                    })
+                if (!oldUserData?.is_premium) {
+                    if (payload?.noAlert) {
+                        Database.setUserData({ ...oldUserData, is_premium: true })
+                    } else {
+                        _showPopUpAlert({
+                            title: Language.restore_purchase,
+                            message: Language.do_you_want_to_restore_your_purchases,
+                            buttonText: Language.restore,
+                            onPressButton: () => {
+                                _hidePopUpAlert()
+                                _showSuccessMessage(Language.purchase_successfully_restored)
+                                Database.setUserData({ ...oldUserData, is_premium: true })
+                                Database.setOtherBool(oldUserData?._id, true)
+                            }
+                        })
+                    }
+                }
             }
 
         } else if (res.status == 400) {

@@ -1,48 +1,96 @@
 {
-  "identifier" : "0E06A4E1",
-  "nonRenewingSubscriptions" : [
-
-  ],
-  "products" : [
+  "identifier": "0E06A4E1",
+  "nonRenewingSubscriptions": [],
+  "products": [
     {
-      "displayPrice" : "1.99",
-      "familyShareable" : false,
-      "internalID" : "310D5EC8",
-      "localizations" : [
+      "displayPrice": "1.99",
+      "familyShareable": false,
+      "internalID": "310D5EC8",
+      "localizations": [
         {
-          "description" : "",
-          "displayName" : "",
-          "locale" : "en_US"
+          "description": "",
+          "displayName": "",
+          "locale": "en_US"
         }
       ],
-      "productID" : "m_subscription",
-      "referenceName" : "Picnic Groups Monthly Membership",
-      "type" : "Consumable"
+      "productID": "m_subscription",
+      "referenceName": "Picnic Groups Monthly Membership",
+      "type": "Consumable"
     },
     {
-      "displayPrice" : "17.99",
-      "familyShareable" : false,
-      "internalID" : "0CEAEAD3",
-      "localizations" : [
+      "displayPrice": "17.99",
+      "familyShareable": false,
+      "internalID": "0CEAEAD3",
+      "localizations": [
         {
-          "description" : "",
-          "displayName" : "",
-          "locale" : "en_US"
+          "description": "",
+          "displayName": "",
+          "locale": "en_US"
         }
       ],
-      "productID" : "y_subscription",
-      "referenceName" : "Picnic Groups Yearly Membership",
-      "type" : "Consumable"
+      "productID": "y_subscription",
+      "referenceName": "Picnic Groups Yearly Membership",
+      "type": "Consumable"
     }
   ],
-  "settings" : {
-
-  },
-  "subscriptionGroups" : [
-
+  "settings": {},
+  "subscriptionGroups": [
+    {
+      "id": "E4387898",
+      "localizations": [
+        {
+          "description": "Create paid events for your communities.",
+          "displayName": "Picnic Groups Membership",
+          "locale": "en_US"
+        }
+      ],
+      "name": "Picnic Members",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "displayPrice": "1.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "F5032E6E",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Create paid events for your communities.",
+              "displayName": "Picnic Groups Membership",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "monthly_subscription",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Picnic Groups Monthly Subscription",
+          "subscriptionGroupID": "E4387898",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "displayPrice": "17.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "0E119132",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Create paid events for your communities.",
+              "displayName": "Picnic Groups Membership",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "yearly_subscription",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Picnic Groups Yearly Subscription",
+          "subscriptionGroupID": "E4387898",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
   ],
-  "version" : {
-    "major" : 1,
-    "minor" : 1
+  "version": {
+    "major": 1,
+    "minor": 1
   }
 }
