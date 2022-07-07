@@ -4,6 +4,7 @@ import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
+import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import * as InAppPurchases from 'react-native-iap';
@@ -121,9 +122,18 @@ const Subscription: FC = (props: any) => {
         try {
             loadingRef.current = true
             dispatch(setLoadingAction(true))
-            const payload = {
+            let payload: any = {
                 transaction_receipt: purchase.transactionReceipt,
                 device: Platform.OS
+            }
+            if (Platform.OS == 'android') {
+                payload = {
+                    ...payload,
+                    transaction_id: purchase?.transactionId,
+                    type: purchase?.productId == subscriptionIds[1] ? "monthly" : "yearly",
+                    expire_at: dateFormat(add(new Date(), purchase?.productId == subscriptionIds[1] ? { months: 1 } : { years: 1 }), "YYYY-MM-DD"),
+                    payment_date: dateFormat(new Date(), "YYYY-MM-DD"),
+                }
             }
             console.log("payload", payload);
 

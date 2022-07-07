@@ -1,7 +1,7 @@
 import { config } from 'api/config';
 import axios, { AxiosResponse, Method } from 'axios';
 import React, { MutableRefObject } from 'react';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
@@ -381,7 +381,7 @@ export const _leaveEvent = async (body: any) => {
 
 export const _authorizeMembership = async (body: any) => {
     console.log("---------- _authorizeMembership Api Call ---------------")
-    return fetchApiData('membership/authorise', "POST", body)
+    return fetchApiData(Platform.OS == 'ios' ? 'membership/authorise' : 'membership/authrise', "POST", body)
 }
 
 export const _captureMembership = async (body: any) => {
