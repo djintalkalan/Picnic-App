@@ -58,6 +58,7 @@
     "@react-native-community/netinfo": "^7.1.7",
     "@react-native-firebase/analytics": "^14.11.1",
     "@react-native-firebase/app": "^14.11.1",
+    "@react-native-firebase/crashlytics": "^14.11.1",
     "@react-native-firebase/dynamic-links": "^14.11.1",
     "@react-native-firebase/messaging": "^14.11.1",
     "@react-native-picker/picker": "^2.4.0",
