@@ -7,14 +7,14 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ColorValue, Dimensions, FlatList, ImageBackground, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
-import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
+import { DEFAULT_CHAT_BACKGROUND, UPDATE_COLOR_EVENT } from 'utils/Constants'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
 
@@ -184,7 +184,11 @@ export const GroupChats: FC<any> = (props) => {
         setTimeout(() => {
             loadMore = true
         }, 200);
-        return () => { loadMore = false }
+        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, setActiveBackgroundColor)
+        return () => {
+            loadMore = false
+            subscription.remove()
+        }
     }, [])
 
     const _renderChatItem = useCallback(({ item, index }) => {

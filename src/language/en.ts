@@ -381,5 +381,5 @@ export const en = {
   donation_price: "Donation price",
   donation_price_required: "Donation price required",
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
-
+  default_background: "Default background",
 }

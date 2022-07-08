@@ -2,14 +2,17 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootState } from 'app-store'
 import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
+import ColorPicker from 'custom-components/ColorPicker'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ColorValue, DeviceEventEmitter, Dimensions, GestureResponderEvent, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import UpcomingPastEvents from 'screens/Group/UpcomingPastEvents'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, _showTouchAlert } from 'utils'
+import { DEFAULT_CHAT_BACKGROUND, UPDATE_COLOR_EVENT } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
 import { GroupChats } from './GroupChats'
 
@@ -17,8 +20,8 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 const { height, width } = Dimensions.get('screen')
 
 const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (props) => {
-    const currentIndexRef = useRef(0);
 
+    const currentIndexRef = useRef(0);
     const { groupDetail, activeGroup } = useSelector((state: RootState) => {
         return {
             groupDetail: state?.groupDetails?.[props?.route?.params?.id]?.group,
@@ -27,10 +30,18 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
     }, shallowEqual)
 
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
+
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.chat_background || DEFAULT_CHAT_BACKGROUND)
+
     useEffect(() => {
         // if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
+
         dispatch(getGroupDetail(activeGroup?._id))
         // }
+        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, setActiveBackgroundColor)
+        return () => {
+            subscription.remove()
+        }
     }, [])
 
 
@@ -67,13 +78,32 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
     ], [useLanguage()])
 
 
+    console.log('groupDetail', groupDetail);
+
+    const colorPickerButtonRef = useRef<TouchableOpacity>(null)
+
+
+    const openColorPicker = useCallback((e?: GestureResponderEvent) => {
+        colorPickerButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    // top,
+                    // right: width - left,
+                    top: y + h + scaler(5) + (StatusBar.currentHeight || 0),
+                    right: width - (w + x)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
+                        <ColorPicker selectedColor={activeBackgroundColor} />
+                    )
+                }
+            })
+        })
+    }, [activeBackgroundColor])
+
+
     const dispatch = useDispatch()
-    const shareGroup = useCallback(() => {
-        shareDynamicLink(groupDetail?.name, {
-            type: "group-detail",
-            id: groupDetail?._id
-        });
-    }, [groupDetail])
     if (!groupDetail) {
         return <View style={styles.container}>
             <ChatHeader
@@ -92,8 +122,6 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
         </View>
     }
-
-    console.log('groupDetail', groupDetail);
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
@@ -126,9 +154,9 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                             <Text style={styles.joinText} >{groupDetail?.status == 1 ? Language.join : ''}</Text>
                         }
                     </TouchableOpacity>
-                    {/* <TouchableOpacity onPress={shareGroup} style={{ paddingHorizontal: scaler(5) }}  >
-                        <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
-                    </TouchableOpacity> */}
+                    <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
+                        <Ionicons name={'color-palette-outline'} size={scaler(23)} />
+                    </TouchableOpacity>
                 </View>
                 }
             />

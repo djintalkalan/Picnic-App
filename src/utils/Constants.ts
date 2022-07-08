@@ -29,3 +29,5 @@ export const CHAT_BACKGROUND_COLORS = [
 ]
 
 export const DEFAULT_CHAT_BACKGROUND = '#DFDFDF'
+
+export const UPDATE_COLOR_EVENT = 'UPDATE_COLOR_EVENT'

@@ -381,4 +381,5 @@ export const es = {
     donation_price: "",
     donation_price_required: "",
     maximum_file_size_allowed: "",
+    default_background: "",
 }
