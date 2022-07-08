@@ -1,6 +1,6 @@
 import { isEqual } from "lodash";
 // import * as RNLocalize from "react-native-localize";
-import MMKVStorage, { useMMKVStorage } from "react-native-mmkv-storage";
+import { MMKVInstance, MMKVLoader, useMMKVStorage } from "react-native-mmkv-storage";
 import { ILanguages, LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
 
@@ -100,13 +100,13 @@ class Database {
     }
 
 
-    static phoneStorage = new MMKVStorage.Loader().withEncryption().initialize();
+    static phoneStorage = new MMKVLoader().withEncryption().initialize();
 
-    private socketStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("socketStorage").initialize();
-    private userDataStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("userDataStorage").initialize();
-    private otherDataStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("otherDataStorage").initialize();
-    private languageStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("languageStorage").initialize();
-    private locationStorage = new MMKVStorage.Loader().withEncryption().withInstanceID("locationStorage").initialize();
+    private socketStorage = new MMKVLoader().withEncryption().withInstanceID("socketStorage").initialize();
+    private userDataStorage = new MMKVLoader().withEncryption().withInstanceID("userDataStorage").initialize();
+    private otherDataStorage = new MMKVLoader().withEncryption().withInstanceID("otherDataStorage").initialize();
+    private languageStorage = new MMKVLoader().withEncryption().withInstanceID("languageStorage").initialize();
+    private locationStorage = new MMKVLoader().withEncryption().withInstanceID("locationStorage").initialize();
 
     DefaultCountry = 'US' // RNLocalize.getCountry() ?? 'US'
 
@@ -152,7 +152,7 @@ class Database {
         this.otherDataStorage.setArray('recentSearches', [data, ...oldData])
     }
 
-    getStorageForKey = (key?: StorageType): MMKVStorage.API => {
+    getStorageForKey = (key?: StorageType): MMKVInstance => {
         switch (key) {
             case 'allLanguages':
             case 'selectedLanguage':

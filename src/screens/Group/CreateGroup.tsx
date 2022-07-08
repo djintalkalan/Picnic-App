@@ -6,14 +6,15 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import { capitalize, round } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, Keyboard, Platform, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils'
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
 import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants'
+
 let n = 87.5
 const frequencies: Array<string> = []
 while (n <= 108.1) {
@@ -30,6 +31,7 @@ type FormType = {
 }
 
 const DropDownData = ["Personal", "Professional", "Charitable"]
+const { height, width } = Dimensions.get('screen')
 
 const CreateGroup: FC<any> = (props) => {
   const { group } = props?.route?.params ?? {}
@@ -48,7 +50,6 @@ const CreateGroup: FC<any> = (props) => {
     mode: 'onChange'
   })
   const keyboardValues = useKeyboardService()
-
   const pickerRef = useRef<Picker<string>>(null)
 
   const onSubmit = useCallback(() => handleSubmit(data => {
@@ -168,6 +169,34 @@ const CreateGroup: FC<any> = (props) => {
     </View>
   }, [])
 
+  const showPurposeDropDown = useCallback((e) => {
+    Keyboard.dismiss()
+    setTimeout(() => {
+      purposeRef.current?.measureInWindow((x, y, w, h) => {
+        _showTouchAlert({
+          placementStyle: {
+            top: y + h + scaler(15) + (StatusBar.currentHeight || 0),
+            left: x
+          },
+          transparent: true,
+          alertComponent: () => {
+            return <FixedDropdown
+              visible={true}
+              relative
+              containerStyle={{ width: w }}
+              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+              onSelect={(data) => {
+                setValue("purpose", data?.title, { shouldValidate: true })
+                _hideTouchAlert()
+              }}
+            />
+          }
+        })
+      })
+    }, Platform.OS == 'android' ? 50 : 0);
+
+  }, [])
+  const purposeRef = useRef<RNTextInput>()
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
       <MyHeader title={group ? Language.update_group : Language.create_group} />
@@ -206,11 +235,9 @@ const CreateGroup: FC<any> = (props) => {
             control={control}
             errors={errors}
           />
-
-
-
           <View style={{ flex: 1, width: '100%' }} >
             <TextInput
+              ref={purposeRef}
               onFocus={() => setDropdown(false)}
               containerStyle={{ flex: 1, marginEnd: scaler(4), }}
               placeholder={Language.group_purpose}
@@ -218,25 +245,13 @@ const CreateGroup: FC<any> = (props) => {
               backgroundColor={colors.colorTextInputBackground}
               name={'purpose'}
               icon={Images.ic_arrow_dropdown}
-              onPress={() => {
-                Keyboard.dismiss()
-                setDropdown(!isDropdown)
+              onPress={(e) => {
+                showPurposeDropDown(e)
               }}
               required={Language.group_purpose_required}
               control={control}
               errors={errors}
             />
-            <FixedDropdown
-              visible={isDropdown}
-              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-              onSelect={(data) => {
-                setDropdown(false)
-                setValue("purpose", data?.title, { shouldValidate: true })
-
-              }}
-
-            />
-
             <TextInput
               containerStyle={{ flex: 1, marginEnd: scaler(4), }}
               placeholder={Language.select_location}
@@ -290,6 +305,7 @@ const CreateGroup: FC<any> = (props) => {
               placeholder={Language.radio_freq}
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
+              returnKeyType={'done'}
               keyboardType={'decimal-pad'}
               name={'radio_frequency'}
               rules={{

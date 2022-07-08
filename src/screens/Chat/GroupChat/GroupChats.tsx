@@ -201,7 +201,7 @@ export const GroupChats: FC<any> = (props) => {
 
     return (
         <ImageBackground source={Images.ic_chat_background} imageStyle={{
-            opacity: 0.5,
+            opacity: 0.4,
             tintColor: "#fff",
             height: '100%', width: '100%',
             top: 0, bottom: 0

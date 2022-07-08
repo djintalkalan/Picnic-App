@@ -364,9 +364,9 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
 
 function* _authorizePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { resource_id, no_of_tickets, currency, plan_id } = payload
+    const { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
     try {
-        let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id });
+        let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
         if (res.status == 200) {
             NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
         } else if (res.status == 400) {

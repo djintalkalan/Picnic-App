@@ -1,3 +1,4 @@
+import { config } from 'api'
 import { _copyEvent } from 'api/APIProvider'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
@@ -6,16 +7,23 @@ import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem } from 'custom-components/ListItem/ListItem'
+import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
+//@ts-ignore
+import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+
+
 const { height, width } = Dimensions.get('screen')
 const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#fff']
 
@@ -27,15 +35,17 @@ const DefaultDelta = {
 
 const EventDetail: FC<any> = (props) => {
 
-    const [isEditButtonOpened, setEditButtonOpened] = useState(false)
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
-
+    const { loadVideo } = useVideoPlayer()
+    const [imageArray, setImageArray] = useState<Array<any>>([])
+    const [selectedBullet, setSelectedBullet] = useState<number>(0)
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
+
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
@@ -70,6 +80,12 @@ const EventDetail: FC<any> = (props) => {
 
         }, 200);
     }, [])
+
+    useEffect(() => {
+        if (event?.image || event?.event_images) {
+            setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
+        }
+    }, [event])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
@@ -187,54 +203,35 @@ const EventDetail: FC<any> = (props) => {
         )
     }, [event?.name, onConfirmCopy])
 
-    if (!event) {
-        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
-            <View style={styles.placeholder}>
-                <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
-            </View>
-            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-        </SafeAreaViewWithStatusBar>
-    }
-    return (
-        <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
-            <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
-                <View style={{ width: width, height: width, alignItems: 'center', justifyContent: 'center', backgroundColor: colors?.colorFadedPrimary }}>
-                    <ImageLoader
-                        onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
-                        //@ts-ignore
-                        style={{ width: width, height: width, resizeMode: 'cover' }}
-                        placeholderSource={Images.ic_event_placeholder}
-                        placeholderStyle={{}}
-                        source={{ uri: getImageUrl(event?.image, { width: width, type: 'events' }) }} />
-                </View>
+    const dotMenuButtonRef = useRef<TouchableOpacity>(null)
+    const priceButtonRef = useRef<TouchableOpacity>(null)
 
-                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
-                <View style={styles.subHeading} >
-                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
-                        <Image style={styles.imgBack} source={Images.ic_back_group} />
-                    </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
-                        <TouchableOpacity onPress={() => setEditButtonOpened(!isEditButtonOpened)} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={Images.ic_more_group} />
-                        </TouchableOpacity>
-                        : undefined}
-                </View>
-                {isEditButtonOpened ?
-                    <View style={{ position: 'absolute', right: scaler(20), top: scaler(90) }} >
+    const openEditButton = useCallback((e?: GestureResponderEvent) => {
+        dotMenuButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    // top,
+                    // right: width - left,
+                    top: y + h + scaler(5) + (StatusBar.currentHeight || 0),
+                    right: width - (w + x)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                    setEditButtonOpened(false)
+                                    _hideTouchAlert()
                                     NavigationService.navigate('CreateEvent1', { id: event?._id })
                                     // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
-                                        setEditButtonOpened(false)
+                                        _hideTouchAlert()
                                         onCopyEvent()
                                     }} title={Language.copy} />
                                     <InnerButton onPress={() => {
                                         shareEvent();
-                                        setEditButtonOpened(false)
+                                        _hideTouchAlert()
                                     }} title={Language.share} />
                                     <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                         _showPopUpAlert({
@@ -249,13 +246,14 @@ const EventDetail: FC<any> = (props) => {
                                             buttonStyle: { backgroundColor: colors.colorErrorRed },
                                             buttonText: Language.yes_cancel,
                                         })
-                                        setEditButtonOpened(false)
+                                        // _hidePopUpAlert()
+                                        _hideTouchAlert()
                                     }
                                     } hideBorder /></>
                                 :
                                 <><InnerButton onPress={() => {
                                     shareEvent();
-                                    setEditButtonOpened(false)
+                                    _hideTouchAlert()
                                 }} title={Language.share} />
                                     <InnerButton title={Language.mute} onPress={() => {
                                         _showPopUpAlert({
@@ -270,7 +268,7 @@ const EventDetail: FC<any> = (props) => {
                                             buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        setEditButtonOpened(false)
+                                        _hideTouchAlert()
                                     }} /><InnerButton title={Language.report} onPress={() => {
                                         _showPopUpAlert({
                                             message: Language.are_you_sure_report_event,
@@ -281,20 +279,140 @@ const EventDetail: FC<any> = (props) => {
                                             buttonText: Language.yes_report,
                                             // cancelButtonText: Language.cancel
                                         })
-                                        setEditButtonOpened(false)
+                                        _hideTouchAlert()
                                     }} hideBorder={event?.is_event_member ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showCancellationPolicy()
-                                            setEditButtonOpened(false)
+                                            _hideTouchAlert()
                                         }} hideBorder /> : undefined}
                                 </>
                             }
                         </Card>
-
-                    </View> : null
-
+                    )
                 }
+            })
+        })
+    }, [event])
+
+    const showAllTicketVisible = useCallback((e?: GestureResponderEvent) => {
+        priceButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    top: y + h + scaler(20) + (StatusBar.currentHeight || 0),
+                    right: width - (x + w)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
+                        <View>
+                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
+                                <View style={{ borderRadius: scaler(5) }}>
+                                    {event?.ticket_plans?.map((_: any, i: number) => {
+                                        if (_.status == 1)
+                                            return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                                    })}
+                                </View>
+                            </Card>
+                        </View>
+                    )
+                }
+            })
+        })
+    }, [event])
+
+
+    const calculateButtonDisability = useCallback(() => {
+        if (!event?.payment_api_username &&
+            (!event?.payment_method?.includes('cash') &&
+                !event?.is_free_event)) {
+            return true;
+        }
+        return false;
+    }, [event]);
+
+    if (!event) {
+        return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
+            <View style={styles.placeholder}>
+                <Image style={styles.eventImage} source={Images.ic_event_placeholder} />
+            </View>
+            <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+        </SafeAreaViewWithStatusBar>
+    }
+    return (
+        <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
+            <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
+                <View style={{ width: width, height: width, backgroundColor: colors?.colorFadedPrimary }}>
+                    {imageArray?.length > 0 ?
+                        <Carousel
+                            delay={4000}
+                            style={{ flex: 1 }}
+                            autoplay={true}
+                            bullets={false}
+                            onAnimateNextPage={(i: number) => selectedBullet != i && setSelectedBullet(i)}  >
+                            {imageArray?.map((_: any, i: number) => {
+                                return (
+                                    <TouchableOpacity style={styles.customSlide}
+                                        key={i}
+                                        activeOpacity={0.7}
+                                        onPress={() => {
+                                            _.type == 'image' ?
+                                                _zoomImage(getImageUrl(_?.name, { type: 'events' })) :
+                                                loadVideo && loadVideo(config.VIDEO_URL + _.name)
+                                        }}>
+                                        {i > (event?.image ? 0 : -1) && _.type == 'image' ?
+                                            <SafeAreaView edges={['top', 'bottom']} >
+                                                <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : { resizeMode: 'contain' }]}
+                                                    source={{
+                                                        uri: _.type == 'image' ?
+                                                            getImageUrl(_?.name, { width: width, type: 'events' }) :
+                                                            config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
+                                                    }} />
+                                            </SafeAreaView> :
+                                            <Image style={[styles.customImage, _.type != 'image' ? { resizeMode: 'contain' } : { resizeMode: 'contain' }]}
+                                                source={{
+                                                    uri: _.type == 'image' ?
+                                                        getImageUrl(_?.name, { width: width, type: 'events' }) :
+                                                        config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png"
+                                                }} />}
+                                        {_.type == 'video' ?
+                                            <TouchableOpacity style={styles.playButton} onPress={() => { loadVideo && loadVideo(config.VIDEO_URL + _.name) }} >
+                                                <Ionicons color={colors.colorPrimary} name="play-circle" size={scaler(60)} />
+                                            </TouchableOpacity> : undefined}
+
+                                        {/* <ImageLoader
+                                        // onPress={() => event?.image && _zoomImage(getImageUrl(event?.image, { type: 'events' }))}
+                                        //@ts-ignore
+                                        style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                                        placeholderSource={Images.ic_event_placeholder}
+                                        placeholderStyle={{}}
+                                        source={{ uri: _.type == 'image' ? getImageUrl(_?.name, { width: width, type: 'events' }) : config.VIDEO_URL + (_?.name?.substring(0, _?.name?.lastIndexOf("."))) + "-00001.png" }} /> */}
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </Carousel>
+                        :
+                        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                            <Image source={Images.ic_event_placeholder} style={{}} />
+                        </View>
+
+                    }
+                </View>
+
+                <LinearGradient colors={gradientColors} style={styles.linearGradient} />
+                {imageArray?.length > 0 && <View style={styles.bulletContainer} >
+                    {imageArray?.map((b, i) => (<View key={i} style={selectedBullet == i ? styles.selectedBulletStyle : styles.bulletStyle} />))}
+                </View>}
+                <View style={styles.subHeading} >
+                    <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
+                        <Image style={styles.imgBack} source={Images.ic_back_group} />
+                    </TouchableOpacity>
+                    {eventDate >= new Date() && event.status == 1 ?
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={Images.ic_more_group} />
+                        </TouchableOpacity>
+                        : undefined}
+                </View>
                 <View style={styles.infoContainer} >
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
@@ -306,15 +424,20 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <View >
-                            <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
-                            </Text>
+                        <View>
+                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={showAllTicketVisible} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                    {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
+                                </Text>
+                                {event?.ticket_plans?.length > 0 ?
+                                    <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
+                                    : undefined}
+                            </TouchableOpacity>
                             <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
+
                         </View>
                     </View>
-
-                    <View style={{ flexDirection: 'row', width: '100%' }} >
+                    <View style={{ flexDirection: 'row', width: '100%', zIndex: -1 }} >
                         <View style={{ flex: 1 }} >
 
                             {event?.is_multi_day_event != 1 ?
@@ -406,36 +529,64 @@ const EventDetail: FC<any> = (props) => {
                         </View> : <View style={{ marginBottom: scaler(15) }} />
                     }
                     {/* <View style={{ height: 1, width: '100%', backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(5) }} /> */}
-                    {activeTicket ? <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text><View style={{ marginBottom: scaler(15) }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                            <View style={{ flex: 1, }}>
-                                <Text style={styles.ticketInfo}>
-                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
-                                </Text>
-                                <Text style={styles.ticketInfo}>
-                                    Tax ({activeTicket?.event_tax_rate}%)
-                                </Text>
+                    {activeTicket?.amount ?
+                        !activeTicket?.is_donation ?
+                            <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                <View style={{ marginBottom: scaler(15) }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                        <View style={{ flex: 1, }}>
+                                            <Text style={styles.ticketInfo}>
+                                                <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                            </Text>
+                                            <Text style={styles.ticketInfo}>
+                                                Tax ({activeTicket?.event_tax_rate}%)
+                                            </Text>
 
+                                        </View>
+                                        <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
+                                            <Text style={styles.ticketInfo}>
+                                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                            </Text>
+                                            <Text style={styles.ticketInfo}>
+                                                {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
+                                        <Text style={[{ flex: 1, }, styles.ticketInfo]}>
+                                            Total
+                                        </Text>
+                                        <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
+                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
+                                        </Text>
+                                    </View>
+                                </View></> :
+                            <View style={{ marginBottom: scaler(10) }}>
+                                <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                    <Text style={styles.ticketInfo}>
+                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                    </Text>
+                                    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                                        <Text style={[styles.ticketInfo, { flex: 1 }]}>
+                                            Donation
+                                        </Text>
+                                        <Text style={styles.ticketInfo}>
+                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View> : activeTicket?.payment_method == 'free' ?
+                            <View style={{ marginBottom: scaler(10) }}>
+                                <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
+                                <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
+                                    <Text style={styles.ticketInfo}>
+                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
-                                <Text style={styles.ticketInfo}>
-                                    {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
-                                </Text>
-                                <Text style={styles.ticketInfo}>
-                                    {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
-                            <Text style={[{ flex: 1, }, styles.ticketInfo]}>
-                                Total
-                            </Text>
-                            <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
-                            </Text>
-                        </View>
-                    </View></> : null}
+                            : null}
 
                     {event.status == 1 && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
@@ -515,7 +666,6 @@ const EventDetail: FC<any> = (props) => {
 
                                             }).catch(e => {
                                                 console.log("E", e);
-
                                             })
                                         }
                                         catch (e) {
@@ -540,6 +690,7 @@ const EventDetail: FC<any> = (props) => {
                             (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                    disabled={calculateButtonDisability()}
                                     onPress={() => {
                                         event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })
@@ -602,6 +753,16 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
             <Text style={{ flexGrow: 1, textAlign: 'left', fontWeight: '400', fontSize: scaler(12), color: textColor ?? colors.colorBlackText }} >{title}</Text>
         </TouchableOpacity>
     ) : null
+}
+
+const TicketPlans = (props: { name: string, currency: string, price: string }) => {
+    const { name, currency, price } = props;
+    return <View style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
+        <Text style={{ flexGrow: 1, fontSize: scaler(14), fontWeight: '500', marginRight: scaler(10) }}>{name}</Text>
+        <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
+            {getSymbol(currency) + price}
+        </Text>
+    </View>
 }
 
 export default EventDetail
@@ -714,5 +875,56 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.colorPlaceholder,
         lineHeight: scaler(23)
+    },
+    planView: {
+        position: 'absolute',
+        backgroundColor: colors.colorWhite,
+        right: scaler(5),
+        top: -scaler(20)
+    },
+    customSlide: {
+        backgroundColor: colors?.colorFadedPrimary,
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        overflow: 'hidden',
+        // marginHorizontal: scaler(2),
+        width: width,
+        height: width,
+        aspectRatio: 1 / 1,
+        // borderRadius: scaler(10),
+        // height: width*5/9
+    },
+    customImage: {
+        // backgroundColor:'red',
+        height: '100%',
+        width: '100%',
+        resizeMode: 'cover'
+    },
+    playButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        alignSelf: 'center',
+        top: width / 2 - scaler(40),
+    },
+    bulletContainer: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        top: -scaler(20),
+        zIndex: 2,
+    },
+    bulletStyle: {
+        width: scaler(6),
+        height: scaler(6),
+        backgroundColor: colors.colorBlack,
+        borderRadius: scaler(8),
+        marginHorizontal: scaler(3),
+    },
+    selectedBulletStyle: {
+        width: scaler(16),
+        height: scaler(6),
+        backgroundColor: colors.colorBlack,
+        borderRadius: scaler(8),
+        marginHorizontal: scaler(3),
     }
 })
