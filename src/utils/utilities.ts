@@ -3,7 +3,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnalyticService from 'analytics';
 import { config } from 'api';
 import { store } from 'app-store';
-import { IPaginationState, setLoadingAction } from 'app-store/actions';
+import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
@@ -15,7 +15,7 @@ import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
-import Language, { LanguageType } from 'src/language/Language';
+import { LanguageType } from 'src/language/Language';
 import { StaticHolder } from './StaticHolder';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
@@ -282,19 +282,6 @@ export const getImageUrl = (url: string, options: { width?: number, height?: num
 }
 
 
-export const ProfileImagePickerOptions = {
-    width: 800,
-    height: 800,
-    compressImageQuality: 1,
-    compressImageMaxWidth: 800,
-    compressImageMaxHeight: 800,
-    enableRotationGesture: true,
-    cropping: true,
-    loadingLabelText: Language.getString("processing", Language.getLanguage()),
-    cropperCircleOverlay: true,
-
-}
-
 export const getAddressFromLocation = async (region: ILocation) => {
     try {
         const json = await Geocoder.from({ latitude: region.latitude, longitude: region.longitude })
@@ -487,11 +474,7 @@ export const getOtherDataFromAddress = (address: { main_text: string, secondary_
     return { city: address?.main_text?.trim(), state: state?.trim(), country: country?.trim() }
 }
 
-export const InitialPaginationState: IPaginationState = {
-    currentPage: 0,
-    totalPages: -1,
-    perPage: 20
-}
+
 
 const getShortAddress = (address: string, state: string, city?: string) => {
     try {

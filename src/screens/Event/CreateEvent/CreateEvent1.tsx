@@ -34,9 +34,9 @@ import {
   getFormattedAddress2,
   getImageUrl,
   NavigationService,
-  ProfileImagePickerOptions,
   scaler
 } from 'utils';
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
 
 type FormType = {
   eventName: string;
@@ -98,7 +98,7 @@ const CreateEvent1: FC<any> = props => {
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
-      ImagePicker.openPicker(ProfileImagePickerOptions)
+      ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS)
         .then(image => {
           uploadedImage.current = '';
           setEventImage(image);

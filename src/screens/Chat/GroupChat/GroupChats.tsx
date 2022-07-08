@@ -1,19 +1,20 @@
 import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
-import { colors } from 'assets'
+import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, FlatList, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ColorValue, Dimensions, FlatList, ImageBackground, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
+import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
 
@@ -171,6 +172,7 @@ export const GroupChats: FC<any> = (props) => {
         chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
     }))
 
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.chat_background || DEFAULT_CHAT_BACKGROUND)
 
     const dispatch = useDispatch()
 
@@ -198,7 +200,14 @@ export const GroupChats: FC<any> = (props) => {
     }, [groupDetail])
 
     return (
-        <View style={styles.container} >
+        <ImageBackground source={Images.ic_chat_background} imageStyle={{
+            opacity: 0.5,
+            tintColor: "#fff",
+            height: '100%', width: '100%',
+            top: 0, bottom: 0
+        }} style={[styles.container, {
+            backgroundColor: activeBackgroundColor
+        }]} >
             <View style={{ flexShrink: 1 }} >
                 {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
                     borderWidth={0}
@@ -263,14 +272,14 @@ export const GroupChats: FC<any> = (props) => {
             </View> : !socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
                 <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
             </View> : null}
-        </View >
+        </ImageBackground >
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#DFDFDF"
+        // backgroundColor: "#DFDFDF"
     },
 
     accessory: {
