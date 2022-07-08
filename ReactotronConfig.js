@@ -1,32 +1,43 @@
 import Reactotron from 'reactotron-react-native';
 import { config } from 'src/api/config';
 
-if (__DEV__ && config.REACTOTRON_STATUS) {
-    Reactotron
-        //   .setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
-        .configure() // controls connection & communication settings
-        .useReactNative() // add all built-in react native plugins
-        .connect() // let's connect!
-
-    const originalLog = console.log
-    console.log = (message, ...optionalParams) => {
-        originalLog(message, ...optionalParams);
-        Reactotron.log(message, ...optionalParams)
+if (__DEV__) {
+    if (config.TERMINAL_CONSOLES) {
+        var originalLog = console.log
+        var originalWarn = console.warn
+        var originalError = console.error
     }
 
-    const originalWarn = console.warn
-    console.warn = (message, ...optionalParams) => {
-        originalWarn(message, ...optionalParams);
-        Reactotron.warn(message, ...optionalParams)
+    if (config.REACTOTRON_CONSOLES) {
+        Reactotron
+            //   .setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
+            .configure() // controls connection & communication settings
+            .useReactNative() // add all built-in react native plugins
+            .connect() // let's connect!
+        if (config.TERMINAL_CONSOLES) {
+            console.log = (message, ...optionalParams) => {
+                originalLog(message, ...optionalParams);
+                Reactotron.log(message, ...optionalParams)
+            }
+            console.warn = (message, ...optionalParams) => {
+                originalWarn(message, ...optionalParams);
+                Reactotron.warn(message, ...optionalParams)
+            }
+            console.error = (message, ...optionalParams) => {
+                originalError(message, ...optionalParams);
+                Reactotron.error(message, ...optionalParams)
+            }
+        } else {
+            console.log = Reactotron.log
+            console.error = Reactotron.error
+            console.warn = Reactotron.warn
+        }
     }
 
-    const originalError = console.error
-    console.error = (message, ...optionalParams) => {
-        originalError(message, ...optionalParams);
-        Reactotron.error(message, ...optionalParams)
+    if (!config.TERMINAL_CONSOLES) {
+        console.log = function () { }
+        console.error = console.log
+        console.warn = console.log
     }
-    console.log('Reactotron Configured');
-} else {
-    console.log('Running without Reactotron');
 }
 

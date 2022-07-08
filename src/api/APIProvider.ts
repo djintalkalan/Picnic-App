@@ -28,7 +28,7 @@ export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
 function interceptResponse(this: AxiosResponse<any>): any {
     try {
-        if (!config.REACTOTRON_STATUS) {
+        if (config.TERMINAL_CONSOLES) {
             console.log("-----------AXIOS  Api Response is----------- ");
             console.log("url string ", this.config?.url);
             console.log("header ", this.config?.headers);
@@ -67,7 +67,7 @@ const api = axios.create({
 
 api.interceptors.request.use(async function (requestConfig) {
     try {
-        if (!config.REACTOTRON_STATUS) {
+        if (config.TERMINAL_CONSOLES) {
             console.log("-----------AXIOS  Api request is----------- ");
             console.log("url string ", requestConfig.url);
             console.log("header ", requestConfig?.headers);
