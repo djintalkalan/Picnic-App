@@ -505,3 +505,8 @@ export const _getMerchantInfo = async () => {
     return fetchApiData('event/get-merchant-info')
 }
 
+export const _setChatBackground = async (body: any) => {
+    console.log("---------- _setChatBackground Api Call ---------------")
+    return fetchApiData('message/set-background-color', "POST", body)
+}
+

@@ -172,7 +172,7 @@ export const GroupChats: FC<any> = (props) => {
         chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
     }))
 
-    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.chat_background || DEFAULT_CHAT_BACKGROUND)
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
     const dispatch = useDispatch()
 

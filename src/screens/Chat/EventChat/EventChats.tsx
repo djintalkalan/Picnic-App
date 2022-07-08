@@ -1,4 +1,5 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
+import { _setChatBackground } from 'api'
 import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -229,7 +230,7 @@ const EventChats: FC<any> = (props) => {
         });
     }, [eventDetail])
 
-    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(eventDetail?.chat_background || DEFAULT_CHAT_BACKGROUND)
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(eventDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
 
     const openColorPicker = useCallback((e?: GestureResponderEvent) => {
@@ -247,6 +248,11 @@ const EventChats: FC<any> = (props) => {
                         <ColorPicker selectedColor={activeBackgroundColor} onSelectColor={(color) => {
                             setActiveBackgroundColor(color)
                             _hideTouchAlert()
+                            try {
+                                _setChatBackground({ resource_id: eventDetail?._id, background_color: color }).then(res => { }).catch()
+                            } catch {
+                                (e: any) => console.log(e);
+                            }
                         }} />
                     )
                 }
@@ -274,9 +280,9 @@ const EventChats: FC<any> = (props) => {
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
 
                     </TouchableOpacity>
-                    <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
+                    {eventDetail?.is_admin ? <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
                         <Ionicons name={'color-palette-outline'} size={scaler(23)} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> : undefined}
                 </View>
                 }
             />

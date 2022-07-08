@@ -31,7 +31,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
 
-    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.chat_background || DEFAULT_CHAT_BACKGROUND)
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
     useEffect(() => {
         // if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
@@ -154,9 +154,9 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                             <Text style={styles.joinText} >{groupDetail?.status == 1 ? Language.join : ''}</Text>
                         }
                     </TouchableOpacity>
-                    <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
+                    {groupDetail?.is_admin ? <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
                         <Ionicons name={'color-palette-outline'} size={scaler(23)} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> : undefined}
                 </View>
                 }
             />
