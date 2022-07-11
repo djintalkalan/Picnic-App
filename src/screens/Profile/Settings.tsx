@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { config, _setLanguage } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Text, TextInput } from 'custom-components'
+import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -23,8 +23,6 @@ const helpImageSource = MaterialIcons.getImageSourceSync("live-help", 50, colors
 const twoFactorAuth = MaterialCommunityIcons.getImageSourceSync('two-factor-authentication', 60, colors.colorBlackText)
 
 let installer = "Other"
-
-let user = []
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     console.log("installerPackageName", installerPackageName);
     installer = installerPackageName
@@ -115,8 +113,6 @@ const Settings: FC<any> = (props) => {
                 </View>
 
                 <View style={{ marginHorizontal: scaler(10), marginTop: scaler(15) }} >
-
-                    <Button onPress={() => { user.map('abd') }} title='Crash app' />
 
                     <SettingButton
                         onPress={() => {
