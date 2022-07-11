@@ -8,6 +8,7 @@ import { Card, PopupAlert } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
 import { FocusAwareStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ImageZoom } from 'custom-components/ImageZoom';
+import { TouchAlert } from 'custom-components/TouchAlert';
 import DropdownAlert from 'dj-react-native-dropdown-alert';
 import IntercomService from 'intercom';
 import * as React from 'react';
@@ -222,6 +223,7 @@ const MyNavigationContainer = () => {
         <PopupAlert ref={ref => StaticHolder.setPopupAlert(ref)} />
         <BottomMenu ref={ref => StaticHolder.setBottomMenu(ref)} />
         <KeyboardAccessoryView ref={ref => StaticHolder.setKeyboardAccessoryView(ref)} />
+        <TouchAlert ref={ref => StaticHolder.setTouchAlert(ref)} />
         <DropdownAlertWithStatusBar />
       </NavigationContainer>
     </SafeAreaProvider>

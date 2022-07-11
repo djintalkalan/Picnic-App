@@ -369,4 +369,9 @@ export const es = {
     standard: "",
     plan_name: "",
     we_recommend_you_to_update: "",
+    donate_by_cash: "",
+    donate_by_paypal: "",
+    donation_price: "",
+    donation_price_required: "",
+    maximum_file_size_allowed: "",
 }

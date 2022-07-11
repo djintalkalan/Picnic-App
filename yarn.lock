@@ -7284,7 +7284,7 @@ prompts@^2.0.1, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7615,6 +7615,14 @@ react-native-localize@^2.1.5:
   resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-2.2.2.tgz#a1c6369000c9dae6800eded8ddb1673bf090f84e"
   integrity sha512-j9aAYyuZblq27XPW3h/cZuBP2WA1OOsEPjTHszPQ/YcM9VrrrYnfpJObP4IyghxmS8i+7Jhoh7qp8CjunfrFjw==
 
+react-native-looped-carousel@^0.1.13:
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/react-native-looped-carousel/-/react-native-looped-carousel-0.1.13.tgz#bc1f94ee818347ecfd573acd9710c84b2f450d1f"
+  integrity sha512-q2y8b0fQJr2FsGoJGr55sAqTcUh6IWHk+UM5etC8lsNiZQSdoUjMSzFMDACrZjrKi9sOuyM8bfMMNhwOc28Trg==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    prop-types "^15.6.1"
+
 react-native-maps@*:
   version "0.31.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.31.1.tgz#574be035a52287e3ab1c1da35e2ce3e2116f0fd6"
@@ -7638,10 +7646,10 @@ react-native-material-ripple@^0.9.1:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-mmkv-storage@0.6.8:
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.6.8.tgz#1860882b58af907ed422d1c27588fe6c45c40655"
-  integrity sha512-l26DVejvL3jN/1pHC8mTQxatoUc1qAEwOmhG2s+PNjRqudgUpRJwFEWbdMj6tmJ54hvP3bbRW3e1+jpryFzMcQ==
+react-native-mmkv-storage@^0.7.6:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.7.6.tgz#c4b2d6d342efda91f69edb6ba4b9c0ff6c34d70c"
+  integrity sha512-Uxc8U3vRJMAeLIu9Dr8VpbaaCUlMd4vJfkEme2sXh2GGCYrbXqrE3XPLjtuA/fSd2VBKZNFBkJhyf4RzU9VX3A==
 
 react-native-modal-datetime-picker@^13.0.0:
   version "13.1.2"
