@@ -242,6 +242,7 @@ const CreateEvent2: FC<any> = props => {
             borderColor={colors.colorTextInputBackground}
             backgroundColor={colors.colorTextInputBackground}
             name={'capacity'}
+            returnKeyType={'done'}
             maxLength={5}
             rules={{
               validate: (v: string) => {

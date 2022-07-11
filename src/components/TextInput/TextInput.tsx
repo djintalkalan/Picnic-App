@@ -2,7 +2,7 @@ import { colors, Fonts } from "assets";
 import { KeyboardValues } from "custom-components/KeyboardService";
 import { capitalize } from "lodash";
 import React, { FC, forwardRef, RefAttributes, useMemo, useState } from "react";
-import { Control, Controller, FieldErrors, RegisterOptions } from "react-hook-form";
+import { Control, Controller, FieldError, FieldErrors, Merge, RegisterOptions } from "react-hook-form";
 import { Button, ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InputAccessoryView, Keyboard, Platform, StyleProp, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -24,7 +24,7 @@ interface TextInputProps extends RNTextInputProps {
     iconSize?: number
     name?: string
     iconPosition?: 'left' | 'right',
-    errors?: FieldErrors
+    errors?: FieldErrors | Merge<FieldError, FieldErrors<any>>
     backgroundColor?: ColorValue
     limit?: number
     borderColor?: ColorValue

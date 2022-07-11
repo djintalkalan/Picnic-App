@@ -500,3 +500,8 @@ export const _checkUsername = async (body: any) => {
     return fetchApiData('auth/check-username', "POST", body)
 }
 
+export const _getMerchantInfo = async () => {
+    console.log("---------- _getMerchantInfo Api Call ---------------")
+    return fetchApiData('event/get-merchant-info')
+}
+
