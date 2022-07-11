@@ -38,19 +38,21 @@ const SendOtp: FC = () => {
     const onSubmit = useCallback(
         () =>
             handleSubmit(data => {
-                _sendOtp({ email: data?.email?.trim()?.toLowerCase() }).then((res) => {
-                    dispatch(setLoadingAction(false))
-                    if (res?.status == 200) {
-                        _showSuccessMessage(res?.message)
-                        NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
-                    }
-                    else {
-                        _showErrorMessage(res?.message)
-                    }
-                }).catch(e => {
-                    console.log(e)
-                    dispatch(setLoadingAction(false))
-                })
+                try {
+                    _sendOtp({ email: data?.email?.trim()?.toLowerCase() }).then((res) => {
+                        dispatch(setLoadingAction(false))
+                        if (res?.status == 200) {
+                            _showSuccessMessage(res?.message)
+                            NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
+                        }
+                        else {
+                            _showErrorMessage(res?.message)
+                        }
+                    }).catch(e => {
+                        console.log(e)
+                        dispatch(setLoadingAction(false))
+                    })
+                } catch { (e: any) => console.log(e) }
             })(),
         [],
     );

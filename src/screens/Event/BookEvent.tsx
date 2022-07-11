@@ -78,7 +78,7 @@ const BookEvent: FC = (props: any) => {
             is_donation: event?.is_free_event && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
-            payment_method: event?.is_free_event ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal
+            payment_method: event?.is_free_event && !isUserDonating ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }

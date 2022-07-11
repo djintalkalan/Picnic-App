@@ -10,6 +10,7 @@ import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } fr
 import { Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 import Entypo from 'react-native-vector-icons/Entypo'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import Database, { useDatabase } from 'src/database/Database'
@@ -19,6 +20,7 @@ import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePo
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 const helpImageSource = MaterialIcons.getImageSourceSync("live-help", 50, colors.colorBlackText)
+const twoFactorAuth = MaterialCommunityIcons.getImageSourceSync('two-factor-authentication', 60, colors.colorBlackText)
 
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
@@ -89,11 +91,10 @@ const Settings: FC<any> = (props) => {
         </View>
     }), [selectedLanguage])
 
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <BackButton />
-
-
             <ScrollView bounces={false} style={{ flex: 1, width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(5) }} >
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(10) }} >
@@ -181,6 +182,13 @@ const Settings: FC<any> = (props) => {
                         image={languageImageSource}
                         title={Language.change_language}
                     />
+
+                    <SettingButton
+                        onPress={() => { NavigationService.navigate('TwoFactorAuth') }}
+                        image={twoFactorAuth}
+                        title={Language.two_factor_auth}
+                    />
+
 
                     <SettingButton
                         onPress={() => {
