@@ -1,7 +1,6 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
-import { _setChatBackground } from 'api'
 import { RootState } from 'app-store'
-import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
+import { getEventChat, getEventDetail, setChatBackground, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import ColorPicker from 'custom-components/ColorPicker'
@@ -248,11 +247,7 @@ const EventChats: FC<any> = (props) => {
                         <ColorPicker selectedColor={activeBackgroundColor} onSelectColor={(color) => {
                             setActiveBackgroundColor(color)
                             _hideTouchAlert()
-                            try {
-                                _setChatBackground({ resource_id: eventDetail?._id, background_color: color }).then(res => { }).catch()
-                            } catch {
-                                (e: any) => console.log(e);
-                            }
+                            dispatch(setChatBackground({ resource_id: eventDetail?._id, background_color: color, resourceType: 'event' }))
                         }} />
                     )
                 }

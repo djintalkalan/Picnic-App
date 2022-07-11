@@ -1,4 +1,5 @@
 import ActionTypes from "app-store/action-types"
+import { ColorValue } from "react-native"
 
 export const getGroupChat = (payload: any) => ({
     type: ActionTypes.GET_GROUP_CHAT,
@@ -50,6 +51,16 @@ export const likeUnlikeMessage = (payload: { message_id: string, is_like: '1' | 
 
 export const likeUnlikeMessageSuccess = (payload: { groupId: string, message_id: string, is_like: '1' | '0' }) => ({
     type: ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS,
+    payload
+})
+
+export const setChatBackground = (payload: { resource_id: string, background_color: ColorValue, resourceType: 'event' | 'group' }) => ({
+    type: ActionTypes.SET_CHAT_BACKGROUND,
+    payload
+})
+
+export const setGroupChatBackground = (payload: { resource_id: string, background_color: string }) => ({
+    type: ActionTypes.SET_GROUP_CHAT_BACKGROUND_SUCCESS,
     payload
 })
 

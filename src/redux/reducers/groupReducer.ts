@@ -113,6 +113,11 @@ export const groupDetailReducer = (state: IGroupDetailReducer = {}, action: acti
         case ActionTypes.RESET_STATE_ON_LOGIN:
         case ActionTypes.RESET_STATE_ON_LOGOUT:
             return {}
+        case ActionTypes.SET_GROUP_CHAT_BACKGROUND_SUCCESS:
+            if (state?.[action?.payload?.resource_id]) {
+                return { ...state, [action?.payload?.resource_id]: { ...state[action?.payload?.resource_id], group: { ...state[action?.payload?.resource_id].group, background_color: action?.payload?.background_color } } }
+            }
+            return state
         default:
             return state
     }

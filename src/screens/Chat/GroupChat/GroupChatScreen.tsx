@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootState } from 'app-store'
-import { getGroupDetail, joinGroup } from 'app-store/actions'
+import { getGroupDetail, joinGroup, setChatBackground } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import ColorPicker from 'custom-components/ColorPicker'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -33,12 +33,17 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
     const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
+    const changeChatBackground = useCallback((color: ColorValue) => {
+        setActiveBackgroundColor(color)
+        dispatch(setChatBackground({ resource_id: groupDetail?._id, background_color: color, resourceType: 'group' }))
+    }, [])
+
     useEffect(() => {
         // if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
 
         dispatch(getGroupDetail(activeGroup?._id))
         // }
-        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, setActiveBackgroundColor)
+        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, changeChatBackground)
         return () => {
             subscription.remove()
         }

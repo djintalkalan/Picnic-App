@@ -1,6 +1,6 @@
 import * as ApiProvider from 'api/APIProvider';
-import { refreshChatInGroup, setChatInGroup, setLoadingAction } from "app-store/actions";
-import { call, put, takeLeading } from "redux-saga/effects";
+import { refreshChatInGroup, setChatInGroup, setEventChatBackground, setGroupChatBackground, setLoadingAction } from "app-store/actions";
+import { call, put, takeLatest, takeLeading } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { mergeMessageObjects, _showErrorMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
@@ -52,10 +52,33 @@ function* _getGroupChatNew({ type, payload, }: action): Generator<any, any, any>
     }
 }
 
+function* _setChatBackground({ type, payload }: action): Generator<any, any, any> {
+    const { resourceType, ...rest } = payload
+    try {
+        let res = yield call(ApiProvider._setChatBackground, rest);
+        if (res.status == 200) {
+            if (resourceType == 'event') {
+                yield put(setEventChatBackground(rest))
+            }
+            else yield put(setGroupChatBackground(rest))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+    }
+
+}
+
 
 // Watcher: watch auth request
 export default function* watchGroupChat() {
     // yield takeLeading(ActionTypes.GET_GROUP_CHAT, _getGroupChat);
     yield takeLeading(ActionTypes.GET_GROUP_CHAT, _getGroupChatNew);
+    yield takeLatest(ActionTypes.SET_CHAT_BACKGROUND, _setChatBackground)
 
 };

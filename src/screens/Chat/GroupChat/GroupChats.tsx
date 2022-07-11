@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
+import { getGroupChat, setChatBackground, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { ILocation, useDatabase } from 'database/Database'
@@ -175,6 +175,10 @@ export const GroupChats: FC<any> = (props) => {
     const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
     const dispatch = useDispatch()
+    const changeChatBackground = useCallback((color: ColorValue) => {
+        setActiveBackgroundColor(color)
+        dispatch(setChatBackground({ resource_id: groupDetail?._id, background_color: color, resourceType: 'group' }))
+    }, [])
 
     useEffect(() => {
         dispatch(getGroupChat({
@@ -184,7 +188,7 @@ export const GroupChats: FC<any> = (props) => {
         setTimeout(() => {
             loadMore = true
         }, 200);
-        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, setActiveBackgroundColor)
+        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, changeChatBackground)
         return () => {
             loadMore = false
             subscription.remove()

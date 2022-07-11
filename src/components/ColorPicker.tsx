@@ -19,8 +19,9 @@ const onSelectColorDefault = (color: ColorValue) => {
 const ColorPicker: FC<ColorPickerProps> = ({ selectedColor, onSelectColor = onSelectColorDefault }) => {
     return (
         <View style={styles.colorContainer}>
-            {CHAT_BACKGROUND_COLORS?.map(_ =>
+            {CHAT_BACKGROUND_COLORS?.map((_, i) =>
                 <TouchableOpacity
+                    key={i}
                     style={[selectedColor == _ ? styles.selectedColorView : styles.colorView, { backgroundColor: _, }]}
                     onPress={() => onSelectColor(_)}
                 />)}
