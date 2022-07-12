@@ -37,9 +37,3 @@ export const refreshChatInEvent = (payload: { eventId: string, chats: Array<any>
     type: ActionTypes.REFRESH_CHAT_IN_EVENT,
     payload
 })
-export const setEventChatBackground = (payload: { resource_id: string, background_color: string }) => ({
-    type: ActionTypes.SET_EVENT_CHAT_BACKGROUND_SUCCESS,
-    payload
-})
-
-

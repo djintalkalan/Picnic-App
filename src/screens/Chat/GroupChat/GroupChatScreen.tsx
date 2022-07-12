@@ -1,11 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootState } from 'app-store'
-import { getGroupDetail, joinGroup, setChatBackground } from 'app-store/actions'
+import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import ColorPicker from 'custom-components/ColorPicker'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { ColorValue, DeviceEventEmitter, Dimensions, GestureResponderEvent, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -31,19 +31,14 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
     const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
 
-    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
-
-    const changeChatBackground = useCallback((color: ColorValue) => {
-        setActiveBackgroundColor(color)
-        dispatch(setChatBackground({ resource_id: groupDetail?._id, background_color: color, resourceType: 'group' }))
-    }, [])
+    const activeBackgroundColorRef = useRef<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
     useEffect(() => {
         // if (!groupDetail || activeGroup?.is_group_member != groupDetail?.is_group_member) {
 
         dispatch(getGroupDetail(activeGroup?._id))
         // }
-        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, changeChatBackground)
+        const subscription = DeviceEventEmitter.addListener(UPDATE_COLOR_EVENT, c => activeBackgroundColorRef.current = c)
         return () => {
             subscription.remove()
         }
@@ -100,12 +95,12 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                 transparent: true,
                 alertComponent: () => {
                     return (
-                        <ColorPicker selectedColor={activeBackgroundColor} />
+                        <ColorPicker selectedColor={activeBackgroundColorRef.current} />
                     )
                 }
             })
         })
-    }, [activeBackgroundColor])
+    }, [])
 
 
     const dispatch = useDispatch()

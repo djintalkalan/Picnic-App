@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { refreshChatInGroup, setChatInGroup, setEventChatBackground, setGroupChatBackground, setLoadingAction } from "app-store/actions";
+import { refreshChatInGroup, setChatBackgroundSuccess, setChatInGroup, setLoadingAction } from "app-store/actions";
 import { call, put, takeLatest, takeLeading } from "redux-saga/effects";
 import Language from 'src/language/Language';
 import { mergeMessageObjects, _showErrorMessage } from "utils";
@@ -57,10 +57,7 @@ function* _setChatBackground({ type, payload }: action): Generator<any, any, any
     try {
         let res = yield call(ApiProvider._setChatBackground, rest);
         if (res.status == 200) {
-            if (resourceType == 'event') {
-                yield put(setEventChatBackground(rest))
-            }
-            else yield put(setGroupChatBackground(rest))
+            yield put(setChatBackgroundSuccess(payload))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
 
