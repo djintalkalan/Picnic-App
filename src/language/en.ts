@@ -382,4 +382,5 @@ export const en = {
   donation_price_required: "Donation price required",
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
   two_factor_auth: "Two Factor Authentication",
+  add_location_to_chat: "Add location to chat",
 }

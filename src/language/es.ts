@@ -382,4 +382,5 @@ export const es = {
     donation_price_required: "",
     maximum_file_size_allowed: "",
     two_factor_auth: "",
+    add_location_to_chat: "",
 }

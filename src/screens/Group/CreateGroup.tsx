@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker'
 import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Fonts, Images } from 'assets'
-import { Button, defaultLocation, FixedDropdown, MyHeader, TextInput, useKeyboardService } from 'custom-components'
+import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Text, TextInput, useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { capitalize, round } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
@@ -40,6 +40,7 @@ const CreateGroup: FC<any> = (props) => {
   const locationRef = useRef<ILocation | null>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
+  const [pinLocation, setPinLocation] = useState(false);
   const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
     defaultValues: __DEV__ ? {
       name: "Test Group",
@@ -282,6 +283,13 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
 
+            <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
+              <CheckBox checked={pinLocation} setChecked={setPinLocation} />
+              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+                {Language.add_location_to_chat}
+              </Text>
+            </TouchableOpacity>
+
 
             {Platform.OS == 'android' &&
               <CustomView hidden={true} />}
@@ -383,6 +391,11 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
+  },
+  eventView: {
+    marginTop: scaler(12),
+    flexDirection: 'row',
+    marginLeft: scaler(5),
   },
 
 })
