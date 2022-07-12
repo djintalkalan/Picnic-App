@@ -138,12 +138,7 @@ export const setPastEvents = (payload: { groupId: string, data: Array<any> }) =>
     payload
 })
 
-export const setChatBackground = (payload: { resource_id: string, background_color: ColorValue, resourceType: 'event' | 'group' }) => ({
-    type: ActionTypes.SET_CHAT_BACKGROUND,
-    payload
-})
-
-export const setChatBackgroundSuccess = (payload: { resource_id: string, background_color: ColorValue, resourceType: 'event' | 'group' }) => ({
+export const setChatBackgroundSuccess = (payload: { resource_id: string, background_color: ColorValue, resource_type: 'event' | 'group' }) => ({
     type: ActionTypes.SET_CHAT_BACKGROUND_SUCCESS,
     payload
 })

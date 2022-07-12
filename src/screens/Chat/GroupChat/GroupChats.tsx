@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getGroupChat, setChatBackground, setLoadingAction, uploadFile } from 'app-store/actions'
+import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import { ILocation, useDatabase } from 'database/Database'
@@ -11,7 +11,7 @@ import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, 
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, SocketService } from 'socket'
+import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND, UPDATE_COLOR_EVENT } from 'utils/Constants'
@@ -177,7 +177,7 @@ export const GroupChats: FC<any> = (props) => {
     const dispatch = useDispatch()
     const changeChatBackground = useCallback((color: ColorValue) => {
         setActiveBackgroundColor(color)
-        dispatch(setChatBackground({ resource_id: groupDetail?._id, background_color: color, resourceType: 'group' }))
+        SocketService.emit(EMIT_SET_CHAT_BACKGROUND, { resource_id: groupDetail?._id, background_color: color, resource_type: 'group' })
     }, [])
 
     useEffect(() => {

@@ -1,12 +1,12 @@
 import { config } from "api";
-import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getEventDetail, getGroupDetail, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
+import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getEventDetail, getGroupDetail, leaveEventSuccess, leaveGroupSuccess, removeEventMemberSuccess, removeGroupMemberSuccess, setChatBackgroundSuccess, setChatInEvent, setChatInGroup, setChatInPerson, updateChatInEvent, updateChatInEventSuccess, updateChatInGroup, updateChatInGroupSuccess, updateChatInPerson, updateChatInPersonSuccess } from "app-store/actions";
 import Database from "database";
 import { Dispatch } from "react";
 import { DeviceEventEmitter } from "react-native";
 import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
 import { getChatUsers, mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
-import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT } from "./SocketEvents";
+import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT, ON_SET_CHAT_BACKGROUND } from "./SocketEvents";
 
 class Service {
     static instance?: Service;
@@ -97,6 +97,9 @@ class Service {
         this.socket?.on(ON_EVENT_DELETE, this.onEventDelete)
         this.socket?.on(ON_EVENT_MEMBER_DELETE, this.onEventMemberDelete)
 
+        this.socket?.on(ON_SET_CHAT_BACKGROUND, this.onSetChatBackground)
+
+
         this.socket?.on(ON_PERSONAL_MESSAGE, this.onPersonalMessage)
         this.socket?.on(ON_PERSONAL_LIKE_UNLIKE, this.onPersonalLikeUnlike)
         this.socket?.on(ON_PERSONAL_MESSAGE_DELETE, this.onPersonalMessageDelete)
@@ -158,6 +161,13 @@ class Service {
                 console.log("Invalid Resource Id");
                 this.dispatch((e?.data?.resource_type == 'group' ? getGroupDetail : getEventDetail)(e?.data?.resource_id))
             }
+        }
+    }
+
+    private onSetChatBackground = (e: any) => {
+        console.log("onSetChatBackground", e)
+        if (e?.data) { 
+            this.dispatch(setChatBackgroundSuccess(e.data))
         }
     }
 

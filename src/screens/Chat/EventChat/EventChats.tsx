@@ -1,6 +1,6 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
 import { RootState } from 'app-store'
-import { getEventChat, getEventDetail, setChatBackground, setLoadingAction, uploadFile } from 'app-store/actions'
+import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import ColorPicker from 'custom-components/ColorPicker'
@@ -14,7 +14,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
+import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
@@ -247,7 +247,7 @@ const EventChats: FC<any> = (props) => {
                         <ColorPicker selectedColor={activeBackgroundColor} onSelectColor={(color) => {
                             setActiveBackgroundColor(color)
                             _hideTouchAlert()
-                            dispatch(setChatBackground({ resource_id: eventDetail?._id, background_color: color, resourceType: 'event' }))
+                            SocketService.emit(EMIT_SET_CHAT_BACKGROUND, { resource_id: eventDetail?._id, background_color: color, resource_type: 'event' })
                         }} />
                     )
                 }
