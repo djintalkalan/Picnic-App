@@ -148,6 +148,42 @@ const ChatItem = (props: IChatItem) => {
         </TouchableOpacity>
     }, [JSON.stringify(props?.coordinates)])
 
+
+    const pinLocation = () => {
+        if (!group?.location?.coordinates?.length && message_type != 'resource_direction' && group?.is_direction != '1') {
+            return null
+        }
+        const region = {
+            latitude: parseFloat(group?.location?.coordinates[1]),
+            longitude: parseFloat(group?.location?.coordinates[0]),
+            ...DefaultDelta
+        }
+
+        return <TouchableOpacity activeOpacity={0.8} onPress={() => {
+            launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })
+        }} style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(5),
+            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
+        }} >
+            <View style={{ flex: 1, overflow: 'hidden', borderRadius: scaler(15), }} pointerEvents='none' >
+                <MapView
+                    style={{ flex: 1, overflow: 'hidden' }}
+                    minZoomLevel={2}
+                    customMapStyle={MapStyle}
+                    provider={'google'}
+                    // cacheEnabled
+                    showsMyLocationButton={false}
+                    initialRegion={region} >
+                    <Marker coordinate={region} >
+                        <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />
+                    </Marker>
+
+                </MapView>
+            </View>
+        </TouchableOpacity>
+    }
+
     const { remainingNames, myMessage } = useMemo(() => {
         return {
             myMessage: userId == userData?._id,
@@ -286,7 +322,7 @@ const ChatItem = (props: IChatItem) => {
             console.log("e", e);
 
         }
-        Clipboard?.setString(message_type == 'file' || message_type == 'image' ? text?.trim() : message?.trim());
+        Clipboard?.setString(message_type == 'resource_direction' ? group?.address : message_type == 'file' || message_type == 'image' ? text?.trim() : message?.trim());
         // console.log("e", e, ((height - scaler(80)) / 3));
         //@ts-ignore
         _showToast("Copied", 'SHORT', gravity);
@@ -399,6 +435,48 @@ const ChatItem = (props: IChatItem) => {
                         </TouchableOpacity>
                     </View>
                     {renderMap}
+                </View>
+            </View>
+        </View>
+    }
+
+    if (message_type == 'resource_direction') {
+        if (group?.is_direction != '1') return <View />
+        if (myMessage) {
+            return <View style={styles.myContainer} >
+                <View style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
+                    {pinLocation()}
+                    <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
+                        <Text style={styles.myMessage}>{message} </Text>
+                        <Text style={{ color: 'blue', fontSize: scaler(13) }}
+                            onLongPress={_onCopy}
+                            onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
+                    </View>
+
+                </View>
+            </View>
+        }
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                    </View>
+                    <View style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
+                        {pinLocation()}
+                        <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5), flexShrink: 1 }}>
+                            <Text style={styles.myMessage}>{message} </Text>
+                            <Text style={{ color: 'blue', fontSize: scaler(13) }}
+                                onLongPress={_onCopy}
+                                onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
         </View>

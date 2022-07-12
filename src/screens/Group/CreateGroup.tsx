@@ -66,7 +66,7 @@ const CreateGroup: FC<any> = (props) => {
     } else {
       callCreateGroupApi(data);
     }
-  })(), [profileImage]);
+  })(), [profileImage, pinLocation]);
 
   useEffect(() => {
     if (group) {
@@ -88,6 +88,7 @@ const CreateGroup: FC<any> = (props) => {
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
       setValue('purpose', capitalize(group?.category ?? ""))
+      setPinLocation(group?.is_direction == '1' ? true : false)
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
       } else {
@@ -98,6 +99,7 @@ const CreateGroup: FC<any> = (props) => {
 
   const callCreateGroupApi = useCallback((data) => {
     const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
+
     let payload = {
       _id: group?._id,
       name: data?.name?.trim(),
@@ -110,6 +112,7 @@ const CreateGroup: FC<any> = (props) => {
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
+      is_direction: pinLocation ? '1' : '0',
       location: {
         type: 'Point',
         coordinates: [
@@ -123,7 +126,7 @@ const CreateGroup: FC<any> = (props) => {
         Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
       }
     }))
-  }, [])
+  }, [pinLocation])
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('name') || !getValues('purpose') || !getValues('location')
@@ -284,7 +287,7 @@ const CreateGroup: FC<any> = (props) => {
             />
 
             <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
-              <CheckBox checked={pinLocation} setChecked={setPinLocation} />
+              <CheckBox checked={pinLocation} />
               <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
                 {Language.add_location_to_chat}
               </Text>
