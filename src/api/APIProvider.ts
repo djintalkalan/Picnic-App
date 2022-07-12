@@ -48,7 +48,8 @@ function interceptResponse(this: AxiosResponse<any>): any {
             }
         }
         else {
-            console.log(JSON.stringify(this?.data));
+            if (config.TERMINAL_CONSOLES)
+                console.log(JSON.stringify(this?.data));
             return this?.data
         }
     } finally {
@@ -73,7 +74,6 @@ api.interceptors.request.use(async function (requestConfig) {
             console.log("header ", requestConfig?.headers);
             console.log("body ", requestConfig?.data);
             console.log("methodType ", requestConfig?.method)
-
         }
 
     } finally {
@@ -510,3 +510,7 @@ export const _setChatBackground = async (body: any) => {
     return fetchApiData('message/set-background-color', "POST", body)
 }
 
+export const _enableDisable2FA = async (body: any) => {
+    console.log("---------- _enableDisable2FA Api Call ---------------")
+    return fetchApiData('two-factor/enable-2fa', "POST", body)
+}

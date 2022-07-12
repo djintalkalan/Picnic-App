@@ -382,4 +382,5 @@ export const es = {
     donation_price_required: "",
     maximum_file_size_allowed: "",
     default_background: "",
+    two_factor_auth: "",
 }

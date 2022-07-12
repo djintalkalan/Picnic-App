@@ -31,8 +31,8 @@ const Login: FC = () => {
             // password: "Shine@2022",
             // email: "sangeetakohar484@gmail.com",
             // password: "Sangu@123",
-            email: config.APP_TYPE == 'dev' ? "deepak@shinewebservices.com" : "picnicshine@gmail.com",
-            password: config.APP_TYPE == 'dev' ? "Deepak@123" : "Shine@2015",
+            email: config.APP_TYPE == 'dev' ? "sangeeta@shinewebservices.com" : "picnicshine@gmail.com",
+            password: config.APP_TYPE == 'dev' ? "Shine@22" : "Shine@2015",
             // email: "deepakq@testings.com",
             // password: "Dj@123456",
 

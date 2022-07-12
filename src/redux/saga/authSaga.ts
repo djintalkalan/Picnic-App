@@ -10,6 +10,7 @@ import Language from 'src/language/Language';
 import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
 import { store } from '..';
 import ActionTypes, { action } from "../action-types";
+
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     console.log("installerPackageName", installerPackageName);
@@ -29,22 +30,27 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(isSignUp ? ApiProvider._restoreAccount : ApiProvider._loginApi, { ...rest, device_token: firebaseToken });
         yield put(setLoadingAction(false));
         if (res.status == 200) {
-            yield put(resetStateOnLogin())
-            ApiProvider.TOKEN_EXPIRED.current = false
-            // _showSuccessMessage(res.message);
-            const { access_token, notification_settings, ...userData } = res?.data
-            // if (!__DEV__) {
-            yield call(AnalyticService.setUserData, userData, 1)
-            // }
+            if (res?.data?.is_two_factor_enabled == '1') {
+                NavigationService.navigate('VerifyOtp', { is2FA: true, ...rest });
+            }
+            else {
+                yield put(resetStateOnLogin())
+                ApiProvider.TOKEN_EXPIRED.current = false
+                // _showSuccessMessage(res.message);
+                const { access_token, notification_settings, ...userData } = res?.data
+                // if (!__DEV__) {
+                yield call(AnalyticService.setUserData, userData, 1)
+                // }
 
-            Database.setMultipleValues({
-                authToken: access_token,
-                userData: { ...userData, is_premium: false },
-                isLogin: true
-            })
-            const isRestored = Database.getOtherBool(userData?._id)
-            if (isRestored && false) {
-                yield put(restorePurchaseAction({ noAlert: true }))
+                Database.setMultipleValues({
+                    authToken: access_token,
+                    userData: { ...userData, is_premium: false },
+                    isLogin: true
+                })
+                const isRestored = Database.getOtherBool(userData?._id)
+                if (isRestored && false) {
+                    yield put(restorePurchaseAction({ noAlert: true }))
+                }
             }
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
@@ -110,8 +116,9 @@ const showRestoreAlert = (payload: any) => {
 function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        const { isSignUp = false, ...rest } = payload
-        let res = yield call(isSignUp ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
+        const { isSignUp = false, is2FA = false, ...rest } = payload
+        if (is2FA) rest.device_token = Database.getStoredValue('firebaseToken')
+        let res = yield call(isSignUp || is2FA ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
         if (res.status == 200) {
             if (isSignUp) {
                 if (res?.data?.resignUp) {
@@ -120,6 +127,22 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
                 }
                 NavigationService.replace("SignUp1", rest)
                 yield put(setLoadingAction(false));
+                return
+            }
+            if (is2FA) {
+                yield put(resetStateOnLogin())
+                ApiProvider.TOKEN_EXPIRED.current = false
+                // _showSuccessMessage(res.message);
+                const { access_token, notification_settings, ...userData } = res?.data
+                // if (!__DEV__) {
+                yield call(AnalyticService.setUserData, userData, 1)
+                // }
+
+                Database.setMultipleValues({
+                    authToken: access_token,
+                    userData: { ...userData, is_premium: false },
+                    isLogin: true
+                })
                 return
             }
             NavigationService.replace("CreateNewPassword", rest)
