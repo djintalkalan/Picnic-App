@@ -27,18 +27,20 @@ class Service {
             if (isLogin) {
                 const authToken = Database.getStoredValue('authToken')
                 const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
-                this.socket = io(config.SOCKET_URL + ":" + config?.SOCKET_PORT, {
-                    // timeout: 5000,
-                    // reconnection: true,
-                    // autoConnect: false,
-                    // reconnectionDelay: 5000,
-                    transports: ['websocket', 'polling'],
-                    extraHeaders: {
-                        Authorization: authToken ? ("Bearer " + authToken) : "",
-                        'Accept-Language': selectedLanguage,
-                        version: '1'
-                    }
-                });
+                this.socket = io(config.SOCKET_URL //+ ":" + config?.SOCKET_PORT
+                    , {
+                        // timeout: 5000,
+                        // reconnection: true,
+                        // autoConnect: false,
+                        // reconnectionDelay: 5000,
+                        secure: true,
+                        transports: ['websocket', 'polling'],
+                        extraHeaders: {
+                            Authorization: authToken ? ("Bearer " + authToken) : "",
+                            'Accept-Language': selectedLanguage,
+                            version: '1'
+                        }
+                    });
                 this.initListeners();
                 console.log("connecting");
                 this.socket.connect()
