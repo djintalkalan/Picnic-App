@@ -368,6 +368,7 @@ export const en = {
   ticket_purchased: "Ticket purchased",
   standard: "Standard",
   plan_name: "Plan name",
+  we_recommend_you_to_update: "You can update application to try new features",
   paypal_details: "Paypal details",
   api_username: "Live API Username",
   api_password: "Live API Password",
@@ -381,6 +382,4 @@ export const en = {
   donation_price_required: "Donation price required",
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
   two_factor_auth: "Two Factor Authentication",
-  we_recommend_you_to_update: "You can update application to try new features",
-
 }

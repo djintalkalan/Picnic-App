@@ -9,14 +9,10 @@ import 'react-native-gesture-handler';
 import "react-native-get-random-values";
 import invokeApp from 'react-native-invoke-app';
 import "react-native-url-polyfill/auto";
-import { config } from 'src/api/config';
 import App from 'src/App';
 import { onMessageReceived, onNotificationOpened } from 'src/notification/FirebaseNotification';
 import { name as appName } from './app.json';
 import './ReactotronConfig';
-
-console.log("config.REACTOTRON_STATUS", config.REACTOTRON_STATUS)
-
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {
     switch (type) {

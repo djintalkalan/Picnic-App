@@ -53,6 +53,7 @@ const Settings: FC<any> = (props) => {
     }, []))
 
 
+
     useEffect(() => {
         dispatch(getProfile())
     }, [selectedLanguage]);

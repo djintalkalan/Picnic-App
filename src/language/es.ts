@@ -368,6 +368,7 @@ export const es = {
     ticket_purchased: "",
     standard: "",
     plan_name: "",
+    we_recommend_you_to_update: "",
     paypal_details: "",
     api_username: "",
     api_password: "",
@@ -381,5 +382,4 @@ export const es = {
     donation_price_required: "",
     maximum_file_size_allowed: "",
     two_factor_auth: "",
-    we_recommend_you_to_update: "",
 }
