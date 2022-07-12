@@ -60,7 +60,6 @@ function* _setChatBackground({ type, payload }: action): Generator<any, any, any
             yield put(setChatBackgroundSuccess(payload))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
-
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }

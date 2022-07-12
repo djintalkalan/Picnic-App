@@ -144,7 +144,7 @@ export const setChatBackground = (payload: { resource_id: string, background_col
 })
 
 export const setChatBackgroundSuccess = (payload: { resource_id: string, background_color: ColorValue, resourceType: 'event' | 'group' }) => ({
-    type: ActionTypes.SET_GROUP_CHAT_BACKGROUND_SUCCESS,
+    type: ActionTypes.SET_CHAT_BACKGROUND_SUCCESS,
     payload
 })
 

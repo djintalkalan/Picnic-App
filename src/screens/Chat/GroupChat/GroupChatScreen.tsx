@@ -78,9 +78,13 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
     ], [useLanguage()])
 
 
-    console.log('groupDetail', groupDetail);
+    // console.log('groupDetail', groupDetail);
 
     const colorPickerButtonRef = useRef<TouchableOpacity>(null)
+
+    useEffect(() => {
+        activeBackgroundColorRef.current = groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND
+    }, [groupDetail?.background_color])
 
 
     const openColorPicker = useCallback((e?: GestureResponderEvent) => {
