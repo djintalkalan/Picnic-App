@@ -3,7 +3,7 @@ import { deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess,
 import Database from "database";
 import { Dispatch } from "react";
 import { DeviceEventEmitter } from "react-native";
-import { io, Socket } from "socket.io-client";
+import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import Language, { LanguageType } from "src/language/Language";
 import { getChatUsers, mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
 import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT } from "./SocketEvents";
@@ -27,20 +27,24 @@ class Service {
             if (isLogin) {
                 const authToken = Database.getStoredValue('authToken')
                 const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
-                this.socket = io(config.SOCKET_URL + config?.SOCKET_PORT ? (":" + config?.SOCKET_PORT) : ""
-                    , {
-                        // timeout: 5000,
-                        // reconnection: true,
-                        // autoConnect: false,
-                        // reconnectionDelay: 5000,
-                        secure: config.SOCKET_URL?.startsWith("https") || config.SOCKET_URL?.startsWith("wss"),
-                        transports: ['websocket', 'polling'],
-                        extraHeaders: {
-                            Authorization: authToken ? ("Bearer " + authToken) : "",
-                            'Accept-Language': selectedLanguage,
-                            version: '1'
-                        }
-                    });
+
+                const url = config.SOCKET_URL + (config?.SOCKET_PORT ? (":" + config?.SOCKET_PORT) : "")
+                const options: Partial<ManagerOptions & SocketOptions> = {
+                    // timeout: 5000,
+                    // reconnection: true,
+                    // autoConnect: false,
+                    // reconnectionDelay: 5000,
+                    secure: config.SOCKET_URL?.startsWith("https") || config.SOCKET_URL?.startsWith("wss"),
+                    transports: ['websocket', 'polling'],
+                    extraHeaders: {
+                        Authorization: authToken ? ("Bearer " + authToken) : "",
+                        'Accept-Language': selectedLanguage,
+                        version: '1'
+                    }
+                }
+                // console.log("SOCKET URL", url);
+                // console.log("OPTIONS", options);
+                this.socket = io(url, options);
                 this.initListeners();
                 console.log("connecting");
                 this.socket.connect()

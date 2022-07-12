@@ -6,6 +6,10 @@ if (__DEV__) {
         var originalLog = console.log
         var originalWarn = console.warn
         var originalError = console.error
+    } else {
+        console.log = function () { }
+        console.error = console.log
+        console.warn = console.log
     }
 
     if (config.REACTOTRON_CONSOLES) {
@@ -32,12 +36,6 @@ if (__DEV__) {
             console.error = Reactotron.error
             console.warn = Reactotron.warn
         }
-    }
-
-    if (!config.TERMINAL_CONSOLES) {
-        console.log = function () { }
-        console.error = console.log
-        console.warn = console.log
     }
 }
 
