@@ -27,13 +27,13 @@ class Service {
             if (isLogin) {
                 const authToken = Database.getStoredValue('authToken')
                 const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
-                this.socket = io(config.SOCKET_URL //+ ":" + config?.SOCKET_PORT
+                this.socket = io(config.SOCKET_URL + config?.SOCKET_PORT ? (":" + config?.SOCKET_PORT) : ""
                     , {
                         // timeout: 5000,
                         // reconnection: true,
                         // autoConnect: false,
                         // reconnectionDelay: 5000,
-                        secure: true,
+                        secure: config.SOCKET_URL?.startsWith("https") || config.SOCKET_URL?.startsWith("wss"),
                         transports: ['websocket', 'polling'],
                         extraHeaders: {
                             Authorization: authToken ? ("Bearer " + authToken) : "",
