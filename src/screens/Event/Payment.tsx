@@ -20,7 +20,7 @@ const Payment: FC<any> = (props) => {
         // console.log("URL is ", e?.url);
         // console.log("EVENT is ", e);
         dispatch(setLoadingAction(e?.loading))
-        if (!closed?.current && e?.url?.includes("compute.amazonaws.com/")) {
+        if (!closed?.current && (e?.url?.includes("payment-success") || e?.url?.includes("payment-error"))) {
             dispatch(setLoadingAction(false))
             closed.current = true
             setPaymentClosed(true)
