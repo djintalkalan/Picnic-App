@@ -195,6 +195,12 @@ export const GroupChats: FC<any> = (props) => {
         }
     }, [])
 
+    useEffect(() => {
+        if (groupDetail?.background_color) {
+            setActiveBackgroundColor(groupDetail?.background_color)
+        }
+    }, [groupDetail?.background_color])
+
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
             <ChatItem

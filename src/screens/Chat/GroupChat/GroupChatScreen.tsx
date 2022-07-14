@@ -44,6 +44,11 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
         }
     }, [])
 
+    useEffect(() => {
+        if (groupDetail?.background_color) {
+            activeBackgroundColorRef.current = groupDetail?.background_color
+        }
+    }, [groupDetail?.background_color])
 
     const tabs: TabProps[] = useMemo(() => [
         {
