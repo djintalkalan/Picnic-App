@@ -255,6 +255,12 @@ const EventChats: FC<any> = (props) => {
         })
     }, [activeBackgroundColor])
 
+    useEffect(() => {
+        if (eventDetail?.background_color) {
+            setActiveBackgroundColor(eventDetail?.background_color)
+        }
+    }, [eventDetail?.background_color])
+
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
