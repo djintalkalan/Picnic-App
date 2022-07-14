@@ -89,5 +89,6 @@ const deleteExtraKeys = (d: any) => {
     delete d.is_ticket_purchased_by_me
     delete d.is_admin
     delete d.is_event_admin
+    delete d.background_color
     return d
 }
