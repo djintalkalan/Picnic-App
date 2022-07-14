@@ -8,12 +8,13 @@ import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { DeviceEventEmitter, Dimensions, EmitterSubscription, FlatList, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { DeviceEventEmitter, Dimensions, EmitterSubscription, FlatList, Image, ImageBackground, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
 import { getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
+import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
 import SingleChatItem from './SingleChatItemNew'
@@ -230,7 +231,14 @@ const PersonChat: FC<any> = (props) => {
                     : null}
             />
 
-            <View style={styles.container} >
+            <ImageBackground source={Images.ic_chat_background} imageStyle={{
+                opacity: 0.4,
+                tintColor: "#fff",
+                height: '100%', width: '100%',
+                top: 0, bottom: 0
+            }} style={[styles.container, {
+                backgroundColor: DEFAULT_CHAT_BACKGROUND
+            }]} >
                 <View style={{ flexShrink: 1 }} >
                     {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
                         borderWidth={0}
@@ -288,7 +296,7 @@ const PersonChat: FC<any> = (props) => {
                     </View> : null}
                 </View>
 
-            </View >
+            </ImageBackground >
         </SafeAreaViewWithStatusBar>
     )
 }

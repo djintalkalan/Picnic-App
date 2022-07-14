@@ -12,7 +12,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { getImageUrl, InitialPaginationState, scaler } from 'utils'
+import { getImageUrl, scaler } from 'utils'
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 const BlockedMembers: FC<any> = (props) => {
 
@@ -23,7 +24,7 @@ const BlockedMembers: FC<any> = (props) => {
         blockedUsers: state?.privacyData?.blockedUsers
     }), isEqual)
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
 
     const dispatch = useDispatch()
 
@@ -69,7 +70,7 @@ const BlockedMembers: FC<any> = (props) => {
 
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {
-            paginationState.current = InitialPaginationState
+            paginationState.current = INITIAL_PAGINATION_STATE
             fetchBlockedMembers()
         })
     }, [])

@@ -16,7 +16,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { getCityOnly, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 const ITEM_HEIGHT = scaler(90)
 const { width, height } = Dimensions.get('screen')
 
@@ -86,7 +87,7 @@ const GroupList: FC<any> = (props) => {
     }), isEqual)
     const [isLoader, setLoader] = useState(false)
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const [selectedLocation] = useDatabase('selectedLocation')
     const [searchHomeText] = useDatabase("searchHomeText")
     const dispatch = useDispatch()
@@ -96,7 +97,7 @@ const GroupList: FC<any> = (props) => {
     useEffect(() => {
         InteractionManager.runAfterInteractions(() => {
             console.log("selectedLocation changed", selectedLocation)
-            paginationState.current = InitialPaginationState
+            paginationState.current = INITIAL_PAGINATION_STATE
             fetchGroupList()
         })
     }, [selectedLocation])
@@ -208,7 +209,7 @@ const GroupList: FC<any> = (props) => {
                 refreshControl={searchedGroups ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
-                        paginationState.current = InitialPaginationState
+                        paginationState.current = INITIAL_PAGINATION_STATE
                         fetchGroupList()
                     }}
                 />}

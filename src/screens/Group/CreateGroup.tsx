@@ -12,7 +12,8 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants'
 
 let n = 87.5
 const frequencies: Array<string> = []
@@ -133,7 +134,7 @@ const CreateGroup: FC<any> = (props) => {
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
-      ImagePicker.openPicker(ProfileImagePickerOptions).then((image) => {
+      ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS).then((image) => {
         console.log(image);
         uploadedImage.current = ""
         setProfileImage(image)

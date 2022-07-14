@@ -9,22 +9,18 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ChatItem from 'screens/Chat/ChatItem';
 import Language from 'src/language/Language';
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
-const initialPaginationState: IPaginationState = {
-    currentPage: 0,
-    totalPages: -1,
-    perPage: 20
-}
 const HiddenPosts: FC = () => {
     const flatListRef = useRef<FlatList>(null);
     const isLoading = useSelector<RootState, boolean>(_ => _?.isLoading, shallowEqual)
     const mutedPosts = useSelector<RootState, Array<any>>(_ => _?.privacyData?.mutedPosts)
 
-    const paginationState = useRef<IPaginationState>(initialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const dispatch = useDispatch();
 
     useEffect(() => {
-        paginationState.current = initialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchResources()
     }, [])
 
@@ -60,7 +56,7 @@ const HiddenPosts: FC = () => {
                         refreshControl={<RefreshControl
                             refreshing={false}
                             onRefresh={() => {
-                                paginationState.current = initialPaginationState
+                                paginationState.current = INITIAL_PAGINATION_STATE
                                 fetchResources()
                             }}
                         />}

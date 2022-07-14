@@ -8,7 +8,8 @@ import React, { FC, useCallback, useLayoutEffect, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils'
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 const ProfileGroups: FC<any> = (props) => {
 
@@ -17,12 +18,12 @@ const ProfileGroups: FC<any> = (props) => {
         userGroups: state?.userGroupsEvents?.groups,
     }))
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const dispatch = useDispatch()
 
 
     useLayoutEffect(() => {
-        paginationState.current = InitialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchUserGroups()
     }, [])
 

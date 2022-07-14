@@ -505,6 +505,11 @@ export const _getMerchantInfo = async () => {
     return fetchApiData('event/get-merchant-info')
 }
 
+export const _setChatBackground = async (body: any) => {
+    console.log("---------- _setChatBackground Api Call ---------------")
+    return fetchApiData('message/set-background-color', "POST", body)
+}
+
 export const _enableDisable2FA = async (body: any) => {
     console.log("---------- _enableDisable2FA Api Call ---------------")
     return fetchApiData('two-factor/enable-2fa', "POST", body)

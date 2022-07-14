@@ -70,7 +70,8 @@ export const Images = {
   ic_whatsapp: require("./images/ic_whatsapp.png"),
   ic_telegram: require("./images/ic_telegram.png"),
   ic_logo_gif: require("./images/ic_logo_gif.gif"),
+  ic_chat_background: require("./images/ic_chat_background.png"),
   ic_paypal_info: require("./images/ic_paypal_info.gif"),
   ic_delete_red: require("./images/ic_delete_red.png"),
-  // ic_logo_gif: require("./images/ic_logo_gif.png"),
+  // ic_whatsapp_background: require("./images/ic_whatsapp_background.png"),
 };

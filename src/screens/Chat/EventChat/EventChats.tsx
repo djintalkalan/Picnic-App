@@ -3,18 +3,21 @@ import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
+import ColorPicker from 'custom-components/ColorPicker'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, FlatList, Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ColorValue, Dimensions, FlatList, GestureResponderEvent, Image, ImageBackground, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, SocketService } from 'socket'
+import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
+import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
 import ChatItem from '../ChatItem'
@@ -175,6 +178,7 @@ const EventChats: FC<any> = (props) => {
     }))
 
     const { name, city, image, state, country, _id } = eventDetail ?? activeEvent
+    const colorPickerButtonRef = useRef<TouchableOpacity>(null)
 
     const dispatch = useDispatch()
 
@@ -225,6 +229,32 @@ const EventChats: FC<any> = (props) => {
         });
     }, [eventDetail])
 
+    const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(eventDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
+
+
+    const openColorPicker = useCallback((e?: GestureResponderEvent) => {
+        colorPickerButtonRef.current?.measureInWindow((x, y, w, h) => {
+            _showTouchAlert({
+                placementStyle: {
+                    // top,
+                    // right: width - left,
+                    top: y + h + scaler(5) + (StatusBar.currentHeight || 0),
+                    right: width - (w + x)
+                },
+                transparent: true,
+                alertComponent: () => {
+                    return (
+                        <ColorPicker selectedColor={activeBackgroundColor} onSelectColor={(color) => {
+                            setActiveBackgroundColor(color)
+                            _hideTouchAlert()
+                            SocketService.emit(EMIT_SET_CHAT_BACKGROUND, { resource_id: eventDetail?._id, background_color: color, resource_type: 'event' })
+                        }} />
+                    )
+                }
+            })
+        })
+    }, [activeBackgroundColor])
+
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
             <ChatHeader
@@ -245,14 +275,21 @@ const EventChats: FC<any> = (props) => {
                         <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
 
                     </TouchableOpacity>
-                    {/* <TouchableOpacity onPress={shareEvent} style={{ paddingHorizontal: scaler(5) }}  >
-                        <Image source={Images.ic_share} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
-                    </TouchableOpacity> */}
+                    {eventDetail?.is_admin ? <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >
+                        <Ionicons name={'color-palette-outline'} size={scaler(23)} />
+                    </TouchableOpacity> : undefined}
                 </View>
                 }
             />
 
-            <View style={styles.container} >
+            <ImageBackground source={Images.ic_chat_background} imageStyle={{
+                opacity: 0.4,
+                tintColor: "#fff",
+                height: '100%', width: '100%',
+                top: 0, bottom: 0
+            }} style={[styles.container, {
+                backgroundColor: activeBackgroundColor
+            }]} >
                 <View pointerEvents={(eventDetail?.is_event_member && socketConnected) ? undefined : 'none'} style={{ flexShrink: 1 }} >
                     {isChatLoader && <Bar width={width} height={scaler(2.5)} borderRadius={scaler(10)} animated
                         borderWidth={0}
@@ -314,7 +351,7 @@ const EventChats: FC<any> = (props) => {
                 </View> : null}
 
 
-            </View >
+            </ImageBackground >
         </SafeAreaViewWithStatusBar>
     )
 }

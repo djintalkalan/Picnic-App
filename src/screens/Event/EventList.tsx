@@ -16,7 +16,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
+
 
 const ITEM_HEIGHT = scaler(120)
 const { width, height } = Dimensions.get('screen')
@@ -140,7 +142,7 @@ const EventList: FC<any> = (props) => {
         searchedEvents: state?.homeData?.searchedEvents
     }), isEqual)
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const [selectedLocation] = useDatabase('selectedLocation')
     const dispatch = useDispatch()
     const [isLoader, setLoader] = useState(false)
@@ -150,7 +152,7 @@ const EventList: FC<any> = (props) => {
 
     useLayoutEffect(() => {
         console.log("selectedLocation changed", selectedLocation)
-        paginationState.current = InitialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchEventList()
     }, [selectedLocation])
 
@@ -269,7 +271,7 @@ const EventList: FC<any> = (props) => {
                 refreshControl={searchedEvents ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
-                        paginationState.current = InitialPaginationState
+                        paginationState.current = INITIAL_PAGINATION_STATE
                         fetchEventList()
                     }}
                 />}
