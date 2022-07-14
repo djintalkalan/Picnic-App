@@ -45,6 +45,7 @@ const CreateEvent1: FC<any> = props => {
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
   const [isDropdown, setDropdown] = useState(false);
+  const [pinLocation, setPinLocation] = useState(false);
   const keyboardValues = useKeyboardService()
   const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
   const eventId = props?.route?.params?.id || null
@@ -156,6 +157,7 @@ const CreateEvent1: FC<any> = props => {
     setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
+    setPinLocation(event?.is_direction == 1 ? true : false)
     if (event?.image) {
       setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
     } else {
@@ -184,10 +186,11 @@ const CreateEvent1: FC<any> = props => {
       event_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
+      is_direction: pinLocation ? '1' : '0'
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }), [event, isOnlineEvent, eventImage, multiImageArray])
+  }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -302,6 +305,13 @@ const CreateEvent1: FC<any> = props => {
               control={control}
               errors={errors}
             />
+
+            <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
+              <CheckBox checked={pinLocation} setChecked={setPinLocation} />
+              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+                {Language.add_location_to_chat}
+              </Text>
+            </TouchableOpacity>
 
             <TextInput
               placeholder={Language.write_something_about_event}
