@@ -34,9 +34,8 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, ic
         <TouchableHighlight onPress={onPressImage} underlayColor={colors.colorPrimary} >
             <View style={style.containerStyle} >
                 <View style={style.textContainer} >
-                    <Text style={styles.title} >{title}</Text>
+                    <Text style={styles.title} ellipsizeMode='tail' numberOfLines={2} >{title}</Text>
                     <Text numberOfLines={2} style={styles.subtitle}>{subtitle}</Text>
-
                     <View style={{ flex: 1, marginVertical: scaler(5), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }} >
                         <View>
                             <Text style={{ color: colors.colorBlack, fontWeight: '600', fontSize: scaler(14) }} >{price ? currency : ""}{price}</Text>
