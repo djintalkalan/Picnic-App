@@ -6,8 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<!-- <string>applinks:picnicapp.page.link</string> -->
-		<string>applinks:picnicgroups.page.link</string>
+		<string>applinks:${DYNAMIC_LINK_DOMAIN}</string>
 	</array>
 </dict>
 </plist>
