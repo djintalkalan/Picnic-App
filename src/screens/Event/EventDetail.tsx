@@ -424,11 +424,11 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View>
                         <View>
-                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={showAllTicketVisible} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                     {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
                                 </Text>
-                                {event?.ticket_plans?.length > 0 ?
+                                {(event?.ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
                             </TouchableOpacity>

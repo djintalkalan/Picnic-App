@@ -32,7 +32,7 @@ const Login: FC = () => {
             // email: "sangeetakohar484@gmail.com",
             // password: "Sangu@123",
             email: config.APP_TYPE == 'dev' ? "sangeeta@shinewebservices.com" : "picnicshine@gmail.com",
-            password: config.APP_TYPE == 'dev' ? "Shine@22" : "Shine@22",
+            password: config.APP_TYPE == 'dev' ? "Shine@22" : "Shine@2015",
             // email: "deepakq@testings.com",
             // password: "Dj@123456",
 
@@ -40,7 +40,7 @@ const Login: FC = () => {
             // email: "deepakq@testings.com",
             //     password: "Dj@123456",
             email: config.APP_TYPE == 'dev' ? "deepak@shinewebservices.com" : "picnicshine@gmail.com",
-            password: config.APP_TYPE == 'dev' ? "Deepak@123" : "Shine@22",
+            password: config.APP_TYPE == 'dev' ? "Deepak@123" : "Shine@2015",
         } : {},
         mode: 'onChange'
     })
