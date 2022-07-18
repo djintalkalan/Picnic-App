@@ -28,7 +28,7 @@ class RollbarService {
             payload: {
                 ...Platform.OS == 'android' ? { ANDROID_VERSION_NAME: config.APP_VERSION, ANDROID_VERSION_CODE: config.BUILD_NUMBER_CODE, }
                     :
-                    { APP_STORE_VERSION: config.APP_STORE_VERSION, IOS_APP_VERSION: config.APP_VERSION, IOS_BUILD_NUMBER: config.BUILD_NUMBER_CODE, },
+                    { IOS_APP_VERSION: config.APP_VERSION, IOS_BUILD_NUMBER: config.BUILD_NUMBER_CODE, },
                 ...isLogin ? {
                     phone: userData?.phone_number,
                     dialCode: userData?.dial_code,

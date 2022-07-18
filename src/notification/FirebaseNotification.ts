@@ -3,6 +3,7 @@
 import notifee, { AndroidColor, AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
+import { config } from "api";
 import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
 import Database, { useDatabase } from 'database/Database';
@@ -135,10 +136,10 @@ const navigateToPages = async (notification: any) => {
 
 const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
     console.log("Link is ", link);
-    if (link && link.url) {
+    if (link && link.url && link.url?.includes(config.BASE_URL)) {
         const { id, type } = getDetailsFromDynamicUrl(link.url)
         if (id && type) {
-            console.log("DetailsFromDynamicUrl", id, type);
+            // console.log("DetailsFromDynamicUrl", id, type);
             NavigationService.navigate("Home");
             switch (type) {
                 case "group-detail":

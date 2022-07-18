@@ -646,7 +646,7 @@ export const shareAppLink = async (name: string) => {
             fallbackUrl: link
         },
         navigation: {
-            forcedRedirectEnabled: false
+            forcedRedirectEnabled: true
         }
     });
 
