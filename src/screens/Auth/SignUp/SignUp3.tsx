@@ -46,6 +46,10 @@ const SignUp3: FC<any> = props => {
     mode: 'onChange',
     shouldFocusError: false
   });
+
+
+  const { otp, otp_type, ...rest } = props.route?.params ?? {}
+
   const dispatch = useDispatch();
   const onSubmit = useCallback(
     () =>
@@ -58,7 +62,7 @@ const SignUp3: FC<any> = props => {
               phone_number: data?.phone?.trim(),
               phone_country_code: data?.phone_countryCode?.trim(),
               register_platform: Platform.OS,
-              ...props.route?.params,
+              ...rest,
             }),
           ))
       })(),

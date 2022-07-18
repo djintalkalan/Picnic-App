@@ -299,22 +299,21 @@ const EventDetail: FC<any> = (props) => {
         priceButtonRef.current?.measureInWindow((x, y, w, h) => {
             _showTouchAlert({
                 placementStyle: {
-                    top: y + h + scaler(20) + (StatusBar.currentHeight || 0),
-                    right: width - (x + w)
+                    top: y + h + (StatusBar.currentHeight || 0),
+                    right: width - (x + w),
+                    maxWidth: width - 2 * (width - (x + w)),
                 },
                 transparent: true,
                 alertComponent: () => {
                     return (
-                        <View>
-                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
-                                <View style={{ borderRadius: scaler(5) }}>
-                                    {event?.ticket_plans?.map((_: any, i: number) => {
-                                        if (_.status == 1)
-                                            return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
-                                    })}
-                                </View>
-                            </Card>
-                        </View>
+                        <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
+                            <View style={{ borderRadius: scaler(5) }}>
+                                {event?.ticket_plans?.map((_: any, i: number) => {
+                                    if (_.status == 1)
+                                        return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                                })}
+                            </View>
+                        </Card>
                     )
                 }
             })
@@ -757,8 +756,8 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
 
 const TicketPlans = (props: { name: string, currency: string, price: string }) => {
     const { name, currency, price } = props;
-    return <View style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
-        <Text style={{ flexGrow: 1, fontSize: scaler(14), fontWeight: '500', marginRight: scaler(10) }}>{name}</Text>
+    return <View style={{ padding: scaler(10), overflow: 'hidden', flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7, justifyContent: 'flex-end' }}>
+        <Text style={{ flexGrow: 1, maxWidth: width / 1.4, fontSize: scaler(14), fontWeight: '500', paddingRight: scaler(10) }}>{name}</Text>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
             {getSymbol(currency) + price}
         </Text>
@@ -877,10 +876,8 @@ const styles = StyleSheet.create({
         lineHeight: scaler(23)
     },
     planView: {
-        position: 'absolute',
         backgroundColor: colors.colorWhite,
-        right: scaler(5),
-        top: -scaler(20)
+        borderRadius: scaler(5),
     },
     customSlide: {
         backgroundColor: colors?.colorFadedPrimary,
