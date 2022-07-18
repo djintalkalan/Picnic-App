@@ -41,7 +41,7 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, s
                         style={styles.iconStyle} />
                 </TouchableHighlight>
                 <View style={style.textContainer} >
-                    <Text style={style.title} >{title}</Text>
+                    <Text style={style.title} numberOfLines={2} ellipsizeMode={'tail'} >{title}</Text>
                     <Text numberOfLines={2} style={style.subtitle}>{subtitle}</Text>
                 </View>
                 {CustomView ? React.isValidElement(CustomView) ?
