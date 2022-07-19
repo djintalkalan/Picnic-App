@@ -136,6 +136,7 @@ const navigateToPages = async (notification: any) => {
 
 const handleLink = async (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
     console.log("Link is ", link);
+    // console.log("Base Url is ", config.BASE_URL);
     if (link && link.url && link.url?.includes(config.BASE_URL)) {
         const { id, type } = getDetailsFromDynamicUrl(link.url)
         if (id && type) {
