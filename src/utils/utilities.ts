@@ -575,19 +575,24 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
 }
 
 const buildLink = async (l: string) => {
-    const link = await dynamicLinks().buildShortLink({
-        link: 'http://www.picnicapp.link/download' + l,
-        // link: config.SOCKET_URL.replace("ws://", "http://") + '/download' + l,
-        domainUriPrefix: 'https://picnicgroups.page.link',
+    const link = `${config.BASE_URL}/download${l}`
+    const dynamicLink = await dynamicLinks().buildShortLink({
+        link,
+        domainUriPrefix: "https://" + config.DYNAMIC_LINK_DOMAIN,
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME,
+            fallbackUrl: link
         },
         ios: {
             bundleId: config.BUNDLE_ID_PACKAGE_NAME,
+            fallbackUrl: link
+        },
+        navigation: {
+            forcedRedirectEnabled: true,
         }
 
     });
-    return link;
+    return dynamicLink;
 }
 
 export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
@@ -625,27 +630,28 @@ const handleShareAction = (shareAction: ShareAction | null, type: string, id: st
                 break;
         }
     }
-
 }
 
 export const shareAppLink = async (name: string) => {
-    const link = await dynamicLinks().buildShortLink({
-        link: 'http://www.picnicapp.link/download',
-        // link: config.SOCKET_URL.replace("ws://", "http://") + '/download',
-        domainUriPrefix: 'https://picnicgroups.page.link',
+    const link = `${config.BASE_URL}/download`
+    const dynamicLink = await dynamicLinks().buildShortLink({
+        link,
+        domainUriPrefix: "https://" + config.DYNAMIC_LINK_DOMAIN,
         android: {
-            packageName: config.BUNDLE_ID_PACKAGE_NAME
+            packageName: config.BUNDLE_ID_PACKAGE_NAME,
+            fallbackUrl: link
         },
         ios: {
-            bundleId: config.BUNDLE_ID_PACKAGE_NAME
+            bundleId: config.BUNDLE_ID_PACKAGE_NAME,
+            fallbackUrl: link
         },
-        // navigation: {
-        //     forcedRedirectEnabled: true
-        // }
+        navigation: {
+            forcedRedirectEnabled: true
+        }
     });
 
     try {
-        const shareAction = await share("Share " + name, link)
+        const shareAction = await share("Share " + name, dynamicLink)
         handleShareAction(shareAction, 'application', Platform.OS)
     }
     catch (e) {

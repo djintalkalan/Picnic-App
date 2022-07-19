@@ -229,6 +229,11 @@ android {
         pickFirst '**/libjsc.so'
         pickFirst '**/libc++_shared.so'
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 dependencies {
