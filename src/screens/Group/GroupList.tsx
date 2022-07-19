@@ -125,6 +125,7 @@ const GroupList: FC<any> = (props) => {
                 textContainerStyle={{ justifyContent: 'center' }}
                 defaultIcon={Images.ic_group_placeholder}
                 title={item?.name}
+                titleTextStyle={item?.is_default_group ? { color: colors.colorPrimary, fontSize: scaler(16) } : {}}
                 // highlight={}
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(80), type: 'groups' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
