@@ -578,7 +578,7 @@ const buildLink = async (l: string) => {
     const link = `${config.BASE_URL}/download${l}`
     const dynamicLink = await dynamicLinks().buildShortLink({
         link,
-        domainUriPrefix: config.DYNAMIC_LINK_DOMAIN,
+        domainUriPrefix: "https://" + config.DYNAMIC_LINK_DOMAIN,
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
@@ -636,7 +636,7 @@ export const shareAppLink = async (name: string) => {
     const link = `${config.BASE_URL}/download`
     const dynamicLink = await dynamicLinks().buildShortLink({
         link,
-        domainUriPrefix: config.DYNAMIC_LINK_DOMAIN,
+        domainUriPrefix: "https://" + config.DYNAMIC_LINK_DOMAIN,
         android: {
             packageName: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
