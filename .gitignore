@@ -71,7 +71,6 @@ GoogleService-Info.plist
 
 # react-native-ultimate-config
 rnuc.xcconfig
-# uncomment these if you are in project
-#
 *.env
 *.yaml
+keystore.gradle
