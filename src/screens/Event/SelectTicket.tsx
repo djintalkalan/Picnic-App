@@ -5,6 +5,8 @@ import React, { FC, memo, useCallback, useState } from 'react'
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
 import { getSymbol, NavigationService, scaler } from 'utils'
+//@ts-ignore
+import ReadMore from 'react-native-read-more-text'
 
 const SelectTicket: FC = (props: any) => {
     const [selectedTicket, setSelectedTicket] = useState<any>()
@@ -22,6 +24,7 @@ const SelectTicket: FC = (props: any) => {
     const renderTicket = useCallback(({ item, index }) => {
         return (
             <TicketView
+                id={item?._id}
                 currency={item.currency}
                 description={item.description}
                 isSelected={item?._id == selectedTicket?._id}
@@ -31,7 +34,6 @@ const SelectTicket: FC = (props: any) => {
             />
         )
     }, [selectedTicket])
-
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.select_ticket} backEnabled />
@@ -56,6 +58,7 @@ const SelectTicket: FC = (props: any) => {
 }
 
 interface TicketProps {
+    id: string;
     title: string;
     price: string;
     currency: string;
@@ -64,7 +67,27 @@ interface TicketProps {
     onPress: () => void;
 }
 
-const TicketView = memo(({ title, currency, description, isSelected = false, price, onPress }: TicketProps) => {
+const TicketView = memo(({ id, title, currency, description, isSelected = false, price, onPress }: TicketProps) => {
+    const _renderTruncatedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: isSelected ? colors.colorBlack : colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Read more
+            </Text>
+        );
+    }
+
+    const _renderRevealedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: isSelected ? colors.colorBlack : colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Show less
+            </Text>
+        );
+    }
+
+    const _handleTextReady = () => {
+        // ...
+    }
+
     return (
         <Card cardElevation={2} cornerRadius={scaler(8)}>
             <TouchableOpacity style={[styles.renderView, isSelected ? { backgroundColor: colors.colorPrimary } : {}]} activeOpacity={0.7} onPress={onPress}>
@@ -72,7 +95,14 @@ const TicketView = memo(({ title, currency, description, isSelected = false, pri
                     <Text style={[styles.mainText, { flex: 1 }, isSelected ? { color: colors.colorWhite } : {}]}>{title}</Text>
                     <Text style={[styles.mainText, isSelected ? { color: colors.colorWhite } : {}]}>{getSymbol(currency)}{price}</Text>
                 </View>
-                <Text style={[styles.description, isSelected ? { color: colors.colorWhite } : {}]}>{description}</Text>
+                <ReadMore
+                    key={id}
+                    numberOfLines={3}
+                    renderTruncatedFooter={_renderTruncatedFooter}
+                    renderRevealedFooter={_renderRevealedFooter}
+                    onReady={_handleTextReady}>
+                    <Text style={[styles.description, isSelected ? { color: colors.colorWhite } : {}]}>{description}</Text>
+                </ReadMore>
             </TouchableOpacity>
         </Card>
     )

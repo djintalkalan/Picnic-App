@@ -1,7 +1,7 @@
 import { config } from 'api/config';
 import axios, { AxiosResponse, Method } from 'axios';
 import React, { MutableRefObject } from 'react';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import { LanguageType } from 'src/language/Language';
@@ -28,12 +28,12 @@ export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
 function interceptResponse(this: AxiosResponse<any>): any {
     try {
-        if (!config.REACTOTRON_STATUS) {
+        if (config.TERMINAL_CONSOLES) {
             console.log("-----------AXIOS  Api Response is----------- ");
             console.log("url string ", this.config?.url);
             console.log("header ", this.config?.headers);
             console.log("body ", this.config?.data);
-            console.log("methodType ", this.config?.data)
+            console.log("methodType ", this.config?.method)
         }
         if (JSON.stringify(this.data).startsWith("<") || JSON.stringify(this.data).startsWith("\"<")) {
             DeviceEventEmitter.emit("STOP_LOADER_EVENT");
@@ -48,6 +48,8 @@ function interceptResponse(this: AxiosResponse<any>): any {
             }
         }
         else {
+            if (config.TERMINAL_CONSOLES)
+                console.log(JSON.stringify(this?.data));
             return this?.data
         }
     } finally {
@@ -56,7 +58,7 @@ function interceptResponse(this: AxiosResponse<any>): any {
 }
 
 const api = axios.create({
-    baseURL: config.API_URL,
+    baseURL: config.BASE_URL + config.API_VERSION,
     timeout: 1000 * 30,
     headers: {
         'Accept': "application/json",
@@ -66,7 +68,7 @@ const api = axios.create({
 
 api.interceptors.request.use(async function (requestConfig) {
     try {
-        if (!config.REACTOTRON_STATUS) {
+        if (config.TERMINAL_CONSOLES) {
             console.log("-----------AXIOS  Api request is----------- ");
             console.log("url string ", requestConfig.url);
             console.log("header ", requestConfig?.headers);
@@ -379,7 +381,7 @@ export const _leaveEvent = async (body: any) => {
 
 export const _authorizeMembership = async (body: any) => {
     console.log("---------- _authorizeMembership Api Call ---------------")
-    return fetchApiData('membership/authrise', "POST", body)
+    return fetchApiData(Platform.OS == 'ios' ? 'membership/authorise' : 'membership/authrise', "POST", body)
 }
 
 export const _captureMembership = async (body: any) => {
@@ -498,3 +500,12 @@ export const _checkUsername = async (body: any) => {
     return fetchApiData('auth/check-username', "POST", body)
 }
 
+export const _getMerchantInfo = async () => {
+    console.log("---------- _getMerchantInfo Api Call ---------------")
+    return fetchApiData('event/get-merchant-info')
+}
+
+export const _enableDisable2FA = async (body: any) => {
+    console.log("---------- _enableDisable2FA Api Call ---------------")
+    return fetchApiData('two-factor/enable-2fa', "POST", body)
+}

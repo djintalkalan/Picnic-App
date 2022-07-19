@@ -10,10 +10,13 @@ import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from '
 import { useForm } from 'react-hook-form';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+//@ts-ignore
+import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import { getSymbol, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+
 
 type FormType = {
     noOfSeats: string;
@@ -47,7 +50,7 @@ const BookEvent: FC = (props: any) => {
         }
         else {
             setSelectedTicket({
-                amount: event.event_fees,
+                amount: event?.event_fees,
                 event_tax_amount: event?.event_tax_amount,
                 currency: event?.event_currency
             })
@@ -55,9 +58,10 @@ const BookEvent: FC = (props: any) => {
     }, [])
 
     useEffect(() => {
-        if (event.is_donation_enabled && isPayByPaypal) {
+        if (event?.is_donation_enabled && isPayByPaypal) {
             setValue('currency', event.event_currency.toUpperCase())
         }
+
     }, [event, isPayByPaypal])
 
 
@@ -74,7 +78,7 @@ const BookEvent: FC = (props: any) => {
             is_donation: event?.is_free_event && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
-            payment_method: event?.is_free_event ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal
+            payment_method: event?.is_free_event && !isUserDonating ? "free" : isPayByPaypal ? 'paypal' : 'cash', // free, cash, paypal
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
@@ -100,6 +104,27 @@ const BookEvent: FC = (props: any) => {
             availableSeats: ((event?.capacity - event?.total_sold_tickets) - (parseInt(noOfTickets || '0')))
         }
     }, [noOfTickets])
+
+
+    const _renderTruncatedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Read more
+            </Text>
+        );
+    }
+
+    const _renderRevealedFooter = (handlePress: any) => {
+        return (
+            <Text style={{ color: colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
+                Show less
+            </Text>
+        );
+    }
+
+    const _handleTextReady = () => {
+        // ...
+    }
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
@@ -176,6 +201,7 @@ const BookEvent: FC = (props: any) => {
                                         isPayByPaypal={isPayByPaypal}
                                         setPayMethodSelected={setPayMethodSelected}
                                         setIsPayByPaypal={setIsPayByPaypal}
+                                        disabled={!event?.payment_api_username && _ == 'paypal'}
                                         isDonation={event.is_donation_enabled} />
                                     {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                                 </Fragment>
@@ -192,9 +218,16 @@ const BookEvent: FC = (props: any) => {
                                 </TouchableOpacity>
 
                                 {/* <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>{Language.donation_description}</Text> */}
-                                <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                    {event?.donation_description}
-                                </Text>
+                                <ReadMore
+                                    numberOfLines={4}
+                                    renderTruncatedFooter={_renderTruncatedFooter}
+                                    renderRevealedFooter={_renderRevealedFooter}
+                                    onReady={_handleTextReady}>
+                                    <Text style={[styles.address, { fontSize: scaler(13), marginLeft: scaler(8), color: colors.colorBlackText }]}>
+                                        {event?.donation_description}
+                                    </Text>
+                                </ReadMore>
+
                                 <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                                 {isUserDonating && event?.payment_method.map((_: any, i: any) => {
                                     return <Fragment key={i}>
@@ -202,6 +235,7 @@ const BookEvent: FC = (props: any) => {
                                             type={_}
                                             isPayByPaypal={isPayByPaypal}
                                             setPayMethodSelected={setPayMethodSelected}
+                                            disabled={!event?.payment_api_username && _ == 'paypal'}
                                             setIsPayByPaypal={setIsPayByPaypal}
                                             isDonation={event.is_donation_enabled}
                                         />
@@ -295,7 +329,7 @@ const styles = StyleSheet.create({
     },
     payView: {
         flexDirection: 'row',
-        marginVertical: scaler(16),
+        paddingVertical: scaler(16),
         alignItems: 'center',
         marginHorizontal: scaler(5)
     },
@@ -307,16 +341,16 @@ const styles = StyleSheet.create({
     },
 })
 
-const PaymentMethod = (props: { type: string, isPayByPaypal?: boolean, setIsPayByPaypal: any, setPayMethodSelected: any, isDonation: number }) => {
+const PaymentMethod = (props: { type: string, isPayByPaypal?: boolean, setIsPayByPaypal: any, setPayMethodSelected: any, isDonation: number, disabled: boolean }) => {
     return (
-        <TouchableOpacity style={styles.payView} onPress={() => { props?.setIsPayByPaypal(props?.type != 'cash'), props?.setPayMethodSelected(true) }}>
+        <TouchableOpacity style={[styles.payView, { backgroundColor: props?.disabled ? '' : '' }]} onPress={() => { props?.setIsPayByPaypal(props?.type != 'cash'), props?.setPayMethodSelected(true) }} disabled={props?.disabled} >
             <Image source={props?.type == 'cash' ? Images.ic_empty_wallet : Images.ic_paypal}
-                style={{ height: scaler(16), width: scaler(19) }} />
-            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>
+                style={{ height: scaler(16), width: scaler(19), tintColor: props.disabled ? colors.colorGreyText : undefined }} />
+            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1, color: props.disabled ? colors.colorGreyInactive : '' }}>
                 {props?.type == 'cash' ? (props?.isDonation ? Language.donate_by_cash : Language.pay_by_cash) : (props?.isDonation ? Language.donate_by_paypal : Language?.pay_by_paypal)}</Text>
             <MaterialIcons name={(props?.type == 'cash' && props?.isPayByPaypal == false) ||
                 (props?.type != 'cash' && props?.isPayByPaypal) ? 'radio-button-on' : 'radio-button-off'}
-                size={scaler(20)} color={colors.colorPrimary} />
+                size={scaler(20)} color={props.disabled ? colors.colorGreyText : colors.colorPrimary} />
         </TouchableOpacity>
     )
 }

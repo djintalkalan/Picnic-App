@@ -238,7 +238,7 @@ const EventDetail: FC<any> = (props) => {
                                             message: Language.are_you_sure_cancel_event,
                                             onPressButton: () => {
                                                 dispatch(deleteEvent(event?._id))
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
@@ -263,7 +263,7 @@ const EventDetail: FC<any> = (props) => {
                                                 setTimeout(() => {
                                                     NavigationService.navigate('HomeEventTab')
                                                 }, 200);
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                             },
                                             buttonText: Language.yes_mute,
                                             // cancelButtonText: Language.cancel
@@ -274,7 +274,7 @@ const EventDetail: FC<any> = (props) => {
                                             message: Language.are_you_sure_report_event,
                                             onPressButton: () => {
                                                 dispatch(reportResource({ resource_id: event?._id, resource_type: 'event' }))
-                                                _hideTouchAlert()
+                                                _hidePopUpAlert()
                                             },
                                             buttonText: Language.yes_report,
                                             // cancelButtonText: Language.cancel
@@ -299,27 +299,36 @@ const EventDetail: FC<any> = (props) => {
         priceButtonRef.current?.measureInWindow((x, y, w, h) => {
             _showTouchAlert({
                 placementStyle: {
-                    top: y + h + scaler(20) + (StatusBar.currentHeight || 0),
-                    right: width - (x + w)
+                    top: y + h + (StatusBar.currentHeight || 0),
+                    right: width - (x + w),
+                    maxWidth: width - 2 * (width - (x + w)),
                 },
                 transparent: true,
                 alertComponent: () => {
                     return (
-                        <View>
-                            <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
-                                <View style={{ borderRadius: scaler(5) }}>
-                                    {event?.ticket_plans?.map((_: any, i: number) => {
-                                        if (_.status == 1)
-                                            return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
-                                    })}
-                                </View>
-                            </Card>
-                        </View>
+                        <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
+                            <View style={{ borderRadius: scaler(5) }}>
+                                {event?.ticket_plans?.map((_: any, i: number) => {
+                                    if (_.status == 1)
+                                        return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                                })}
+                            </View>
+                        </Card>
                     )
                 }
             })
         })
     }, [event])
+
+
+    const calculateButtonDisability = useCallback(() => {
+        if (!event?.payment_api_username &&
+            (!event?.payment_method?.includes('cash') &&
+                !event?.is_free_event)) {
+            return true;
+        }
+        return false;
+    }, [event]);
 
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
@@ -415,11 +424,11 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View>
                         <View>
-                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={showAllTicketVisible} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                     {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
                                 </Text>
-                                {event?.ticket_plans?.length > 0 ?
+                                {(event?.ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
                             </TouchableOpacity>
@@ -680,6 +689,7 @@ const EventDetail: FC<any> = (props) => {
                             (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                    disabled={calculateButtonDisability()}
                                     onPress={() => {
                                         event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })
@@ -746,8 +756,8 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
 
 const TicketPlans = (props: { name: string, currency: string, price: string }) => {
     const { name, currency, price } = props;
-    return <View style={{ padding: scaler(10), flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7 }}>
-        <Text style={{ flexGrow: 1, fontSize: scaler(14), fontWeight: '500', marginRight: scaler(10) }}>{name}</Text>
+    return <View style={{ padding: scaler(10), overflow: 'hidden', flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7, justifyContent: 'flex-end' }}>
+        <Text style={{ flexGrow: 1, maxWidth: width / 1.4, fontSize: scaler(14), fontWeight: '500', paddingRight: scaler(10) }}>{name}</Text>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
             {getSymbol(currency) + price}
         </Text>
@@ -866,10 +876,8 @@ const styles = StyleSheet.create({
         lineHeight: scaler(23)
     },
     planView: {
-        position: 'absolute',
         backgroundColor: colors.colorWhite,
-        right: scaler(5),
-        top: -scaler(20)
+        borderRadius: scaler(5),
     },
     customSlide: {
         backgroundColor: colors?.colorFadedPrimary,

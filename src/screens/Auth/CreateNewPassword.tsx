@@ -26,11 +26,13 @@ const CreateNewPassword: FC<any> = (props) => {
         },
         mode: 'onChange'
     })
+
+    const { otp_type, ...rest } = props?.route?.params ?? {}
     const dispatch = useDispatch()
     const onSubmit = useCallback(() => handleSubmit(data => {
         dispatch(resetPassword({
             password: data?.password,
-            ...props?.route?.params
+            ...rest
         }))
     })(), []);
 

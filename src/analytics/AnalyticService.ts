@@ -1,4 +1,7 @@
 import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
+import { config } from 'api';
+import Database from 'database/Database';
 import { Platform } from 'react-native';
 
 const getAnalyticScreenName = (routeName: string) => {
@@ -51,15 +54,36 @@ const AnalyticService = {
     },
 
     setUserData: async (userData: any, type?: 1 | 2) => {
+        if (!__DEV__ && config.APP_TYPE != 'dev')
+            try {
+                const analytic = analytics()
+                await Promise.all([
+                    analytic.setUserId(userData?._id),
+                    analytic.setUserProperties({
+                        username: userData?.username,
+                        fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+                        email: userData?.email
+                    }),
+                    ...(type ? [analytic[type == 1 ? 'logLogin' : "logSignUp"]({ method: `${Platform.OS}-app` })] : [])
+                ]);
+            } catch (error) {
+                console.log("Set UserData Error", error)
+            }
         try {
-            const analytic = analytics()
-            await analytic.setUserId(userData?._id)
-            await analytic.setUserProperties({
-                username: userData?.username,
-                fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
-                email: userData?.email
-            })
-            type && await analytic[type == 1 ? 'logLogin' : "logSignUp"]({ method: `${Platform.OS}-app` })
+            await Promise.all([
+                crashlytics().setUserId(userData?._id),
+                crashlytics().setAttributes({
+                    email: userData.email,
+                    username: userData.username,
+                    fullName: userData?.first_name + (userData?.last_name ? (" " + userData?.last_name) : ""),
+                    environment: config.APP_TYPE == 'dev' ? "development" : config.APP_TYPE,
+                    platform: Platform.OS,
+                    phone: userData?.phone_number,
+                    dialCode: userData?.dial_code,
+                    authToken: Database.getStoredValue('authToken'),
+                    firebaseToken: Database.getStoredValue('firebaseToken'),
+                }),
+            ]);
         } catch (error) {
             console.log("Set UserData Error", error)
         }
@@ -73,32 +97,47 @@ const AnalyticService = {
                 fullName: null,
                 email: null
             })
+            await Promise.all([
+                crashlytics().setUserId(''),
+                crashlytics().setAttributes({
+                    email: '',
+                    username: '',
+                    fullName: '',
+                    environment: '',
+                    platform: '',
+                    phone: '',
+                    dialCode: '',
+                    authToken: '',
+                    firebaseToken: '',
+                }),
+            ]);
         } catch (error) {
             console.log("clear UserData Error", error)
         }
     },
     logScreenView: async (currentRouteName: string) => {
-        try {
-            await analytics().logScreenView({
-                screen_name: getAnalyticScreenName(currentRouteName),
-                screen_class: currentRouteName,
-            });
-        } catch (error) {
-            console.log("Screen View Log Error", error)
-
-        }
+        if (!__DEV__ && config.APP_TYPE != 'dev')
+            try {
+                await analytics().logScreenView({
+                    screen_name: getAnalyticScreenName(currentRouteName),
+                    screen_class: currentRouteName,
+                });
+            } catch (error) {
+                console.log("Screen View Log Error", error)
+            }
 
     },
     logShare: async (id: string, type: string, method: string = "") => {
-        try {
-            await analytics().logShare({
-                content_type: type,
-                item_id: id,
-                method: method || ""
-            })
-        } catch (error) {
-            console.log("Share Log Error", error)
-        }
+        if (!__DEV__ && config.APP_TYPE != 'dev')
+            try {
+                await analytics().logShare({
+                    content_type: type,
+                    item_id: id,
+                    method: method || ""
+                })
+            } catch (error) {
+                console.log("Share Log Error", error)
+            }
     }
 }
 
