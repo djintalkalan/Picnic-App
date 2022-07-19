@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply from: 'keystore.gradle'
 
 import com.android.build.OutputFile
 
@@ -90,9 +91,6 @@ apply from: "../../node_modules/react-native-ultimate-config/android/rnuc.gradle
 def outputFileName = project.config.get("OUTPUT_NAME")
 def ANDROID_VERSION_CODE = project.config.get("BUILD_NUMBER_CODE").toInteger()
 def ANDROID_VERSION_NAME = project.config.get("APP_VERSION")
-def KEYSTORE_NAME = project.config.get("KEYSTORE_NAME")
-def KEYSTORE_PASSWORD = project.config.get("KEYSTORE_PASSWORD")
-def ALIAS_NAME = project.config.get("ALIAS_NAME")
 def PACKAGE_NAME = project.config.get("BUNDLE_ID_PACKAGE_NAME")
 def APP_TYPE = project.config.get("APP_TYPE")
 def outputPathName = "${project.rootDir.absolutePath}/output"
@@ -110,7 +108,7 @@ def enableSeparateBuildPerCPUArchitecture = true
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore.
@@ -185,12 +183,16 @@ android {
                     abiFilters nativeArchitectures.split(',')
                 }
             }
+            // minifyEnabled true
+            // shrinkResources enableProguardInReleaseBuilds
+            // proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro", "proguard-rules-debug.pro"
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             firebaseCrashlytics {
                 nativeSymbolUploadEnabled true
@@ -282,7 +284,7 @@ dependencies {
     //gif
     implementation 'com.facebook.fresco:animated-gif:2.5.0'
 
-
+    implementation "androidx.multidex:multidex:2.0.1"
 }
 
 // Run this once to be able to run the application with BUCK
