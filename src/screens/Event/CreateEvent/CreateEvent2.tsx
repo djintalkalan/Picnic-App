@@ -19,7 +19,6 @@ import Language from 'src/language/Language';
 import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
 type FormType = {
-  capacity: string;
   eventDate: string;
   endDate: string;
   startTime: string;
@@ -50,13 +49,11 @@ const CreateEvent2: FC<any> = props => {
   const eventDateRef = useRef<RNTextInput>(null)
   const scrollViewRef = useRef<ScrollView>(null)
   const dispatch = useDispatch();
-  const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [, forceRender] = useState(false);
   const [isMultidayEvent, setIsMultidayEvent] = useState(false);
   const keyboardValues = useKeyboardService()
   const eventPriceInputRef = useRef<RNInput>(null)
   const additionalInfoInputRef = useRef<RNInput>(null)
-  const capacityInputRef = useRef<RNInput>(null)
   const eventDateTime = useRef<IEventDateTime>(initialDateTime);
   const [userData] = useDatabase("userData")
   const { current: event } = useRef(store.getState().createEventState)
@@ -98,9 +95,7 @@ const CreateEvent2: FC<any> = props => {
     }
 
     console.log(event);
-    setValue('capacity', (event?.capacity || "")?.toString())
     setValue('additionalInfo', event?.details || "")
-    setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
     setIsMultidayEvent(event?.is_multi_day_event == 1 ? true : false)
     forceRender(_ => !_)
   }, [])
@@ -121,19 +116,18 @@ const CreateEvent2: FC<any> = props => {
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('eventDate') ||
       !getValues('startTime') ||
-      (errors && (errors.eventDate || errors.startTime || errors.capacity))
+      (errors && (errors.eventDate || errors.startTime))
     ) {
       return true;
     }
     return false;
-  }, [errors, isUnlimitedCapacity]);
+  }, [errors]);
 
   const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime" | "endDate") => {
     eventDateTime.current.selectedType = type
     setDatePickerVisibility(true);
     eventPriceInputRef.current?.blur()
     additionalInfoInputRef.current?.blur()
-    capacityInputRef.current?.blur()
   }, []);
 
   const getMinDate = useCallback(() => {
@@ -188,8 +182,6 @@ const CreateEvent2: FC<any> = props => {
     }
 
     const payload = {
-      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
-      capacity: data.capacity,
       is_multi_day_event: isMultidayEvent ? '1' : '0',
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_end_date: isMultidayEvent ? dateFormat(endEventDate, "YYYY-MM-DD") : '',
@@ -201,7 +193,7 @@ const CreateEvent2: FC<any> = props => {
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent3')
 
-  })(), [userData, isUnlimitedCapacity, isMultidayEvent])
+  })(), [userData, isMultidayEvent])
 
 
   return (
@@ -209,56 +201,7 @@ const CreateEvent2: FC<any> = props => {
       <MyHeader title={event?._id ? event?.is_copied_event != '0' ? Language.copy_event : Language.edit_event : Language.host_an_event} />
       <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
-        <View style={styles.eventView}>
-          <TouchableOpacity onPress={() => {
-            setIsUnlimitedCapacity((b) => {
-              if (!b) {
-                clearErrors('capacity')
-                setValue('capacity', "")
-              }
-              return !b
-            })
-          }} style={{ flexDirection: 'row' }}>
-            <CheckBox
-              checked={isUnlimitedCapacity}
-              setChecked={(b) => {
-                if (b) {
-                  clearErrors('capacity')
-                  setValue('capacity', "")
-                }
-                setIsUnlimitedCapacity(b)
-              }}
-            />
-            <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
-              {Language.unlimited_capacity}
-            </Text>
-          </TouchableOpacity>
-        </View>
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={Language.capacity}
-            ref={capacityInputRef}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'capacity'}
-            returnKeyType={'done'}
-            maxLength={5}
-            rules={{
-              validate: (v: string) => {
-                if (!isUnlimitedCapacity && parseInt(v) == 0) {
-                  return Language.invalid_capacity
-                }
-              }
-            }}
-            keyboardType={'number-pad'}
-            disabled={isUnlimitedCapacity ? true : false}
-            required={
-              isUnlimitedCapacity ? undefined : Language.capacity_required
-            }
-            control={control}
-            errors={errors}
-          />
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
               eventDateTime.current = initialDateTime
@@ -462,12 +405,5 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
-  },
-  eventView: {
-    marginTop: scaler(20),
-    flexDirection: 'row',
-    marginHorizontal: scaler(25),
-    alignItems: 'center',
-    flex: 1
   },
 });

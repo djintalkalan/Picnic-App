@@ -9,7 +9,7 @@ import Database from 'database/Database';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
-  StyleSheet, TouchableOpacity,
+  StyleSheet, TextInput as RNInput, TouchableOpacity,
   View
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -19,13 +19,26 @@ import Language from 'src/language/Language';
 import { NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 
 type FormType = {
+  capacity: string;
   currency: string;
   ticketPrice: string;
   ticketType: string;
   donationDescription: string;
   ticketPlans: Array<typeof emptyTicketType>
 };
-const emptyTicketType = { ticketTitle: '', ticketPrice: '', currency: 'USD', ticketDescription: '', status: 1, plan_id: "" }
+const emptyTicketType = {
+  ticketTitle: '',
+  ticketPrice: '',
+  currency: 'USD',
+  ticketDescription: '',
+  capacityType: 'limited',
+  capacity: '',
+  cutOffDate: '',
+  cutOffTime: '',
+  noOfFreeTickets: '',
+  status: 1,
+  plan_id: ""
+}
 const DropDownData = ['USD', 'EUR', 'GBP'];
 const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Multiple tickets', value: 'multiple' }]
 
@@ -37,6 +50,8 @@ const CreateEvent3: FC<any> = props => {
   const [isDropdown, setDropdown] = useState(false);
   const [multiTicketCurrencyIndex, setMultiTicketCurrencyIndex] = useState(-1);
   const [isTicketTypeDropdown, setIsTicketTypeDropdown] = useState(false);
+  const capacityInputRef = useRef<RNInput>(null)
+  const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isDonationAccepted, setIsDonationAccepted] = useState(false)
   const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
@@ -47,6 +62,7 @@ const CreateEvent3: FC<any> = props => {
     setValue,
     handleSubmit,
     getValues,
+    clearErrors,
     formState: { errors },
   } = useForm<FormType>({
     mode: 'onChange', shouldFocusError: true, defaultValues: { ticketPlans: [emptyTicketType], ticketType: TicketTypeData[0].text, currency: 'USD' }
@@ -88,6 +104,8 @@ const CreateEvent3: FC<any> = props => {
         setValue('currency', event?.event_currency?.toUpperCase() || "USD")
       }
     }
+    setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
+    setValue('capacity', (event?.capacity || "")?.toString())
     setIsFreeEvent(event?.is_free_event == 1 ? true : false)
     uploadedImage.current = event?.image?.path ? '' : event.image
   }, [])
@@ -154,7 +172,8 @@ const CreateEvent3: FC<any> = props => {
   const onSubmit = useCallback((data: FormType) => {
     const payload: any = {
       is_free_event: '0',
-      is_donation_enabled: '0'
+      is_donation_enabled: '0',
+      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
     }
 
     if (isFreeEvent) {
@@ -206,7 +225,7 @@ const CreateEvent3: FC<any> = props => {
       })
     } else next(payload)
 
-  }, [isFreeEvent, isDonationAccepted, ticketPlans])
+  }, [isFreeEvent, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
 
 
   return (
@@ -216,23 +235,67 @@ const CreateEvent3: FC<any> = props => {
         <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
           <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
           <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
-            <TouchableOpacity onPress={() => {
-              setIsFreeEvent((b) => {
-                if (!b) {
-                  ticketTypeRef.current = TicketTypeData[0].value
-                  setValue('ticketType', TicketTypeData[0].text);
+            <View style={styles.eventView}>
+
+              <TouchableOpacity onPress={() => {
+                setIsFreeEvent((b) => {
+                  if (!b) {
+                    ticketTypeRef.current = TicketTypeData[0].value
+                    setValue('ticketType', TicketTypeData[0].text);
+                  }
+                  return !b
+                })
+              }} style={{ flexDirection: 'row' }}>
+                <CheckBox checked={isFreeEvent}
+
+                />
+                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
+              </TouchableOpacity>
+              {ticketTypeRef.current == 'multiple' ? undefined : <TouchableOpacity onPress={() => {
+                setIsUnlimitedCapacity((b) => {
+                  if (!b) {
+                    clearErrors('capacity')
+                    setValue('capacity', "")
+                  }
+                  return !b
+                })
+              }} style={{ flexDirection: 'row' }}>
+                <CheckBox checked={isUnlimitedCapacity} />
+                <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
+                  {Language.unlimited_capacity}
+                </Text>
+              </TouchableOpacity>}
+
+            </View>
+            {ticketTypeRef.current == 'multiple' || isUnlimitedCapacity ? undefined :
+              <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={Language.capacity}
+                ref={capacityInputRef}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'capacity'}
+                returnKeyType={'done'}
+                maxLength={5}
+                rules={{
+                  validate: (v: string) => {
+                    if (!isUnlimitedCapacity && parseInt(v) == 0) {
+                      return Language.invalid_capacity
+                    }
+                  }
+                }}
+                keyboardType={'number-pad'}
+                disabled={isUnlimitedCapacity ? true : false}
+                required={
+                  isUnlimitedCapacity ? undefined : Language.capacity_required
                 }
-                return !b
-              })
-            }} style={{ flexDirection: 'row', marginTop: scaler(20), marginVertical: scaler(10) }}>
-              <CheckBox checked={isFreeEvent}
-
+                control={control}
+                errors={errors}
               />
-              <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
-            </TouchableOpacity>
-
+            }
 
             <View style={{ flex: 1, width: '100%', paddingBottom: scaler(10) }} >
+
               <TextInput
                 containerStyle={{ marginEnd: scaler(4), width: '100%' }}
                 borderColor={colors.colorTextInputBackground}
@@ -338,6 +401,47 @@ const CreateEvent3: FC<any> = props => {
                                 control={control}
                                 errors={errors.ticketPlans?.[i]}
                               />
+                              <TouchableOpacity onPress={() => {
+                                setIsUnlimitedCapacity((b) => {
+                                  if (!b) {
+                                    clearErrors('capacity')
+                                    setValue('capacity', "")
+                                  }
+                                  return !b
+                                })
+                              }} style={styles.capacityCheck}>
+                                <CheckBox checked={isUnlimitedCapacity} />
+                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
+                                  {Language.unlimited_capacity}
+                                </Text>
+                              </TouchableOpacity>
+                              {isUnlimitedCapacity ? undefined :
+                                <TextInput
+                                  containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                  placeholder={Language.capacity}
+                                  ref={capacityInputRef}
+                                  borderColor={colors.colorTextInputBackground}
+                                  backgroundColor={colors.colorTextInputBackground}
+                                  name={`ticketPlans.${i}.capacity`}
+                                  returnKeyType={'done'}
+                                  maxLength={5}
+                                  rules={{
+                                    validate: (v: string) => {
+                                      if (!isUnlimitedCapacity && parseInt(v) == 0) {
+                                        return Language.invalid_capacity
+                                      }
+                                    }
+                                  }}
+                                  keyboardType={'number-pad'}
+                                  disabled={isUnlimitedCapacity ? true : false}
+                                  required={
+                                    isUnlimitedCapacity ? undefined : Language.capacity_required
+                                  }
+                                  control={control}
+                                  errors={errors}
+                                />
+                              }
+
                               <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                                   <TextInput
@@ -398,6 +502,31 @@ const CreateEvent3: FC<any> = props => {
                                     // update(i, { ...a, currency: data.title })
                                   }}
                                 />
+                                {/* <View style={{ flexDirection: 'row' }}>
+             <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={Language.end_date}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                style={{ fontSize: scaler(13) }}
+                name={'endDate'}
+                onPress={() => (openDatePicker("endDate"))}
+                icon={Images.ic_calender}
+                iconSize={scaler(20)}
+                control={control}
+                errors={errors} />
+              <TextInput
+                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
+                borderColor={colors.colorTextInputBackground}
+                backgroundColor={colors.colorTextInputBackground}
+                name={'endTime'}
+                onPress={() => (openDatePicker("endTime"))}
+                iconSize={scaler(18)}
+                icon={Images.ic_clock}
+                control={control}
+                errors={errors} />
+            </View> */}
 
                                 <TextInput
                                   placeholder={Language.description}
@@ -531,6 +660,20 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     top: scaler(-12),
     right: scaler(-12)
+  },
+  eventView: {
+    marginVertical: scaler(15),
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1
+  },
+  capacityCheck: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: scaler(5),
+    marginLeft: scaler(5),
+    marginTop: scaler(15)
   }
 });
 
