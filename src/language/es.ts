@@ -382,4 +382,11 @@ export const es = {
     donation_price_required: "",
     maximum_file_size_allowed: "",
     two_factor_auth: "",
+    cutoff_date_title: "Cutoff Date and time (optional)",
+    cutoff_date: "Cutoff date",
+    cutoff_time: "Cutoff time",
+    number_of_free_tickets: "Number of free tickets (optional)",
+    x_free_ticket_available: "{0} Free Tickets Available",
+    invalid_free_tickets: "",
+    cutoff_time_required: "",
 }

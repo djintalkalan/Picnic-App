@@ -105,16 +105,18 @@ export const stringToDate = (_date: string, _format: string = "YYYY-MM-DD", _del
 }
 
 export const dateStringFormat = (dateString: string, toFormat: string, fromFormat: string = "YYYY-MM-DD", delimiter: "-" | "/" | "." = "-") => {
+    if (!dateString) return ""
     try {
         return dateFormat(stringToDate(dateString, fromFormat, delimiter), toFormat)
     }
     catch (e) {
-        console.log("Error", encodeURIComponent)
+        console.log("Error", e)
         return dateString
     }
 }
 
 export const dateFormat = (date: Date, toFormat: string) => {
+    if (!date) return ""
     try {
         toFormat = toFormat.replace("YYYY", 'yyyy')
         toFormat = toFormat.replace("YYY", 'yyy')
@@ -127,8 +129,8 @@ export const dateFormat = (date: Date, toFormat: string) => {
         return FNSFormat(date, toFormat)
     }
     catch (e) {
-        console.log("Error", encodeURIComponent)
-        return date.toDateString()
+        console.log("Error", e)
+        return date && date?.toDateString()
     }
 }
 
@@ -767,5 +769,35 @@ const getLanguageString = (language: LanguageType) => {
             return "English";
         case 'es':
             return "Español (Spanish)"
+    }
+}
+
+export const getReadableTime = (date: Date) => {
+    try {
+        if (!date) return ""
+        let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
+        let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
+        let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
+        return hour + ':' + min + ' ' + isAMPM
+
+    }
+    catch (e) {
+        console.log("getReadableTime e", e);
+
+        return ""
+    }
+}
+
+export const getReadableDate = (date: Date) => {
+    try {
+        if (!date) return ""
+
+        return dateFormat(date, 'MMM DD, YYYY')
+
+    }
+    catch (e) {
+        console.log("getReadableDate e", e);
+
+        return ""
     }
 }

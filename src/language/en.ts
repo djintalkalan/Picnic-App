@@ -382,4 +382,11 @@ export const en = {
   donation_price_required: "Donation price required",
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
   two_factor_auth: "Two Factor Authentication",
+  cutoff_date_title: "Cutoff Date and time (optional)",
+  cutoff_date: "Cutoff date",
+  cutoff_time: "Cutoff time",
+  number_of_free_tickets: "Number of free tickets (optional)",
+  x_free_ticket_available: "{0} Free tickets available",
+  invalid_free_tickets: "Invalid free tickets",
+  cutoff_time_required: "Cutoff time is required"
 }

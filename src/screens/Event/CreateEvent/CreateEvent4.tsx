@@ -87,6 +87,7 @@ const CreateEvent3: FC<any> = props => {
             setValue('policy', event?.event_refund_policy ?? '')
         }
     }, [])
+    console.log("event", event);
 
     const onSubmit = useCallback(
         async (data) => {

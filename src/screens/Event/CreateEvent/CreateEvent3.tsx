@@ -13,28 +13,46 @@ import {
   View
 } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { NavigationService, scaler, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, getReadableDate, getReadableTime, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 type FormType = {
-  capacity: string;
   currency: string;
   ticketPrice: string;
   ticketType: string;
   donationDescription: string;
-  ticketPlans: Array<typeof emptyTicketType>
+  ticketPlans: Array<TicketType>
+  capacity: string,
+  cutoffDate?: Date | null,
+  cutoffTime?: Date | null,
+  noOfFreeTickets: string,
 };
-const emptyTicketType = {
+type TicketType = {
+  ticketTitle: string,
+  ticketPrice: string,
+  currency: string,
+  ticketDescription: string,
+  isUnlimitedCapacity: boolean,
+  capacity: string,
+  cutoffDate?: Date | null,
+  cutoffTime?: Date | null,
+  noOfFreeTickets: string,
+  status: number,
+  plan_id: string
+}
+const emptyTicketType: TicketType = {
   ticketTitle: '',
   ticketPrice: '',
   currency: 'USD',
   ticketDescription: '',
-  capacityType: 'limited',
+  isUnlimitedCapacity: false,
   capacity: '',
-  cutOffDate: '',
-  cutOffTime: '',
+  cutoffDate: null,
+  cutoffTime: null,
   noOfFreeTickets: '',
   status: 1,
   plan_id: ""
@@ -51,12 +69,13 @@ const CreateEvent3: FC<any> = props => {
   const [multiTicketCurrencyIndex, setMultiTicketCurrencyIndex] = useState(-1);
   const [isTicketTypeDropdown, setIsTicketTypeDropdown] = useState(false);
   const capacityInputRef = useRef<RNInput>(null)
+  const numberOfFreeInputRef = useRef<RNInput>(null)
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isDonationAccepted, setIsDonationAccepted] = useState(false)
   const dispatch = useDispatch();
   const keyboardValues = useKeyboardService()
   const { current: event } = useRef(store.getState().createEventState)
-
+  const [toggle, setToggle] = useState(true)
   const {
     control,
     setValue,
@@ -77,15 +96,19 @@ const CreateEvent3: FC<any> = props => {
     // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
   }, [])
 
-
   const setEventValues = useCallback(() => {
+
+    const setDate = () => {
+      setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
+      setValue('capacity', (event?.capacity || "")?.toString())
+    }
 
     if (event.is_free_event == 1) {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
       setValue('currency', event?.event_currency?.toUpperCase() || "USD")
-
+      setDate()
     } else {
       if (event.ticket_type == 'multiple') {
         ticketTypeRef.current = TicketTypeData[1]?.value
@@ -97,15 +120,22 @@ const CreateEvent3: FC<any> = props => {
           currency: _.currency?.toUpperCase(),
           ticketDescription: _.description,
           status: (_?.status || 1),
+          capacity: _.capacity,
+          cutoffDate: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
+          cutoffTime: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
+          isUnlimitedCapacity: _?.capacity_type == 'unlimited',
+          noOfFreeTickets: _?.total_free_tickets
         })))
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
         setValue('currency', event?.event_currency?.toUpperCase() || "USD")
+        setValue('cutoffDate', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
+        setValue('cutoffTime', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
+        setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
+        setDate()
       }
     }
-    setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
-    setValue('capacity', (event?.capacity || "")?.toString())
     setIsFreeEvent(event?.is_free_event == 1 ? true : false)
     uploadedImage.current = event?.image?.path ? '' : event.image
   }, [])
@@ -169,11 +199,10 @@ const CreateEvent3: FC<any> = props => {
 
   }, []);
 
-  const onSubmit = useCallback((data: FormType) => {
+  const onSubmit = useCallback(() => handleSubmit((data: FormType) => {
     const payload: any = {
       is_free_event: '0',
       is_donation_enabled: '0',
-      capacity_type: isUnlimitedCapacity ? 'unlimited' : 'limited',
     }
 
     if (isFreeEvent) {
@@ -196,11 +225,23 @@ const CreateEvent3: FC<any> = props => {
           event_tax_amount: "0",
           currency: _.currency?.toLowerCase(),
           description: _.ticketDescription,
-          status: _.status == 2 ? 2 : undefined
+          status: _.status == 2 ? 2 : undefined,
+          sales_ends_on: _.cutoffTime && _.cutoffTime?.toISOString(),
+          total_free_tickets: _?.noOfFreeTickets,
+          capacity: _?.capacity,
+          capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
         }))
+        payload.total_free_tickets = undefined
+        payload.capacity_type = undefined
+        payload.capacity = undefined
+        payload.sales_ends_on = undefined
       } else {
         payload.event_fees = data.ticketPrice
         payload.ticket_plans = []
+        payload.total_free_tickets = data.noOfFreeTickets ?? 0
+        payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
+        payload.capacity = data.capacity
+        payload.sales_ends_on = data?.cutoffTime && data?.cutoffTime?.toISOString()
       }
     }
     dispatch(updateCreateEvent(payload))
@@ -225,8 +266,34 @@ const CreateEvent3: FC<any> = props => {
       })
     } else next(payload)
 
-  }, [isFreeEvent, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
+  })(), [isFreeEvent, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
 
+  const openDatePicker = useCallback((i: number, isTime: any = false) => {
+    // eventDateTime.current.selectedType = type
+    selectedIndexRef.current = (i)
+    setDatePickerVisibility(isTime ? 'time' : 'date');
+    // eventPriceInputRef.current?.blur()
+    // additionalInfoInputRef.current?.blur()
+  }, []);
+
+  const [datePickerVisibility, setDatePickerVisibility] = useState<any>();
+  const selectedIndexRef = useRef(0);
+  // console.log("Date", ticketPlans[selectedIndex]);
+  // console.log("event", event);
+
+  const datePickerRef = useRef<DateTimePickerModal>(null)
+
+  const getCurrentDate = () => {
+    if (!datePickerVisibility) return ""
+    let dateString = `ticketPlans.${selectedIndexRef?.current}.cutoffDate`
+    let timeString = `ticketPlans.${selectedIndexRef?.current}.cutoffTime`
+    if (selectedIndexRef?.current < 0) {
+      dateString = "cutoffDate"
+      timeString = "cutoffTime"
+    }
+    //@ts-ignore
+    return (datePickerVisibility == 'date') ? (getValues(dateString) || undefined) : getValues(timeString) || stringToDate(dateFormat(getValues(dateString), "YYYY-MM-DD"), "YYYY-MM-DD", "-")
+  }
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -235,64 +302,23 @@ const CreateEvent3: FC<any> = props => {
         <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
           <Stepper step={3} totalSteps={4} paddingHorizontal={scaler(20)} />
           <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
-            <View style={styles.eventView}>
 
-              <TouchableOpacity onPress={() => {
-                setIsFreeEvent((b) => {
-                  if (!b) {
-                    ticketTypeRef.current = TicketTypeData[0].value
-                    setValue('ticketType', TicketTypeData[0].text);
-                  }
-                  return !b
-                })
-              }} style={{ flexDirection: 'row' }}>
-                <CheckBox checked={isFreeEvent}
-
-                />
-                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
-              </TouchableOpacity>
-              {ticketTypeRef.current == 'multiple' ? undefined : <TouchableOpacity onPress={() => {
-                setIsUnlimitedCapacity((b) => {
-                  if (!b) {
-                    clearErrors('capacity')
-                    setValue('capacity', "")
-                  }
-                  return !b
-                })
-              }} style={{ flexDirection: 'row' }}>
-                <CheckBox checked={isUnlimitedCapacity} />
-                <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
-                  {Language.unlimited_capacity}
-                </Text>
-              </TouchableOpacity>}
-
-            </View>
-            {ticketTypeRef.current == 'multiple' || isUnlimitedCapacity ? undefined :
-              <TextInput
-                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={Language.capacity}
-                ref={capacityInputRef}
-                borderColor={colors.colorTextInputBackground}
-                backgroundColor={colors.colorTextInputBackground}
-                name={'capacity'}
-                returnKeyType={'done'}
-                maxLength={5}
-                rules={{
-                  validate: (v: string) => {
-                    if (!isUnlimitedCapacity && parseInt(v) == 0) {
-                      return Language.invalid_capacity
-                    }
-                  }
-                }}
-                keyboardType={'number-pad'}
-                disabled={isUnlimitedCapacity ? true : false}
-                required={
-                  isUnlimitedCapacity ? undefined : Language.capacity_required
+            <TouchableOpacity onPress={() => {
+              setIsFreeEvent((b) => {
+                if (!b) {
+                  ticketTypeRef.current = TicketTypeData[0].value
+                  setValue('ticketType', TicketTypeData[0].text);
+                  // setValue('cutoffDate', undefined);
+                  // setValue('cutoffTime', undefined);
                 }
-                control={control}
-                errors={errors}
+                return !b
+              })
+            }} style={{ flexDirection: 'row' }}>
+              <CheckBox checked={isFreeEvent}
+
               />
-            }
+              <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.free_event}</Text>
+            </TouchableOpacity>
 
             <View style={{ flex: 1, width: '100%', paddingBottom: scaler(10) }} >
 
@@ -318,9 +344,117 @@ const CreateEvent3: FC<any> = props => {
                 onSelect={data => {
                   ticketTypeRef.current = data?.data?.value
                   setValue('ticketType', data?.title, { shouldValidate: true });
+                  // setValue('cutoffDate', undefined);
+                  // setValue('cutoffTime', undefined);
                   setIsTicketTypeDropdown(false);
                 }}
               />
+
+
+              {ticketTypeRef.current == 'single' ?
+                <>
+                  <TouchableOpacity onPress={() => {
+                    setIsUnlimitedCapacity((b) => {
+                      if (!b) {
+                        clearErrors('capacity')
+                        setValue('capacity', "")
+                      }
+                      return !b
+                    })
+                  }} style={{ flexDirection: 'row', marginTop: scaler(20), }}>
+                    <CheckBox checked={isUnlimitedCapacity} />
+                    <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
+                      {Language.unlimited_capacity}
+                    </Text>
+                  </TouchableOpacity>
+                  {!isUnlimitedCapacity && <TextInput
+                    containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                    placeholder={Language.capacity}
+                    ref={capacityInputRef}
+                    borderColor={colors.colorTextInputBackground}
+                    backgroundColor={colors.colorTextInputBackground}
+                    name={'capacity'}
+                    returnKeyType={'done'}
+                    maxLength={5}
+                    rules={{
+                      validate: (v: string) => {
+                        if (!isUnlimitedCapacity && parseInt(v) == 0) {
+                          return Language.invalid_capacity
+                        }
+                      }
+                    }}
+                    keyboardType={'number-pad'}
+                    disabled={isUnlimitedCapacity ? true : false}
+                    required={
+                      isUnlimitedCapacity ? undefined : Language.capacity_required
+                    }
+                    control={control}
+                    errors={errors}
+                  />}
+                </>
+                : undefined}
+
+              {ticketTypeRef.current == 'multiple' || isFreeEvent ? undefined :
+                <>
+                  <TextInput
+                    containerStyle={{ marginEnd: scaler(4) }}
+                    placeholder={Language.number_of_free_tickets}
+                    borderColor={colors.colorTextInputBackground}
+                    backgroundColor={colors.colorTextInputBackground}
+                    name={'noOfFreeTickets'}
+                    returnKeyType={'done'}
+                    maxLength={5}
+                    rules={{
+                      validate: (v: string) => {
+                        if (!isUnlimitedCapacity && parseInt(v) > parseInt(getValues('capacity') || "0")) {
+                          return Language.invalid_free_tickets
+                        }
+                      }
+                    }}
+                    keyboardType={'number-pad'}
+                    control={control}
+                    errors={errors}
+                  />
+                  <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5) }} >{Language.cutoff_date_title}</Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    <TextInput
+                      containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                      placeholder={Language.cutoff_date}
+                      borderColor={colors.colorTextInputBackground}
+                      backgroundColor={colors.colorTextInputBackground}
+                      style={{ fontSize: scaler(13) }}
+                      name={'cutoffDate'}
+                      format={getReadableDate}
+                      onPress={() => openDatePicker(-1)}
+                      icon={getValues('cutoffDate') ? closeImage : Images.ic_calender}
+                      onPressIcon={getValues('cutoffDate') ? () => {
+                        setValue('cutoffDate', null)
+                        setValue('cutoffTime', null)
+                        setToggle(_ => !_)
+                      } : undefined}
+                      iconSize={scaler(20)}
+                      control={control}
+                      errors={errors} />
+                    <TextInput
+                      containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                      placeholder={Language.cutoff_time}
+                      borderColor={colors.colorTextInputBackground}
+                      backgroundColor={colors.colorTextInputBackground}
+                      name={'cutoffTime'}
+                      format={getReadableTime}
+                      required={getValues('cutoffDate') ? Language.cutoff_time_required : false}
+                      onPress={() => openDatePicker(-1, getValues('cutoffDate'))}
+                      iconSize={scaler(18)}
+                      icon={getValues('cutoffTime') ? closeImage : Images.ic_clock}
+                      onPressIcon={getValues('cutoffTime') ? () => {
+                        setValue('cutoffTime', undefined)
+                        setToggle(_ => !_)
+                      } : undefined}
+                      control={control}
+                      errors={errors} />
+                  </View>
+                </>
+              }
 
               {/* ----------------------------------- free event flow started here -----------------------------------*/}
 
@@ -401,46 +535,7 @@ const CreateEvent3: FC<any> = props => {
                                 control={control}
                                 errors={errors.ticketPlans?.[i]}
                               />
-                              <TouchableOpacity onPress={() => {
-                                setIsUnlimitedCapacity((b) => {
-                                  if (!b) {
-                                    clearErrors('capacity')
-                                    setValue('capacity', "")
-                                  }
-                                  return !b
-                                })
-                              }} style={styles.capacityCheck}>
-                                <CheckBox checked={isUnlimitedCapacity} />
-                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
-                                  {Language.unlimited_capacity}
-                                </Text>
-                              </TouchableOpacity>
-                              {isUnlimitedCapacity ? undefined :
-                                <TextInput
-                                  containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                  placeholder={Language.capacity}
-                                  ref={capacityInputRef}
-                                  borderColor={colors.colorTextInputBackground}
-                                  backgroundColor={colors.colorTextInputBackground}
-                                  name={`ticketPlans.${i}.capacity`}
-                                  returnKeyType={'done'}
-                                  maxLength={5}
-                                  rules={{
-                                    validate: (v: string) => {
-                                      if (!isUnlimitedCapacity && parseInt(v) == 0) {
-                                        return Language.invalid_capacity
-                                      }
-                                    }
-                                  }}
-                                  keyboardType={'number-pad'}
-                                  disabled={isUnlimitedCapacity ? true : false}
-                                  required={
-                                    isUnlimitedCapacity ? undefined : Language.capacity_required
-                                  }
-                                  control={control}
-                                  errors={errors}
-                                />
-                              }
+
 
                               <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
@@ -502,31 +597,109 @@ const CreateEvent3: FC<any> = props => {
                                     // update(i, { ...a, currency: data.title })
                                   }}
                                 />
-                                {/* <View style={{ flexDirection: 'row' }}>
-             <TextInput
-                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={Language.end_date}
-                borderColor={colors.colorTextInputBackground}
-                backgroundColor={colors.colorTextInputBackground}
-                style={{ fontSize: scaler(13) }}
-                name={'endDate'}
-                onPress={() => (openDatePicker("endDate"))}
-                icon={Images.ic_calender}
-                iconSize={scaler(20)}
-                control={control}
-                errors={errors} />
-              <TextInput
-                containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={Language.select_end_time + ' (' + Language.optional + ")"}
-                borderColor={colors.colorTextInputBackground}
-                backgroundColor={colors.colorTextInputBackground}
-                name={'endTime'}
-                onPress={() => (openDatePicker("endTime"))}
-                iconSize={scaler(18)}
-                icon={Images.ic_clock}
-                control={control}
-                errors={errors} />
-            </View> */}
+
+                                <TouchableOpacity onPress={() => {
+                                  clearErrors(`ticketPlans.${i}.capacity`)
+                                  setValue(`ticketPlans.${i}.capacity`, "")
+                                  update(i, {
+                                    ...getValues(`ticketPlans.${i}`),
+                                    isUnlimitedCapacity: !getValues(`ticketPlans.${i}.isUnlimitedCapacity`)
+                                  })
+
+
+                                }} style={styles.capacityCheck}>
+                                  <CheckBox checked={getValues(`ticketPlans.${i}.isUnlimitedCapacity`)} />
+                                  <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
+                                    {Language.unlimited_capacity}
+                                  </Text>
+                                </TouchableOpacity>
+                                {getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined :
+                                  <TextInput
+                                    containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                    placeholder={Language.capacity}
+                                    borderColor={colors.colorTextInputBackground}
+                                    backgroundColor={colors.colorTextInputBackground}
+                                    name={`ticketPlans.${i}.capacity`}
+                                    returnKeyType={'done'}
+                                    maxLength={5}
+                                    rules={{
+                                      validate: (v: string) => {
+                                        if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) == 0) {
+                                          return Language.invalid_capacity
+                                        }
+                                      }
+                                    }}
+                                    keyboardType={'number-pad'}
+                                    required={
+                                      getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined : Language.capacity_required
+                                    }
+                                    control={control}
+                                    errors={errors.ticketPlans?.[i]}
+                                  />
+                                }
+
+                                <TextInput
+                                  containerStyle={{ marginEnd: scaler(4) }}
+                                  placeholder={Language.number_of_free_tickets}
+                                  borderColor={colors.colorTextInputBackground}
+                                  backgroundColor={colors.colorTextInputBackground}
+                                  name={`ticketPlans.${i}.noOfFreeTickets`}
+                                  returnKeyType={'done'}
+                                  maxLength={5}
+                                  rules={{
+                                    validate: (v: string) => {
+                                      if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) > parseInt(getValues(`ticketPlans.${i}.capacity`) || "0")) {
+                                        return Language.invalid_free_tickets
+                                      }
+                                    }
+                                  }}
+                                  keyboardType={'number-pad'}
+                                  control={control}
+                                  errors={errors.ticketPlans?.[i]}
+                                />
+
+                                <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5) }} >{Language.cutoff_date_title}</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                  <TextInput
+                                    containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                    placeholder={Language.cutoff_date}
+                                    borderColor={colors.colorTextInputBackground}
+                                    backgroundColor={colors.colorTextInputBackground}
+                                    style={{ fontSize: scaler(13) }}
+                                    name={`ticketPlans.${i}.cutoffDate`}
+                                    format={getReadableDate}
+                                    onPress={() => openDatePicker(i)}
+                                    icon={getValues(`ticketPlans.${i}.cutoffDate`) ? closeImage : Images.ic_calender}
+                                    iconSize={scaler(20)}
+                                    control={control}
+                                    onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
+                                      update(i, {
+                                        ...getValues(`ticketPlans.${i}`),
+                                        cutoffDate: undefined,
+                                        cutoffTime: undefined
+                                      })
+                                    } : undefined}
+                                    errors={errors?.ticketPlans?.[i]} />
+                                  <TextInput
+                                    containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                    placeholder={Language.cutoff_time}
+                                    borderColor={colors.colorTextInputBackground}
+                                    backgroundColor={colors.colorTextInputBackground}
+                                    name={`ticketPlans.${i}.cutoffTime`}
+                                    format={getReadableTime}
+                                    onPress={() => openDatePicker(i, getValues(`ticketPlans.${i}.cutoffDate`))}
+                                    iconSize={scaler(18)}
+                                    required={getValues(`ticketPlans.${i}.cutoffDate`) ? Language.cutoff_time_required : false}
+                                    icon={getValues(`ticketPlans.${i}.cutoffTime`) ? closeImage : Images.ic_clock}
+                                    onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
+                                      update(i, {
+                                        ...getValues(`ticketPlans.${i}`),
+                                        cutoffTime: undefined
+                                      })
+                                    } : undefined}
+                                    control={control}
+                                    errors={errors?.ticketPlans?.[i]} />
+                                </View>
 
                                 <TextInput
                                   placeholder={Language.description}
@@ -625,9 +798,108 @@ const CreateEvent3: FC<any> = props => {
           // disabled={calculateButtonDisability()}
           containerStyle={{ marginTop: scaler(20) }}
           title={Language.next}
-          onPress={handleSubmit(onSubmit)}
+          onPress={onSubmit}
         />
       </View>
+      <DateTimePickerModal
+        ref={datePickerRef}
+        style={{ zIndex: 20 }}
+        isVisible={datePickerVisibility}
+        minimumDate={datePickerVisibility == 'date' ? new Date() : undefined}
+        // maximumDate={stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")}
+        mode={datePickerVisibility}
+        customConfirmButtonIOS={props => (
+          <Text
+            onPress={props.onPress}
+            style={{
+              fontWeight: '500',
+              fontSize: scaler(18),
+              color: colors.colorPrimary,
+              textAlign: 'center',
+              padding: scaler(10),
+            }}>
+            {Language.confirm}
+          </Text>
+        )}
+        customCancelButtonIOS={props => (
+          <View
+            style={{
+              padding: scaler(7),
+              backgroundColor: 'white',
+              borderRadius: scaler(10),
+              marginBottom: scaler(10),
+            }}>
+            <Text
+              onPress={props.onPress}
+              style={{
+                fontWeight: '500',
+                fontSize: scaler(18),
+                color: colors.colorBlack,
+                textAlign: 'center',
+                padding: scaler(5),
+              }}>
+              {Language.close}
+            </Text>
+          </View>
+        )}
+        //@ts-ignore
+        date={getCurrentDate()}
+        onConfirm={(cDate: Date) => {
+          const cutoffDate = selectedIndexRef?.current < 0 ? getValues('cutoffDate') : ticketPlans[selectedIndexRef?.current].cutoffDate
+          //@ts-ignore
+          const date = datePickerVisibility == 'date' ? cDate : new Date(cutoffDate?.getFullYear(), cutoffDate.getMonth(), cutoffDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
+
+          const updatedTicket = {
+            ...getValues(`ticketPlans.${selectedIndexRef?.current}`),
+            [datePickerVisibility == 'date' ? 'cutoffDate' : 'cutoffTime']: date
+          }
+
+          if (datePickerVisibility == 'date') {
+            const eventEndDate = event.event_end_date.replace(/-/g, "")
+            const chosenDate = dateFormat(date, "YYYYMMDD")
+            const thisDate = dateFormat(new Date(), "YYYYMMDD")
+            if (chosenDate > eventEndDate) {
+              _showErrorMessage("Cutoff date should be less than event end date")
+              return
+            }
+            if (chosenDate < thisDate) {
+              _showErrorMessage("Cutoff date should be greater than current date")
+              return
+            }
+            try {
+              datePickerRef.current?.setState({
+                currentDate: stringToDate(dateFormat(date, "YYYY-MM-DD"), "YYYY-MM-DD", "-")
+              })
+            }
+            catch (e) {
+
+            }
+            updatedTicket.cutoffTime = undefined
+          } else {
+            const eventEndDate = stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
+            const chosenDate = date
+            const thisDate = new Date()
+            if (chosenDate > eventEndDate) {
+              _showErrorMessage("Cutoff time should be less than event end time")
+              return
+            }
+            if (chosenDate < thisDate) {
+              _showErrorMessage("Cutoff time should be greater than current time")
+              return
+            }
+
+          }
+
+          if (selectedIndexRef?.current >= 0)
+            update(selectedIndexRef?.current, updatedTicket)
+          else
+            setValue(datePickerVisibility == 'date' ? 'cutoffDate' : "cutoffTime", date)
+          setDatePickerVisibility(datePickerVisibility == 'date' ? 'time' : null);
+        }}
+        onCancel={() => {
+          setDatePickerVisibility(null);
+        }}
+      />
     </SafeAreaViewWithStatusBar>
   );
 };
@@ -660,13 +932,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     top: scaler(-12),
     right: scaler(-12)
-  },
-  eventView: {
-    marginVertical: scaler(15),
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1
   },
   capacityCheck: {
     flexDirection: 'row',
