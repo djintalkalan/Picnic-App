@@ -1,18 +1,15 @@
-import { _sendOtp } from 'api/APIProvider';
 import { checkEmail, setLoadingAction } from 'app-store/actions';
 import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import {
-    EmailValidations, validateEmail
-} from 'custom-components/TextInput/rules';
+import { EmailValidations, validateEmail } from 'custom-components/TextInput/rules';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { NavigationService, scaler, _showErrorMessage, _showSuccessMessage } from 'utils';
+import { NavigationService, scaler } from 'utils';
 
 type FormType = {
     email: string;
@@ -39,19 +36,21 @@ const SendOtp: FC = () => {
         () =>
             handleSubmit(data => {
                 try {
-                    _sendOtp({ email: data?.email?.trim()?.toLowerCase() }).then((res) => {
-                        dispatch(setLoadingAction(false))
-                        if (res?.status == 200) {
-                            _showSuccessMessage(res?.message)
-                            NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
-                        }
-                        else {
-                            _showErrorMessage(res?.message)
-                        }
-                    }).catch(e => {
-                        console.log(e)
-                        dispatch(setLoadingAction(false))
-                    })
+                    dispatch(setLoadingAction(false))
+                    NavigationService.navigate("SignUp1", { email: data?.email?.trim()?.toLowerCase() })
+                    // _sendOtp({ email: data?.email?.trim()?.toLowerCase() }).then((res) => {
+                    //     dispatch(setLoadingAction(false))
+                    //     if (res?.status == 200) {
+                    //         _showSuccessMessage(res?.message)
+                    //         NavigationService.navigate('VerifyOtp', { isSignUp: true, ...data });
+                    //     }
+                    //     else {
+                    //         _showErrorMessage(res?.message)
+                    //     }
+                    // }).catch(e => {
+                    //     console.log(e)
+                    //     dispatch(setLoadingAction(false))
+                    // })
                 } catch { (e: any) => console.log(e) }
             })(),
         [],
