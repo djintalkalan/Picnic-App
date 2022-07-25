@@ -72,5 +72,6 @@ export const Images = {
   ic_logo_gif: require("./images/ic_logo_gif.gif"),
   ic_paypal_info: require("./images/ic_paypal_info.gif"),
   ic_delete_red: require("./images/ic_delete_red.png"),
-  // ic_logo_gif: require("./images/ic_logo_gif.png"),
+  ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
+  // ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
 };

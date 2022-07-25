@@ -310,7 +310,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ borderRadius: scaler(5) }}>
                                 {event?.ticket_plans?.map((_: any, i: number) => {
                                     if (_.status == 1)
-                                        return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                                        return <TicketPlans key={i} {..._} />
                                 })}
                             </View>
                         </Card>
@@ -754,10 +754,16 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
     ) : null
 }
 
-const TicketPlans = (props: { name: string, currency: string, price: string }) => {
-    const { name, currency, price } = props;
+const TicketPlans = ({ name, currency, amount: price, total_free_tickets, total_free_tickets_consumed }: any) => {
+    const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
     return <View style={{ padding: scaler(10), overflow: 'hidden', flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7, justifyContent: 'flex-end' }}>
-        <Text style={{ flexGrow: 1, maxWidth: width / 1.4, fontSize: scaler(14), fontWeight: '500', paddingRight: scaler(10) }}>{name}</Text>
+        <View style={{ flexGrow: 1, maxWidth: width / 1.4, paddingRight: scaler(10) }} >
+            <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>{name}</Text>
+            {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(5) }} >
+                <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
+                <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
+            </View> : null}
+        </View>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
             {getSymbol(currency) + price}
         </Text>

@@ -801,3 +801,21 @@ export const getReadableDate = (date: Date) => {
         return ""
     }
 }
+
+export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
+    total_free_tickets: number,
+    total_free_tickets_consumed: number
+} => {
+    if (ticket_plans?.length)
+        return ticket_plans.reduce((prev, current) => {
+            if ((prev?.total_free_tickets || 0) - (prev?.total_free_tickets_consumed || 0) > (current?.total_free_tickets || 0) - (current?.total_free_tickets_consumed || 0)) {
+                return { total_free_tickets: prev?.total_free_tickets || 0, total_free_tickets_consumed: prev?.total_free_tickets_consumed || 0 }
+            } else {
+                return { total_free_tickets: current?.total_free_tickets || 0, total_free_tickets_consumed: current?.total_free_tickets_consumed || 0 }
+            }
+        })
+    return {
+        total_free_tickets: 0,
+        total_free_tickets_consumed: 0
+    }
+}

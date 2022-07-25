@@ -1,8 +1,8 @@
-import { colors } from 'assets/Colors'
+import { colors, Images } from 'assets'
 import { Button, Card, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import React, { FC, memo, useCallback, useState } from 'react'
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
 import { getSymbol, NavigationService, scaler } from 'utils'
 //@ts-ignore
@@ -24,13 +24,9 @@ const SelectTicket: FC = (props: any) => {
     const renderTicket = useCallback(({ item, index }) => {
         return (
             <TicketView
-                id={item?._id}
-                currency={item.currency}
-                description={item.description}
                 isSelected={item?._id == selectedTicket?._id}
-                price={item.amount}
-                title={item.name}
                 onPress={() => onTicketSelect(item)}
+                {...item}
             />
         )
     }, [selectedTicket])
@@ -57,21 +53,14 @@ const SelectTicket: FC = (props: any) => {
     )
 }
 
-interface TicketProps {
-    id: string;
-    title: string;
-    price: string;
-    currency: string;
-    description: string;
-    isSelected: boolean;
-    onPress: () => void;
-}
-
-const TicketView = memo(({ id, title, currency, description, isSelected = false, price, onPress }: TicketProps) => {
+const TicketView = memo(({ _id: id, name: title, currency, description,
+    isSelected = false, amount: price, onPress,
+    total_free_tickets = 0, total_free_tickets_consumed = 0
+}: any) => {
     const _renderTruncatedFooter = (handlePress: any) => {
         return (
             <Text style={{ color: isSelected ? colors.colorBlack : colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
-                Read more
+                {Language.read_more}
             </Text>
         );
     }
@@ -79,7 +68,7 @@ const TicketView = memo(({ id, title, currency, description, isSelected = false,
     const _renderRevealedFooter = (handlePress: any) => {
         return (
             <Text style={{ color: isSelected ? colors.colorBlack : colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
-                Show less
+                {Language.show_less}
             </Text>
         );
     }
@@ -87,6 +76,7 @@ const TicketView = memo(({ id, title, currency, description, isSelected = false,
     const _handleTextReady = () => {
         // ...
     }
+    const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
 
     return (
         <Card cardElevation={2} cornerRadius={scaler(8)}>
@@ -95,6 +85,10 @@ const TicketView = memo(({ id, title, currency, description, isSelected = false,
                     <Text style={[styles.mainText, { flex: 1 }, isSelected ? { color: colors.colorWhite } : {}]}>{title}</Text>
                     <Text style={[styles.mainText, isSelected ? { color: colors.colorWhite } : {}]}>{getSymbol(currency)}{price}</Text>
                 </View>
+                {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
+                    <Image style={{ width: scaler(18), aspectRatio: 1, tintColor: isSelected ? colors.colorWhite : undefined }} source={Images.ic_free_ticket_icon} />
+                    <Text style={{ color: isSelected ? colors.colorWhite : colors.colorPrimary, fontSize: scaler(14) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
+                </View> : null}
                 <ReadMore
                     key={id}
                     numberOfLines={3}

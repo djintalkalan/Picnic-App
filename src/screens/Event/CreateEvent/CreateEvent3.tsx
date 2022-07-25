@@ -120,11 +120,11 @@ const CreateEvent3: FC<any> = props => {
           currency: _.currency?.toUpperCase(),
           ticketDescription: _.description,
           status: (_?.status || 1),
-          capacity: _.capacity,
+          capacity: _.capacity?.toString(),
           cutoffDate: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
           cutoffTime: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
           isUnlimitedCapacity: _?.capacity_type == 'unlimited',
-          noOfFreeTickets: _?.total_free_tickets
+          noOfFreeTickets: _?.total_free_tickets?.toString(),
         })))
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);

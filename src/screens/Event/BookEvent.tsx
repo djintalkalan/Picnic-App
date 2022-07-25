@@ -52,7 +52,12 @@ const BookEvent: FC = (props: any) => {
             setSelectedTicket({
                 amount: event?.event_fees,
                 event_tax_amount: event?.event_tax_amount,
-                currency: event?.event_currency
+                currency: event?.event_currency,
+                capacity_type: event?.capacity_type,
+                capacity: event?.capacity,
+                sales_ends_on: event?.sales_ends_on,
+                total_free_tickets: event?.total_free_tickets || 0,
+                total_free_tickets_consumed: event?.total_free_tickets_consumed || 0
             })
         }
     }, [])
@@ -100,10 +105,10 @@ const BookEvent: FC = (props: any) => {
 
     const { availableSeats, allSeats } = useMemo(() => {
         return {
-            allSeats: (event?.capacity - event?.total_sold_tickets),
-            availableSeats: ((event?.capacity - event?.total_sold_tickets) - (parseInt(noOfTickets || '0')))
+            allSeats: (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0)),
+            availableSeats: ((selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0)) - (parseInt(noOfTickets || '0')))
         }
-    }, [noOfTickets])
+    }, [noOfTickets, selectedTicket])
 
 
     const _renderTruncatedFooter = (handlePress: any) => {
@@ -125,11 +130,12 @@ const BookEvent: FC = (props: any) => {
     const _handleTextReady = () => {
         // ...
     }
+    const free_tickets = (selectedTicket?.total_free_tickets || 0) - (selectedTicket?.total_free_tickets_consumed || 0)
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
-            <ScrollView enableResetScrollToCoords={false} >
+            <ScrollView keyboardShouldPersistTaps={'handled'} enableResetScrollToCoords={false} >
                 <View style={{ margin: scaler(20), flex: 1 }}>
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
@@ -160,7 +166,7 @@ const BookEvent: FC = (props: any) => {
                             maxLength={5}
                             rules={{
                                 validate: (v: string) => {
-                                    if ((event?.capacity_type != 'unlimited' && parseInt(v) > (event?.capacity - event?.total_sold_tickets)) || parseInt(v) == 0) {
+                                    if ((selectedTicket?.capacity_type != 'unlimited' && parseInt(v) > (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0))) || parseInt(v) == 0) {
                                         return Language.invalid_seat_quantity
                                     }
                                 }
@@ -171,10 +177,17 @@ const BookEvent: FC = (props: any) => {
                             errors={errors}
                         />
                     </View>
-                    <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
-                        {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
-                            undefined)}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: scaler(10), }} >
+                        <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(0), marginLeft: scaler(5) }]} >
+                            {(selectedTicket?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
+                                undefined)}
+                        </Text>
+                        {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
+                            <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
+                            <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
+                        </View> : null}
+                    </View>
+
 
                     {(!event?.is_free_event) ?
                         <>
@@ -278,7 +291,7 @@ const BookEvent: FC = (props: any) => {
             </ScrollView>
             <KeyboardHideView>
                 <View style={{ marginBottom: scaler(10), marginHorizontal: scaler(15) }}>
-                    {!event?.is_free_event && event?.event_refund_policy ?
+                    {!event?.is_free_event && isPayByPaypal && event?.event_refund_policy ?
                         <Text onPress={() => {
                             _showPopUpAlert({
                                 message: event?.event_refund_policy,

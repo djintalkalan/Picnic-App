@@ -321,7 +321,7 @@ const CreateEvent3: FC<any> = props => {
                                     errors={errors} />
                             </View> : undefined}
 
-                        {event.is_donation_enabled != 1 ?
+                        {event.is_donation_enabled != 1 && isPayByPaypal ?
                             <View style={{ flex: 1, width: '100%' }}>
                                 <TextInput
                                     placeholder={Language.write_refund_policy}

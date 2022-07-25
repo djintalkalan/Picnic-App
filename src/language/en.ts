@@ -386,7 +386,9 @@ export const en = {
   cutoff_date: "Cutoff date",
   cutoff_time: "Cutoff time",
   number_of_free_tickets: "Number of free tickets (optional)",
-  x_free_ticket_available: "{0} Free tickets available",
+  x_free_ticket_available: "free tickets available",
   invalid_free_tickets: "Invalid free tickets",
-  cutoff_time_required: "Cutoff time is required"
+  cutoff_time_required: "Cutoff time is required",
+  read_more: "Read more",
+  show_less: "Show less",
 }
