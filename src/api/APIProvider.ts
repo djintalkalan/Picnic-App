@@ -509,3 +509,10 @@ export const _enableDisable2FA = async (body: any) => {
     console.log("---------- _enableDisable2FA Api Call ---------------")
     return fetchApiData('two-factor/enable-2fa', "POST", body)
 }
+
+export const _totalSoldTickets = async (body: any) => {
+    console.log("---------- _enableDisable2FA Api Call ---------------")
+    return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
+}
+
+

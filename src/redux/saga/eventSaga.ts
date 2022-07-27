@@ -368,7 +368,16 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
     try {
         let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
         if (res.status == 200) {
-            NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
+            if (res?.data?.is_payment_by_passed) {
+                _showSuccessMessage(res?.message)
+                SocketService.emit(EMIT_JOIN_ROOM, {
+                    resource_id
+                })
+                yield put(joinEventSuccess(resource_id))
+                yield put(getEventDetail(resource_id))
+                NavigationService.navigate('EventDetail')
+            }
+            else NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
