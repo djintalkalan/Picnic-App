@@ -855,7 +855,7 @@ const CreateEvent3: FC<any> = props => {
           }
 
           if (datePickerVisibility == 'date') {
-            const eventEndDate = event.event_end_date.replace(/-/g, "")
+            const eventEndDate = (event.event_end_date || event.event_date).replace(/-/g, "")
             const chosenDate = dateFormat(date, "YYYYMMDD")
             const thisDate = dateFormat(new Date(), "YYYYMMDD")
             if (chosenDate > eventEndDate) {
@@ -876,7 +876,7 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = undefined
           } else {
-            const eventEndDate = stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
+            const eventEndDate = stringToDate((event?.event_end_date || event.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
             const chosenDate = date
             const thisDate = new Date()
             if (chosenDate > eventEndDate) {
@@ -894,7 +894,10 @@ const CreateEvent3: FC<any> = props => {
             update(selectedIndexRef?.current, updatedTicket)
           else
             setValue(datePickerVisibility == 'date' ? 'cutoffDate' : "cutoffTime", date)
-          setDatePickerVisibility(datePickerVisibility == 'date' ? 'time' : null);
+          datePickerVisibility == 'date' && setDatePickerVisibility(null);
+          setTimeout(() => {
+            setDatePickerVisibility(datePickerVisibility == 'date' ? 'time' : null);
+          }, 200);
         }}
         onCancel={() => {
           setDatePickerVisibility(null);
