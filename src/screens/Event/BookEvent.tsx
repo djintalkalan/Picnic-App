@@ -16,7 +16,7 @@ import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { getSymbol, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { formatAmount, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 
 type FormType = {
@@ -155,7 +155,7 @@ const BookEvent: FC = (props: any) => {
             message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                 : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
             onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: Language.pay + ' ' + getSymbol(selectedTicket.currency) + getTotalPayment()?.paidTicketsPrice,
+            buttonText: Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
             buttonStyle: { width: '100%' }
         })
     })(), [event, isPayByPaypal, isUserDonating, getTotalPayment])
@@ -177,7 +177,7 @@ const BookEvent: FC = (props: any) => {
                                     {Language.free}
                                 </Text> :
                                 <><Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                    {getSymbol(selectedTicket?.currency) + selectedTicket?.amount}
+                                    {formatAmount(selectedTicket?.currency, selectedTicket?.amount)}
                                 </Text><Text style={styles.address}>{Language.per_person}</Text></>
                             }
                         </View>
@@ -230,7 +230,7 @@ const BookEvent: FC = (props: any) => {
                                 {Language.applicable_tax}
                             </Text>
                             <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + round(getTotalPayment()?.paidTicketsSelected * selectedTicket?.event_tax_amount, 2) : getSymbol(selectedTicket.currency) + 0}
+                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, round(getTotalPayment()?.paidTicketsSelected * selectedTicket?.event_tax_amount, 2)) : formatAmount(selectedTicket.currency, 0)}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                             {getTotalPayment().paidTicketsSelected != 0 ? <>
@@ -339,7 +339,7 @@ const BookEvent: FC = (props: any) => {
                     {noOfTickets ?
                         <Button
                             title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? isPayByPaypal ? 'Donate and book event' : Language.book_ticket
-                                : Language.pay + ' ' + getSymbol(selectedTicket.currency) + getTotalPayment()?.paidTicketsPrice}
+                                : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
                             onPress={onSubmit}
                             disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
                         />

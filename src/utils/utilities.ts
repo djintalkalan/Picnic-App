@@ -550,6 +550,39 @@ export const getSymbol = (currency: string) => {
     return symbol;
 }
 
+export const formatAmountWithSymbol = (currency: string, amount: string) => {
+    const symbol = getSymbol(currency)
+    const price = formatAmount(currency, amount);
+    console.log("symbol", symbol);
+    console.log("price", price);
+    return symbol + price
+}
+
+export const formatAmount = (currency: string, amount: string | number) => {
+    try {
+        const activeLanguage = Language.getLanguage()
+        const currencyString = parseFloat("0").toLocaleString(activeLanguage, {
+            currency: currency?.toUpperCase(),
+            style: 'currency',
+        })
+
+        let price = parseFloat(amount?.toString()).toLocaleString(activeLanguage, {
+            currency: currency?.toUpperCase(),
+        })
+
+        const search = activeLanguage == 'en' ? "0.00" : "0,00"
+
+        price = currencyString.replace(search, price)
+
+        return price
+    }
+    catch (e) {
+        console.log("Error in format", e);
+        return ""
+    }
+
+}
+
 export const WaitTill = async (time: number) => {
     return new Promise((resolve) => {
         setTimeout(() => {

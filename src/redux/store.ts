@@ -27,7 +27,7 @@ export interface RootState {
     createEventState: ICreateEventReducer
 }
 
-const PERSIST_ENABLED = !__DEV__
+const PERSIST_ENABLED = true// !__DEV__
 
 const sagaMiddleware = createSagaMiddleware();
 

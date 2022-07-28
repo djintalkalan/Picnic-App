@@ -21,7 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 
 const { height, width } = Dimensions.get('screen')
@@ -426,7 +426,7 @@ const EventDetail: FC<any> = (props) => {
                         <View>
                             <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                    {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
+                                    {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
                                 </Text>
                                 {(event?.ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
@@ -544,10 +544,10 @@ const EventDetail: FC<any> = (props) => {
                                         </View>
                                         <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
                                             <Text style={styles.ticketInfo}>
-                                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                                {formatAmount(activeTicket?.currency,activeTicket?.total_tickets_amount?.toFixed(2))}
                                             </Text>
                                             <Text style={styles.ticketInfo}>
-                                                {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                                {formatAmount(activeTicket?.currency,activeTicket?.event_tax_amount?.toFixed(2))}
                                             </Text>
                                         </View>
                                     </View>
@@ -557,7 +557,7 @@ const EventDetail: FC<any> = (props) => {
                                             Total
                                         </Text>
                                         <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
+                                            {formatAmount(activeTicket?.currency,activeTicket?.total_paid_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View></> :
@@ -572,7 +572,7 @@ const EventDetail: FC<any> = (props) => {
                                             Donation
                                         </Text>
                                         <Text style={styles.ticketInfo}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                            {formatAmount(activeTicket?.currency,activeTicket?.total_tickets_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View>
@@ -765,7 +765,7 @@ const TicketPlans = ({ name, currency, amount: price, total_free_tickets, total_
             </View> : null}
         </View>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
-            {getSymbol(currency) + price}
+            {formatAmount(currency , price)}
         </Text>
     </View>
 }

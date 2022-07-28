@@ -4,7 +4,7 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import React, { FC, memo, useCallback, useState } from 'react'
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
-import { getSymbol, NavigationService, scaler } from 'utils'
+import { formatAmount, NavigationService, scaler } from 'utils'
 //@ts-ignore
 import ReadMore from 'react-native-read-more-text'
 
@@ -83,7 +83,7 @@ const TicketView = memo(({ _id: id, name: title, currency, description,
             <TouchableOpacity style={[styles.renderView, isSelected ? { backgroundColor: colors.colorPrimary } : {}]} activeOpacity={0.7} onPress={onPress}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <Text style={[styles.mainText, { flex: 1 }, isSelected ? { color: colors.colorWhite } : {}]}>{title}</Text>
-                    <Text style={[styles.mainText, isSelected ? { color: colors.colorWhite } : {}]}>{getSymbol(currency)}{price}</Text>
+                    <Text style={[styles.mainText, isSelected ? { color: colors.colorWhite } : {}]}>{formatAmount(currency, price)}</Text>
                 </View>
                 {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
                     <Image style={{ width: scaler(18), aspectRatio: 1, tintColor: isSelected ? colors.colorWhite : undefined }} source={Images.ic_free_ticket_icon} />

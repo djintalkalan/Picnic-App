@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getFreeTicketsInMultiple, getImageUrl, getSymbol, InitialPaginationState, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, InitialPaginationState, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
@@ -213,9 +213,9 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 date={dateStringFormat(event_date, "MMM DD, YYYY", "YYYY-MM-DD", "-")}
-                currency={getSymbol(event_currency)}
+                currency={""}
                 free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
-                price={!is_free_event ? event_fees : ""} />
+                price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />
         )
     }, [])
 
