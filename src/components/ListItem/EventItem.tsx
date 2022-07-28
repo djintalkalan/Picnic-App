@@ -40,7 +40,7 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, fr
                     <Text numberOfLines={1} ellipsizeMode='tail' style={styles.subtitle}>{subtitle}</Text>
 
 
-                    <View style={{ flex: 1, marginVertical: scaler(5), justifyContent: 'flex-end' }} >
+                    <View style={{ flex: 1, marginVertical: scaler(1), justifyContent: 'flex-end' }} >
 
                         {free_tickets ?
                             <View style={{ flexDirection: 'row', alignItems: 'center' }} >

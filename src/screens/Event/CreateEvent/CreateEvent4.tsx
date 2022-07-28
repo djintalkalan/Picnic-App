@@ -92,7 +92,7 @@ const CreateEvent3: FC<any> = props => {
     const onSubmit = useCallback(
         async (data) => {
 
-            if (!data?.policy?.trim() && event.is_donation_enabled != 1) {
+            if (!data?.policy?.trim() && event.is_donation_enabled != 1 && isPayByPaypal) {
                 setError("policy", { message: Language.write_refund_policy })
                 return
             }

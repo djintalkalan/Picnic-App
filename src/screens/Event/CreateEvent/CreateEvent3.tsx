@@ -304,6 +304,7 @@ const CreateEvent3: FC<any> = props => {
           <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
             <TouchableOpacity onPress={() => {
+              setIsTicketTypeDropdown(false)
               setIsFreeEvent((b) => {
                 if (!b) {
                   ticketTypeRef.current = TicketTypeData[0].value
