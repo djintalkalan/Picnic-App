@@ -813,7 +813,7 @@ const styles = StyleSheet.create({
     about: {
         fontSize: scaler(12),
         fontWeight: '400',
-        textTransform: 'capitalize',
+        // textTransform: 'capitalize',
         color: '#9A9A9A',
         marginTop: scaler(6),
     },
