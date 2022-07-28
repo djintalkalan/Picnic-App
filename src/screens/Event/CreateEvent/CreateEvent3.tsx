@@ -327,15 +327,18 @@ const CreateEvent3: FC<any> = props => {
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'ticketType'}
-                icon={Images.ic_arrow_dropdown}
+                icon={!isFreeEvent ? Images.ic_arrow_dropdown : undefined}
                 onChangeText={(text) => {
 
                 }}
+                style={{ color: isFreeEvent ? colors.colorGreyText : colors.colorBlack }}
+                disabled={isFreeEvent ?? false}
                 // required={isFreeEvent ? undefined : Language.event_name_required}
                 control={control}
                 iconContainerStyle={{ end: scaler(4) }}
                 onPress={() => { setIsTicketTypeDropdown(_ => !_) }}
                 errors={errors}
+
               />
               <FixedDropdown
                 containerStyle={{ width: '100%', }}
