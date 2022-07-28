@@ -284,7 +284,7 @@ const CreateEvent3: FC<any> = props => {
   const datePickerRef = useRef<DateTimePickerModal>(null)
 
   const getCurrentDate = () => {
-    if (!datePickerVisibility) return ""
+    if (!datePickerVisibility) return undefined
     let dateString = `ticketPlans.${selectedIndexRef?.current}.cutoffDate`
     let timeString = `ticketPlans.${selectedIndexRef?.current}.cutoffTime`
     if (selectedIndexRef?.current < 0) {
