@@ -40,7 +40,7 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, fr
                     <Text numberOfLines={1} ellipsizeMode='tail' style={styles.subtitle}>{subtitle}</Text>
 
 
-                    <View style={{ flex: 1, marginVertical: scaler(1), justifyContent: 'flex-end' }} >
+                    <View style={{ flex: 1, marginVertical: scaler(5), justifyContent: 'flex-end' }} >
 
                         {free_tickets ?
                             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
     title: {
         color: colors.colorBlack,
         fontWeight: '600',
-        fontSize: scaler(14),
-        marginTop: scaler(4)
+        fontSize: scaler(13.5),
+        // marginTop: scaler(4)
     },
     date: {
         // color: "rgb(136,115,84)",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     subtitle: {
         color: colors.colorGreyInactive,
         fontWeight: '400',
-        fontSize: scaler(11),
+        fontSize: scaler(10.5),
         maxWidth: '90%',
         marginTop: scaler(2)
         // minHeight: scaler(31)
