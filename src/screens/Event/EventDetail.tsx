@@ -53,7 +53,7 @@ const EventDetail: FC<any> = (props) => {
             const activeTicket = index > -1 ? event?.my_tickets[index] : null
             if (activeTicket) {
                 activeTicket.event_tax_rate = activeTicket.event_tax_rate || event?.event_tax_rate
-                activeTicket.event_tax_amount = (activeTicket.event_tax_rate * activeTicket?.no_of_tickets * activeTicket.amount / 100)
+                activeTicket.event_tax_amount = (activeTicket.event_tax_rate * (activeTicket?.no_of_tickets - activeTicket?.no_of_free_tickets_used) * activeTicket.amount / 100)
                 if (activeTicket.plan_id) {
                     activeTicket.ticket_name = activeTicket.selected_plan?.name
                     activeTicket.currency = activeTicket.selected_plan?.currency
@@ -544,10 +544,10 @@ const EventDetail: FC<any> = (props) => {
                                         </View>
                                         <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
                                             <Text style={styles.ticketInfo}>
-                                                {formatAmount(activeTicket?.currency,activeTicket?.total_tickets_amount?.toFixed(2))}
+                                                {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount?.toFixed(2))}
                                             </Text>
                                             <Text style={styles.ticketInfo}>
-                                                {formatAmount(activeTicket?.currency,activeTicket?.event_tax_amount?.toFixed(2))}
+                                                {formatAmount(activeTicket?.currency, activeTicket?.event_tax_amount?.toFixed(2))}
                                             </Text>
                                         </View>
                                     </View>
@@ -557,7 +557,7 @@ const EventDetail: FC<any> = (props) => {
                                             Total
                                         </Text>
                                         <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                            {formatAmount(activeTicket?.currency,activeTicket?.total_paid_amount?.toFixed(2))}
+                                            {formatAmount(activeTicket?.currency, activeTicket?.total_paid_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View></> :
@@ -572,7 +572,7 @@ const EventDetail: FC<any> = (props) => {
                                             Donation
                                         </Text>
                                         <Text style={styles.ticketInfo}>
-                                            {formatAmount(activeTicket?.currency,activeTicket?.total_tickets_amount?.toFixed(2))}
+                                            {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View>
@@ -691,7 +691,7 @@ const EventDetail: FC<any> = (props) => {
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     disabled={calculateButtonDisability()}
                                     onPress={() => {
-                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
+                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })
                                     }}
                                 />
@@ -765,7 +765,7 @@ const TicketPlans = ({ name, currency, amount: price, total_free_tickets, total_
             </View> : null}
         </View>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
-            {formatAmount(currency , price)}
+            {formatAmount(currency, price)}
         </Text>
     </View>
 }
