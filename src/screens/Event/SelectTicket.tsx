@@ -1,20 +1,29 @@
 import { colors, Images } from 'assets'
 import { Button, Card, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
-import React, { FC, memo, useCallback, useState } from 'react'
+import React, { FC, memo, useCallback, useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
 import { formatAmount, NavigationService, scaler } from 'utils'
 //@ts-ignore
+import { _totalSoldTickets } from 'api/APIProvider'
 import ReadMore from 'react-native-read-more-text'
 
+let ticketArray: Array<any> = []
 const SelectTicket: FC = (props: any) => {
     const [selectedTicket, setSelectedTicket] = useState<any>()
 
-    const ticketArray = (props?.route?.params.data || [])
-
     const onTicketSelect = useCallback((item: any) => {
         setSelectedTicket(item)
+    }, [])
+
+    useEffect(() => {
+        _totalSoldTickets({ resource_id: props?.route?.params?.id }).then(res => {
+            if (res?.status == 200) {
+                console.log('res', res);
+                ticketArray = res?.data?.tickets?.filter((_: any) => { return _.status != 2 })
+            } else console.log(res);
+        }).catch(e => console.log(e))
     }, [])
 
     const onNextPress = useCallback(() => {
@@ -55,7 +64,8 @@ const SelectTicket: FC = (props: any) => {
 
 const TicketView = memo(({ _id: id, name: title, currency, description,
     isSelected = false, amount: price, onPress,
-    total_free_tickets = 0, total_free_tickets_consumed = 0
+    total_free_tickets = 0, total_free_tickets_consumed = 0,
+    sales_ends_on, capacity_type, capacity, total_sold_tickets
 }: any) => {
     const _renderTruncatedFooter = (handlePress: any) => {
         return (
