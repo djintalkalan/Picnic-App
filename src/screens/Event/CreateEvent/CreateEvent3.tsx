@@ -207,6 +207,9 @@ const CreateEvent3: FC<any> = props => {
 
     if (isFreeEvent) {
       payload.is_free_event = '1'
+      payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
+      payload.capacity = data.capacity
+      payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : undefined
       if (isDonationAccepted) {
         payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
@@ -226,7 +229,7 @@ const CreateEvent3: FC<any> = props => {
           currency: _.currency?.toLowerCase(),
           description: _.ticketDescription,
           status: _.status == 2 ? 2 : undefined,
-          sales_ends_on: _.cutoffTime && _.cutoffTime?.toISOString(),
+          sales_ends_on: _.cutoffTime ? _.cutoffTime?.toISOString() : undefined,
           total_free_tickets: _?.noOfFreeTickets,
           capacity: _?.capacity,
           capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
@@ -241,7 +244,7 @@ const CreateEvent3: FC<any> = props => {
         payload.total_free_tickets = data.noOfFreeTickets ?? 0
         payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
-        payload.sales_ends_on = data?.cutoffTime && data?.cutoffTime?.toISOString()
+        payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : undefined
       }
     }
     dispatch(updateCreateEvent(payload))

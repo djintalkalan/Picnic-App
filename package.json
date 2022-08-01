@@ -8,6 +8,7 @@
     "start": "npx react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "clean-install": "rm -rf node_modules; rm -rf yarn.lock; rm -rf ios/Pods; rm -rf ios/Podfile.lock; yarn",
     "backup": "git archive --format zip --output ./backup.zip master",
     "clean:cache": "rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && npm cache clean --force && yarn cache clean",
     "pod": "npx pod-install",
