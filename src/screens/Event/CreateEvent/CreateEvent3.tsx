@@ -400,6 +400,73 @@ const CreateEvent3: FC<any> = props => {
 
               {ticketTypeRef.current == 'multiple' || isFreeEvent ? undefined :
                 <>
+                  <View>
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                      <View style={{ marginEnd: scaler(4), width: '30%' }} >
+                        <TextInput
+                          containerStyle={{ width: '100%' }}
+                          borderColor={colors.colorTextInputBackground}
+                          backgroundColor={colors.colorTextInputBackground}
+                          name={'currency'}
+                          disabled={isFreeEvent ? true : false}
+                          icon={Images.ic_arrow_dropdown}
+                          onChangeText={(text) => {
+
+                          }}
+                          control={control}
+                          iconContainerStyle={{ end: scaler(4) }}
+                          onPress={() => { setDropdown(_ => !_) }}
+                          errors={errors}
+                        />
+                        <FixedDropdown
+                          containerStyle={{ width: '98%', position: 'relative', top: 0 }}
+                          visible={isDropdown}
+                          data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                          onSelect={data => {
+                            setDropdown(false);
+                            setValue('currency', data?.title, { shouldValidate: true });
+                          }}
+                        />
+                      </View>
+                      <TextInput
+                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                        placeholder={
+                          Language.event_ticket_price + ' (' + Language.per_person + ')'
+                        }
+                        style={{ paddingLeft: scaler(20) }}
+                        borderColor={colors.colorTextInputBackground}
+                        backgroundColor={colors.colorTextInputBackground}
+                        name={'ticketPrice'}
+                        keyboardType={'decimal-pad'}
+                        disabled={isFreeEvent ? true : false}
+                        iconSize={scaler(18)}
+                        returnKeyType={'done'}
+                        icon={Images.ic_ticket}
+                        rules={{
+                          validate: (v: string) => {
+                            v = v?.trim()
+                            if (parseFloat(v) > 9999.99) {
+                              return Language.event_max_price
+                            }
+                            try {
+                              if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
+                                return Language.invalid_ticket_price
+                              }
+                            }
+                            catch (e) { }
+
+                          }
+                        }}
+                        required={
+                          isFreeEvent ? undefined : Language.ticket_price_required
+                        }
+                        control={control}
+                        errors={errors}
+                      />
+                    </View>
+
+                  </View>
+
                   <TextInput
                     containerStyle={{ marginEnd: scaler(4) }}
                     placeholder={Language.number_of_free_tickets}
@@ -419,6 +486,17 @@ const CreateEvent3: FC<any> = props => {
                     control={control}
                     errors={errors}
                   />
+
+
+                </>
+              }
+
+
+
+
+              {ticketTypeRef.current == 'multiple' ? undefined :
+                <>
+
                   <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5) }} >{Language.cutoff_date_title}</Text>
                   <View style={{ flexDirection: 'row' }}>
                     <TextInput
@@ -725,72 +803,7 @@ const CreateEvent3: FC<any> = props => {
 
                     </View>
                     :
-                    <View>
-                      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                        <View style={{ marginEnd: scaler(4), width: '30%' }} >
-                          <TextInput
-                            containerStyle={{ width: '100%' }}
-                            borderColor={colors.colorTextInputBackground}
-                            backgroundColor={colors.colorTextInputBackground}
-                            name={'currency'}
-                            disabled={isFreeEvent ? true : false}
-                            icon={Images.ic_arrow_dropdown}
-                            onChangeText={(text) => {
-
-                            }}
-                            control={control}
-                            iconContainerStyle={{ end: scaler(4) }}
-                            onPress={() => { setDropdown(_ => !_) }}
-                            errors={errors}
-                          />
-                          <FixedDropdown
-                            containerStyle={{ width: '98%', position: 'relative', top: 0 }}
-                            visible={isDropdown}
-                            data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                            onSelect={data => {
-                              setDropdown(false);
-                              setValue('currency', data?.title, { shouldValidate: true });
-                            }}
-                          />
-                        </View>
-                        <TextInput
-                          containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                          placeholder={
-                            Language.event_ticket_price + ' (' + Language.per_person + ')'
-                          }
-                          style={{ paddingLeft: scaler(20) }}
-                          borderColor={colors.colorTextInputBackground}
-                          backgroundColor={colors.colorTextInputBackground}
-                          name={'ticketPrice'}
-                          keyboardType={'decimal-pad'}
-                          disabled={isFreeEvent ? true : false}
-                          iconSize={scaler(18)}
-                          returnKeyType={'done'}
-                          icon={Images.ic_ticket}
-                          rules={{
-                            validate: (v: string) => {
-                              v = v?.trim()
-                              if (parseFloat(v) > 9999.99) {
-                                return Language.event_max_price
-                              }
-                              try {
-                                if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
-                                  return Language.invalid_ticket_price
-                                }
-                              }
-                              catch (e) { }
-
-                            }
-                          }}
-                          required={
-                            isFreeEvent ? undefined : Language.ticket_price_required
-                          }
-                          control={control}
-                          errors={errors}
-                        />
-                      </View>
-
-                    </View>}
+                    null}
                 </View>
               }
             </View>
@@ -808,7 +821,7 @@ const CreateEvent3: FC<any> = props => {
       <DateTimePickerModal
         ref={datePickerRef}
         style={{ zIndex: 20 }}
-        isVisible={datePickerVisibility}
+        isVisible={datePickerVisibility ? true : false}
         minimumDate={datePickerVisibility == 'date' ? new Date() : undefined}
         // maximumDate={stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")}
         mode={datePickerVisibility}
@@ -864,11 +877,11 @@ const CreateEvent3: FC<any> = props => {
             const thisDate = dateFormat(new Date(), "YYYYMMDD")
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff date should be less than event end date")
-              return
+              return setDatePickerVisibility(null)
             }
             if (chosenDate < thisDate) {
               _showErrorMessage("Cutoff date should be greater than current date")
-              return
+              return setDatePickerVisibility(null)
             }
             try {
               datePickerRef.current?.setState({
@@ -885,23 +898,27 @@ const CreateEvent3: FC<any> = props => {
             const thisDate = new Date()
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff time should be less than event end time")
-              return
+              return setDatePickerVisibility(null)
             }
             if (chosenDate < thisDate) {
               _showErrorMessage("Cutoff time should be greater than current time")
-              return
+              return setDatePickerVisibility(null)
             }
-
           }
 
           if (selectedIndexRef?.current >= 0)
             update(selectedIndexRef?.current, updatedTicket)
           else
             setValue(datePickerVisibility == 'date' ? 'cutoffDate' : "cutoffTime", date)
-          datePickerVisibility == 'date' && setDatePickerVisibility(null);
-          setTimeout(() => {
-            setDatePickerVisibility(datePickerVisibility == 'date' ? 'time' : null);
-          }, 200);
+
+          setDatePickerVisibility((_: any) => {
+            if (_ == 'date') {
+              setTimeout(() => {
+                setDatePickerVisibility('time');
+              }, 500);
+            }
+            return null
+          })
         }}
         onCancel={() => {
           setDatePickerVisibility(null);
