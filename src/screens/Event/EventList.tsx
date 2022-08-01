@@ -16,11 +16,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 
-const ITEM_HEIGHT = scaler(120)
+const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
 const EventList: FC<any> = (props) => {
@@ -176,7 +176,14 @@ const EventList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, city, state, country, is_free_event, event_date, event_currency, event_fees } = item
+        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_free_event, event_date, event_currency, event_fees, } = item
+        if (ticket_type == 'multiple') {
+            var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = getFreeTicketsInMultiple(ticket_plans)
+        } else {
+            //@ts-ignore
+            var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = item
+        }
+
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -208,8 +215,9 @@ const EventList: FC<any> = (props) => {
 
                 }}
                 date={dateStringFormat(event_date, "MMM DD, YYYY", "YYYY-MM-DD", "-")}
-                currency={getSymbol(event_currency)}
-                price={!is_free_event ? event_fees : ""} />
+                currency={""}
+                free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
+                price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />
         )
     }, [])
 

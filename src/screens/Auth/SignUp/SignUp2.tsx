@@ -95,7 +95,7 @@ const SignUp2: FC<any> = (props) => {
 
                     <TextInput
                         containerStyle={{ flex: 1, marginRight: scaler(10) }}
-                        placeholder={"MMM DD, YYYY"}
+                        placeholder={"DOB (MMM DD, YYYY)"}
                         style={{ fontSize: scaler(13) }}
                         name={'dob'}
                         onPress={openDatePicker}

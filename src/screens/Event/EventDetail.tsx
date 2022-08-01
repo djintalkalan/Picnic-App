@@ -21,7 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, getCityOnly, getImageUrl, getSymbol, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 
 const { height, width } = Dimensions.get('screen')
@@ -46,6 +46,8 @@ const EventDetail: FC<any> = (props) => {
 
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
 
+    const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
+
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
@@ -53,7 +55,7 @@ const EventDetail: FC<any> = (props) => {
             const activeTicket = index > -1 ? event?.my_tickets[index] : null
             if (activeTicket) {
                 activeTicket.event_tax_rate = activeTicket.event_tax_rate || event?.event_tax_rate
-                activeTicket.event_tax_amount = (activeTicket.event_tax_rate * activeTicket?.no_of_tickets * activeTicket.amount / 100)
+                activeTicket.event_tax_amount = (activeTicket.event_tax_rate * (activeTicket?.no_of_tickets - activeTicket?.no_of_free_tickets_used) * activeTicket.amount / 100)
                 if (activeTicket.plan_id) {
                     activeTicket.ticket_name = activeTicket.selected_plan?.name
                     activeTicket.currency = activeTicket.selected_plan?.currency
@@ -310,7 +312,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ borderRadius: scaler(5) }}>
                                 {event?.ticket_plans?.map((_: any, i: number) => {
                                     if (_.status == 1)
-                                        return <TicketPlans key={i} name={_?.name} currency={_?.currency} price={_?.amount} />
+                                        return <TicketPlans key={i} {..._} />
                                 })}
                             </View>
                         </Card>
@@ -406,7 +408,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
+                    {endSales >= new Date() && event.status == 1 ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -426,7 +428,7 @@ const EventDetail: FC<any> = (props) => {
                         <View>
                             <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                    {event?.is_free_event ? Language.free : getSymbol(event?.event_currency) + event?.event_fees}
+                                    {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
                                 </Text>
                                 {(event?.ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
@@ -544,10 +546,10 @@ const EventDetail: FC<any> = (props) => {
                                         </View>
                                         <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
                                             <Text style={styles.ticketInfo}>
-                                                {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                                {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount?.toFixed(2))}
                                             </Text>
                                             <Text style={styles.ticketInfo}>
-                                                {getSymbol(activeTicket?.currency)}{activeTicket?.event_tax_amount?.toFixed(2)}
+                                                {formatAmount(activeTicket?.currency, activeTicket?.event_tax_amount?.toFixed(2))}
                                             </Text>
                                         </View>
                                     </View>
@@ -557,7 +559,7 @@ const EventDetail: FC<any> = (props) => {
                                             Total
                                         </Text>
                                         <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_paid_amount?.toFixed(2)}
+                                            {formatAmount(activeTicket?.currency, activeTicket?.total_paid_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View></> :
@@ -572,7 +574,7 @@ const EventDetail: FC<any> = (props) => {
                                             Donation
                                         </Text>
                                         <Text style={styles.ticketInfo}>
-                                            {getSymbol(activeTicket?.currency)}{activeTicket?.total_tickets_amount?.toFixed(2)}
+                                            {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount?.toFixed(2))}
                                         </Text>
                                     </View>
                                 </View>
@@ -647,7 +649,7 @@ const EventDetail: FC<any> = (props) => {
                 <>
                     {(event?.is_admin || event?.is_event_member) ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                            {eventDate >= new Date() ?
+                            {endSales >= new Date() ?
                                 <View style={{ flex: 1 }}>
                                     <Button onPress={() => {
                                         try {
@@ -676,22 +678,22 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flex: 1 }}>
                                 <Button title={Language.start_chat}
                                     onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
-                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
+                                    fontColor={endSales >= new Date() ? 'black' : 'white'}
+                                    backgroundColor={endSales >= new Date() ? 'white' : colors.colorPrimary}
                                     buttonStyle={{
                                         borderColor: 'black',
-                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                        borderWidth: endSales >= new Date() ? scaler(1) : 0
                                     }}
                                     textStyle={{ fontWeight: '400' }} />
                             </View>
                         </View> :
-                        (eventDate >= new Date() &&
+                        (endSales >= new Date() &&
                             (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     disabled={calculateButtonDisability()}
                                     onPress={() => {
-                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { data: event?.ticket_plans.filter((_: any) => { return _.status != 2 }), id: event?._id }) :
+                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
                                             NavigationService.navigate('BookEvent', { id: event?._id })
                                     }}
                                 />
@@ -754,12 +756,18 @@ const InnerButton = (props: { visible?: boolean, hideBorder?: boolean, title: st
     ) : null
 }
 
-const TicketPlans = (props: { name: string, currency: string, price: string }) => {
-    const { name, currency, price } = props;
+const TicketPlans = ({ name, currency, amount: price, total_free_tickets, total_free_tickets_consumed }: any) => {
+    const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
     return <View style={{ padding: scaler(10), overflow: 'hidden', flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7, justifyContent: 'flex-end' }}>
-        <Text style={{ flexGrow: 1, maxWidth: width / 1.4, fontSize: scaler(14), fontWeight: '500', paddingRight: scaler(10) }}>{name}</Text>
+        <View style={{ flexGrow: 1, maxWidth: width / 1.4, paddingRight: scaler(10) }} >
+            <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>{name}</Text>
+            {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(5) }} >
+                <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
+                <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
+            </View> : null}
+        </View>
         <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
-            {getSymbol(currency) + price}
+            {formatAmount(currency, price)}
         </Text>
     </View>
 }
@@ -807,7 +815,7 @@ const styles = StyleSheet.create({
     about: {
         fontSize: scaler(12),
         fontWeight: '400',
-        textTransform: 'capitalize',
+        // textTransform: 'capitalize',
         color: '#9A9A9A',
         marginTop: scaler(6),
     },

@@ -195,9 +195,13 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
             res.data.event.is_event_admin = res.data?.event?.is_admin ? true : false
             if (res?.data?.event?.ticket_type == 'multiple') {
                 const leastTicket = res?.data?.event?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+                const totalCapacity = res?.data?.event?.ticket_plans?.reduce((p: any, c: any) => (c?.capacity_type == 'unlimited' || p?.capacity_type == 'unlimited' ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
                 res.data.event.event_fees = leastTicket.amount?.toString()
                 res.data.event.event_tax_rate = leastTicket.event_tax_rate?.toString()
                 res.data.event.event_currency = leastTicket.currency?.toString()
+                res.data.event.capacity_type = totalCapacity?.capacity_type
+                res.data.event.capacity = totalCapacity?.capacity
+
             }
             if (res?.data?.event?.is_admin)
                 yield put(getEventMembers(payload))
@@ -368,7 +372,16 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
     try {
         let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
         if (res.status == 200) {
-            NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
+            if (res?.data?.is_payment_by_passed) {
+                _showSuccessMessage(res?.message)
+                SocketService.emit(EMIT_JOIN_ROOM, {
+                    resource_id
+                })
+                yield put(joinEventSuccess(resource_id))
+                yield put(getEventDetail(resource_id))
+                NavigationService.navigate('EventDetail')
+            }
+            else NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
