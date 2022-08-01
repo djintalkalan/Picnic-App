@@ -16,11 +16,18 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, InitialPaginationState, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateStringFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
+
+const InitialPaginationState: IPaginationState = {
+    currentPage: 0,
+    totalPages: -1,
+    perPage: 20
+}
+
 const EventList: FC<any> = (props) => {
     const insets = useSafeAreaInsets()
 
@@ -274,7 +281,7 @@ const EventList: FC<any> = (props) => {
                 useNativeDriver
                 color={colors.colorPrimary} />}
             <SwipeListView
-                refreshControl={searchedEvents ? undefined : <RefreshControl
+                refreshControl={searchedEvents?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = InitialPaginationState

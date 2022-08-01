@@ -109,6 +109,8 @@ const CreateEvent3: FC<any> = props => {
       setIsDonationAccepted(event?.is_donation_enabled == 1);
       setValue('currency', event?.event_currency?.toUpperCase() || "USD")
       setDate()
+      setValue('cutoffDate', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
+      setValue('cutoffTime', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
     } else {
       if (event.ticket_type == 'multiple') {
         ticketTypeRef.current = TicketTypeData[1]?.value
@@ -124,7 +126,7 @@ const CreateEvent3: FC<any> = props => {
           cutoffDate: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
           cutoffTime: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
           isUnlimitedCapacity: _?.capacity_type == 'unlimited',
-          noOfFreeTickets: _?.total_free_tickets?.toString(),
+          noOfFreeTickets: _?.total_free_tickets?.toString() || "",
         })))
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
