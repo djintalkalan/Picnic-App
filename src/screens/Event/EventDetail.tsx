@@ -46,6 +46,8 @@ const EventDetail: FC<any> = (props) => {
 
     const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
 
+    const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
+
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
@@ -406,7 +408,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
+                    {endSales >= new Date() && event.status == 1 ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -647,7 +649,7 @@ const EventDetail: FC<any> = (props) => {
                 <>
                     {(event?.is_admin || event?.is_event_member) ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                            {eventDate >= new Date() ?
+                            {endSales >= new Date() ?
                                 <View style={{ flex: 1 }}>
                                     <Button onPress={() => {
                                         try {
@@ -676,16 +678,16 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flex: 1 }}>
                                 <Button title={Language.start_chat}
                                     onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
-                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
+                                    fontColor={endSales >= new Date() ? 'black' : 'white'}
+                                    backgroundColor={endSales >= new Date() ? 'white' : colors.colorPrimary}
                                     buttonStyle={{
                                         borderColor: 'black',
-                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                        borderWidth: endSales >= new Date() ? scaler(1) : 0
                                     }}
                                     textStyle={{ fontWeight: '400' }} />
                             </View>
                         </View> :
-                        (eventDate >= new Date() &&
+                        (endSales >= new Date() &&
                             (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
