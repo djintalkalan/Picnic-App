@@ -42,7 +42,7 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, fr
 
                     <View style={{ flex: 1, marginVertical: scaler(5), justifyContent: 'flex-end' }} >
 
-                        {free_tickets ?
+                        {free_tickets > 0 ?
                             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                                 <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
                                 <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>

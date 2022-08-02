@@ -1,40 +1,46 @@
 import { _enableDisable2FA } from 'api';
-import { getProfile } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { MyHeader, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
-import { useDatabase } from 'database/Database';
+import Database, { useDatabase } from 'database/Database';
+import { debounce } from 'lodash';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { InteractionManager, StyleSheet, View } from 'react-native';
 import Language from 'src/language/Language';
-import { scaler, _showErrorMessage, _showSuccessMessage } from 'utils';
-
+import { scaler, _showErrorMessage } from 'utils';
+let count = 0
 const TwoFactorAuth: FC = () => {
-    const [authEnabled, setAuthEnabled] = useState<boolean>(false)
-    const dispatch = useDispatch()
-    const [userData] = useDatabase("userData")
-
+    const [userData] = useDatabase<any>("userData")
+    const [authEnabled, setAuthEnabled] = useState<boolean>(userData?.is_two_factor_enabled == '1' ? true : false)
     useEffect(() => {
-        setAuthEnabled(userData?.is_two_factor_enabled == '1' ? true : false)
-    }, [userData])
+        InteractionManager?.runAfterInteractions(() => {
+            setAuthEnabled(userData?.is_two_factor_enabled == '1' ? true : false)
+        })
+    }, [userData?.is_two_factor_enabled])
+
+    const debounceSearch = useCallback(debounce((permissionEnabled) => {
+        _enableDisable2FA(
+            {
+                "is_two_factor_enabled": permissionEnabled ? '1' : '0',
+                "two_factor_mode": "email"
+            }).then(res => {
+                if (res && res?.status == 200) {
+                    Database.setUserData({
+                        ...Database.getStoredValue("userData"),
+                        is_two_factor_enabled: permissionEnabled ? '1' : '0'
+                    })
+                    setAuthEnabled(permissionEnabled)
+                }
+                else _showErrorMessage(res?.message)
+            }).catch(e => console.log(e))
+    }, 1200), [])
 
 
     const onChangePermission = useCallback((permissionEnabled: boolean) => {
         try {
-            _enableDisable2FA(
-                {
-                    "is_two_factor_enabled": permissionEnabled ? '1' : '0',
-                    "two_factor_mode": "email"
-                }).then(res => {
-                    if (res && res?.status == 200) {
-                        _showSuccessMessage(res?.message)
-                        setAuthEnabled(permissionEnabled)
-                        dispatch(getProfile())
-                    }
-                    else _showErrorMessage(res?.message)
-                }).catch(e => console.log(e))
+            setAuthEnabled(permissionEnabled)
+            debounceSearch(permissionEnabled)
         }
         catch { (e: any) => console.log(e) }
     }, [])
@@ -45,7 +51,7 @@ const TwoFactorAuth: FC = () => {
             <MyHeader title={Language.two_factor_auth} backEnabled />
             <View style={styles.authView} >
                 <Text style={styles.textStyle} >{Language.two_factor_auth}</Text>
-                <Switch active={authEnabled} onChange={_ => onChangePermission(_)} />
+                <Switch active={authEnabled} onChange={onChangePermission} />
             </View>
         </SafeAreaViewWithStatusBar>
     )
