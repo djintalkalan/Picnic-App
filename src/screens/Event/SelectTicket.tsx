@@ -105,7 +105,8 @@ const TicketView = memo(({ _id: id, name: title, currency, description,
     const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
 
     return (
-        <Card cardElevation={2} cornerRadius={scaler(8)}>
+        <Card cardElevation={2} cornerRadius={scaler(8)}  >
+            {isDisabled ? <Image source={new Date() > endSales ? Images.ic_no_longer_available : Images.ic_sold_out} style={styles.disableImage} resizeMode={'contain'} /> : undefined}
             <TouchableOpacity disabled={isDisabled} style={[styles.renderView, isSelected ? { backgroundColor: colors.colorPrimary } : {}]} activeOpacity={0.7} onPress={onPress}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <Text style={[styles.mainText, { flex: 1 }, isSelected ? { color: colors.colorWhite } : isDisabled ? { color: colors.colorGreyText } : {}]}>{title}</Text>
@@ -148,6 +149,13 @@ const styles = StyleSheet.create({
         fontSize: scaler(13),
         marginTop: scaler(10),
         flex: 1,
+    },
+    disableImage: {
+        position: 'absolute',
+        height: scaler(70),
+        width: scaler(120),
+        zIndex: 1,
+        alignSelf: 'center'
     }
 
 })
