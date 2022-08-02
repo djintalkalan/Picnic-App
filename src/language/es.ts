@@ -383,6 +383,7 @@ export const es = {
     maximum_file_size_allowed: "",
     default_background: "",
     two_factor_auth: "",
+    add_location_to_chat: "",
     cutoff_date_title: "",
     cutoff_date: "",
     cutoff_time: "",
@@ -392,5 +393,5 @@ export const es = {
     cutoff_time_required: "",
     read_more: "",
     show_less: "",
-    add_location_to_chat: "",
+
 }

@@ -383,6 +383,7 @@ export const en = {
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
   default_background: "Default background",
   two_factor_auth: "Two Factor Authentication",
+  add_location_to_chat: "Share location in chat window",
   cutoff_date_title: "Cutoff Date and time (optional)",
   cutoff_date: "Cutoff date",
   cutoff_time: "Cutoff time",
@@ -392,5 +393,5 @@ export const en = {
   cutoff_time_required: "Cutoff time is required",
   read_more: "Read more",
   show_less: "Show less",
-  add_location_to_chat: "Share location in chat window",
+
 }
