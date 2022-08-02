@@ -107,6 +107,11 @@ export const eventDetailReducer = (state: IEventDetailReducer = {}, action: acti
         case ActionTypes.RESET_STATE_ON_LOGIN:
         case ActionTypes.RESET_STATE_ON_LOGOUT:
             return {}
+        case ActionTypes.SET_CHAT_BACKGROUND_SUCCESS:
+            if (state?.[action?.payload?.resource_id] && action?.payload?.resource_type == 'event') {
+                return { ...state, [action.payload?.resource_id]: { ...state[action?.payload?.resource_id], event: { ...state[action?.payload?.resource_id].event, background_color: action?.payload?.background_color } } }
+            }
+            return state
         default:
             return state
     }

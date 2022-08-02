@@ -10,7 +10,8 @@ import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, InitialPaginationState, NavigationService, scaler } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils'
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 let loadMore = false
 const ProfileEvents: FC<any> = (props) => {
@@ -44,13 +45,13 @@ const ProfileEventsList: FC<any> = (props) => {
         isLoading: state.isLoading,
         userEvents: state?.userGroupsEvents?.[type],
     }))
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const dispatch = useDispatch()
 
     const flatListRef = useRef<FlatList<any>>(null)
 
     useLayoutEffect(() => {
-        paginationState.current = InitialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchEventList()
         setTimeout(() => {
             loadMore = true
@@ -115,7 +116,7 @@ const ProfileEventsList: FC<any> = (props) => {
                 // refreshControl={searchedEvents ? undefined : <RefreshControl
                 //     refreshing={false}
                 //     onRefresh={() => {
-                //         paginationState.current = InitialPaginationState
+                //         paginationState.current = INITIAL_PAGINATION_STATE
                 //         fetchEventList()
                 //     }}
                 // />}

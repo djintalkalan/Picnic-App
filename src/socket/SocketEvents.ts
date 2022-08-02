@@ -26,6 +26,7 @@ export const EMIT_JOIN = 'join';
 export const EMIT_LEAVE_ROOM = "leaveRoom";
 export const EMIT_JOIN_ROOM = "joinRoom";
 export const EMIT_LIKE_UNLIKE = 'likeUnlike';
+export const EMIT_SET_CHAT_BACKGROUND = 'setBackgroundColor'
 
 // PERSONAL Messages Events
 
@@ -69,6 +70,7 @@ export const ON_JOIN = 'onJoin';
 export const ON_LEAVE_ROOM = "onLeaveRoom";
 export const ON_JOIN_ROOM = "onJoinRoom";
 export const ON_LIKE_UNLIKE = "onLikeUnlike";//When Message Is  Like/Un-liked
+export const ON_SET_CHAT_BACKGROUND = 'onSetBackgroundColor'
 
 // PERSONAL Messages Events
 export const ON_PERSONAL_MESSAGE = 'onMessage';

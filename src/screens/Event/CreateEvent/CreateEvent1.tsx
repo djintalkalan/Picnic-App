@@ -17,7 +17,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _showErrorMessage } from 'utils';
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils';
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
 
 type FormType = {
   eventName: string;
@@ -97,7 +98,7 @@ const CreateEvent1: FC<any> = props => {
         mediaType: 'any',
         forceJpg: true,
         compressVideoPreset: "MediumQuality",
-      } : ProfileImagePickerOptions)
+      } : PROFILE_IMAGE_PICKER_OPTIONS)
         .then(image => {
           console.log("image", image);
           const maxSizeInMb = 100
