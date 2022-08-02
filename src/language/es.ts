@@ -393,4 +393,5 @@ export const es = {
     cutoff_time_required: "",
     read_more: "",
     show_less: "",
+
 }
