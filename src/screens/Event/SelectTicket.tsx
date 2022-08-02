@@ -1,14 +1,14 @@
+import { _totalSoldTickets } from 'api/APIProvider'
+import { RootState } from 'app-store/store'
 import { colors, Images } from 'assets'
 import { Button, Card, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
+import { isEqual } from 'lodash'
 import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
 import { formatAmount, NavigationService, scaler, stringToDate } from 'utils'
 //@ts-ignore
-import { _totalSoldTickets } from 'api/APIProvider'
-import { RootState } from 'app-store/store'
-import { isEqual } from 'lodash'
 import ReadMore from 'react-native-read-more-text'
 import { useSelector } from 'react-redux'
 
