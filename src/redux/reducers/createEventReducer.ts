@@ -56,6 +56,7 @@ export interface ICreateEventReducer {
     payment_api_username: string;
     payment_api_password: string;
     payment_api_signature: string;
+    is_direction: string;
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {

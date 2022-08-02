@@ -383,4 +383,5 @@ export const es = {
     maximum_file_size_allowed: "",
     default_background: "",
     two_factor_auth: "",
+    add_location_to_chat: "",
 }
