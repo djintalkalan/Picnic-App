@@ -1,7 +1,7 @@
 import { colors, Images } from 'assets'
 import { Button, Card, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
-import React, { FC, memo, useCallback, useEffect, useState } from 'react'
+import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
 import { formatAmount, NavigationService, scaler, stringToDate } from 'utils'
@@ -102,7 +102,12 @@ const TicketView = memo(({ _id: id, name: title, currency, description,
     const _handleTextReady = () => {
         // ...
     }
-    const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
+    // const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
+
+    const free_tickets = useMemo(() => {
+        const freeTicket = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
+        return Math.max((freeTicket || 0), 0)
+    }, [total_free_tickets, total_free_tickets_consumed])
 
     return (
         <Card cardElevation={2} cornerRadius={scaler(8)}  >
