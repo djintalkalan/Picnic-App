@@ -102,7 +102,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 style={{
                     justifyContent: 'center',
                     minHeight: scaler(50),
-                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
+                    borderColor: (errors && errors[errorName]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
                     backgroundColor: backgroundColor ?? colors.colorWhite,
                     // padding: scaler(2),
                     paddingTop: scaler(10),

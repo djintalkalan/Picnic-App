@@ -23,6 +23,7 @@ import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
+
 const EventList: FC<any> = (props) => {
     const insets = useSafeAreaInsets()
 
@@ -276,7 +277,7 @@ const EventList: FC<any> = (props) => {
                 useNativeDriver
                 color={colors.colorPrimary} />}
             <SwipeListView
-                refreshControl={searchedEvents ? undefined : <RefreshControl
+                refreshControl={searchedEvents?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = INITIAL_PAGINATION_STATE

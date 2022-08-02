@@ -88,12 +88,13 @@ const BookEvent: FC = (props: any) => {
 
 
     const confirmReservation = useCallback((data) => {
+
         let payload = {
             resource_id: event?._id,
             no_of_tickets: noOfTickets?.toString(),
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
-            donation_amount: event.is_donation_enabled && isPayByPaypal ? data.donationAmount : '0',
+            donation_amount: (event.is_donation_enabled && isPayByPaypal && isUserDonating) ? data.donationAmount : '0',
             is_donation: event?.is_free_event && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
@@ -101,7 +102,11 @@ const BookEvent: FC = (props: any) => {
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
-        dispatch(isPayByPaypal == false ? joinEvent(payload) : authorizePayment(payload))
+        let action = joinEvent(payload)
+        if ((isPayByPaypal && isUserDonating) || (isPayByPaypal && getTotalPayment().paidTicketsPrice)) {
+            action = authorizePayment(payload)
+        }
+        dispatch(action)
     }, [event, noOfTickets, isPayByPaypal, selectedTicket, isUserDonating])
 
     const { availableSeats, allSeats } = useMemo(() => {
@@ -211,7 +216,7 @@ const BookEvent: FC = (props: any) => {
                             {(selectedTicket?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
                                 undefined)}
                         </Text>
-                        {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
+                        {free_tickets > 0 ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
                             <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
                             <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
                         </View> : null}
@@ -285,7 +290,7 @@ const BookEvent: FC = (props: any) => {
                                         {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                                     </Fragment>
                                 })}
-                                {isPayByPaypal ?
+                                {isUserDonating && isPayByPaypal ?
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                                         <TextInput
                                             containerStyle={{ marginEnd: scaler(4), width: '30%' }}

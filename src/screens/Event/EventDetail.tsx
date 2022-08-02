@@ -761,7 +761,7 @@ const TicketPlans = ({ name, currency, amount: price, total_free_tickets, total_
     return <View style={{ padding: scaler(10), overflow: 'hidden', flexDirection: 'row', alignItems: 'center', borderBottomColor: colors.colorGreyText, borderBottomWidth: 0.7, justifyContent: 'flex-end' }}>
         <View style={{ flexGrow: 1, maxWidth: width / 1.4, paddingRight: scaler(10) }} >
             <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>{name}</Text>
-            {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(5) }} >
+            {free_tickets > 0 ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(5) }} >
                 <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
                 <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
             </View> : null}

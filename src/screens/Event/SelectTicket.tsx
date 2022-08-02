@@ -105,13 +105,18 @@ const TicketView = memo(({ _id: id, name: title, currency, description,
     const free_tickets = (total_free_tickets || 0) - (total_free_tickets_consumed || 0)
 
     return (
-        <Card cardElevation={2} cornerRadius={scaler(8)}>
+        <Card cardElevation={2} cornerRadius={scaler(8)}  >
+            {isDisabled ?
+                <View style={styles.disableContainer} >
+                    <Image source={new Date() > endSales ? Images.ic_no_longer_available : Images.ic_sold_out} style={styles.disableImage} resizeMode={'contain'} />
+                </View>
+                : undefined}
             <TouchableOpacity disabled={isDisabled} style={[styles.renderView, isSelected ? { backgroundColor: colors.colorPrimary } : {}]} activeOpacity={0.7} onPress={onPress}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                     <Text style={[styles.mainText, { flex: 1 }, isSelected ? { color: colors.colorWhite } : isDisabled ? { color: colors.colorGreyText } : {}]}>{title}</Text>
                     <Text style={[styles.mainText, isSelected ? { color: colors.colorWhite } : isDisabled ? { color: colors.colorGreyText } : {}]}>{formatAmount(currency, price)}</Text>
                 </View>
-                {free_tickets ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
+                {free_tickets > 0 ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
                     <Image style={{ width: scaler(18), aspectRatio: 1, tintColor: isSelected ? colors.colorWhite : isDisabled ? colors.colorGreyText : undefined }} source={Images.ic_free_ticket_icon} />
                     <Text style={{ color: isSelected ? colors.colorWhite : isDisabled ? colors.colorGreyText : colors.colorPrimary, fontSize: scaler(14) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
                 </View> : null}
@@ -148,6 +153,24 @@ const styles = StyleSheet.create({
         fontSize: scaler(13),
         marginTop: scaler(10),
         flex: 1,
+    },
+    disableImage: {
+        height: scaler(70),
+        // width: scaler(140),
+        // maxHeight: '100%',
+        // opacity: 0.9,
+        resizeMode: 'contain',
+        // transform: [{
+        //     rotate: '28.32deg'
+        // }]
+    },
+    disableContainer: {
+        position: 'absolute',
+        zIndex: 1,
+        justifyContent: 'center',
+        // backgroundColor: 'green',
+        alignSelf: 'center',
+        height: '100%'
     }
 
 })
