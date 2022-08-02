@@ -37,5 +37,3 @@ export const refreshChatInEvent = (payload: { eventId: string, chats: Array<any>
     type: ActionTypes.REFRESH_CHAT_IN_EVENT,
     payload
 })
-
-

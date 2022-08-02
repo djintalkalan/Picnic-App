@@ -381,6 +381,7 @@ export const es = {
     donation_price: "",
     donation_price_required: "",
     maximum_file_size_allowed: "",
+    default_background: "",
     two_factor_auth: "",
     cutoff_date_title: "",
     cutoff_date: "",
@@ -391,4 +392,5 @@ export const es = {
     cutoff_time_required: "",
     read_more: "",
     show_less: "",
+    add_location_to_chat: "",
 }

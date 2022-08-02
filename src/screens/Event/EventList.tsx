@@ -17,16 +17,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import { dateStringFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
+
 
 const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
-
-const InitialPaginationState: IPaginationState = {
-    currentPage: 0,
-    totalPages: -1,
-    perPage: 20
-}
 
 const EventList: FC<any> = (props) => {
     const insets = useSafeAreaInsets()
@@ -147,7 +143,7 @@ const EventList: FC<any> = (props) => {
         searchedEvents: state?.homeData?.searchedEvents
     }), isEqual)
 
-    const paginationState = useRef<IPaginationState>(InitialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const [selectedLocation] = useDatabase('selectedLocation')
     const dispatch = useDispatch()
     const [isLoader, setLoader] = useState(false)
@@ -157,7 +153,7 @@ const EventList: FC<any> = (props) => {
 
     useLayoutEffect(() => {
         console.log("selectedLocation changed", selectedLocation)
-        paginationState.current = InitialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchEventList()
     }, [selectedLocation])
 
@@ -284,7 +280,7 @@ const EventList: FC<any> = (props) => {
                 refreshControl={searchedEvents?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
-                        paginationState.current = InitialPaginationState
+                        paginationState.current = INITIAL_PAGINATION_STATE
                         fetchEventList()
                     }}
                 />}

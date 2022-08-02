@@ -62,6 +62,7 @@ export interface ICreateEventReducer {
     payment_api_signature: string;
     sales_ends_on?: string;
     total_free_tickets?: string
+    is_direction: string;
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {

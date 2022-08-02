@@ -15,8 +15,8 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { dateFormat, formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, stringToDate, _zoomImage } from 'utils'
-
+import { dateFormat, formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, stringToDate, _zoomImage } from 'utils'
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants'
 type FormType = {
     about: string
     firstName: string
@@ -77,7 +77,7 @@ const ProfileScreen: FC<any> = (props) => {
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
-            ImagePicker.openPicker(ProfileImagePickerOptions).then((image) => {
+            ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS).then((image) => {
                 console.log(image);
                 setProfileImage(image)
             }).catch(e => {

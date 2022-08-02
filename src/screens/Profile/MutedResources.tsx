@@ -11,12 +11,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getCityOnly, getImageUrl, scaler } from 'utils'
-
-const initialPaginationState: IPaginationState = {
-    currentPage: 0,
-    totalPages: -1,
-    perPage: 20
-}
+import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 const MutedResources: FC<any> = (props) => {
 
@@ -33,7 +28,7 @@ const MutedResources: FC<any> = (props) => {
 
     const mutedResource = type == 'group' ? mutedGroups : mutedEvents
 
-    const paginationState = useRef<IPaginationState>(initialPaginationState)
+    const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
 
     const [resources, setResources] = useState<Array<any>>([])
 
@@ -96,7 +91,7 @@ const MutedResources: FC<any> = (props) => {
     ), [])
 
     useEffect(() => {
-        paginationState.current = initialPaginationState
+        paginationState.current = INITIAL_PAGINATION_STATE
         fetchResources()
     }, [])
 

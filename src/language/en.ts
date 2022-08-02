@@ -381,6 +381,7 @@ export const en = {
   donation_price: "Donation price",
   donation_price_required: "Donation price required",
   maximum_file_size_allowed: "Maximum file size allowed is {0} MB",
+  default_background: "Default background",
   two_factor_auth: "Two Factor Authentication",
   cutoff_date_title: "Cutoff Date and time (optional)",
   cutoff_date: "Cutoff date",
@@ -391,4 +392,5 @@ export const en = {
   cutoff_time_required: "Cutoff time is required",
   read_more: "Read more",
   show_less: "Show less",
+  add_location_to_chat: "Share location in chat window",
 }

@@ -32,13 +32,13 @@ import Language from 'src/language/Language';
 import {
     dateFormat,
     formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService,
-    ProfileImagePickerOptions,
     scaler,
     stringToDate,
     _hidePopUpAlert,
     _showErrorMessage,
     _showPopUpAlert
 } from 'utils';
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
 
 type FormType = {
     eventName: string;
@@ -134,7 +134,7 @@ const EditEvent: FC<any> = props => {
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
-            ImagePicker.openPicker(ProfileImagePickerOptions)
+            ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS)
                 .then(image => {
                     uploadedImage.current = '';
                     setEventImage(image);

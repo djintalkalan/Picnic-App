@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker'
 import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Fonts, Images } from 'assets'
-import { Button, defaultLocation, FixedDropdown, MyHeader, TextInput, useKeyboardService } from 'custom-components'
+import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Text, TextInput, useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { capitalize, round } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
@@ -12,7 +12,8 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import { useDispatch } from 'react-redux'
 import Database, { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
-import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, ProfileImagePickerOptions, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
+import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
+import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants'
 
 let n = 87.5
 const frequencies: Array<string> = []
@@ -40,6 +41,7 @@ const CreateGroup: FC<any> = (props) => {
   const locationRef = useRef<ILocation | null>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
+  const [pinLocation, setPinLocation] = useState(false);
   const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
     defaultValues: __DEV__ ? {
       name: "Test Group",
@@ -65,7 +67,7 @@ const CreateGroup: FC<any> = (props) => {
     } else {
       callCreateGroupApi(data);
     }
-  })(), [profileImage]);
+  })(), [profileImage, pinLocation]);
 
   useEffect(() => {
     if (group) {
@@ -87,6 +89,7 @@ const CreateGroup: FC<any> = (props) => {
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
       setValue('purpose', capitalize(group?.category ?? ""))
+      setPinLocation(group?.is_direction == '1' ? true : false)
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
       } else {
@@ -97,6 +100,7 @@ const CreateGroup: FC<any> = (props) => {
 
   const callCreateGroupApi = useCallback((data) => {
     const { latitude, longitude, address, otherData } = locationRef?.current ?? {}
+
     let payload = {
       _id: group?._id,
       name: data?.name?.trim(),
@@ -109,6 +113,7 @@ const CreateGroup: FC<any> = (props) => {
       city: otherData?.city,
       state: otherData?.state,
       country: otherData?.country,
+      is_direction: pinLocation ? '1' : '0',
       location: {
         type: 'Point',
         coordinates: [
@@ -122,7 +127,7 @@ const CreateGroup: FC<any> = (props) => {
         Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
       }
     }))
-  }, [])
+  }, [pinLocation])
 
   const calculateButtonDisability = useCallback(() => {
     if (!getValues('name') || !getValues('purpose') || !getValues('location')
@@ -133,7 +138,7 @@ const CreateGroup: FC<any> = (props) => {
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
-      ImagePicker.openPicker(ProfileImagePickerOptions).then((image) => {
+      ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS).then((image) => {
         console.log(image);
         uploadedImage.current = ""
         setProfileImage(image)
@@ -282,6 +287,13 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
 
+            <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
+              <CheckBox checked={pinLocation} />
+              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+                {Language.add_location_to_chat}
+              </Text>
+            </TouchableOpacity>
+
 
             {Platform.OS == 'android' &&
               <CustomView hidden={true} />}
@@ -383,6 +395,11 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
+  },
+  eventView: {
+    marginTop: scaler(12),
+    flexDirection: 'row',
+    marginLeft: scaler(5),
   },
 
 })

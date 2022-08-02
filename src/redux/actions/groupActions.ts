@@ -1,4 +1,5 @@
 import ActionTypes from "app-store/action-types";
+import { ColorValue } from "react-native";
 export type IResourceType = 'event' | 'group' | 'message' | 'user'
 export const createGroup = (payload: any) => ({
     type: ActionTypes.CREATE_GROUP,
@@ -134,6 +135,11 @@ export const setUpcomingEvents = (payload: { groupId: string, data: Array<any> }
 
 export const setPastEvents = (payload: { groupId: string, data: Array<any> }) => ({
     type: ActionTypes.SET_PAST_EVENTS,
+    payload
+})
+
+export const setChatBackgroundSuccess = (payload: { resource_id: string, background_color: ColorValue, resource_type: 'event' | 'group' }) => ({
+    type: ActionTypes.SET_CHAT_BACKGROUND_SUCCESS,
     payload
 })
 
