@@ -137,9 +137,10 @@ const BookEvent: FC = (props: any) => {
         // ...
     }
 
-
-
-    const free_tickets = (selectedTicket?.total_free_tickets || 0) - (selectedTicket?.total_free_tickets_consumed || 0)
+    const free_tickets = useMemo(() => {
+        const freeTicket = (selectedTicket?.total_free_tickets || 0) - (selectedTicket?.total_free_tickets_consumed || 0)
+        return Math.max((freeTicket || 0), 0)
+    }, [selectedTicket])
 
     const getTotalPayment = useCallback(() => {
         let paidTicketsSelected = free_tickets > parseInt(noOfTickets) ? 0 : parseInt(noOfTickets) - free_tickets
