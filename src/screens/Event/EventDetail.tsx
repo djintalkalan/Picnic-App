@@ -686,7 +686,7 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View> :
                         (eventDate >= new Date() &&
-                            (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
+                            ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     disabled={calculateButtonDisability()}
