@@ -384,4 +384,5 @@ export const en = {
   default_background: "Default background",
   two_factor_auth: "Two Factor Authentication",
   add_location_to_chat: "Share location in chat window",
+  paypal_detail: "Paypal Details",
 }
