@@ -125,6 +125,13 @@ const App: FC = () => {
 
     return (
         <GestureHandlerRootView style={styles.container} >
+            {config.APP_TYPE != 'production' &&
+                //@ts-ignore
+                <View style={[styles[Platform.OS], styles[config.APP_TYPE]]} >
+                    {/*@ts-ignore*/}
+                    <Text style={styles[Platform.OS + 'Text']} >{config.APP_TYPE?.toUpperCase()}</Text>
+                </View>
+            }
             <LocationServiceProvider>
                 <VideoProvider>
                     <Provider store={store}>
@@ -139,12 +146,7 @@ const App: FC = () => {
                 <StatusBar backgroundColor={"#fbfbfb"} />
                 <Image style={{ height, width: width * 1.5, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_logo_gif} />
             </View> : null}
-            {config.APP_TYPE != 'production' &&
-                //@ts-ignore
-                <View style={styles[config.APP_TYPE]} >
-                    <Text style={styles.text} >{config.APP_TYPE?.toUpperCase()}</Text>
-                </View>
-            }
+
         </GestureHandlerRootView>
     )
 }
@@ -154,44 +156,45 @@ export default (App)
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.colorWhite },
-    environmentLogo: {
+    android: {
         position: 'absolute',
-        left: 0,
-        top: 0,
-        height: scaler(50),
-        width: scaler(50),
+        width: scaler(100),
+        left: -scaler(35),
+        bottom: -scaler(5),
+        paddingHorizontal: scaler(10),
+        paddingBottom: scaler(12),
+        paddingTop: scaler(3),
+        transform: [{ rotate: '45deg' }],
+        alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 10,
-        transform: [{ rotate: '270deg' }]
     },
-    dev: {
+    ios: {
         position: 'absolute',
         width: scaler(100),
         left: -scaler(30),
         top: scaler(10),
-        backgroundColor: 'orange',
         paddingHorizontal: scaler(10),
         paddingVertical: scaler(5),
         transform: [{ rotate: '-45deg' }],
         alignItems: 'center',
-        justifyContent: 'center'
-
+        justifyContent: 'center',
+        zIndex: 10,
+    },
+    dev: {
+        backgroundColor: 'orange',
     },
     beta: {
-        position: 'absolute',
-        width: scaler(100),
-        left: -scaler(30),
-        top: scaler(10),
         backgroundColor: 'red',
-        paddingHorizontal: scaler(10),
-        paddingVertical: scaler(3),
-        transform: [{ rotate: '-45deg' }],
-        alignItems: 'center',
-        justifyContent: 'center'
-
     },
-    text: {
+    iosText: {
         fontWeight: '600',
         color: 'white',
         fontSize: scaler(14)
+    },
+    androidText: {
+        fontWeight: '200',
+        color: 'white',
+        fontSize: scaler(10)
     }
 })
