@@ -198,7 +198,7 @@ const CreateEvent2: FC<any> = props => {
       details: data.additionalInfo
     }
     payload.event_start_date_time = stringToDate(payload?.event_date + " " + payload?.event_start_time)
-    payload.event_start_date_time = isMultidayEvent ?
+    payload.event_end_date_time = isMultidayEvent ?
       stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
       stringToDate(payload?.event_date + " 23:59")
 
