@@ -7,7 +7,7 @@ import { isEqual } from 'lodash'
 import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Language from 'src/language/Language'
-import { formatAmount, NavigationService, scaler, stringToDate } from 'utils'
+import { formatAmount, NavigationService, scaler } from 'utils'
 //@ts-ignore
 import ReadMore from 'react-native-read-more-text'
 import { useSelector } from 'react-redux'
@@ -44,7 +44,7 @@ const SelectTicket: FC = (props: any) => {
                 isSelected={item?._id == selectedTicket?._id}
                 onPress={() => onTicketSelect(item)}
                 {...item}
-                eventDate={stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-')}
+                eventDate={new Date(event?.event_start_date_time)}
             />
         )
     }, [selectedTicket])
