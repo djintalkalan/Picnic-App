@@ -57,6 +57,8 @@ export interface ICreateEventReducer {
     payment_api_password: string;
     payment_api_signature: string;
     is_direction: string;
+    event_start_date_time: string
+    event_end_date_time: string
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {
