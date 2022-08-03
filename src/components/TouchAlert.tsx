@@ -58,7 +58,7 @@ export class TouchAlert extends Component<TouchAlertProps, any> {
     }
 
     onBackPress = () => {
-        // this.setState({ alertVisible: false })
+        this.setState({ alertVisible: false })
         return true
     }
 

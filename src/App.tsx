@@ -1,7 +1,7 @@
 import { config, _getAppVersion } from 'api';
 import { persistor, store } from 'app-store/store';
 import { colors, Images } from 'assets';
-import { Loader } from 'custom-components';
+import { Loader, Text } from 'custom-components';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { VideoProvider } from 'custom-components/VideoProvider';
 import React, { FC, useCallback, useEffect } from 'react';
@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Semver from 'semver';
+import { scaler } from 'utils';
 import Database, { useOtherValues } from './database/Database';
 import Language from './language/Language';
 import MyNavigationContainer from './routes/MyNavigationContainer';
@@ -29,7 +30,7 @@ const App: FC = () => {
     const [showGif, setGif] = useOtherValues<boolean>("showGif", true);
 
     const getVersion = useCallback(() => {
-        if (config.APP_TYPE == 'beta') {
+        if (config.APP_TYPE != 'production') {
             setTimeout(() => {
                 setGif(false)
             }, __DEV__ ? 0 : 3000);
@@ -124,6 +125,13 @@ const App: FC = () => {
 
     return (
         <GestureHandlerRootView style={styles.container} >
+            {config.APP_TYPE != 'production' &&
+                //@ts-ignore
+                <View style={[styles[Platform.OS], styles[config.APP_TYPE]]} >
+                    {/*@ts-ignore*/}
+                    <Text style={styles[Platform.OS + 'Text']} >{config.APP_TYPE?.toUpperCase()}</Text>
+                </View>
+            }
             <LocationServiceProvider>
                 <VideoProvider>
                     <Provider store={store}>
@@ -138,6 +146,7 @@ const App: FC = () => {
                 <StatusBar backgroundColor={"#fbfbfb"} />
                 <Image style={{ height, width: width * 1.5, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_logo_gif} />
             </View> : null}
+
         </GestureHandlerRootView>
     )
 }
@@ -146,5 +155,46 @@ const App: FC = () => {
 export default (App)
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.colorWhite }
+    container: { flex: 1, backgroundColor: colors.colorWhite },
+    android: {
+        position: 'absolute',
+        width: scaler(100),
+        left: -scaler(35),
+        bottom: -scaler(5),
+        paddingHorizontal: scaler(10),
+        paddingBottom: scaler(12),
+        paddingTop: scaler(3),
+        transform: [{ rotate: '45deg' }],
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10,
+    },
+    ios: {
+        position: 'absolute',
+        width: scaler(100),
+        left: -scaler(30),
+        top: scaler(10),
+        paddingHorizontal: scaler(10),
+        paddingVertical: scaler(5),
+        transform: [{ rotate: '-45deg' }],
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10,
+    },
+    dev: {
+        backgroundColor: 'orange',
+    },
+    beta: {
+        backgroundColor: 'red',
+    },
+    iosText: {
+        fontWeight: '600',
+        color: 'white',
+        fontSize: scaler(14)
+    },
+    androidText: {
+        fontWeight: '200',
+        color: 'white',
+        fontSize: scaler(10)
+    }
 })
