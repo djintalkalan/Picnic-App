@@ -1,7 +1,7 @@
 import { config, _getAppVersion } from 'api';
 import { persistor, store } from 'app-store/store';
 import { colors, Images } from 'assets';
-import { Loader } from 'custom-components';
+import { Loader, Text } from 'custom-components';
 import { LocationServiceProvider } from 'custom-components/LocationService';
 import { VideoProvider } from 'custom-components/VideoProvider';
 import React, { FC, useCallback, useEffect } from 'react';
@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Semver from 'semver';
+import { scaler } from 'utils';
 import Database, { useOtherValues } from './database/Database';
 import Language from './language/Language';
 import MyNavigationContainer from './routes/MyNavigationContainer';
@@ -29,7 +30,7 @@ const App: FC = () => {
     const [showGif, setGif] = useOtherValues<boolean>("showGif", true);
 
     const getVersion = useCallback(() => {
-        if (config.APP_TYPE == 'beta') {
+        if (config.APP_TYPE != 'production') {
             setTimeout(() => {
                 setGif(false)
             }, __DEV__ ? 0 : 3000);
@@ -138,6 +139,12 @@ const App: FC = () => {
                 <StatusBar backgroundColor={"#fbfbfb"} />
                 <Image style={{ height, width: width * 1.5, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_logo_gif} />
             </View> : null}
+            {config.APP_TYPE != 'production' &&
+                //@ts-ignore
+                <View style={styles[config.APP_TYPE]} >
+                    <Text style={styles.text} >{config.APP_TYPE?.toUpperCase()}</Text>
+                </View>
+            }
         </GestureHandlerRootView>
     )
 }
@@ -146,5 +153,45 @@ const App: FC = () => {
 export default (App)
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.colorWhite }
+    container: { flex: 1, backgroundColor: colors.colorWhite },
+    environmentLogo: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        height: scaler(50),
+        width: scaler(50),
+        zIndex: 10,
+        transform: [{ rotate: '270deg' }]
+    },
+    dev: {
+        position: 'absolute',
+        width: scaler(100),
+        left: -scaler(30),
+        top: scaler(10),
+        backgroundColor: 'orange',
+        paddingHorizontal: scaler(10),
+        paddingVertical: scaler(5),
+        transform: [{ rotate: '-45deg' }],
+        alignItems: 'center',
+        justifyContent: 'center'
+
+    },
+    beta: {
+        position: 'absolute',
+        width: scaler(100),
+        left: -scaler(30),
+        top: scaler(10),
+        backgroundColor: 'red',
+        paddingHorizontal: scaler(10),
+        paddingVertical: scaler(3),
+        transform: [{ rotate: '-45deg' }],
+        alignItems: 'center',
+        justifyContent: 'center'
+
+    },
+    text: {
+        fontWeight: '600',
+        color: 'white',
+        fontSize: scaler(14)
+    }
 })
