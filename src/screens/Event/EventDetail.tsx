@@ -21,7 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 
 const { height, width } = Dimensions.get('screen')
@@ -44,7 +44,7 @@ const EventDetail: FC<any> = (props) => {
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 
-    const eventDate = stringToDate(event?.event_date + " " + event?.event_start_time, 'YYYY-MM-DD', '-');
+    const eventDate = new Date(event?.event_start_date_time);
 
     const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
 
@@ -449,13 +449,13 @@ const EventDetail: FC<any> = (props) => {
                                     <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                         source={Images.ic_group_events} />
                                     <Text style={styles.events}>
-                                        {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}
+                                        {dateFormat(new Date(event?.event_start_date_time), 'MMMMMM, DD, YYYY')}
                                     </Text>
                                 </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_event_time} />
                                         <Text style={styles.events}>
-                                            {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                            {dateFormat(new Date(event?.event_start_date_time), 'hh:mm A')}
                                         </Text>
                                     </View></>
                                 : <>
@@ -467,7 +467,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.start_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormat(stringToDate(event?.event_date, 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}  {dateFormat(stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                                {dateFormat(new Date(event?.event_start_date_time), 'MMMMMM, DD, YYYY hh:mm A')}
                                             </Text>
                                         </View>
 
@@ -479,7 +479,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.end_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormat(stringToDate((event?.event_end_date || event?.event_date), 'YYYY-MM-DD', '-'), 'MMMMMM, DD, YYYY')}  {dateFormat(stringToDate((event?.event_end_date || event?.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-"), 'hh:mm A')}
+                                                {dateFormat(new Date(event?.event_end_date_time), 'MMMMMM, DD, YYYY hh:mm A')}
                                             </Text>
                                         </View>
 
@@ -657,7 +657,7 @@ const EventDetail: FC<any> = (props) => {
                                     <Button onPress={() => {
                                         try {
                                             const startDate = eventDate?.toISOString()
-                                            const endDate = event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, 'YYYY-MM-DD', '-').toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                            const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
                                             presentEventCreatingDialog({
                                                 startDate,
                                                 endDate,
@@ -691,7 +691,7 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View> :
                         (endSales >= new Date() &&
-                            (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
+                            ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     disabled={calculateButtonDisability()}

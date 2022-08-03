@@ -63,6 +63,8 @@ export interface ICreateEventReducer {
     sales_ends_on?: string;
     total_free_tickets?: string
     is_direction: string;
+    event_start_date_time: string
+    event_end_date_time: string
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {
