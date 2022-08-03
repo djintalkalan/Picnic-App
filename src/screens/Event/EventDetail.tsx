@@ -48,6 +48,11 @@ const EventDetail: FC<any> = (props) => {
 
     const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
 
+    console.log("eventDate", eventDate);
+    console.log("endSales", endSales);
+    console.log("new Date()", new Date());
+
+
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
             const index = event?.my_tickets?.findIndex((_: any) => _.status == 1) ?? -1
@@ -342,6 +347,8 @@ const EventDetail: FC<any> = (props) => {
             <LinearGradient colors={gradientColors} style={styles.linearGradient} />
         </SafeAreaViewWithStatusBar>
     }
+    console.log("endSales >= new Date()", endSales >= new Date());
+
     return (
         <SafeAreaViewWithStatusBar backgroundColor={colors.colorWhite} barStyle={'light-content'} translucent edges={['bottom']} >
             <ScrollView bounces={false} showsVerticalScrollIndicator={false} nestedScrollEnabled={true} style={styles.container} >
@@ -690,7 +697,7 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View> :
                         (endSales >= new Date() &&
-                            (event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited') ?
+                            ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
                             <View style={{ marginHorizontal: scaler(10) }}>
                                 <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
                                     disabled={calculateButtonDisability()}
