@@ -211,7 +211,7 @@ const CreateEvent3: FC<any> = props => {
       payload.is_free_event = '1'
       payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
       payload.capacity = data.capacity
-      payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : undefined
+      payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : ''
       if (isDonationAccepted) {
         payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
