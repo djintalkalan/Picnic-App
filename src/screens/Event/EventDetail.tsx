@@ -413,7 +413,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {endSales >= new Date() && event.status == 1 ?
+                    {eventDate >= new Date() && event.status == 1 ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -654,7 +654,7 @@ const EventDetail: FC<any> = (props) => {
                 <>
                     {(event?.is_admin || event?.is_event_member) ?
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                            {endSales >= new Date() ?
+                            {eventDate >= new Date() ?
                                 <View style={{ flex: 1 }}>
                                     <Button onPress={() => {
                                         try {
@@ -683,11 +683,11 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flex: 1 }}>
                                 <Button title={Language.start_chat}
                                     onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                                    fontColor={endSales >= new Date() ? 'black' : 'white'}
-                                    backgroundColor={endSales >= new Date() ? 'white' : colors.colorPrimary}
+                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
+                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
                                     buttonStyle={{
                                         borderColor: 'black',
-                                        borderWidth: endSales >= new Date() ? scaler(1) : 0
+                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
                                     }}
                                     textStyle={{ fontWeight: '400' }} />
                             </View>
