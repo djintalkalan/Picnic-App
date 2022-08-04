@@ -388,4 +388,13 @@ export const en = {
   click_to_see_tutorial: "Click to see tutorial",
   pay_by_credit: 'Pay by credit card',
   donate_by_credit: "Donate by credit card",
+  cutoff_date_title: "Cutoff Date and time (optional)",
+  cutoff_date: "Cutoff date",
+  cutoff_time: "Cutoff time",
+  number_of_free_tickets: "Number of free tickets (optional)",
+  x_free_ticket_available: "free tickets available",
+  invalid_free_tickets: "Invalid free tickets",
+  cutoff_time_required: "Cutoff time is required",
+  read_more: "Read more",
+  show_less: "Show less",
 }

@@ -207,7 +207,7 @@ const GroupList: FC<any> = (props) => {
                 useNativeDriver
                 color={colors.colorPrimary} />}
             <SwipeListView
-                refreshControl={searchedGroups ? undefined : <RefreshControl
+                refreshControl={searchedGroups?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = INITIAL_PAGINATION_STATE

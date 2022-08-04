@@ -17,6 +17,10 @@ export interface TicketPlan {
     currency: string;
     description: string;
     status: number;
+    sales_ends_on?: string;
+    total_free_tickets?: string
+    capacity: string
+    capacity_type: string
 }
 
 export interface ICreateEventReducer {
@@ -56,7 +60,11 @@ export interface ICreateEventReducer {
     payment_api_username: string;
     payment_api_password: string;
     payment_api_signature: string;
+    sales_ends_on?: string;
+    total_free_tickets?: string
     is_direction: string;
+    event_start_date_time: string
+    event_end_date_time: string
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {

@@ -387,4 +387,13 @@ export const es = {
     click_to_see_tutorial: "",
     pay_by_credit: '',
     donate_by_credit: "",
+    cutoff_date_title: "",
+    cutoff_date: "",
+    cutoff_time: "",
+    number_of_free_tickets: "",
+    x_free_ticket_available: "",
+    invalid_free_tickets: "",
+    cutoff_time_required: "",
+    read_more: "",
+    show_less: "",
 }

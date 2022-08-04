@@ -1,4 +1,5 @@
 
+import { _totalSoldTickets } from 'api/APIProvider';
 import { authorizePayment, joinEvent } from 'app-store/actions';
 import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
@@ -15,7 +16,7 @@ import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { getSymbol, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { formatAmount, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 
 type FormType = {
@@ -29,6 +30,7 @@ const BookEvent: FC = (props: any) => {
     const [noOfTickets, setNoOfTickets] = useState("")
     const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'credit' | undefined>();
     const [selectedTicket, setSelectedTicket] = useState<any>({})
+    const [toggle, setToggle] = useState(false)
     const [isUserDonating, setIsUserDonation] = useState(true)
     const { event } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
@@ -51,9 +53,26 @@ const BookEvent: FC = (props: any) => {
             setSelectedTicket({
                 amount: event?.event_fees,
                 event_tax_amount: event?.event_tax_amount,
-                currency: event?.event_currency
+                currency: event?.event_currency,
+                capacity_type: event?.capacity_type,
+                capacity: event?.capacity,
+                sales_ends_on: event?.sales_ends_on,
+                total_free_tickets: event?.total_free_tickets || 0,
+                total_free_tickets_consumed: event?.total_free_tickets_consumed || 0
             })
         }
+        fetchTicketData()
+    }, [])
+
+    const fetchTicketData = useCallback(() => {
+        // if (!_.isEmpty(selectedTicket)) {
+        _totalSoldTickets({ resource_id: props?.route?.params?.id, plan_id: props?.route?.params?.selectedTicket?._id }).then(res => {
+            if (res?.status == 200) {
+                console.log('res', res);
+                res?.data?.tickets?.length && setSelectedTicket(res?.data?.tickets[0])
+            } else console.log(res);
+        }).catch(e => console.log(e))
+        // }
     }, [])
 
     useEffect(() => {
@@ -67,6 +86,7 @@ const BookEvent: FC = (props: any) => {
 
 
     const confirmReservation = useCallback((data) => {
+
         let payload = {
             resource_id: event?._id,
             no_of_tickets: noOfTickets?.toString(),
@@ -83,25 +103,6 @@ const BookEvent: FC = (props: any) => {
         dispatch(payMethodSelected != 'cash' ? authorizePayment(payload) : joinEvent(payload))
     }, [event, noOfTickets, payMethodSelected, selectedTicket, isUserDonating])
 
-    const onSubmit = useCallback(() => handleSubmit(data => {
-        if (event?.is_free_event)
-            confirmReservation(data)
-        else _showPopUpAlert({
-            title: Language.confirm_payment_method,
-            //@ts-ignore
-            message: Language.are_you_sure_you_want_to_pay_using + ' ' + Language[payMethodSelected] + '?',
-            onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: Language.pay + ' ' + getSymbol(selectedTicket.currency) + round(parseInt(noOfTickets) * (parseFloat(selectedTicket.amount + (selectedTicket.event_tax_amount ?? 0))), 2),
-            buttonStyle: { width: '100%' }
-        })
-    })(), [event, noOfTickets, payMethodSelected, isUserDonating])
-
-    const { availableSeats, allSeats } = useMemo(() => {
-        return {
-            allSeats: (event?.capacity - event?.total_sold_tickets),
-            availableSeats: ((event?.capacity - event?.total_sold_tickets) - (parseInt(noOfTickets || '0')))
-        }
-    }, [noOfTickets])
 
 
     const _renderTruncatedFooter = (handlePress: any) => {
@@ -124,10 +125,47 @@ const BookEvent: FC = (props: any) => {
         // ...
     }
 
+    const free_tickets = useMemo(() => {
+        const freeTicket = (selectedTicket?.total_free_tickets || 0) - (selectedTicket?.total_free_tickets_consumed || 0)
+        return Math.max((freeTicket || 0), 0)
+    }, [selectedTicket])
+
+    const getTotalPayment = useCallback(() => {
+        let paidTicketsSelected = free_tickets > parseInt(noOfTickets) ? 0 : parseInt(noOfTickets) - free_tickets
+        let payment = {
+            freeTicketsSelected: free_tickets > parseInt(noOfTickets) ? parseInt(noOfTickets) : free_tickets,
+            paidTicketsSelected: paidTicketsSelected,
+            paidTicketsPrice: round(paidTicketsSelected * (parseFloat(selectedTicket.amount + (selectedTicket.event_tax_amount ?? 0))), 2)
+        }
+        return payment
+    }, [noOfTickets, free_tickets, selectedTicket])
+
+
+    const onSubmit = useCallback(() => handleSubmit(data => {
+        if (event?.is_free_event || getTotalPayment().paidTicketsSelected == 0)
+            confirmReservation(data)
+        else _showPopUpAlert({
+            title: Language.confirm_payment_method,
+            //@ts-ignore
+            message: Language.are_you_sure_you_want_to_pay_using + ' ' + Language[payMethodSelected] + '?',
+            onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
+            buttonText: Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
+            buttonStyle: { width: '100%' }
+        })
+    })(), [event, noOfTickets, payMethodSelected, isUserDonating])
+
+    const { availableSeats, allSeats } = useMemo(() => {
+        return {
+            allSeats: (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0)),
+            availableSeats: ((selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0)) - (parseInt(noOfTickets || '0')))
+        }
+    }, [noOfTickets, selectedTicket])
+
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
-            <ScrollView enableResetScrollToCoords={false} >
+            <ScrollView keyboardShouldPersistTaps={'handled'} enableResetScrollToCoords={false} >
                 <View style={{ margin: scaler(20), flex: 1 }}>
                     <View style={styles.nameContainer}>
                         <View style={{ flex: 1, marginEnd: scaler(12) }} >
@@ -140,7 +178,7 @@ const BookEvent: FC = (props: any) => {
                                     {Language.free}
                                 </Text> :
                                 <><Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                    {getSymbol(selectedTicket?.currency) + selectedTicket?.amount}
+                                    {formatAmount(selectedTicket?.currency, selectedTicket?.amount)}
                                 </Text><Text style={styles.address}>{Language.per_person}</Text></>
                             }
                         </View>
@@ -158,7 +196,7 @@ const BookEvent: FC = (props: any) => {
                             maxLength={5}
                             rules={{
                                 validate: (v: string) => {
-                                    if ((event?.capacity_type != 'unlimited' && parseInt(v) > (event?.capacity - event?.total_sold_tickets)) || parseInt(v) == 0) {
+                                    if ((selectedTicket?.capacity_type != 'unlimited' && parseInt(v) > (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0))) || parseInt(v) == 0) {
                                         return Language.invalid_seat_quantity
                                     }
                                 }
@@ -169,10 +207,17 @@ const BookEvent: FC = (props: any) => {
                             errors={errors}
                         />
                     </View>
-                    <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(10), marginLeft: scaler(5) }]} >
-                        {(event?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
-                            undefined)}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: scaler(10), }} >
+                        <Text style={[styles.address, { fontSize: scaler(11), marginTop: scaler(0), marginLeft: scaler(5) }]} >
+                            {(selectedTicket?.capacity_type == 'limited' ? Language.available_seats + ' ' + (availableSeats > -1 ? availableSeats : allSeats) :
+                                undefined)}
+                        </Text>
+                        {free_tickets > 0 ? <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(3), marginBottom: scaler(6) }} >
+                            <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
+                            <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
+                        </View> : null}
+                    </View>
+
 
                     {(!event?.is_free_event) ?
                         <>
@@ -186,35 +231,36 @@ const BookEvent: FC = (props: any) => {
                                 {Language.applicable_tax}
                             </Text>
                             <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {noOfTickets && selectedTicket.event_tax_amount ? getSymbol(selectedTicket.currency) + round((parseInt(noOfTickets) * parseFloat(selectedTicket.event_tax_amount)), 2) : getSymbol(selectedTicket.currency) + 0}
+                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, round(getTotalPayment()?.paidTicketsSelected * selectedTicket?.event_tax_amount, 2)) : formatAmount(selectedTicket.currency, 0)}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
-                                {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
-                            </Text>
-                            {event?.payment_method.map((_: any, i: any) => {
-                                return <Fragment key={i}>
-                                    <PaymentMethod
-                                        type={_}
-                                        payMethodSelected={payMethodSelected}
-                                        setPayMethodSelected={setPayMethodSelected}
-                                        disabled={!event?.payment_api_username && _ != 'cash'}
-                                        isDonation={event.is_donation_enabled} />
-                                    {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
-                                </Fragment>
-                            })}
-                            {event?.payment_method?.includes("paypal") ?
-                                <Fragment>
-                                    <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
+                            {getTotalPayment().paidTicketsSelected != 0 ? <>
+                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
+                                    {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
+                                </Text>
+                                {event?.payment_method.map((_: any, i: any) => {
+                                    return <Fragment key={i}>
+                                        <PaymentMethod
+                                            type={_}
+                                            payMethodSelected={payMethodSelected}
+                                            setPayMethodSelected={setPayMethodSelected}
+                                            disabled={!event?.payment_api_username && _ != 'cash'}
+                                            isDonation={event.is_donation_enabled} />
+                                        {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
+                                    </Fragment>
+                                })}
+                                {event?.payment_method?.includes("paypal") ?
+                                    <Fragment>
+                                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
 
-                                    <PaymentMethod
-                                        type={"credit"}
-                                        payMethodSelected={payMethodSelected}
-                                        setPayMethodSelected={setPayMethodSelected}
-                                        disabled={!event?.payment_api_username}
-                                        isDonation={event.is_donation_enabled} />
-                                </Fragment>
-                                : undefined}
+                                        <PaymentMethod
+                                            type={"credit"}
+                                            payMethodSelected={payMethodSelected}
+                                            setPayMethodSelected={setPayMethodSelected}
+                                            disabled={!event?.payment_api_username}
+                                            isDonation={event.is_donation_enabled} />
+                                    </Fragment>
+                                    : undefined}</> : undefined}
                         </>
                         : event.is_donation_enabled ?
                             <View>
@@ -298,7 +344,7 @@ const BookEvent: FC = (props: any) => {
             </ScrollView>
             <KeyboardHideView>
                 <View style={{ marginBottom: scaler(10), marginHorizontal: scaler(15) }}>
-                    {!event?.is_free_event && event?.event_refund_policy ?
+                    {!event?.is_free_event && payMethodSelected != 'cash' && event?.event_refund_policy ?
                         <Text onPress={() => {
                             _showPopUpAlert({
                                 message: event?.event_refund_policy,
@@ -315,10 +361,10 @@ const BookEvent: FC = (props: any) => {
                     }
                     {noOfTickets ?
                         <Button
-                            title={event?.is_free_event ? payMethodSelected != 'cash' ? 'Donate and book event' : Language.book_ticket
-                                : Language.pay + ' ' + getSymbol(selectedTicket.currency) + round(parseInt(noOfTickets) * (parseFloat(selectedTicket.amount + (selectedTicket.event_tax_amount ?? 0))), 2)}
+                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? 'Donate and book event' : Language.book_ticket
+                                : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
                             onPress={onSubmit}
-                            disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating))}
+                            disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
                         />
                         : undefined
                     }
