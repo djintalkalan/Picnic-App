@@ -231,22 +231,22 @@ const CreateEvent3: FC<any> = props => {
           currency: _.currency?.toLowerCase(),
           description: _.ticketDescription,
           status: _.status == 2 ? 2 : undefined,
-          sales_ends_on: _.cutoffTime ? _.cutoffTime?.toISOString() : undefined,
-          total_free_tickets: _?.noOfFreeTickets,
+          sales_ends_on: _.cutoffTime ? _.cutoffTime?.toISOString() : '',
+          total_free_tickets: _?.noOfFreeTickets || 0,
           capacity: _?.capacity,
           capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
         }))
         payload.total_free_tickets = undefined
         payload.capacity_type = undefined
-        payload.capacity = undefined
-        payload.sales_ends_on = undefined
+        payload.capacity = ''
+        payload.sales_ends_on = ''
       } else {
         payload.event_fees = data.ticketPrice
         payload.ticket_plans = []
-        payload.total_free_tickets = data.noOfFreeTickets ?? 0
+        payload.total_free_tickets = data.noOfFreeTickets || 0
         payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
-        payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : undefined
+        payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : ''
       }
     }
     dispatch(updateCreateEvent(payload))
