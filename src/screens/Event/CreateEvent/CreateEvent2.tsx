@@ -65,10 +65,10 @@ const CreateEvent2: FC<any> = props => {
   const setEventValues = useCallback(() => {
     if (event?.is_copied_event != '1') {
       eventDateTime.current = {
-        eventDate: event?.event_date ? stringToDate(event?.event_date, "YYYY-MM-DD", "-") : new Date(),
-        startTime: event?.event_date ? stringToDate(event?.event_date + " " + event?.event_start_time, "YYYY-MM-DD", "-") : defaultTime,
-        endDate: event?.event_end_date ? stringToDate(event?.event_end_date, "YYYY-MM-DD", "-") : new Date(),
-        endTime: event?.event_end_time ? stringToDate(event?.event_date + " " + event?.event_end_time, "YYYY-MM-DD", "-") : defaultTime,
+        eventDate: event?.event_date ? new Date(event?.event_start_date_time) : new Date(),
+        startTime: event?.event_date ? new Date(event?.event_start_date_time) : defaultTime,
+        endDate: event?.event_end_date ? new Date(event?.event_end_date_time) : new Date(),
+        endTime: event?.event_end_time ? new Date(event?.event_end_date_time) : defaultTime,
         selectedType: 'eventDate',
       }
       setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
@@ -181,7 +181,7 @@ const CreateEvent2: FC<any> = props => {
       return
     }
 
-    const payload = {
+    const payload: any = {
       is_multi_day_event: isMultidayEvent ? '1' : '0',
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_end_date: isMultidayEvent ? dateFormat(endEventDate, "YYYY-MM-DD") : '',
@@ -189,7 +189,10 @@ const CreateEvent2: FC<any> = props => {
       event_end_time: data.endTime ? dateFormat(endTimeDate, "HH:mm") : "",
       details: data.additionalInfo
     }
-
+    payload.event_start_date_time = stringToDate(payload?.event_date + " " + payload?.event_start_time)
+    payload.event_end_date_time = isMultidayEvent ?
+      stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
+      stringToDate(payload?.event_date + " 23:59")
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent3')
 

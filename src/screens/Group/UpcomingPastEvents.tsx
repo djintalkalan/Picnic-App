@@ -9,7 +9,7 @@ import React, { FC, useCallback, useEffect } from 'react'
 import { FlatList, InteractionManager, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootParams } from 'src/routes/Routes'
-import { dateStringFormat, getImageUrl, NavigationService, scaler } from 'utils'
+import { dateFormat, getImageUrl, NavigationService, scaler } from 'utils'
 
 
 const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEvents'>> = ({ route, navigation }) => {
@@ -31,7 +31,7 @@ const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEve
         return (
             <ListItem
                 title={item?.name}
-                subtitle={dateStringFormat(item?.event_date + " " + item?.event_start_time, "MMMM DD, YYYY, hh:mm A", "YYYY-MM-DD")}
+                subtitle={dateFormat(new Date(item?.event_start_date_time), "MMMM DD, YYYY, hh:mm A")}
                 onPressImage={() => {
                     dispatch(setActiveEvent(item))
                     NavigationService.navigate('EventDetail', { id: item?._id })
