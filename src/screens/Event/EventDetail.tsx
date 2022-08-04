@@ -145,6 +145,8 @@ const EventDetail: FC<any> = (props) => {
         ...DefaultDelta
     }), [event])
 
+    const ticket_plans = useMemo(() => (event?.ticket_type == 'single' ? [] : (event?.ticket_plans || [])), [event])
+
 
     const shareEvent = useCallback(() => {
         shareDynamicLink(event?.name, {
@@ -313,7 +315,7 @@ const EventDetail: FC<any> = (props) => {
                     return (
                         <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
                             <View style={{ borderRadius: scaler(5) }}>
-                                {event?.ticket_plans?.map((_: any, i: number) => {
+                                {ticket_plans?.map((_: any, i: number) => {
                                     if (_.status == 1)
                                         return <TicketPlans key={i} {..._} />
                                 })}
@@ -429,11 +431,11 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         </View>
                         <View>
-                            <TouchableOpacity ref={priceButtonRef} disabled={!event?.ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity ref={priceButtonRef} disabled={!ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
                                     {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
                                 </Text>
-                                {(event?.ticket_plans?.length > 0 && !event?.is_free_event) ?
+                                {(ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
                             </TouchableOpacity>
