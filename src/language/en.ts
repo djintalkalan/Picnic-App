@@ -226,6 +226,7 @@ export const en = {
   are_you_sure_you_want_to_pay_using: 'Are you sure you want to pay using',
   cash: 'CASH',
   paypal: 'PAYPAL',
+  credit: 'CREDIT CARD',
   free: 'Free',
   confirm_payment_method: 'Confirm payment method',
   payment_methods: 'Payment methods',
@@ -384,4 +385,7 @@ export const en = {
   default_background: "Default background",
   two_factor_auth: "Two Factor Authentication",
   add_location_to_chat: "Share location in chat window",
+  click_to_see_tutorial: "Click to see tutorial",
+  pay_by_credit: 'Pay by credit card',
+  donate_by_credit: "Donate by credit card",
 }

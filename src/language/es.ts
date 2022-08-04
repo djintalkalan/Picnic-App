@@ -384,4 +384,7 @@ export const es = {
     default_background: "",
     two_factor_auth: "",
     add_location_to_chat: "",
+    click_to_see_tutorial: "",
+    pay_by_credit: '',
+    donate_by_credit: "",
 }
