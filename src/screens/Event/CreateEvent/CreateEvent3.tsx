@@ -938,7 +938,7 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = undefined
           } else {
-            const eventEndDate = stringToDate((event?.event_end_date || event.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
+            const eventEndDate = new Date(event?.event_end_date_time)
             const chosenDate = date
             const thisDate = new Date()
             if (chosenDate > eventEndDate) {
