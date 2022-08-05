@@ -110,7 +110,7 @@ export const dateStringFormat = (dateString: string, toFormat: string, fromForma
         return dateFormat(stringToDate(dateString, fromFormat, delimiter), toFormat)
     }
     catch (e) {
-        console.log("Error", e)
+        console.log("dateStringFormat Error", e)
         return dateString
     }
 }
@@ -129,7 +129,7 @@ export const dateFormat = (date: Date, toFormat: string) => {
         return FNSFormat(date, toFormat)
     }
     catch (e) {
-        console.log("Error", e)
+        console.log("dateFormat Error", e, date)
         return date && date?.toDateString()
     }
 }
