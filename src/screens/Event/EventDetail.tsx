@@ -224,6 +224,15 @@ const EventDetail: FC<any> = (props) => {
                 },
                 transparent: true,
                 alertComponent: () => {
+                    if (event?.is_admin && eventDate < new Date()) {
+                        return <Card cardElevation={2} style={styles.fabActionContainer} >
+                            <InnerButton hideBorder visible={true} onPress={() => {
+                                _hideTouchAlert()
+                                onCopyEvent()
+                            }} title={Language.copy} />
+                        </Card>
+                    }
+
                     return (
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
@@ -413,7 +422,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
+                    {event.status == 1 && (eventDate >= new Date() || event?.is_admin) ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
