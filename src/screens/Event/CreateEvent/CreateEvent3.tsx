@@ -271,7 +271,7 @@ const CreateEvent3: FC<any> = props => {
       })
     } else next(payload)
 
-  })(), [isFreeEvent, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
+  })(), [isFreeEvent, handleSubmit, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
 
   const openDatePicker = useCallback((i: number, isTime: any = false) => {
     // eventDateTime.current.selectedType = type
@@ -686,21 +686,20 @@ const CreateEvent3: FC<any> = props => {
                                 />
 
                                 <TouchableOpacity onPress={() => {
-                                  clearErrors(`ticketPlans.${i}.capacity`)
-                                  setValue(`ticketPlans.${i}.capacity`, "")
                                   update(i, {
                                     ...getValues(`ticketPlans.${i}`),
                                     isUnlimitedCapacity: !getValues(`ticketPlans.${i}.isUnlimitedCapacity`)
                                   })
-
+                                  setValue(`ticketPlans.${i}.capacity`, "")
+                                  clearErrors(`ticketPlans.${i}.capacity`)
 
                                 }} style={styles.capacityCheck}>
-                                  <CheckBox checked={getValues(`ticketPlans.${i}.isUnlimitedCapacity`)} />
+                                  <CheckBox checked={_?.isUnlimitedCapacity} />
                                   <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
                                     {Language.unlimited_capacity}
                                   </Text>
                                 </TouchableOpacity>
-                                {getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined :
+                                {_?.isUnlimitedCapacity ? undefined :
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                     placeholder={Language.capacity}
@@ -711,15 +710,18 @@ const CreateEvent3: FC<any> = props => {
                                     maxLength={5}
                                     rules={{
                                       validate: (v: string) => {
-                                        if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) == 0) {
-                                          return Language.invalid_capacity
+                                        if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`)) {
+                                          if (!v?.trim()) {
+                                            return Language.capacity_required
+                                          }
+                                          if (parseInt(v) == 0) {
+                                            return Language.invalid_capacity
+                                          }
                                         }
+
                                       }
                                     }}
                                     keyboardType={'number-pad'}
-                                    required={
-                                      getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined : Language.capacity_required
-                                    }
                                     control={control}
                                     errors={errors.ticketPlans?.[i]}
                                   />
