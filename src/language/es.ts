@@ -226,6 +226,7 @@ export const es = {
     are_you_sure_you_want_to_pay_using: "¿Seguro que deseas pagar usando",
     cash: "EFECTIVO",
     paypal: "PAYPAL",
+    credit: '',
     free: "Gratis",
     confirm_payment_method: "Confirmar método de pago",
     payment_methods: "Métodos de pagos",
