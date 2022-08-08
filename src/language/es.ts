@@ -384,4 +384,6 @@ export const es = {
     default_background: "",
     two_factor_auth: "",
     add_location_to_chat: "",
+    check_in: "",
+    reserve: "",
 }

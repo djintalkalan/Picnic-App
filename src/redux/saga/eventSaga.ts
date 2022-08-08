@@ -325,9 +325,27 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
     try {
         let res = yield call(ApiProvider._getEventMembers, payload);
         if (res.status == 200) {
+            const checkedIn: any[] = []
+            const notCheckedIn: any[] = []
+            res?.data?.data.forEach((el: any) => {
+                const data = {
+                    _id: el?._id,
+                    ...el?.resource_members,
+                    user: el?.tickets?.user,
+                    tickets: el?.tickets
+                }
+                if (data?.is_event_checked_in) {
+                    checkedIn.push(data)
+                } else {
+                    notCheckedIn.push(data)
+                }
+            });
+            // console.log("checkedIn", checkedIn);
+            // console.log("notCheckedIn", notCheckedIn);
+
             yield put(setEventMembers({
                 eventId: payload,
-                data: { eventMembersCheckedIn: res?.data?.checked_in?.data, eventMembersNotCheckedIn: res?.data?.not_checked_in?.data }
+                data: { eventMembersCheckedIn: checkedIn, eventMembersNotCheckedIn: notCheckedIn }
             }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

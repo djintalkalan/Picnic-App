@@ -396,7 +396,7 @@ export const _getActiveMembership = async () => {
 
 export const _getEventMembers = async (body: string) => {
     console.log("---------- _getEventMembers Api Call ---------------")
-    return fetchApiData('event/members?id=' + body)
+    return fetchApiData('event/get-event-members?_id=' + body)
 }
 
 export const _removeEventMember = async (body: any) => {
