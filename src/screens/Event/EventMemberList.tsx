@@ -276,7 +276,7 @@ export const MemberListItem: FC<MemberListItemProps> = ({ isCheckedIn, noOfTicke
                         <Text style={{ color: '#797979', fontSize: scaler(13) }} >{paymentMethod}</Text>
                         <Text style={{ fontWeight: '600', color: '#272727', fontSize: scaler(14) }} >{formatAmount(currency, totalPaidAmount)}</Text>
                     </View>
-                    {(paymentMethod == 'cash' && !isCheckedIn) ?
+                    {((paymentMethod == 'cash' && isCheckedIn) || (paymentMethod == 'paypal')) ?
                         <MaterialCommunityIcons size={scaler(22)} name={'checkbox-marked-circle-outline'} color={colors.colorPrimary} />
                         : null}
                 </View>
