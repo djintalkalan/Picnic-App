@@ -262,7 +262,7 @@ const CreateEvent2: FC<any> = props => {
                 style={{ fontSize: scaler(13) }}
                 name={'endDate'}
                 onPress={() => (openDatePicker("endDate"))}
-                required={Language.date_required}
+                required={Language.end_date_required}
                 icon={Images.ic_calender}
                 iconSize={scaler(20)}
                 control={control}
@@ -273,7 +273,7 @@ const CreateEvent2: FC<any> = props => {
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'endTime'}
-                required={isMultidayEvent ? Language.end_date_required : false}
+                required={isMultidayEvent ? Language.end_time_required : false}
                 onPress={() => (openDatePicker("endTime"))}
                 iconSize={scaler(18)}
                 icon={Images.ic_clock}
