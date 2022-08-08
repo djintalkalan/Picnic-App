@@ -19,13 +19,17 @@ function* _searchAtHome({ type, payload, }: action): Generator<any, any, any> {
                 for (const index in res?.data?.data) {
                     if (res?.data?.data[index].ticket_type == 'multiple') {
                         const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
-                        const eventCapacityType = res?.data?.data[index]?.capacity_type
-                        const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited' ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
+
                         res.data.data[index].event_fees = leastTicket.amount?.toString()
                         res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
                         res.data.data[index].event_currency = leastTicket.currency
-                        res.data.data[index].capacity_type = totalCapacity?.capacity_type
-                        res.data.data[index].capacity = totalCapacity?.capacity
+
+                        if (!res?.data?.data[index]?.capacity) {
+                            const eventCapacityType = res?.data?.data[index]?.capacity_type
+                            const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited' ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
+                            res.data.data[index].capacity_type = totalCapacity?.capacity_type
+                            res.data.data[index].capacity = totalCapacity?.capacity
+                        }
                     }
                 }
             }
