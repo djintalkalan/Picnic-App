@@ -69,6 +69,10 @@ const Home: FC = () => {
     InteractionManager.runAfterInteractions(() => {
       dispatch(getAllCurrencies())
       dispatch(getProfile())
+
+      setTimeout(() => {
+        NavigationService.navigate('EventMembers', { id: '62e7c488e09626694c4cf75f' })
+      }, 200)
     })
   }, [])
 

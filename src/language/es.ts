@@ -397,5 +397,7 @@ export const es = {
     cutoff_time_required: "",
     read_more: "",
     show_less: "",
-    end_time_required: ""
+    end_time_required: "",
+    check_in: "",
+    reserve: "",
 }
