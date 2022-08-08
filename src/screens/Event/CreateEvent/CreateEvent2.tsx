@@ -192,7 +192,7 @@ const CreateEvent2: FC<any> = props => {
     payload.event_start_date_time = stringToDate(payload?.event_date + " " + payload?.event_start_time)
     payload.event_end_date_time = isMultidayEvent ?
       stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
-      stringToDate(payload?.event_date + " 23:59")
+      stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59"))
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent3')
 
@@ -219,8 +219,7 @@ const CreateEvent2: FC<any> = props => {
               return !b
             })
           }} style={{ flexDirection: 'row', marginTop: scaler(20), marginVertical: scaler(10) }}>
-            <CheckBox checked={isMultidayEvent}
-            />
+            <CheckBox checked={isMultidayEvent} />
             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.multiday_event}</Text>
           </TouchableOpacity>
 
@@ -263,7 +262,7 @@ const CreateEvent2: FC<any> = props => {
                 style={{ fontSize: scaler(13) }}
                 name={'endDate'}
                 onPress={() => (openDatePicker("endDate"))}
-                required={Language.date_required}
+                required={Language.end_date_required}
                 icon={Images.ic_calender}
                 iconSize={scaler(20)}
                 control={control}
@@ -274,7 +273,7 @@ const CreateEvent2: FC<any> = props => {
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'endTime'}
-                required={isMultidayEvent ? Language.end_date_required : false}
+                required={isMultidayEvent ? Language.end_time_required : false}
                 onPress={() => (openDatePicker("endTime"))}
                 iconSize={scaler(18)}
                 icon={Images.ic_clock}

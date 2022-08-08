@@ -1,11 +1,13 @@
 import { store } from 'app-store';
 import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
+import { ICreateEventReducer } from 'app-store/reducers';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
 import Database from 'database/Database';
+import { add, differenceInMinutes } from 'date-fns';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
@@ -60,6 +62,26 @@ const emptyTicketType: TicketType = {
 const DropDownData = ['USD', 'EUR', 'GBP'];
 const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Multiple tickets', value: 'multiple' }]
 
+const getCutoffDateTime = (event: ICreateEventReducer) => {
+  try {
+    if (event?.sales_ends_on)
+      return new Date(event?.sales_ends_on)
+
+    const startDate = new Date(event?.event_start_date_time)
+    const endDate = new Date(event?.event_end_date_time)
+
+    if (differenceInMinutes(endDate, startDate) > 60) {
+      return add(startDate, { minutes: 60 })
+    }
+    return endDate
+
+
+  } catch (e) {
+    return null
+  }
+
+}
+
 const CreateEvent3: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
   const uploadedImage = useRef<string>('');
@@ -84,8 +106,20 @@ const CreateEvent3: FC<any> = props => {
     clearErrors,
     formState: { errors },
   } = useForm<FormType>({
-    mode: 'onChange', shouldFocusError: true, defaultValues: { ticketPlans: [emptyTicketType], ticketType: TicketTypeData[0].text, currency: 'USD' }
+    mode: 'onChange', shouldFocusError: true, defaultValues: {
+      ticketPlans: [{
+        ...emptyTicketType,
+        cutoffDate: getCutoffDateTime(event),
+        cutoffTime: getCutoffDateTime(event),
+      }],
+      ticketType: TicketTypeData[0].text,
+      currency: 'USD',
+      cutoffDate: getCutoffDateTime(event),
+      cutoffTime: getCutoffDateTime(event),
+    }
   });
+
+
 
   const {
     fields: ticketPlans, append, prepend, remove, insert, update, replace
@@ -109,8 +143,8 @@ const CreateEvent3: FC<any> = props => {
       setIsDonationAccepted(event?.is_donation_enabled == 1);
       setValue('currency', event?.event_currency?.toUpperCase() || "USD")
       setDate()
-      setValue('cutoffDate', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
-      setValue('cutoffTime', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
+      setValue('cutoffDate', getCutoffDateTime(event))
+      setValue('cutoffTime', getCutoffDateTime(event))
     } else {
       if (event.ticket_type == 'multiple') {
         ticketTypeRef.current = TicketTypeData[1]?.value
@@ -123,8 +157,8 @@ const CreateEvent3: FC<any> = props => {
           ticketDescription: _.description,
           status: (_?.status || 1),
           capacity: _.capacity?.toString(),
-          cutoffDate: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
-          cutoffTime: _?.sales_ends_on ? new Date(_?.sales_ends_on) : null,
+          cutoffDate: getCutoffDateTime({ ...event, sales_ends_on: _?.sales_ends_on }),
+          cutoffTime: getCutoffDateTime({ ...event, sales_ends_on: _?.sales_ends_on }),
           isUnlimitedCapacity: _?.capacity_type == 'unlimited',
           noOfFreeTickets: _?.total_free_tickets?.toString() || "",
         })))
@@ -132,8 +166,8 @@ const CreateEvent3: FC<any> = props => {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
         setValue('currency', event?.event_currency?.toUpperCase() || "USD")
-        setValue('cutoffDate', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
-        setValue('cutoffTime', event?.sales_ends_on ? new Date(event?.sales_ends_on) : null)
+        setValue('cutoffDate', getCutoffDateTime(event))
+        setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
         setDate()
       }
@@ -152,7 +186,11 @@ const CreateEvent3: FC<any> = props => {
   }, [isFreeEvent])
 
   const addTicket = useCallback(() => {
-    insert(0, { ...emptyTicketType, currency: getValues('ticketPlans')[0].currency })
+    insert(0, {
+      ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
+      cutoffDate: getCutoffDateTime(event),
+      cutoffTime: getCutoffDateTime(event),
+    })
   }, [])
 
   const deleteTicket = useCallback((i: number, _: any) => {
@@ -271,7 +309,7 @@ const CreateEvent3: FC<any> = props => {
       })
     } else next(payload)
 
-  })(), [isFreeEvent, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
+  })(), [isFreeEvent, handleSubmit, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
 
   const openDatePicker = useCallback((i: number, isTime: any = false) => {
     // eventDateTime.current.selectedType = type
@@ -534,7 +572,7 @@ const CreateEvent3: FC<any> = props => {
                       iconSize={scaler(18)}
                       icon={getValues('cutoffTime') ? closeImage : Images.ic_clock}
                       onPressIcon={getValues('cutoffTime') ? () => {
-                        setValue('cutoffTime', undefined)
+                        setValue('cutoffTime', null)
                         setToggle(_ => !_)
                       } : undefined}
                       control={control}
@@ -607,7 +645,6 @@ const CreateEvent3: FC<any> = props => {
                       {/* ----------------------------------- map function for total tickets started here -----------------------------------*/}
 
                       {ticketPlans?.map((_, i) => {
-
                         if (_?.status != 2)
                           return (
                             <View key={_.id} style={styles.ticketView}>
@@ -686,21 +723,20 @@ const CreateEvent3: FC<any> = props => {
                                 />
 
                                 <TouchableOpacity onPress={() => {
-                                  clearErrors(`ticketPlans.${i}.capacity`)
-                                  setValue(`ticketPlans.${i}.capacity`, "")
                                   update(i, {
                                     ...getValues(`ticketPlans.${i}`),
                                     isUnlimitedCapacity: !getValues(`ticketPlans.${i}.isUnlimitedCapacity`)
                                   })
-
+                                  setValue(`ticketPlans.${i}.capacity`, "")
+                                  clearErrors(`ticketPlans.${i}.capacity`)
 
                                 }} style={styles.capacityCheck}>
-                                  <CheckBox checked={getValues(`ticketPlans.${i}.isUnlimitedCapacity`)} />
+                                  <CheckBox checked={_?.isUnlimitedCapacity} />
                                   <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
                                     {Language.unlimited_capacity}
                                   </Text>
                                 </TouchableOpacity>
-                                {getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined :
+                                {_?.isUnlimitedCapacity ? undefined :
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                     placeholder={Language.capacity}
@@ -711,15 +747,18 @@ const CreateEvent3: FC<any> = props => {
                                     maxLength={5}
                                     rules={{
                                       validate: (v: string) => {
-                                        if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) == 0) {
-                                          return Language.invalid_capacity
+                                        if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`)) {
+                                          if (!v?.trim()) {
+                                            return Language.capacity_required
+                                          }
+                                          if (parseInt(v) == 0) {
+                                            return Language.invalid_capacity
+                                          }
                                         }
+
                                       }
                                     }}
                                     keyboardType={'number-pad'}
-                                    required={
-                                      getValues(`ticketPlans.${i}.isUnlimitedCapacity`) ? undefined : Language.capacity_required
-                                    }
                                     control={control}
                                     errors={errors.ticketPlans?.[i]}
                                   />
@@ -762,8 +801,8 @@ const CreateEvent3: FC<any> = props => {
                                     onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
                                       update(i, {
                                         ...getValues(`ticketPlans.${i}`),
-                                        cutoffDate: undefined,
-                                        cutoffTime: undefined
+                                        cutoffDate: null,
+                                        cutoffTime: null
                                       })
                                     } : undefined}
                                     errors={errors?.ticketPlans?.[i]} />
@@ -778,10 +817,10 @@ const CreateEvent3: FC<any> = props => {
                                     iconSize={scaler(18)}
                                     required={getValues(`ticketPlans.${i}.cutoffDate`) ? Language.cutoff_time_required : false}
                                     icon={getValues(`ticketPlans.${i}.cutoffTime`) ? closeImage : Images.ic_clock}
-                                    onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
+                                    onPressIcon={_?.cutoffDate ? () => {
                                       update(i, {
                                         ...getValues(`ticketPlans.${i}`),
-                                        cutoffTime: undefined
+                                        cutoffTime: null
                                       })
                                     } : undefined}
                                     control={control}
@@ -896,7 +935,7 @@ const CreateEvent3: FC<any> = props => {
             catch (e) {
 
             }
-            updatedTicket.cutoffTime = undefined
+            updatedTicket.cutoffTime = null
           } else {
             const eventEndDate = stringToDate((event?.event_end_date || event.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
             const chosenDate = date
