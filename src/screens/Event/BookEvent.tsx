@@ -161,7 +161,7 @@ const BookEvent: FC = (props: any) => {
             message: !isPayByPaypal ? Language.are_you_sure_you_want_to_pay_using + ' ' + Language.cash + '?'
                 : Language.are_you_sure_you_want_to_pay_using + ' ' + Language.paypal + '?',
             onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
+            buttonText: Language.reserve,//Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
             buttonStyle: { width: '100%' }
         })
     })(), [event, isPayByPaypal, isUserDonating, getTotalPayment])
@@ -345,7 +345,8 @@ const BookEvent: FC = (props: any) => {
                     {noOfTickets ?
                         <Button
                             title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? isPayByPaypal ? 'Donate and book event' : Language.book_ticket
-                                : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
+                                : Language.reserve//Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)
+                            }
                             onPress={onSubmit}
                             disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
                         />

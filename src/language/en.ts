@@ -394,4 +394,6 @@ export const en = {
   read_more: "Read more",
   show_less: "Show less",
   end_time_required: 'End time is required',
+  check_in: "Check In",
+  reserve: "Reserve",
 }

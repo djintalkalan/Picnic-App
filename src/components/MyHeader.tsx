@@ -10,6 +10,7 @@ interface MyHeaderProps {
     backEnabled?: boolean
     rightIcon?: ImageURISource,
     onPressRight?: (e?: GestureResponderEvent) => void
+    scanText?: boolean
 }
 
 export const MyHeader: FC<MyHeaderProps> = (props) => {
@@ -26,7 +27,7 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
         [isKeyboard, props?.onPress],
     )
 
-    const { backEnabled = true, title, onPressRight, rightIcon } = props
+    const { backEnabled = true, title, onPressRight, rightIcon, scanText = false } = props
 
 
 
@@ -40,8 +41,13 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
             <Text style={styles.title} >{title}</Text>
             {rightIcon &&
                 <TouchableOpacity onPress={onPressRight} style={[styles.button, {
-                    left: undefined, right: 0
+                    left: undefined, right: 0,
+                    flexDirection: 'row'
                 }]} >
+                    {scanText ? <View>
+                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >Tap to scan</Text>
+                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >QR code</Text>
+                    </View> : null}
                     <Image source={rightIcon} style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} />
                 </TouchableOpacity>}
         </View>
