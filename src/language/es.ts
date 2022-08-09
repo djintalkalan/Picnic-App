@@ -397,5 +397,10 @@ export const es = {
     cutoff_time_required: "",
     read_more: "",
     show_less: "",
-    end_time_required: ""
+    end_time_required: "",
+    check_in: "",
+    reserve: "",
+    donate_and_book_event: "",
+    are_you_sure_you_want_to_reserve_using: "",
+
 }

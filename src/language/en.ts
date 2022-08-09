@@ -398,4 +398,9 @@ export const en = {
   read_more: "Read more",
   show_less: "Show less",
   end_time_required: 'End time is required',
+  check_in: "Check In",
+  reserve: "Reserve",
+  donate_and_book_event: "Donate and book event",
+  are_you_sure_you_want_to_reserve_using: 'Are you sure you want to reserve using',
+
 }

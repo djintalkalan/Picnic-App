@@ -44,7 +44,7 @@ const EventMembers: FC<any> = (props) => {
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
-            <MyHeader title={Language.members}
+            <MyHeader scanText title={Language.members}
                 backEnabled
                 rightIcon={Images.ic_scan}
                 onPressRight={() => NavigationService.navigate('Scanner', { id: props?.route?.params?.id })}
