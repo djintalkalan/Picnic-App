@@ -363,7 +363,7 @@ const BookEvent: FC = (props: any) => {
                     }
                     {noOfTickets ?
                         <Button
-                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? Language.reserve : 'Donate and book event'
+                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? Language.reserve : Language.donate_and_book_event
                                 : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
                             onPress={onSubmit}
                             disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
