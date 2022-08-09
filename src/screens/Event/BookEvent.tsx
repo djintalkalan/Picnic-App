@@ -54,6 +54,9 @@ const BookEvent: FC = (props: any) => {
                 currency: event?.event_currency
             })
         }
+        if (event?.payment_method?.length == 1) {
+            setPayMethodSelected(event?.payment_method[0])
+        }
     }, [])
 
     useEffect(() => {
