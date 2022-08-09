@@ -193,10 +193,18 @@ const CreateEvent2: FC<any> = props => {
     payload.event_end_date_time = isMultidayEvent ?
       stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
       stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59"))
+
+    if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
+      if (event?.event_start_date_time != payload.event_start_date_time ||
+        event?.event_end_date_time != payload.event_end_date_time
+      ) {
+        payload.sales_ends_on = null
+      }
+    }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent3')
 
-  })(), [userData, isMultidayEvent])
+  })(), [userData, isMultidayEvent, event])
 
 
   return (
