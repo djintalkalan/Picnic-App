@@ -143,16 +143,15 @@ const BookEvent: FC = (props: any) => {
         return payment
     }, [noOfTickets, free_tickets, selectedTicket])
 
-
     const onSubmit = useCallback(() => handleSubmit(data => {
         if (event?.is_free_event || getTotalPayment().paidTicketsSelected == 0)
             confirmReservation(data)
         else _showPopUpAlert({
             title: Language.confirm_payment_method,
             //@ts-ignore
-            message: Language.are_you_sure_you_want_to_pay_using + ' ' + Language[payMethodSelected] + '?',
+            message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected] + '?',
             onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: Language.reserve,//Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
+            buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + ' (' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice) + ")",
             buttonStyle: { width: '100%' }
         })
     })(), [event, noOfTickets, payMethodSelected, isUserDonating])
@@ -364,9 +363,8 @@ const BookEvent: FC = (props: any) => {
                     }
                     {noOfTickets ?
                         <Button
-                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? 'Donate and book event' : Language.book_ticket
-                                : Language.reserve// Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)
-                            }
+                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? Language.reserve : Language.donate_and_book_event
+                                : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
                             onPress={onSubmit}
                             disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
                         />

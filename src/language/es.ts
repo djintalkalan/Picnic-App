@@ -400,4 +400,7 @@ export const es = {
     end_time_required: "",
     check_in: "",
     reserve: "",
+    donate_and_book_event: "",
+    are_you_sure_you_want_to_reserve_using: "",
+
 }
