@@ -386,4 +386,5 @@ export const en = {
   add_location_to_chat: "Share location in chat window",
   check_in: "Check In",
   reserve: "Reserve",
+  donate_and_book_event: "Donate and book event",
 }

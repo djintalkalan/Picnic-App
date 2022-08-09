@@ -386,4 +386,6 @@ export const es = {
     add_location_to_chat: "",
     check_in: "",
     reserve: "",
+    donate_and_book_event: "",
+
 }

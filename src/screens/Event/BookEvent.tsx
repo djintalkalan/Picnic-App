@@ -295,7 +295,7 @@ const BookEvent: FC = (props: any) => {
                     }
                     {noOfTickets ?
                         <Button
-                            title={event?.is_free_event ? isPayByPaypal ? 'Donate and book event' : Language.book_ticket
+                            title={event?.is_free_event ? isPayByPaypal ? Language.donate_and_book_event : Language.book_ticket
                                 : Language.reserve // Language.pay + ' ' + getSymbol(selectedTicket.currency) + round(parseInt(noOfTickets) * (parseFloat(selectedTicket.amount + (selectedTicket.event_tax_amount ?? 0))), 2)
                             }
                             onPress={onSubmit}
