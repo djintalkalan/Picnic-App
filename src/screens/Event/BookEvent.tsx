@@ -164,6 +164,20 @@ const BookEvent: FC = (props: any) => {
     }, [noOfTickets, selectedTicket])
 
 
+    const getTitle = () => {
+
+        if (event?.is_free_event == 1) {
+            if (event?.is_donation == 1 && isUserDonating && payMethodSelected != 'cash'
+                && getTotalPayment()?.paidTicketsPrice != 0) {
+                return Language.donate_and_book_event
+            } else {
+                return Language.reserve
+            }
+        }
+        return payMethodSelected != 'cash' && getTotalPayment()?.paidTicketsPrice != 0 ? Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice) : Language.reserve
+    }
+
+
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.confirm_reservation} />
@@ -363,8 +377,7 @@ const BookEvent: FC = (props: any) => {
                     }
                     {noOfTickets ?
                         <Button
-                            title={event?.is_free_event || getTotalPayment().paidTicketsSelected == 0 ? payMethodSelected != 'cash' ? Language.reserve : Language.donate_and_book_event
-                                : Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice)}
+                            title={getTitle()}
                             onPress={onSubmit}
                             disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
                         />
