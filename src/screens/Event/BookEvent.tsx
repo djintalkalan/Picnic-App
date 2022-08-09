@@ -61,6 +61,9 @@ const BookEvent: FC = (props: any) => {
                 total_free_tickets_consumed: event?.total_free_tickets_consumed || 0
             })
         }
+        if (event?.payment_method?.length == 1) {
+            setPayMethodSelected(event?.payment_method[0])
+        }
         fetchTicketData()
     }, [])
 
