@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateFormat, getCityOnly, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 
@@ -176,7 +176,7 @@ const EventList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, city, state, country, is_free_event, event_date, event_currency, event_fees } = item
+        const { is_event_member, city, state, country, is_free_event, event_start_date_time, event_currency, event_fees } = item
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -207,7 +207,7 @@ const EventList: FC<any> = (props) => {
                     }, 0);
 
                 }}
-                date={dateStringFormat(event_date, "MMM DD, YYYY", "YYYY-MM-DD", "-")}
+                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={getSymbol(event_currency)}
                 price={!is_free_event ? event_fees : ""} />
         )
