@@ -215,9 +215,8 @@ const EventList: FC<any> = (props) => {
                     setTimeout(() => {
                         NavigationService.navigate("EventDetail", { id: item?._id });
                     }, 0);
-
                 }}
-                date={dateFormat(new Date(event_start_date_time), "YYYY-MM-DD")}
+                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={""}
                 free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
                 price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />
