@@ -95,7 +95,7 @@ const EventDetail: FC<any> = (props) => {
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
             message: Language.are_you_sure_cancel_reservation + '?',
-            customView: !event?.is_free_event && event?.event_refund_policy?.trim() ? () => <TouchableOpacity
+            customView: !event?.is_free_event && event?.event_refund_policy?.trim() && activeTicket?.payment_method == 'paypal' ? () => <TouchableOpacity
                 onPress={() => {
                     event?.event_refund_policy ?
                         _showPopUpAlert({
@@ -106,7 +106,6 @@ const EventDetail: FC<any> = (props) => {
                             },
                             buttonStyle: { backgroundColor: colors.colorErrorRed },
                             buttonText: Language.close,
-
                         })
                         : _showErrorMessage(Language.refund_policy_not_available)
                 }}>
@@ -118,7 +117,7 @@ const EventDetail: FC<any> = (props) => {
             },
             buttonText: Language.yes_cancel,
         })
-    }, [event])
+    }, [event, activeTicket])
 
 
 
