@@ -207,7 +207,7 @@ const EventList: FC<any> = (props) => {
                     }, 0);
 
                 }}
-                date={dateFormat(new Date(event_start_date_time), "YYYY-MM-DD")}
+                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={getSymbol(event_currency)}
                 price={!is_free_event ? event_fees : ""} />
         )
