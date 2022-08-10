@@ -96,14 +96,14 @@ const BookEvent: FC = (props: any) => {
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
             donation_amount: event.is_donation_enabled && payMethodSelected != 'cash' ? data.donationAmount : '0',
-            is_donation: event?.is_free_event && isUserDonating ? '1' : '0',
+            is_donation: event?.is_free_event && event?.is_donation_enabled && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
             payment_method: event?.is_free_event && !isUserDonating ? "free" : payMethodSelected != 'cash' ? 'paypal' : 'cash', // free, cash, paypal
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
-        dispatch(payMethodSelected != 'cash' ? authorizePayment(payload) : joinEvent(payload))
+        dispatch(payload?.is_donation == '1' && payMethodSelected != 'cash' ? authorizePayment(payload) : joinEvent(payload))
     }, [event, noOfTickets, payMethodSelected, selectedTicket, isUserDonating])
 
 
@@ -167,8 +167,7 @@ const BookEvent: FC = (props: any) => {
     const getTitle = () => {
 
         if (event?.is_free_event == 1) {
-            if (event?.is_donation == 1 && isUserDonating && payMethodSelected != 'cash'
-                && getTotalPayment()?.paidTicketsPrice != 0) {
+            if (event?.is_donation_enabled == 1 && isUserDonating && payMethodSelected != 'cash') {
                 return Language.donate_and_book_event
             } else {
                 return Language.reserve
