@@ -193,6 +193,14 @@ const CreateEvent2: FC<any> = props => {
     payload.event_end_date_time = isMultidayEvent ?
       stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
       stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59"))
+    const event = store.getState().createEventState
+    if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
+      if (event?.event_start_date_time?.toString() != payload.event_start_date_time?.toString() ||
+        event?.event_end_date_time?.toString() != payload.event_end_date_time?.toString()
+      ) {
+        payload.sales_ends_on = null
+      }
+    }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent3')
 
@@ -262,7 +270,7 @@ const CreateEvent2: FC<any> = props => {
                 style={{ fontSize: scaler(13) }}
                 name={'endDate'}
                 onPress={() => (openDatePicker("endDate"))}
-                required={Language.date_required}
+                required={Language.end_date_required}
                 icon={Images.ic_calender}
                 iconSize={scaler(20)}
                 control={control}
@@ -273,7 +281,7 @@ const CreateEvent2: FC<any> = props => {
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'endTime'}
-                required={isMultidayEvent ? Language.end_date_required : false}
+                required={isMultidayEvent ? Language.end_time_required : false}
                 onPress={() => (openDatePicker("endTime"))}
                 iconSize={scaler(18)}
                 icon={Images.ic_clock}

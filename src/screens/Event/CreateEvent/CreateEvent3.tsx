@@ -572,7 +572,7 @@ const CreateEvent3: FC<any> = props => {
                       iconSize={scaler(18)}
                       icon={getValues('cutoffTime') ? closeImage : Images.ic_clock}
                       onPressIcon={getValues('cutoffTime') ? () => {
-                        setValue('cutoffTime', undefined)
+                        setValue('cutoffTime', null)
                         setToggle(_ => !_)
                       } : undefined}
                       control={control}
@@ -645,7 +645,6 @@ const CreateEvent3: FC<any> = props => {
                       {/* ----------------------------------- map function for total tickets started here -----------------------------------*/}
 
                       {ticketPlans?.map((_, i) => {
-
                         if (_?.status != 2)
                           return (
                             <View key={_.id} style={styles.ticketView}>
@@ -802,8 +801,8 @@ const CreateEvent3: FC<any> = props => {
                                     onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
                                       update(i, {
                                         ...getValues(`ticketPlans.${i}`),
-                                        cutoffDate: undefined,
-                                        cutoffTime: undefined
+                                        cutoffDate: null,
+                                        cutoffTime: null
                                       })
                                     } : undefined}
                                     errors={errors?.ticketPlans?.[i]} />
@@ -818,10 +817,10 @@ const CreateEvent3: FC<any> = props => {
                                     iconSize={scaler(18)}
                                     required={getValues(`ticketPlans.${i}.cutoffDate`) ? Language.cutoff_time_required : false}
                                     icon={getValues(`ticketPlans.${i}.cutoffTime`) ? closeImage : Images.ic_clock}
-                                    onPressIcon={getValues(`ticketPlans.${i}.cutoffDate`) ? () => {
+                                    onPressIcon={_?.cutoffDate ? () => {
                                       update(i, {
                                         ...getValues(`ticketPlans.${i}`),
-                                        cutoffTime: undefined
+                                        cutoffTime: null
                                       })
                                     } : undefined}
                                     control={control}
@@ -936,7 +935,7 @@ const CreateEvent3: FC<any> = props => {
             catch (e) {
 
             }
-            updatedTicket.cutoffTime = undefined
+            updatedTicket.cutoffTime = null
           } else {
             const eventEndDate = new Date(event?.event_end_date_time)
             const chosenDate = date
