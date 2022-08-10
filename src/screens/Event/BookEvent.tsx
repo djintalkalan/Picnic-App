@@ -167,8 +167,7 @@ const BookEvent: FC = (props: any) => {
     const getTitle = () => {
 
         if (event?.is_free_event == 1) {
-            if (event?.is_donation == 1 && isUserDonating && payMethodSelected != 'cash'
-                && getTotalPayment()?.paidTicketsPrice != 0) {
+            if (event?.is_donation_enabled == 1 && isUserDonating && payMethodSelected != 'cash') {
                 return Language.donate_and_book_event
             } else {
                 return Language.reserve
