@@ -36,7 +36,7 @@ const EventList: FC<any> = (props) => {
         const buttons: Array<IBottomMenuButton> = []
         if (is_event_admin) {
             const eventDate = new Date(item?.event_start_date_time);
-            if (!item?.total_sold_tickets && eventDate >= new Date() && item.status == 1)
+            if (eventDate >= new Date() && item.status == 1)
                 buttons.push({
                     title: Language.edit_event, onPress: () => {
                         dispatch(setActiveEvent(item))
