@@ -384,7 +384,7 @@ export const en = {
   default_background: "Default background",
   two_factor_auth: "Two Factor Authentication",
   add_location_to_chat: "Share location in chat window",
-  cutoff_date_title: "Grace Period (optional)",
+  cutoff_date_title: "Grace period for check-in (optional)",
   cutoff_date: "Date",
   cutoff_time: "Time",
   number_of_free_tickets: "Number of free tickets (optional)",
