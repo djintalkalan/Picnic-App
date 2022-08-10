@@ -119,6 +119,9 @@ const CreateEvent3: FC<any> = props => {
     }
   });
 
+  // console.log("_formValues", control._formValues);
+  // console.log("errors", control._formState.errors);
+  // console.log("fields", control?._fields);
 
 
   const {
@@ -186,19 +189,27 @@ const CreateEvent3: FC<any> = props => {
   }, [isFreeEvent])
 
   const addTicket = useCallback(() => {
-    insert(0, {
-      ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
-      cutoffDate: getCutoffDateTime(event),
-      cutoffTime: getCutoffDateTime(event),
-    })
-  }, [])
+    replace([
+      {
+        ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
+        cutoffDate: getCutoffDateTime(event),
+        cutoffTime: getCutoffDateTime(event),
+      },
+      ...ticketPlans
+    ])
+    // insert(0, {
+    //   ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
+    //   cutoffDate: getCutoffDateTime(event),
+    //   cutoffTime: getCutoffDateTime(event),
+    // })
+  }, [ticketPlans, event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
-
     if (_?.plan_id) {
       update(i, { ..._, status: 2 })
     } else
       remove(i);
+    // setTicketKey((new Date()).toISOString())
   }, [])
 
   const next = useCallback((payload: any) => {
