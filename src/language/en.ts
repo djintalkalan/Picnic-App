@@ -388,7 +388,7 @@ export const en = {
   click_to_see_tutorial: "Click to see tutorial",
   pay_by_credit: 'Pay by credit card',
   donate_by_credit: "Donate by credit card",
-  cutoff_date_title: "Grace Period (optional)",
+  cutoff_date_title: "Grace period for check-in (optional)",
   cutoff_date: "Date",
   cutoff_time: "Time",
   number_of_free_tickets: "Number of free tickets (optional)",
