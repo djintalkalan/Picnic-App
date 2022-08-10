@@ -297,7 +297,7 @@ export const en = {
   contact_support_dob: 'Contact support to change your date of birth',
   contact_support_email: 'Contact support to change your email address',
   contact_support_username: 'Contact support to change your username',
-  refund_policy_not_available: "Refund policy not available",
+  refund_policy_not_available: "There is no refund policy for this event",
   add_caption_here: "Add caption here",
   processing: "Processing",
   loading: "Loading",
