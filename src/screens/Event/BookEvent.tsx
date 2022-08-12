@@ -103,7 +103,11 @@ const BookEvent: FC = (props: any) => {
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
-        dispatch((payload?.is_donation == '1' && payMethodSelected != 'cash') || event?.is_free_event != 1 ? authorizePayment(payload) : joinEvent(payload))
+        let action = joinEvent
+        if (payMethodSelected && payMethodSelected != 'cash' && (payload?.is_donation == '1' || event?.is_free_event != 1)) {
+            action = authorizePayment
+        }
+        dispatch(action(payload))
     }, [event, noOfTickets, payMethodSelected, selectedTicket, isUserDonating])
 
 
