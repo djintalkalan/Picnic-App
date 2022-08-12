@@ -56,7 +56,7 @@ const CreateEvent1: FC<any> = props => {
   })
 
   const isEditable = useSelector((state: RootState) => {
-    return !(state?.eventDetails?.[eventId]?.event?.total_sold_tickets)
+    return true//!(state?.eventDetails?.[eventId]?.event?.total_sold_tickets)
   }, isEqual)
 
   const loaded = useRef(false);

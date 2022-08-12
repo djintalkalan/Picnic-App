@@ -119,6 +119,9 @@ const CreateEvent3: FC<any> = props => {
     }
   });
 
+  // console.log("_formValues", control._formValues);
+  // console.log("errors", control._formState.errors);
+  // console.log("fields", control?._fields);
 
 
   const {
@@ -186,19 +189,27 @@ const CreateEvent3: FC<any> = props => {
   }, [isFreeEvent])
 
   const addTicket = useCallback(() => {
-    insert(0, {
-      ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
-      cutoffDate: getCutoffDateTime(event),
-      cutoffTime: getCutoffDateTime(event),
-    })
-  }, [])
+    replace([
+      {
+        ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
+        cutoffDate: getCutoffDateTime(event),
+        cutoffTime: getCutoffDateTime(event),
+      },
+      ...ticketPlans
+    ])
+    // insert(0, {
+    //   ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
+    //   cutoffDate: getCutoffDateTime(event),
+    //   cutoffTime: getCutoffDateTime(event),
+    // })
+  }, [ticketPlans, event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
-
     if (_?.plan_id) {
       update(i, { ..._, status: 2 })
     } else
       remove(i);
+    // setTicketKey((new Date()).toISOString())
   }, [])
 
   const next = useCallback((payload: any) => {
@@ -937,7 +948,7 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = null
           } else {
-            const eventEndDate = stringToDate((event?.event_end_date || event.event_date) + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")
+            const eventEndDate = new Date(event?.event_end_date_time)
             const chosenDate = date
             const thisDate = new Date()
             if (chosenDate > eventEndDate) {

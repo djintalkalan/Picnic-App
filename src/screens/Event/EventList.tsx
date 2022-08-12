@@ -36,7 +36,7 @@ const EventList: FC<any> = (props) => {
         const buttons: Array<IBottomMenuButton> = []
         if (is_event_admin) {
             const eventDate = new Date(item?.event_start_date_time);
-            if (!item?.total_sold_tickets && eventDate >= new Date() && item.status == 1)
+            if (eventDate >= new Date() && item.status == 1)
                 buttons.push({
                     title: Language.edit_event, onPress: () => {
                         dispatch(setActiveEvent(item))
@@ -215,9 +215,8 @@ const EventList: FC<any> = (props) => {
                     setTimeout(() => {
                         NavigationService.navigate("EventDetail", { id: item?._id });
                     }, 0);
-
                 }}
-                date={dateFormat(new Date(event_start_date_time), "YYYY-MM-DD")}
+                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={""}
                 free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
                 price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />

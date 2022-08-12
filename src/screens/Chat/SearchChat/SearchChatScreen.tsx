@@ -1,4 +1,3 @@
-import { useFocusEffect } from '@react-navigation/native'
 import { _getMyEvents, _searchChat, _searchPersonChat } from 'api'
 import { RootState } from 'app-store'
 import { setLoadingAction } from 'app-store/actions'
@@ -6,8 +5,8 @@ import { colors, Images } from 'assets'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _ from 'lodash'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Image, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
@@ -18,7 +17,6 @@ import { SearchProvider, useSearchState } from './SearchProvider'
 const SearchChatScreen: FC<any> = (props) => {
     const dispatch = useDispatch()
     const [currentTabIndex, setCurrentTabIndex] = useState(0)
-    const [isFocused, setFocused] = useState(false);
 
     const { setChats = () => (null), setEvents = () => (null), searchedText, setSearchedText = () => (null) } = useSearchState()
     const chatRoomId = props?.route?.params?.chatRoomId
@@ -91,27 +89,32 @@ const SearchChatScreen: FC<any> = (props) => {
         searchedText?.trim()?.length < 3 && debounceClear()
     }, [currentTabIndex, searchedText])
 
-    useFocusEffect(useCallback(() => {
-        setTimeout(() => {
-            setFocused(true)
-        }, 100);
-    }, []))
 
+    useEffect(() => {
+        InteractionManager.runAfterInteractions(() => {
+            setTimeout(() => {
+                inputRef?.current?.focus()
+            }, 500);
+        })
+    }, [])
+
+    const inputRef = useRef<TextInput>(null)
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
-            {isFocused && <View style={{
+            {true && <View style={{
                 paddingVertical: scaler(20),
                 borderBottomColor: 'rgba(0, 0, 0, 0.04)',
                 borderBottomWidth: 2,
                 marginBottom: scaler(2),
             }} >
                 <TextInput
+                    ref={inputRef}
                     autoCapitalize={'none'}
                     onChangeText={(text) => {
                         // console.log("Text is ", text);
                         setSearchedText(text?.toLowerCase())
                     }}
-                    autoFocus
+                    // autoFocus={true}
                     style={styles.searchInput}
                     // value={searchedText}
                     clearButtonMode={'while-editing'}

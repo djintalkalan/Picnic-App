@@ -4,8 +4,8 @@ import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItemSeparator } from 'custom-components/ListItem/ListItem'
-import React, { FC, useCallback, useRef, useState } from 'react'
-import { Dimensions, FlatList, Image, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { Dimensions, FlatList, Image, InteractionManager, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete'
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, IRecentSearches, useDatabase } from 'src/database/Database'
@@ -78,11 +78,19 @@ const GooglePlacesTextInput: FC<any> = (props) => {
         }
     }, [])
 
+    useEffect(() => {
+        InteractionManager.runAfterInteractions(() => {
+            setTimeout(() => {
+                placeInputRef?.current?.focus()
+            }, 500);
+        })
+    }, [])
+
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1 }} >
             <View style={{ flex: 1 }}>
                 <TouchableOpacity style={{ flex: 1, paddingTop: scaler(10) }} disabled >
-                    {isFocused && <GooglePlacesAutocomplete
+                    <GooglePlacesAutocomplete
                         ref={placeInputRef}
                         keyboardShouldPersistTaps={'always'}
                         placeholder={Language.search_location}
@@ -90,7 +98,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         fetchDetails={true}
                         keepResultsAfterBlur
                         textInputProps={{
-                            autoFocus: true,
+                            // autoFocus: true,
                             returnKeyType: 'done',
                             placeholderTextColor: colors.colorGreyInactive,
                             numberOfLines: 1,
@@ -144,7 +152,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                             },
                         }}
                         currentLocation={false}
-                    />}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { NavigationService.goBack() }} style={styles.closeButton} >
                     <Image style={styles.imagePlaceholder} source={Images.ic_left} />
