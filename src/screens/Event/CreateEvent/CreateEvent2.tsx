@@ -194,14 +194,12 @@ const CreateEvent2: FC<any> = props => {
       stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
       stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59"))
     const event: any = store.getState().createEventState
-
     if (event?.event_start_date_time && !(event.event_start_date_time instanceof Date)) {
       event.event_start_date_time = new Date(event?.event_start_date_time)
     }
     if (event?.event_end_date_time && !(event.event_end_date_time instanceof Date)) {
       event.event_end_date_time = new Date(event?.event_end_date_time)
     }
-
     if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
       if (event?.event_start_date_time?.toString() != payload.event_start_date_time?.toString() ||
         event?.event_end_date_time?.toString() != payload.event_end_date_time?.toString()
