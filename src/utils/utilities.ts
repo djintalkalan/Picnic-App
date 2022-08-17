@@ -9,7 +9,9 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat, intervalToDuration } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
+import { format as TZFormat, utcToZonedTime } from 'date-fns-tz';
+
+import { formatInTimeZone, getTimezoneOffset } from 'date-fns-tz';
 import { decode } from 'html-entities';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
@@ -115,18 +117,21 @@ export const dateStringFormat = (dateString: string, toFormat: string, fromForma
         return dateString
     }
 }
-
+const getFormat = (toFormat: string) => {
+    toFormat = toFormat.replace("YYYY", 'yyyy')
+    toFormat = toFormat.replace("YYY", 'yyy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("DDD", 'ddd')
+    toFormat = toFormat.replace("DD", 'dd')
+    toFormat = toFormat.replace("D", 'd')
+    toFormat = toFormat.replace("A", 'a')
+    return toFormat
+}
 export const dateFormat = (date: Date, toFormat: string) => {
     if (!date) return ""
     try {
-        toFormat = toFormat.replace("YYYY", 'yyyy')
-        toFormat = toFormat.replace("YYY", 'yyy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("DDD", 'ddd')
-        toFormat = toFormat.replace("DD", 'dd')
-        toFormat = toFormat.replace("D", 'd')
-        toFormat = toFormat.replace("A", 'a')
+        toFormat = getFormat(toFormat);
         return FNSFormat(date, toFormat)
     }
     catch (e) {
@@ -866,6 +871,22 @@ export const getFromZonedDate = (zonedDate: Date, timezoneOffset: number) => {
 
     return new Date(dateFormat(zonedDate, "YYYY-MM-DD HH:mm:ss") + ".000" + offSet)
 
+}
+
+
+export const getLocalDate = (iso: string | Date, timezone: string, format: string) => {
+    const timezoneOffset = getTimezoneOffset(timezone)
+    const mills = Math.abs(timezoneOffset)
+
+    const symbol = timezoneOffset?.toString()?.includes("-") ? "-" : "+";
+    const d = intervalToDuration({ start: 0, end: mills })
+    const offSet = `${symbol}${((d?.hours || 0 <= 9) ? "0" : "") + d.hours || "00"}:${((d?.minutes || 0) <= 9 ? "0" : "") + d.minutes || "00"}`
+    const zoned = utcToZonedTime(new Date(iso), timezone)
+    return TZFormat(zoned, getFormat(format), {
+        timeZone: timezone,
+    })
+
+    return "DATE";
 }
 
 
