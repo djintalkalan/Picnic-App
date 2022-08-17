@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { EMIT_EVENT_MEMBER_DELETE, SocketService } from 'socket';
 import Language, { useLanguage } from 'src/language/Language';
-import { getDisplayName, getImageUrl, getSymbol, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { formatAmount, getDisplayName, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 
 export const EventMemberList: FC<any> = (props) => {
     const dispatch = useDispatch();
@@ -274,7 +274,7 @@ export const MemberListItem: FC<MemberListItemProps> = ({ isCheckedIn, noOfTicke
                     </View>
                     <View style={{ marginHorizontal: scaler(5), alignItems: 'center' }} >
                         <Text style={{ color: '#797979', fontSize: scaler(13) }} >{paymentMethod}</Text>
-                        <Text style={{ fontWeight: '600', color: '#272727', fontSize: scaler(14) }} >{getSymbol(currency) + totalPaidAmount}</Text>
+                        <Text style={{ fontWeight: '600', color: '#272727', fontSize: scaler(14) }} >{formatAmount(currency, totalPaidAmount)}</Text>
                     </View>
                     {((paymentMethod == 'cash' && isCheckedIn) || (paymentMethod == 'paypal')) ?
                         <MaterialCommunityIcons size={scaler(22)} name={'checkbox-marked-circle-outline'} color={colors.colorPrimary} />

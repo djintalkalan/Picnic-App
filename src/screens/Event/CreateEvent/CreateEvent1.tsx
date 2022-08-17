@@ -7,7 +7,7 @@ import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Te
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
-import { isArray, isEmpty } from 'lodash';
+import { isArray, isEmpty, isEqual } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
@@ -54,6 +54,10 @@ const CreateEvent1: FC<any> = props => {
   const event = useSelector((state: RootState) => {
     return state?.createEventState
   })
+
+  const isEditable = useSelector((state: RootState) => {
+    return true//!(state?.eventDetails?.[eventId]?.event?.total_sold_tickets)
+  }, isEqual)
 
   const loaded = useRef(false);
 
@@ -135,6 +139,16 @@ const CreateEvent1: FC<any> = props => {
       setEventValues(event);
     }
   }, [event])
+
+
+  useEffect(() => {
+    if (!isEditable) {
+      props?.navigation?.goBack();
+    }
+  }, [isEditable])
+
+
+
 
   const setEventValues = useCallback((event: any) => {
     if (loaded.current) return

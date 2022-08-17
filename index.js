@@ -1,6 +1,21 @@
 /**
  * @format
  */
+
+// Polyfills required to use Intl with Hermes engine
+import '@formatjs/intl-getcanonicallocales/polyfill';
+
+import '@formatjs/intl-locale/polyfill';
+
+import '@formatjs/intl-pluralrules/polyfill';
+import '@formatjs/intl-pluralrules/locale-data/en';
+import '@formatjs/intl-pluralrules/locale-data/es';
+
+import '@formatjs/intl-numberformat/polyfill';
+import '@formatjs/intl-numberformat/locale-data/en'
+import '@formatjs/intl-numberformat/locale-data/es'
+
+
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';

@@ -30,13 +30,14 @@ interface TextInputProps extends RNTextInputProps {
     borderColor?: ColorValue
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
     keyboardValues?: KeyboardValues,
+    format?: any
 }
 
 
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
     const [isFocused, setFocused] = useState(false)
-    const { iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
+    const { format, iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
     const openKeyboardAccessory = props?.keyboardValues?.openKeyboardAccessory
 
     const errorName = useMemo(() => {
@@ -86,7 +87,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
             }
         })
 
-    }, [style, height, containerStyle, fontFamily, icon])
+    }, [style, height, containerStyle, fontFamily, icon, iconContainerStyle])
 
     return (
         <TouchableOpacity
@@ -98,11 +99,10 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 // onLayout={(e) => {
                 //     console.log("Parent ", e.nativeEvent.layout)
                 // }}
-                pointerEvents={(onPress || disabled) ? 'none' : undefined}
                 style={{
                     justifyContent: 'center',
                     minHeight: scaler(50),
-                    borderColor: (errors && errors[name]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
+                    borderColor: (errors && errors[errorName]) ? colors.colorRed : isFocused ? colors.colorPrimary : borderColor,
                     backgroundColor: backgroundColor ?? colors.colorWhite,
                     // padding: scaler(2),
                     paddingTop: scaler(10),
@@ -120,7 +120,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                     rules={{ required: required, ...rules }}
                     defaultValue=""
                     render={({ field: { onChange, onBlur: onBlurC, value, ref: cRef } }) => (
-                        <>
+                        <><View pointerEvents={(onPress || disabled) ? 'none' : undefined}    >
                             <RNTextInput {...rest}
                                 ref={(r) => {
                                     if (ref) {
@@ -139,7 +139,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 placeholderTextColor={colors.colorTextPlaceholder}
                                 // placeholder={!isFocused ? placeholder : ""}
                                 allowFontScaling={false}
-                                value={value}
+                                value={format ? format(value) : value}
                                 multiline={multiline}
                                 autoCorrect={props?.autoCorrect ?? multiline}
                                 spellCheck={props?.spellCheck ?? props?.autoCorrect ?? multiline}
@@ -169,6 +169,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     if (onChangeText) onChangeText(text);
                                 }}
                             />
+                        </View>
                             {icon && iconPosition == 'right' ?
                                 <TouchableOpacity disabled={!onPressIcon} onPress={onPressIcon} activeOpacity={0.7} style={styles?.iconContainerStyle} >
                                     <Image style={{ height: iconSize, width: iconSize }} source={icon} />
@@ -195,7 +196,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                         <RNTextInput {...rest}
                             ref={ref}
                             style={styles.textInputStyle}
-                            value={value}
+                            value={format ? format(value) : value}
                             multiline={multiline}
                             inputAccessoryViewID={multiline ? name : undefined}
                             // placeholder={!isFocused ? placeholder : ""}
