@@ -106,7 +106,6 @@ const EventDetail: FC<any> = (props) => {
                             },
                             buttonStyle: { backgroundColor: colors.colorErrorRed },
                             buttonText: Language.close,
-
                         })
                         : _showErrorMessage(Language.refund_policy_not_available)
                 }}>
@@ -118,7 +117,7 @@ const EventDetail: FC<any> = (props) => {
             },
             buttonText: Language.yes_cancel,
         })
-    }, [event])
+    }, [event, activeTicket])
 
 
 

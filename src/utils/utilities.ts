@@ -788,7 +788,7 @@ const getLanguageString = (language: LanguageType) => {
         case 'en':
             return "English";
         case 'es':
-            return "Español (Spanish)"
+            return "Español"
     }
 }
 

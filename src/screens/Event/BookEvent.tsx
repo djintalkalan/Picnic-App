@@ -27,7 +27,7 @@ type FormType = {
 
 
 const BookEvent: FC = (props: any) => {
-    const [isPayByPaypal, setIsPayByPaypal] = useState()
+    const [isPayByPaypal, setIsPayByPaypal] = useState<boolean>()
     const [noOfTickets, setNoOfTickets] = useState("")
     const [payMethodSelected, setPayMethodSelected] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState<any>({})
@@ -61,6 +61,10 @@ const BookEvent: FC = (props: any) => {
                 total_free_tickets: event?.total_free_tickets || 0,
                 total_free_tickets_consumed: event?.total_free_tickets_consumed || 0
             })
+        }
+        if (event?.payment_method?.length == 1) {
+            setIsPayByPaypal(event.payment_method[0] == 'paypal')
+            setPayMethodSelected(true)
         }
         fetchTicketData()
     }, [])
