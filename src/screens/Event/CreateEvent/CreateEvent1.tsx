@@ -7,6 +7,7 @@ import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Te
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
+import { getTimezoneOffset } from 'date-fns-tz';
 import { isArray, isEmpty, isEqual } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -17,6 +18,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
+import TZ from "tz-lookup";
 import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils';
 import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
 
@@ -184,12 +186,19 @@ const CreateEvent1: FC<any> = props => {
   const next = useCallback(handleSubmit((data) => {
     console.log('multiImageArray', eventImage, multiImageArray)
     const { latitude, longitude, address, otherData } = locationRef.current ?? {};
+    let timezone = ""
+    if (latitude && longitude) {
+      timezone = TZ(latitude, longitude);
+    }
+
     const payload = {
       name: data.eventName?.trim(),
       location: {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
+      timezone,
+      timezoneOffset: getTimezoneOffset(timezone),
       address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,

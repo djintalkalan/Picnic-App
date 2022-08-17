@@ -8,7 +8,8 @@ import { colors } from 'assets';
 import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
-import { format as FNSFormat } from 'date-fns';
+import { format as FNSFormat, intervalToDuration } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { decode } from 'html-entities';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
@@ -839,3 +840,32 @@ export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
         total_free_tickets_consumed: 0
     }
 }
+
+export const getZonedDate = (ISODate: Date, timezone: string) => {
+    if (!ISODate) {
+        ISODate = new Date()
+    }
+    const dateStr = formatInTimeZone(ISODate, timezone, "yyyy-MM-dd")
+    const timeStr = formatInTimeZone(ISODate, timezone, "HH:mm")
+    return new Date(dateStr + " " + timeStr);
+}
+
+export const getFromZonedDate = (zonedDate: Date, timezoneOffset: number) => {
+    if (!zonedDate) {
+        zonedDate = new Date()
+    }
+
+    // const deviceTimeZoneOffset = getTimezoneOffset(RNLocalize?.getTimeZone())
+    const mills = Math.abs(timezoneOffset)
+
+    const symbol = timezoneOffset?.toString()?.includes("-") ? "-" : "+";
+    const d = intervalToDuration({ start: 0, end: mills })
+    const offSet = `${symbol}${((d?.hours || 0 <= 9) ? "0" : "") + d.hours || "00"}:${((d?.minutes || 0) <= 9 ? "0" : "") + d.minutes || "00"}`
+    // console.log("hours", offSet);
+    // console.log("zonedDate", zonedDate);
+
+    return new Date(dateFormat(zonedDate, "YYYY-MM-DD HH:mm:ss") + ".000" + offSet)
+
+}
+
+

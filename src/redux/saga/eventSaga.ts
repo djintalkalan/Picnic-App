@@ -96,7 +96,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
     yield put(setLoadingAction(true));
     try {
-        const data = store.getState().createEventState
+        const { timezone, timezoneOffset, ...data } = store.getState().createEventState
         let res = yield call(data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
