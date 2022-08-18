@@ -402,5 +402,6 @@ export const es = {
     reserve: "",
     donate_and_book_event: "",
     are_you_sure_you_want_to_reserve_using: "",
+    paypal_detail: "",
 
 }

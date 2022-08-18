@@ -5,10 +5,12 @@ import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
+import Database from 'database/Database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import CryptoJS from "react-native-crypto-js";
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -55,10 +57,17 @@ const CreateEvent3: FC<any> = props => {
                 _getMerchantInfo().then(
                     res => {
                         if (res?.status == 200) {
-                            setValue('paypalEmail', res?.data?.payment_email ?? '')
-                            setValue('apiUserName', res?.data?.payment_api_username ?? '')
-                            setValue('apiPassword', res?.data?.payment_api_password ?? '')
-                            setValue('apiSignature', res?.data?.payment_api_signature ?? '')
+
+                            const token = res?.data?.token
+                            const userData = Database.getStoredValue("userData");
+                            const bytes = CryptoJS.AES.decrypt(token, userData?._id);
+                            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+                            setValue('apiPassword', decryptedData?.payment_api_password)
+                            setValue('apiSignature', decryptedData?.payment_api_signature)
+                            setValue('apiUserName', decryptedData?.payment_api_username)
+                            setValue('paypalEmail', decryptedData?.payment_email)
+                            console.log("data", decryptedData);
                         }
                     }
                 ).catch(e => console.log(e))
