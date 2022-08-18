@@ -8,7 +8,6 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import Switch from 'custom-components/Switch';
 import Database from 'database/Database';
 import { add, differenceInMinutes } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import {
@@ -357,12 +356,7 @@ const CreateEvent3: FC<any> = props => {
   const datePickerRef = useRef<DateTimePickerModal>(null)
 
   const getMinDate = useCallback(() => {
-    let currentDate = new Date()
-    const dateStr = formatInTimeZone(currentDate, event?.timezone, "yyyy-MM-dd")
-    const timeStr = formatInTimeZone(currentDate, event?.timezone, "HH:mm")
-    console.log(dateStr)
-    console.log(timeStr)
-    currentDate = new Date(dateStr + " " + timeStr);
+    const currentDate = getZonedDate(event?.timezone);
     switch (datePickerVisibility) {
       case "date":
         return currentDate;
@@ -964,7 +958,8 @@ const CreateEvent3: FC<any> = props => {
           if (datePickerVisibility == 'date') {
             const eventEndDate = (event.event_end_date || event.event_date).replace(/-/g, "")
             const chosenDate = dateFormat(date, "YYYYMMDD")
-            const thisDate = dateFormat(new Date(), "YYYYMMDD")
+            const thisDate = dateFormat(getZonedDate(event?.timezone), "YYYYMMDD")
+
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff date should be less than event end date")
               return setDatePickerVisibility(null)
@@ -983,9 +978,9 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = null
           } else {
-            const eventEndDate = new Date(event?.event_end_date_time)
+            const eventEndDate = getZonedDate(event?.timezone, event?.event_end_date_time)
             const chosenDate = date
-            const thisDate = new Date()
+            const thisDate = getZonedDate(event?.timezone);
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff time should be less than event end time")
               return setDatePickerVisibility(null)
