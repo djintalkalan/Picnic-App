@@ -866,7 +866,7 @@ export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) =>
 }
 
 
-export const getLocalDate = (iso: string | Date, timezone: string, format: string) => {
+export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, format: string) => {
     const zoned = getZonedDate(timezone, iso)
     return TZFormat(zoned, getFormat(format), {
         timeZone: timezone,
