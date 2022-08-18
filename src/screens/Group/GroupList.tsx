@@ -207,7 +207,7 @@ const GroupList: FC<any> = (props) => {
                 useNativeDriver
                 color={colors.colorPrimary} />}
             <SwipeListView
-                refreshControl={searchedGroups ? undefined : <RefreshControl
+                refreshControl={searchedGroups?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = INITIAL_PAGINATION_STATE
@@ -215,7 +215,7 @@ const GroupList: FC<any> = (props) => {
                     }}
                 />}
                 data={(searchedGroups && searchHomeText) ? searchedGroups : allGroups}
-                contentContainerStyle={{ flex: (searchedGroups ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
+                contentContainerStyle={{ flex: (searchedGroups && searchHomeText ? searchedGroups : allGroups)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}

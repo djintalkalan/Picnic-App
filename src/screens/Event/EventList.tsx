@@ -16,13 +16,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateStringFormat, getCityOnly, getImageUrl, getSymbol, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { dateFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 
-const ITEM_HEIGHT = scaler(120)
+const ITEM_HEIGHT = scaler(140)
 const { width, height } = Dimensions.get('screen')
 let LOADING = false
+
 const EventList: FC<any> = (props) => {
     const insets = useSafeAreaInsets()
 
@@ -34,14 +35,16 @@ const EventList: FC<any> = (props) => {
         const { is_event_member, _id, is_event_admin, name } = item
         const buttons: Array<IBottomMenuButton> = []
         if (is_event_admin) {
-            buttons.push({
-                title: Language.edit_event, onPress: () => {
-                    dispatch(setActiveEvent(item))
-                    setTimeout(() => {
-                        NavigationService.navigate('CreateEvent1', { id: _id })
-                    }, 0);
-                }
-            })
+            const eventDate = new Date(item?.event_start_date_time);
+            if (eventDate >= new Date() && item.status == 1)
+                buttons.push({
+                    title: Language.edit_event, onPress: () => {
+                        dispatch(setActiveEvent(item))
+                        setTimeout(() => {
+                            NavigationService.navigate('CreateEvent1', { id: _id })
+                        }, 0);
+                    }
+                })
             buttons.push({
                 title: Language.share_event, onPress: () => {
                     shareDynamicLink(name, {
@@ -176,7 +179,14 @@ const EventList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_event_member, city, state, country, is_free_event, event_date, event_currency, event_fees } = item
+        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_free_event, event_start_date_time, event_currency, event_fees, } = item
+        if (ticket_type == 'multiple') {
+            var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = getFreeTicketsInMultiple(ticket_plans)
+        } else {
+            //@ts-ignore
+            var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = item
+        }
+
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -205,11 +215,11 @@ const EventList: FC<any> = (props) => {
                     setTimeout(() => {
                         NavigationService.navigate("EventDetail", { id: item?._id });
                     }, 0);
-
                 }}
-                date={dateStringFormat(event_date, "MMM DD, YYYY", "YYYY-MM-DD", "-")}
-                currency={getSymbol(event_currency)}
-                price={!is_free_event ? event_fees : ""} />
+                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
+                currency={""}
+                free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
+                price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />
         )
     }, [])
 
@@ -268,7 +278,7 @@ const EventList: FC<any> = (props) => {
                 useNativeDriver
                 color={colors.colorPrimary} />}
             <SwipeListView
-                refreshControl={searchedEvents ? undefined : <RefreshControl
+                refreshControl={searchedEvents?.length ? undefined : <RefreshControl
                     refreshing={false}
                     onRefresh={() => {
                         paginationState.current = INITIAL_PAGINATION_STATE
@@ -276,7 +286,7 @@ const EventList: FC<any> = (props) => {
                     }}
                 />}
                 data={searchedEvents && searchHomeText ? searchedEvents : allEvents}
-                contentContainerStyle={{ flex: (searchedEvents ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
+                contentContainerStyle={{ flex: (searchedEvents && searchHomeText ? searchedEvents : allEvents)?.length ? undefined : 1, paddingBottom: bottom + scaler(80) }}
                 renderItem={_renderItem}
                 renderHiddenItem={_renderHiddenItem}
                 leftOpenValue={scaler(80)}
