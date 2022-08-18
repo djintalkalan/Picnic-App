@@ -502,8 +502,15 @@ export const _checkUsername = async (body: any) => {
 
 export const _getMerchantInfo = async () => {
     console.log("---------- _getMerchantInfo Api Call ---------------")
-    return fetchApiData('event/get-merchant-info')
+    return fetchApiData('event/get-merchant-info-new')
 }
+
+export const _updatePaypalInfo = async (body: any) => {
+    console.log("---------- _updatePaypalInfo Api Call ---------------")
+    return fetchApiData('user/update-paypal-details', 'POST', body)
+}
+
+
 
 export const _setChatBackground = async (body: any) => {
     console.log("---------- _setChatBackground Api Call ---------------")
