@@ -155,7 +155,7 @@ const BookEvent: FC = (props: any) => {
             //@ts-ignore
             message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected] + '?',
             onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + ' (' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice) + ")",
+            buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + " " + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
             buttonStyle: { width: '100%' }
         })
     })(), [event, noOfTickets, payMethodSelected, isUserDonating])
@@ -348,9 +348,7 @@ const BookEvent: FC = (props: any) => {
                                             keyboardType={'decimal-pad'}
                                             iconSize={scaler(18)}
                                             icon={Images.ic_ticket}
-                                            required={
-                                                Language.donation_price_required
-                                            }
+                                            required={Language.donation_price_required}
                                             control={control}
                                             errors={errors}
                                         />
