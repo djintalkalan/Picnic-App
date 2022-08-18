@@ -9,9 +9,8 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat, intervalToDuration } from 'date-fns';
-import { format as TZFormat, utcToZonedTime } from 'date-fns-tz';
+import { format as TZFormat, getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
-import { formatInTimeZone, getTimezoneOffset } from 'date-fns-tz';
 import { decode } from 'html-entities';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
@@ -846,21 +845,27 @@ export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
     }
 }
 
-export const getZonedDate = (ISODate: Date, timezone: string) => {
+export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
     if (!ISODate) {
         ISODate = new Date()
     }
-    const dateStr = formatInTimeZone(ISODate, timezone, "yyyy-MM-dd")
-    const timeStr = formatInTimeZone(ISODate, timezone, "HH:mm")
-    return new Date(dateStr + " " + timeStr);
+    if (!(ISODate instanceof Date)) {
+        ISODate = new Date(ISODate)
+    }
+
+    return utcToZonedTime(ISODate?.toISOString(), timezone);
 }
 
-export const getFromZonedDate = (zonedDate: Date, timezoneOffset: number) => {
+export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) => {
+    const timezoneOffset = getTimezoneOffset(timezone)
+
     if (!zonedDate) {
         zonedDate = new Date()
     }
+    if (!(zonedDate instanceof Date)) {
+        zonedDate = new Date(zonedDate)
+    }
 
-    // const deviceTimeZoneOffset = getTimezoneOffset(RNLocalize?.getTimeZone())
     const mills = Math.abs(timezoneOffset)
 
     const symbol = timezoneOffset?.toString()?.includes("-") ? "-" : "+";
@@ -868,19 +873,16 @@ export const getFromZonedDate = (zonedDate: Date, timezoneOffset: number) => {
     const offSet = `${symbol}${((d?.hours || 0 <= 9) ? "0" : "") + d.hours || "00"}:${((d?.minutes || 0) <= 9 ? "0" : "") + d.minutes || "00"}`
     // console.log("hours", offSet);
     // console.log("zonedDate", zonedDate);
+    // console.log("getFromZonedDate", new Date(dateFormat(zonedDate, "YYYY-MM-DD HH:mm:ss") + ".000" + offSet));
+    // console.log("zonedTimeToUtc", zonedTimeToUtc(zonedDate, timezone));
 
+    return zonedTimeToUtc(zonedDate, timezone)
     return new Date(dateFormat(zonedDate, "YYYY-MM-DD HH:mm:ss") + ".000" + offSet)
 
 }
 
 
 export const getLocalDate = (iso: string | Date, timezone: string, format: string) => {
-    const timezoneOffset = getTimezoneOffset(timezone)
-    const mills = Math.abs(timezoneOffset)
-
-    const symbol = timezoneOffset?.toString()?.includes("-") ? "-" : "+";
-    const d = intervalToDuration({ start: 0, end: mills })
-    const offSet = `${symbol}${((d?.hours || 0 <= 9) ? "0" : "") + d.hours || "00"}:${((d?.minutes || 0) <= 9 ? "0" : "") + d.minutes || "00"}`
     const zoned = utcToZonedTime(new Date(iso), timezone)
     return TZFormat(zoned, getFormat(format), {
         timeZone: timezone,

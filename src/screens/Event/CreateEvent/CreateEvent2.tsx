@@ -66,10 +66,10 @@ const CreateEvent2: FC<any> = props => {
   const setEventValues = useCallback(() => {
     if (event?.is_copied_event != '1') {
       eventDateTime.current = {
-        eventDate: getZonedDate(new Date(event?.event_start_date_time || Date?.now()), event?.timezone),
-        startTime: getZonedDate(event?.event_date ? new Date(event?.event_start_date_time || Date?.now()) : defaultTime, event?.timezone),
-        endDate: getZonedDate(new Date(event?.event_end_date_time), event?.timezone),
-        endTime: getZonedDate(event?.event_end_time ? new Date(event?.event_end_date_time) : defaultTime, event?.timezone),
+        eventDate: getZonedDate(event?.timezone, event?.event_start_date_time),
+        startTime: getZonedDate(event?.timezone, event?.event_date ? event?.event_start_date_time : defaultTime),
+        endDate: getZonedDate(event?.timezone, event?.event_end_date_time),
+        endTime: getZonedDate(event?.timezone, event?.event_end_time ? event?.event_end_date_time : defaultTime,),
         selectedType: 'eventDate',
       }
       setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
@@ -133,7 +133,7 @@ const CreateEvent2: FC<any> = props => {
 
   const getMinDate = useCallback(() => {
     const { startTime, endTime, eventDate, selectedType, endDate } = eventDateTime.current
-    const currentDate = getZonedDate(new Date, event?.timezone);
+    const currentDate = getZonedDate(event?.timezone);
     switch (selectedType) {
       case "eventDate":
       case "endDate":
@@ -151,9 +151,9 @@ const CreateEvent2: FC<any> = props => {
     const { startTime: startTimeDate, endTime: endTimeDate, endDate: endEventDate, eventDate } = eventDateTime.current
 
 
-    const currentDate = getZonedDate(new Date(), event?.timeZone)
+    const currentDate = getZonedDate(event?.timezone);
 
-    console.log("currentDate", currentDate);
+    // console.log("currentDateNew", new Date());
     // return
     if (startTimeDate <= currentDate) {
       _showErrorMessage(Language.start_time_invalid)
@@ -176,18 +176,18 @@ const CreateEvent2: FC<any> = props => {
       event_end_time: data.endTime ? dateFormat(endTimeDate, "HH:mm:ss") : "",
       details: data.additionalInfo
     }
-    payload.event_start_date_time = getFromZonedDate(stringToDate(payload?.event_date + " " + payload?.event_start_time), event?.timezoneOffset)
+    payload.event_start_date_time = getFromZonedDate(event?.timezone, stringToDate(payload?.event_date + " " + payload?.event_start_time))
 
     payload.event_end_date_time = isMultidayEvent ?
-      getFromZonedDate(stringToDate(payload?.event_end_date + " " + payload?.event_end_time), event?.timezoneOffset) :
-      getFromZonedDate(stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59:00")), event?.timezoneOffset)
+      getFromZonedDate(event?.timezone, stringToDate(payload?.event_end_date + " " + payload?.event_end_time)) :
+      getFromZonedDate(event?.timezone, stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59:00")))
     console.log("payload.event_end_date_time", payload.event_end_date_time);
 
     if (event?.event_start_date_time && !(event.event_start_date_time instanceof Date)) {
-      event.event_start_date_time = getFromZonedDate(getZonedDate(new Date(event?.event_start_date_time || Date?.now()), event?.timezone), event?.timezoneOffset)
+      event.event_start_date_time = getFromZonedDate(event?.timezone, getZonedDate(event?.timezone, event?.event_start_date_time))
     }
     if (event?.event_end_date_time && !(event.event_end_date_time instanceof Date)) {
-      event.event_end_date_time = getFromZonedDate(getZonedDate(new Date(event?.event_end_date_time || Date?.now()), event?.timezone), event?.timezoneOffset)
+      event.event_end_date_time = getFromZonedDate(event?.timezone, getZonedDate(event?.timezone, event?.event_end_date_time))
     }
     if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
       if (event?.event_start_date_time?.toString() != payload.event_start_date_time?.toString() ||

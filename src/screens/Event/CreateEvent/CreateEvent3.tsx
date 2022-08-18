@@ -68,7 +68,7 @@ const getCutoffDateTime = (event: ICreateEventReducer) => {
     console.log("event?.sales_ends_on", event?.sales_ends_on);
 
     if (event?.sales_ends_on)
-      return getZonedDate(new Date(event?.sales_ends_on), event?.timezone)
+      return getZonedDate(event?.timezone, event?.sales_ends_on)
 
     const startDate = stringToDate(event?.event_date + " " + event?.event_start_time)
     const endDate = event?.is_multi_day_event == 1 ?
@@ -269,7 +269,7 @@ const CreateEvent3: FC<any> = props => {
       payload.capacity = data.capacity
 
 
-      payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(data?.cutoffTime, event?.timezoneOffset)?.toISOString() : ''
+      payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
       console.log(payload.sales_ends_on);
 
       if (isDonationAccepted) {
@@ -283,7 +283,7 @@ const CreateEvent3: FC<any> = props => {
       payload.event_currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => {
-          const sales_ends_on = _.cutoffTime ? getFromZonedDate(_?.cutoffTime, event?.timezoneOffset)?.toISOString() : ''
+          const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.timezone, _?.cutoffTime)?.toISOString() : ''
 
           return ({
             _id: _?.plan_id || undefined,
@@ -310,7 +310,7 @@ const CreateEvent3: FC<any> = props => {
         payload.total_free_tickets = data.noOfFreeTickets || 0
         payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
-        payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(data?.cutoffTime, event?.timezoneOffset)?.toISOString() : ''
+        payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
 
       }
     }
