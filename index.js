@@ -9,11 +9,11 @@ import '@formatjs/intl-locale/polyfill';
 
 import '@formatjs/intl-pluralrules/polyfill';
 import '@formatjs/intl-pluralrules/locale-data/en';
-import '@formatjs/intl-pluralrules/locale-data/es';
 
 import '@formatjs/intl-numberformat/polyfill';
 import '@formatjs/intl-numberformat/locale-data/en'
-import '@formatjs/intl-numberformat/locale-data/es'
+import '@formatjs/intl-numberformat/locale-data/en-GB'
+import '@formatjs/intl-numberformat/locale-data/de'
 
 
 import notifee, { EventType } from "@notifee/react-native";

@@ -558,7 +558,23 @@ export const formatAmount = (currency: string, amount: string | number) => {
         // price = currencyString.replace(search, price)
 
         // return price
-        return parseFloat(amount?.toString()).toLocaleString(activeLanguage, {
+
+        const getLocale = (currency: string) => {
+            switch (currency?.toUpperCase()) {
+                case "GBP":
+                    return 'en-GB'
+                case "EUR":
+                    return 'de'
+                default:
+                    return 'en-US'
+            }
+        }
+
+        // return Intl.NumberFormat(getLocale(currency), {
+        //     currency: currency?.toUpperCase(),
+        //     style: 'currency',
+        // }).format(parseFloat(amount?.toString()))
+        return parseFloat(amount?.toString()).toLocaleString(getLocale(currency), {
             currency: currency?.toUpperCase(),
             style: 'currency',
         })
