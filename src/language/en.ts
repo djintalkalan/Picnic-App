@@ -351,7 +351,7 @@ export const en = {
   start_time: "Start time",
   end_time: "End time",
   end_date_required: "End date is required",
-  end_date_greater_than_start_date: "End date should be greater than start date",
+  end_date_greater_than_start_date: "End date should be greater than start date in selected timezone",
   accept_donation: "Accept donation",
   donation_description: "Suggested donation and any additional instructions",
   add_ticket: "Add ticket",
