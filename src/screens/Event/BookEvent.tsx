@@ -90,16 +90,26 @@ const BookEvent: FC = (props: any) => {
 
     const confirmReservation = useCallback((data) => {
 
+        const getPaymentMethod = () => {
+            if (event?.is_free_event) {
+                if (event?.is_donation_enabled && isUserDonating) {
+                    return payMethodSelected == 'credit' ? 'paypal' : payMethodSelected
+                }
+                return 'free'
+            }
+            return payMethodSelected == 'credit' ? 'paypal' : payMethodSelected
+        }
+
         let payload = {
             resource_id: event?._id,
             no_of_tickets: noOfTickets?.toString(),
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
-            donation_amount: event.is_donation_enabled && payMethodSelected != 'cash' ? data.donationAmount : '0',
+            donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'credit') ? data.donationAmount : '0',
             is_donation: event?.is_free_event && event?.is_donation_enabled && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
-            payment_method: event?.is_free_event && !isUserDonating ? "free" : payMethodSelected != 'cash' ? 'paypal' : 'cash', // free, cash, paypal
+            payment_method: getPaymentMethod(),
             paid_via_email: "", //send when payment_method is paypal
             paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
         }
