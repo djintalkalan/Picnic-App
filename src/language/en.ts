@@ -394,4 +394,8 @@ export const en = {
   read_more: "Read more",
   show_less: "Show less",
   end_time_required: 'End time is required',
+  help_and_support: "Help and Support",
+  additional_photos: "Additional Photos and Videos",
+  single_ticket: 'Single ticket',
+  multiple_ticket: 'Multiple ticket',
 }
