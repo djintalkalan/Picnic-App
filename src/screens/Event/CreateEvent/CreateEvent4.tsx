@@ -313,15 +313,19 @@ const CreateEvent3: FC<any> = props => {
 
 
                                 {usePaypalBusinessAccount ? <>
-                                    <View style={{ flexDirection: 'row', marginTop: scaler(15), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1 }}>
+                                    <View style={{ flexDirection: 'row', marginTop: scaler(15), flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
                                             {Language.paypal_details}
                                         </Text>
-                                        <MaterialCommunityIcons
-                                            name='information'
-                                            color={colors.colorPrimary}
-                                            size={scaler(25)}
-                                            onPress={() => setInfoVisible(true)} />
+                                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setInfoVisible(true)}>
+                                            <Text style={{ fontSize: scaler(12), color: colors.colorPrimary, marginEnd: scaler(4) }} >{Language.see_tutorial}</Text>
+                                            <MaterialCommunityIcons
+                                                name='information'
+                                                color={colors.colorPrimary}
+                                                size={scaler(25)}
+                                            />
+                                        </TouchableOpacity>
+
                                     </View>
 
                                     <TextInput

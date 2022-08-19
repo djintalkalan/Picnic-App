@@ -395,5 +395,6 @@ export const es = {
     show_less: "",
     end_time_required: "",
     paypal_detail: "",
+    see_tutorial: "",
 
 }

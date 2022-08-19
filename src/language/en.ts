@@ -395,5 +395,6 @@ export const en = {
   show_less: "Show less",
   end_time_required: 'End time is required',
   paypal_detail: "Paypal Details",
+  see_tutorial: "Click to see tutorial",
 
 }
