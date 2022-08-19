@@ -209,13 +209,8 @@ const CreateEvent2: FC<any> = props => {
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
-          <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{"Selected Timezone"}</Text>
-          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{new Date(Date.now())
-            .toLocaleTimeString("en-US", {
-              timeZone: event?.timezone,
-              timeZoneName: "long"
-            })
-            .split(" ")[2]} ({formatInTimeZone(new Date(), event?.timezone, 'zzz')})</Text>
+          <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{Language.selected_timezone}</Text>
+          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{formatInTimeZone(new Date(), event?.timezone, 'zzzz')} ({formatInTimeZone(new Date(), event?.timezone, 'zzz')})</Text>
 
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
