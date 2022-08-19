@@ -54,21 +54,27 @@ const CreateEvent3: FC<any> = props => {
 
 
     useEffect(() => {
-        if (isPayByPaypal && !event?.payment_api_username) {
+        if (isPayByPaypal) {
             try {
                 _getMerchantInfo().then(
                     res => {
                         if (res?.status == 200) {
-
                             const token = res?.data?.token
                             const userData = Database.getStoredValue("userData");
                             const bytes = CryptoJS.AES.decrypt(token, userData?._id);
                             const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-                            setValue('apiPassword', decryptedData?.payment_api_password)
-                            setValue('apiSignature', decryptedData?.payment_api_signature)
-                            setValue('apiUserName', decryptedData?.payment_api_username)
-                            setValue('paypalEmail', decryptedData?.payment_email)
+                            if (!event?.payment_api_password) {
+                                setValue('apiPassword', decryptedData?.payment_api_password)
+                            }
+                            if (!event?.payment_api_signature) {
+                                setValue('apiSignature', decryptedData?.payment_api_signature)
+                            }
+                            if (!event?.payment_api_username) {
+                                setValue('apiUserName', decryptedData?.payment_api_username)
+                            }
+                            if (!event?.payment_email) {
+                                setValue('paypalEmail', decryptedData?.payment_email)
+                            }
                             console.log("data", decryptedData);
                         }
                     }
@@ -138,10 +144,10 @@ const CreateEvent3: FC<any> = props => {
         const payload: any = {
             is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
-            payment_email: data?.paypalEmail?.trim() ?? '',
-            payment_api_username: usePaypalBusinessAccount ? data?.apiUserName?.trim() || '' : '',
-            payment_api_password: usePaypalBusinessAccount ? data?.apiPassword?.trim() || '' : '',
-            payment_api_signature: usePaypalBusinessAccount ? data?.apiSignature?.trim() || '' : '',
+            payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
+            payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
+            payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
+            payment_api_signature: usePaypalBusinessAccount && data?.apiSignature?.trim() || '',
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
@@ -223,6 +229,7 @@ const CreateEvent3: FC<any> = props => {
                             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_paypal : Language.pay_by_paypal}</Text>
                             <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                         </TouchableOpacity>
+                        <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
                     </View>
                     <View
                         style={{
@@ -233,7 +240,7 @@ const CreateEvent3: FC<any> = props => {
                         {event.is_donation_enabled != 1 ?
                             <><Text>{Language.tax_rate} (%)</Text>
                                 <TextInput
-                                    containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+                                    containerStyle={{ flex: 1, marginEnd: scaler(4), paddingBottom: scaler(10) }}
                                     placeholder={Language.enter_the_tax_rate}
                                     style={{ paddingLeft: scaler(20) }}
                                     borderColor={colors.colorTextInputBackground}
@@ -269,7 +276,7 @@ const CreateEvent3: FC<any> = props => {
                                     control={control}
                                     errors={errors} />
                                 {event.ticket_type == 'single' ?
-                                    <><Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
+                                    <><Text style={{ marginBottom: scaler(10) }}>{Language.tax_amount}</Text>
                                         <TextInput
                                             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                             placeholder={'Tax Price'}
@@ -285,30 +292,38 @@ const CreateEvent3: FC<any> = props => {
                             : undefined}
 
                         {isPayByPaypal ?
-                            <View style={{ marginTop: scaler(15) }}>
-                                <TextInput
-                                    containerStyle={{ flex: 1, marginEnd: scaler(4), marginTop: -scaler(8), marginBottom: scaler(10) }}
+                            <View style={{}}>
+                                {!usePaypalBusinessAccount && <TextInput
+                                    containerStyle={{ paddingTop: 0, marginTop: 0, flex: 1, marginEnd: scaler(4), marginBottom: scaler(10) }}
                                     placeholder={Language.paypal_id}
                                     borderColor={colors.colorTextInputBackground}
                                     backgroundColor={colors.colorTextInputBackground}
                                     name={'paypalEmail'}
                                     required={Language.paypal_id_required}
                                     control={control}
-                                    errors={errors} />
-                                <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                    errors={errors} />}
+                                <View style={{ marginTop: scaler(5), flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 
                                     <Switch active={usePaypalBusinessAccount} onChange={() => setPaypalBusinessAccount(!usePaypalBusinessAccount)} />
 
                                     <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1, marginHorizontal: scaler(10) }}>
                                         Use PayPal business account
                                     </Text>
-                                    <MaterialCommunityIcons
-                                        name='information'
-                                        color={colors.colorPrimary}
-                                        size={scaler(25)}
-                                        onPress={() => setInfoVisible(true)} />
                                 </View>
+
+
                                 {usePaypalBusinessAccount ? <>
+                                    <View style={{ flexDirection: 'row', marginTop: scaler(15), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1 }}>
+                                            {Language.paypal_details}
+                                        </Text>
+                                        <MaterialCommunityIcons
+                                            name='information'
+                                            color={colors.colorPrimary}
+                                            size={scaler(25)}
+                                            onPress={() => setInfoVisible(true)} />
+                                    </View>
+
                                     <TextInput
                                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                         placeholder={Language.api_username}
