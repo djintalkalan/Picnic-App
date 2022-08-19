@@ -350,7 +350,7 @@ const CreateEvent1: FC<any> = props => {
               errors={errors}
             />
             <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), flex: 1 }}>Additional Photos and Videos </Text>
+              <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), flex: 1 }}>{Language.additional_photos} </Text>
               <Text style={{ fontSize: scaler(14), fontWeight: '500', marginVertical: scaler(15), color: colors.colorPlaceholder }}>{'(' + multiImageArray?.length + '/10)'} </Text>
             </View>
             <View style={{ flexDirection: 'row', flex: 1, flexWrap: 'wrap', marginHorizontal: -scaler(2.5) }}>

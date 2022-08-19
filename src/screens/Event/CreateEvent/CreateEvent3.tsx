@@ -60,7 +60,7 @@ const emptyTicketType: TicketType = {
   plan_id: ""
 }
 const DropDownData = ['USD', 'EUR', 'GBP'];
-const TicketTypeData = [{ text: 'Single ticket', value: 'single' }, { text: 'Multiple tickets', value: 'multiple' }]
+const TicketTypeData = [{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {

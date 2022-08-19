@@ -202,7 +202,7 @@ const Settings: FC<any> = (props) => {
                             IntercomService.openMessenger();
                         }}
                         image={helpImageSource}
-                        title={"Help and Support"}
+                        title={Language.help_and_support}
                     />
 
                     <View style={{}} >
