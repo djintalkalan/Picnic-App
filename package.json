@@ -48,7 +48,7 @@
     "clean-ios": "xcodebuild clean -workspace ios/Picnic.xcworkspace -scheme Picnic && xcodebuild clean -project ios/Picnic.xcodeproj -scheme Picnic && rm -rf ios/build && rm -rf ios/output",
     "generate-archive": "xcodebuild -sdk iphoneos -workspace ios/Picnic.xcworkspace -scheme Picnic -configuration Release -archivePath ios/build/Picnic.xcarchive archive",
     "generate-ipa": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptions.plist -exportPath ios/output -allowProvisioningUpdates && yarn open-transporter",
-    "generate-ipa-diawi": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptionsDiawi.plist -exportPath ios/output/diawi -allowProvisioningUpdates && open-ios-folder"
+    "generate-ipa-diawi": "xcodebuild -exportArchive -archivePath ios/build/Picnic.xcarchive -exportOptionsPlist ios/Picnic/exportOptionsDiawi.plist -exportPath ios/output/diawi -allowProvisioningUpdates && yarn open-ios-folder"
   },
   "dependencies": {
     "@aws-sdk/client-elastic-transcoder": "^3.100.0",
