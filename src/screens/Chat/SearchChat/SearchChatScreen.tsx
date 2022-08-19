@@ -94,7 +94,7 @@ const SearchChatScreen: FC<any> = (props) => {
         InteractionManager.runAfterInteractions(() => {
             setTimeout(() => {
                 inputRef?.current?.focus()
-            }, 500);
+            }, 1000);
         })
     }, [])
 
