@@ -398,4 +398,6 @@ export const es = {
     additional_photos: "Fotos y Videos Adicionales",
     single_ticket: 'Vender Tickets Individualmente',
     multiple_ticket: 'Vender Múltiples Ticket',
+    selected_timezone: "",
+
 }

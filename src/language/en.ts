@@ -398,4 +398,5 @@ export const en = {
   additional_photos: "Additional Photos and Videos",
   single_ticket: 'Single ticket',
   multiple_ticket: 'Multiple ticket',
+  selected_timezone: "Selected Timezone",
 }
