@@ -334,7 +334,8 @@ const CreateEvent3: FC<any> = props => {
           _hidePopUpAlert()
         },
         cancelButtonText: Language.no_thanks_create_my_event,
-        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
+        // onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
+        onPressCancel: () => { next(payload) }
       })
     } else next(payload)
 
