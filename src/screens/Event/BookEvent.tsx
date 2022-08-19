@@ -97,7 +97,7 @@ const BookEvent: FC = (props: any) => {
                 }
                 return 'free'
             }
-            return payMethodSelected == 'credit' ? 'paypal' : payMethodSelected
+            return getTotalPayment()?.paidTicketsPrice > 0 ? (payMethodSelected == 'credit' ? 'paypal' : payMethodSelected) : 'free'
         }
 
         let payload = {
