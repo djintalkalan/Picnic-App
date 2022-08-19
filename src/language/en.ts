@@ -408,5 +408,4 @@ export const en = {
   single_ticket: 'Single ticket',
   multiple_ticket: 'Multiple ticket',
   see_tutorial: "Click to see tutorial",
-
 }

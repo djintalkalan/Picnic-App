@@ -543,6 +543,7 @@ export const formatAmountWithSymbol = (currency: string, amount: string) => {
 
 export const formatAmount = (currency: string, amount: string | number) => {
     try {
+        if (!currency) currency = 'usd';
         const activeLanguage = Language.getLanguage()
         // const currencyString = parseFloat("0").toLocaleString(activeLanguage, {
         //     currency: currency?.toUpperCase(),

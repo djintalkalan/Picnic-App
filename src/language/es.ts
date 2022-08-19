@@ -408,5 +408,4 @@ export const es = {
     single_ticket: 'Vender Tickets Individualmente',
     multiple_ticket: 'Vender Múltiples Ticket',
     see_tutorial: "",
-
 }
