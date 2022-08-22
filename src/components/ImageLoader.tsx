@@ -113,15 +113,18 @@ const ImageLoader = (props: IImageLoader) => {
                         color={loadingStyle ? loadingStyle.color : 'gray'}
                     /> : null}
 
-                    {(loaded && placeholderSource && (!loading && error)) || !source ?
-                        <Image
-                            //@ts-ignore
-                            style={placeholderStyle ?? styles?.mainStyle}
-                            source={placeholderSource ?? null}
-                        /> : null}
+
                 </View> : null}
 
             </FastImage>
+
+            {(loaded && placeholderSource && (!loading && error)) || !source ?
+                <Image
+                    //@ts-ignore
+                    style={[{ position: 'absolute', zIndex: -10 }, placeholderStyle ?? styles?.mainStyle]}
+                    source={placeholderSource ?? null}
+                />
+                : null}
         </TouchableOpacity>
     );
 }
