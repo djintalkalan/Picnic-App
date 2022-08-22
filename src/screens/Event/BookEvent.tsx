@@ -272,7 +272,7 @@ const BookEvent: FC = (props: any) => {
                                             type={_}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username && _ != 'cash'}
+                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash'}
                                             isDonation={event.is_donation_enabled} />
                                         {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                                     </Fragment>
@@ -285,7 +285,7 @@ const BookEvent: FC = (props: any) => {
                                             type={"credit"}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username}
+                                            disabled={!event?.payment_api_username && !event?.payment_email}
                                             isDonation={event.is_donation_enabled} />
                                     </Fragment>
                                     : undefined}</> : undefined}
@@ -318,7 +318,7 @@ const BookEvent: FC = (props: any) => {
                                             type={_}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username && _ != 'cash'}
+                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash'}
                                             isDonation={event.is_donation_enabled}
                                         />
                                         {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
@@ -332,7 +332,7 @@ const BookEvent: FC = (props: any) => {
                                             type={"credit"}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username}
+                                            disabled={!event?.payment_api_username && !event?.payment_email}
                                             isDonation={event.is_donation_enabled} />
                                     </Fragment>
                                     : undefined}
