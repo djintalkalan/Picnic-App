@@ -18,7 +18,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
-import Language from 'src/language/Language';
+import Language, { useLanguage } from 'src/language/Language';
 import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
@@ -60,7 +60,6 @@ const emptyTicketType: TicketType = {
   plan_id: ""
 }
 const DropDownData = ['USD', 'EUR', 'GBP'];
-const TicketTypeData = [{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
@@ -102,6 +101,9 @@ const CreateEvent3: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const { current: event } = useRef(store.getState().createEventState)
   const [toggle, setToggle] = useState(true)
+  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }])
+    , [useLanguage()])
+
   const {
     control,
     setValue,
