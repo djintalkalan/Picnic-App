@@ -594,7 +594,7 @@ const EventDetail: FC<any> = (props) => {
                                     <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
                                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                                         <Text style={[{ flex: 1, }, styles.ticketInfo]}>
-                                            Total
+                                            {Language.total}
                                         </Text>
                                         <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
                                             {formatAmount(activeTicket?.currency, activeTicket?.total_paid_amount)}
@@ -609,7 +609,7 @@ const EventDetail: FC<any> = (props) => {
                                     </Text>
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                                         <Text style={[styles.ticketInfo, { flex: 1 }]}>
-                                            Donation
+                                            {Language?.donation}
                                         </Text>
                                         <Text style={styles.ticketInfo}>
                                             {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount)}
