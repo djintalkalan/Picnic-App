@@ -580,7 +580,7 @@ const EventDetail: FC<any> = (props) => {
                                     </Text>
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                                         <Text style={[styles.ticketInfo, { flex: 1 }]}>
-                                            Donation
+                                            {Language?.donation}
                                         </Text>
                                         <Text style={styles.ticketInfo}>
                                             {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount)}
