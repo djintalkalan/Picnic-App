@@ -419,4 +419,5 @@ export const en = {
   tickets: "tickets",
   tax: "Tax",
   donation: "Donation",
+  total: "Total",
 }

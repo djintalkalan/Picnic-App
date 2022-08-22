@@ -419,5 +419,6 @@ export const es = {
     tickets: "boletos",
     tax: "Impuesto",
     donation: "",
+    total: "",
 
 }
