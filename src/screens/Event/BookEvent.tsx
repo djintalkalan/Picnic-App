@@ -296,7 +296,7 @@ const BookEvent: FC = (props: any) => {
                                 <TouchableOpacity style={styles.eventView} onPress={() => setIsUserDonation(!isUserDonating)}>
                                     <CheckBox checked={isUserDonating} setChecked={setIsUserDonation} />
                                     <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), fontWeight: '500' }}>
-                                        {'Donate to ' + event.name}
+                                        {Language.include_a_donation}
                                     </Text>
                                 </TouchableOpacity>
 
