@@ -585,7 +585,7 @@ const EventDetail: FC<any> = (props) => {
                                     <View style={{ height: 1, marginStart: scaler(10), marginEnd: scaler(25), backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(8) }} />
                                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                                         <Text style={[{ flex: 1, }, styles.ticketInfo]}>
-                                            Total
+                                            {Language.total}
                                         </Text>
                                         <Text style={[{ marginLeft: scaler(10), }, styles.ticketInfo]}>
                                             {formatAmount(activeTicket?.currency, activeTicket?.total_paid_amount)}
