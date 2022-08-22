@@ -563,11 +563,11 @@ const EventDetail: FC<any> = (props) => {
                                         <View style={{ flex: 1, }}>
                                             {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 0 ?
                                                 <Text style={styles.ticketInfo}>
-                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0)} ticket{activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 1 ? 's' : ""}
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0)} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 1 ? 's' : "")]}
                                                 </Text> : null}
                                             {activeTicket?.no_of_free_tickets_used ?
                                                 <Text style={styles.ticketInfo}>
-                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_free_tickets_used} ticket{activeTicket?.no_of_free_tickets_used > 1 ? 's' : ""} <Image
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_free_tickets_used} {(Language as any)?.['ticket' + (activeTicket?.no_of_free_tickets_used > 1 ? 's' : "")]} <Image
                                                         style={{
                                                             width: scaler(18),
                                                             height: scaler(18),
