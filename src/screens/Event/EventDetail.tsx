@@ -440,9 +440,14 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                         <View>
                             <TouchableOpacity ref={priceButtonRef} disabled={!ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
-                                    {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
-                                </Text>
+                                <View style={{ alignItems: 'flex-end' }} >
+                                    <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                        {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
+                                    </Text>
+                                    {event?.is_free_event && event?.is_donation_enabled ?
+                                        <Text style={{ fontSize: scaler(10.5), fontWeight: '400', color: colors.colorGreyInactive }}>{Language.donation_accepted}</Text>
+                                        : null}
+                                </View>
                                 {(ticket_plans?.length > 0 && !event?.is_free_event) ?
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
@@ -551,11 +556,11 @@ const EventDetail: FC<any> = (props) => {
                                         <View style={{ flex: 1, }}>
                                             {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 0 ?
                                                 <Text style={styles.ticketInfo}>
-                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0)} ticket{activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 1 ? 's' : ""}
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0)} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 1 ? 's' : "")]}
                                                 </Text> : null}
                                             {activeTicket?.no_of_free_tickets_used ?
                                                 <Text style={styles.ticketInfo}>
-                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_free_tickets_used} ticket{activeTicket?.no_of_free_tickets_used > 1 ? 's' : ""} <Image
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_free_tickets_used} {(Language as any)?.['ticket' + (activeTicket?.no_of_free_tickets_used > 1 ? 's' : "")]} <Image
                                                         style={{
                                                             width: scaler(18),
                                                             height: scaler(18),
@@ -567,7 +572,7 @@ const EventDetail: FC<any> = (props) => {
                                                 </Text>
                                                 : null}
                                             <Text style={styles.ticketInfo}>
-                                                Tax ({activeTicket?.event_tax_rate}%)
+                                                {Language.tax} ({activeTicket?.event_tax_rate}%)
                                             </Text>
 
                                         </View>
@@ -600,7 +605,7 @@ const EventDetail: FC<any> = (props) => {
                                 <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
                                 <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
                                     <Text style={styles.ticketInfo}>
-                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} ticket{activeTicket?.no_of_tickets > 1 ? 's' : ""}
+                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets > 1 ? 's' : "")]}
                                     </Text>
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                                         <Text style={[styles.ticketInfo, { flex: 1 }]}>

@@ -368,7 +368,7 @@ const GroupDetail: FC<any> = (props) => {
                         <View style={{ alignItems: 'flex-end' }} >
                             <View style={styles.typeContainer} >
                                 <Image style={{ height: scaler(20), width: scaler(20) }} source={Images.ic_briefcase} />
-                                <Text style={styles.groupType}>{group?.category}</Text>
+                                <Text style={styles.groupType}>{(Language as any)?.[group?.category]}</Text>
                             </View>
                             {group?.radio_frequency ? <Text style={[styles.address, { textAlign: 'right', marginHorizontal: scaler(3) }]}>{Language.fm_freq} : {group?.radio_frequency}</Text> : null}
                         </View>
