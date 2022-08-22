@@ -418,4 +418,6 @@ export const es = {
     ticket: "boleto",
     tickets: "boletos",
     tax: "Impuesto",
+    donation: "",
+
 }
