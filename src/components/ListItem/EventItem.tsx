@@ -23,10 +23,11 @@ interface EventProps {
     date: string
     currency: string
     price?: string
+    is_donation_enabled?: boolean
     free_tickets?: number
 }
 
-const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, free_tickets = 0, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+const EventItemS: FC<EventProps> = ({ title, subtitle, is_donation_enabled, date, currency, price, free_tickets = 0, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
     const style = useMemo(() => StyleSheet.create({
         containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
         textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) }
@@ -52,8 +53,9 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, date, currency, price, fr
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }} >
                             <View>
 
-                                <Text style={{ color: colors.colorBlack, fontWeight: '600', fontSize: scaler(14) }} >{price ? currency : ""}{price}</Text>
+                                {price ? <Text style={{ color: colors.colorBlack, fontWeight: '600', fontSize: scaler(14) }} >{price ? currency : ""}{price}</Text> : null}
                                 <Text style={{ color: price ? colors.colorGreyInactive : colors.colorBlackText, marginTop: scaler(2), fontSize: scaler(price ? 11 : 13) }} >{price ? Language.per_person : Language.free_event}</Text>
+                                {is_donation_enabled ? <Text style={{ color: colors.colorGreyInactive, marginTop: scaler(2), fontSize: scaler(11) }} >{Language.donation_accepted}</Text> : null}
                             </View>
                             <View style={{ flexShrink: 1, alignItems: 'flex-end' }}>
                                 <View  >
