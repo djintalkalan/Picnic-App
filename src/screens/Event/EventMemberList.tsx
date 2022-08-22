@@ -6,6 +6,7 @@ import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import ImageLoader from 'custom-components/ImageLoader';
+import { capitalize } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -273,7 +274,7 @@ export const MemberListItem: FC<MemberListItemProps> = ({ isCheckedIn, noOfTicke
                         <Text style={{ fontSize: scaler(11.5), color: colors.colorWhite }} >{noOfTickets}</Text>
                     </View>
                     <View style={{ marginHorizontal: scaler(5), alignItems: 'center' }} >
-                        <Text style={{ color: '#797979', fontSize: scaler(13) }} >{paymentMethod}</Text>
+                        <Text style={{ color: '#797979', fontSize: scaler(13) }} >{paymentMethod == 'paypal' ? Language.paypal : capitalize((Language as any)?.[paymentMethod])}</Text>
                         <Text style={{ fontWeight: '600', color: '#272727', fontSize: scaler(14) }} >{formatAmount(currency, totalPaidAmount)}</Text>
                     </View>
                     {((paymentMethod == 'cash' && isCheckedIn) || (paymentMethod == 'paypal')) ?
