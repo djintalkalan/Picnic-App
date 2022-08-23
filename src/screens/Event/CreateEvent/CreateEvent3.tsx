@@ -195,7 +195,7 @@ const CreateEvent3: FC<any> = props => {
         cutoffDate: getCutoffDateTime(event),
         cutoffTime: getCutoffDateTime(event),
       },
-      ...ticketPlans
+      ...getValues('ticketPlans')
     ])
     // insert(0, {
     //   ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
