@@ -7,6 +7,7 @@ import { random } from "lodash";
 import { Platform } from "react-native";
 import { Progress } from 'react-native-aws3';
 import { call, put, takeLatest } from 'redux-saga/effects';
+import Language from "src/language/Language";
 import { dateFormat } from "utils";
 import { store } from "..";
 import ActionTypes, { action } from "../action-types";
@@ -140,7 +141,7 @@ const uploadProgress = async (progress: Progress, id: string, currentCount = 0, 
 
 
 const showNotification = async (id: string, p: IProgress, currentCount: number, length: number) => {
-    let title = "Uploading file"
+    let title = Language.getString('uploading_file')
     if (currentCount) {
         p.currentCount = currentCount
         p.length = length
