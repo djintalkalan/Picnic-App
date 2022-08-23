@@ -153,6 +153,14 @@ const Settings: FC<any> = (props) => {
                         arrowRight={true}
                     />
 
+                    <SettingButton
+                        onPress={() => { NavigationService.navigate('PaypalDetails') }}
+                        image={Images.ic_paypal_icon}
+                        title={Language.paypal_detail}
+                        arrowRight={true}
+
+                    />
+
 
                     <SettingButton
                         onPress={() => {
@@ -184,11 +192,6 @@ const Settings: FC<any> = (props) => {
                         title={Language.change_language}
                     />
 
-                    <SettingButton
-                        onPress={() => { NavigationService.navigate('PaypalDetails') }}
-                        image={Images.ic_paypal_icon}
-                        title={Language.paypal_detail}
-                    />
 
                     <SettingButton
                         onPress={() => { NavigationService.navigate('TwoFactorAuth') }}
