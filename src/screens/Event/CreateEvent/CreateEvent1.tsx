@@ -74,7 +74,7 @@ const CreateEvent1: FC<any> = props => {
     getValues,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange',
     defaultValues: __DEV__ ? {
@@ -83,19 +83,6 @@ const CreateEvent1: FC<any> = props => {
     } : {}
   });
 
-
-
-  const calculateButtonDisability = useCallback(() => {
-    if (
-      !getValues('eventName') ||
-      !getValues('location') ||
-      !getValues('selectGroup') ||
-      !selectedGroupRef.current ||
-      (errors && (errors.eventName || errors.location))
-    )
-      return true;
-    return false;
-  }, [errors]);
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
@@ -376,7 +363,7 @@ const CreateEvent1: FC<any> = props => {
           </View>
 
           <Button
-            disabled={calculateButtonDisability()}
+            disabled={!selectedGroupRef.current || !isValid}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={next}

@@ -1,4 +1,4 @@
-import { config, _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
+import { _authorizeMembership, _captureMembership, _getActiveMembership } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
@@ -90,32 +90,6 @@ const Subscription: FC = (props: any) => {
             purchaseErrorSubscription?.remove && purchaseErrorSubscription?.remove();
         }
     }, []);
-    const getData = async (purchase: InAppPurchases.SubscriptionPurchase) => {
-        const receipt = purchase?.transactionReceipt;
-        let expiryDateMs = null
-        let receiptData
-        let originalTransactionId
-        if (receipt) {
-            receiptData = await InAppPurchases.validateReceiptIos({
-                'receipt-data': receipt,
-                password: 'ff5e2205868f4032beb5ea586d73892e',
-                'exclude-old-transactions': true
-            }, __DEV__ || config.APP_TYPE != 'production')
-            if (receiptData) {
-                purchase.transactionReceipt = ""
-                receiptData.latest_receipt = ""
-                console.log("Purchase", purchase);
-                console.log("Receipt Data", receiptData);
-                const currentReceiptData: any = receiptData?.latest_receipt_info?.find((_: any) => _.transaction_id == purchase.transactionId || (parseInt(_?.purchase_date_ms?.toString() || "0") == parseInt(purchase.transactionDate?.toString())))
-                console.log("currentReceiptDataPurchase", currentReceiptData);
-                if (currentReceiptData?.expires_date_ms)
-                    currentReceiptData.expires_date_ms = parseInt(currentReceiptData?.expires_date_ms)
-                expiryDateMs = currentReceiptData?.expires_date_ms
-                originalTransactionId = currentReceiptData?.original_transaction_id
-            }
-        }
-        return { expiryDateMs, receipt, receiptData, originalTransactionId }
-    }
 
     const handlePurchase = useCallback(async (purchase: InAppPurchases.SubscriptionPurchase | null) => {
         if (!purchase || loadingRef.current) return
@@ -259,7 +233,7 @@ const Subscription: FC = (props: any) => {
                 if ((expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium))) {
                     console.log("Requesting purchase");
                     if (true) {
-                        requestSubscription(subscriptionIds[i], false)
+                        requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false })
                         // .then(handlePurchase, handleError).catch((r) => {
                         //     console.log("catch", r);
                         //     dispatch(setLoadingAction(false))

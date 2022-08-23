@@ -110,7 +110,7 @@ const CreateEvent3: FC<any> = props => {
     handleSubmit,
     getValues,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange', shouldFocusError: true, defaultValues: {
       ticketPlans: [{
@@ -700,7 +700,7 @@ const CreateEvent3: FC<any> = props => {
                                 name={`ticketPlans.${i}.ticketTitle`}
                                 required={Language.title_required}
                                 control={control}
-                                errors={errors.ticketPlans?.[i]}
+                                errors={(errors?.ticketPlans as any)?.[i]}
                               />
 
 
@@ -717,7 +717,7 @@ const CreateEvent3: FC<any> = props => {
                                     control={control}
                                     iconContainerStyle={{ end: scaler(4) }}
                                     onPress={() => { setMultiTicketCurrencyIndex(_ => (_ != -1 ? -1 : i)) }}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -750,7 +750,7 @@ const CreateEvent3: FC<any> = props => {
                                       Language.ticket_price_required
                                     }
                                     control={control}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                 </View>
                                 <FixedDropdown
@@ -803,7 +803,7 @@ const CreateEvent3: FC<any> = props => {
                                     }}
                                     keyboardType={'number-pad'}
                                     control={control}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                 }
 
@@ -824,7 +824,7 @@ const CreateEvent3: FC<any> = props => {
                                   }}
                                   keyboardType={'number-pad'}
                                   control={control}
-                                  errors={errors.ticketPlans?.[i]}
+                                  errors={(errors?.ticketPlans as any)?.[i]}
                                 />
 
                                 <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5) }} >{Language.cutoff_date_title}</Text>
@@ -848,7 +848,7 @@ const CreateEvent3: FC<any> = props => {
                                         cutoffTime: null
                                       })
                                     } : undefined}
-                                    errors={errors?.ticketPlans?.[i]} />
+                                    errors={(errors?.ticketPlans as any)?.[i]} />
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                     placeholder={Language.cutoff_time}
@@ -867,7 +867,7 @@ const CreateEvent3: FC<any> = props => {
                                       })
                                     } : undefined}
                                     control={control}
-                                    errors={errors?.ticketPlans?.[i]} />
+                                    errors={(errors?.ticketPlans as any)?.[i]} />
                                 </View>
 
                                 <TextInput
@@ -881,7 +881,7 @@ const CreateEvent3: FC<any> = props => {
                                   backgroundColor={colors.colorTextInputBackground}
                                   required={Language.description_required}
                                   control={control}
-                                  errors={errors.ticketPlans?.[i]}
+                                  errors={(errors?.ticketPlans as any)?.[i]}
                                 />
                               </View>
                             </View>

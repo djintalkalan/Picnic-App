@@ -82,12 +82,12 @@ const Settings: FC<any> = (props) => {
         return <View style={{ width: '100%' }} >
             <TouchableOpacity onPress={() => { setLanguage('en') }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'en' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
-                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }} >English</Text>
+                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }} >{Language.english}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => { setLanguage('es') }} style={{ alignItems: 'center', width: '100%', flexDirection: 'row', paddingVertical: scaler(10) }} >
                 <MaterialIcons name={selectedLanguage == 'es' ? 'check-circle' : 'radio-button-unchecked'} size={scaler(25)} color={colors.colorPrimary} />
-                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>Español</Text>
+                <Text style={{ marginLeft: scaler(10), fontSize: scaler(14), color: colors.colorBlackText }}>{Language.spanish}</Text>
             </TouchableOpacity>
         </View>
     }), [selectedLanguage])

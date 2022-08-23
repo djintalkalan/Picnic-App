@@ -5,6 +5,7 @@ import { Dimensions, InteractionManager, StyleSheet } from 'react-native'
 import { RNCamera } from 'react-native-camera'
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { useDispatch } from 'react-redux'
+import Language from 'src/language/Language'
 import { NavigationService, _showWarningMessage } from 'utils'
 import ScannerUi from './ScannerUi'
 const { height, width } = Dimensions.get('screen')
@@ -39,7 +40,7 @@ const Scanner: FC<any> = (props) => {
                 }
             }))
         } else {
-            _showWarningMessage("Invalid QR Code")
+            _showWarningMessage(Language.invalid_qr_code)
             setTimeout(() => {
                 scannerRef.current?.enable()
                 setQrScanning(true)

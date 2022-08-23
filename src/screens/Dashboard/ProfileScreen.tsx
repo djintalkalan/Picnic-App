@@ -326,12 +326,12 @@ const ProfileScreen: FC<any> = (props) => {
                 isVisible={isDatePickerVisible}
                 mode="date"
                 customConfirmButtonIOS={(props) => (
-                    <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorPrimary, textAlign: 'center', padding: scaler(10) }} >Confirm
+                    <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorPrimary, textAlign: 'center', padding: scaler(10) }} >{Language.confirm}
                     </Text>
                 )}
                 customCancelButtonIOS={(props) => (
                     <View style={{ padding: scaler(7), backgroundColor: 'white', borderRadius: scaler(10), marginBottom: scaler(10) }} >
-                        <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorBlack, textAlign: 'center', padding: scaler(5) }} >Cancel</Text>
+                        <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorBlack, textAlign: 'center', padding: scaler(5) }} >{Language.cancel}</Text>
                     </View>
                 )}
                 date={birthDate.current}
