@@ -71,16 +71,16 @@ const CreateEvent1: FC<any> = props => {
     control,
     getValues,
     setValue,
+    resetField,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange',
-    defaultValues: __DEV__ ? {
+    defaultValues: __DEV__ && !eventId ? {
       eventName: "Test Event",
       location: "Sahibzada Ajit Singh Nagar, Punjab, India"
     } : {}
   });
-
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
@@ -154,10 +154,19 @@ const CreateEvent1: FC<any> = props => {
 
     selectedGroupRef.current = event?.event_group
     setMultiImageArray(event.event_images || [])
+
+    // reset({
+    //   eventName: event?.name,
+    //   location: event?.address,
+    //   selectGroup: event?.event_group?.name,
+    //   aboutEvent: event?.short_description,
+    // })
+
     setValue('eventName', event?.name)
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
+    resetField('aboutEvent', { defaultValue: event?.short_description })
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
     setPinLocation(event?.is_direction == 1 ? true : false)
     if (event?.image) {
@@ -165,7 +174,6 @@ const CreateEvent1: FC<any> = props => {
     } else {
       setEventImage(null)
     }
-
   }, [])
 
   const next = useCallback(handleSubmit((data) => {
