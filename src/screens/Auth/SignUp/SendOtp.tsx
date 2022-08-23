@@ -3,7 +3,7 @@ import { colors, Images } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { EmailValidations, validateEmail } from 'custom-components/TextInput/rules';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Image, StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -23,7 +23,7 @@ const SendOtp: FC = () => {
         handleSubmit,
         getValues,
         setValue,
-        formState: { errors },
+        formState: { errors, isValid },
         setError,
     } = useForm<FormType>({
         defaultValues: __DEV__ ? {
@@ -55,15 +55,6 @@ const SendOtp: FC = () => {
             })(),
         [],
     );
-
-    const buttonDisability = useMemo(() => {
-        if (
-            !getValues('email') ||
-            (errors && errors.email)
-        )
-            return true;
-        return false;
-    }, [errors?.email?.message]);
 
     const onBlurEmail = useCallback(() => {
         if (validateEmail(getValues('email'))) {
@@ -118,7 +109,7 @@ const SendOtp: FC = () => {
                     />
 
                     <Button
-                        disabled={buttonDisability}
+                        disabled={!isValid}
                         containerStyle={{ marginTop: scaler(20) }}
                         title={Language.next}
                         onPress={onBlurEmail}

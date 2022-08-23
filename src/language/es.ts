@@ -398,4 +398,11 @@ export const es = {
     additional_photos: "Fotos y Videos Adicionales",
     single_ticket: 'Vender Tickets Individualmente',
     multiple_ticket: 'Vender Múltiples Ticket',
+    chat_services_down: "",
+    copied: "",
+    english: "English",
+    spanish: "Español",
+    current_password_required: "",
+    new_password_required: "",
+    invalid_qr_code: "",
 }

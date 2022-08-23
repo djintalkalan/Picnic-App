@@ -325,7 +325,7 @@ const ChatItem = (props: IChatItem) => {
         Clipboard?.setString(message_type == 'resource_direction' ? group?.address : message_type == 'file' || message_type == 'image' ? text?.trim() : message?.trim());
         // console.log("e", e, ((height - scaler(80)) / 3));
         //@ts-ignore
-        _showToast("Copied", 'SHORT', gravity);
+        _showToast(Language.getString('copied'), 'SHORT', gravity);
     }, [])
 
     const region = useMemo(() => {

@@ -13,6 +13,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
+import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
@@ -292,7 +293,7 @@ const PersonChat: FC<any> = (props) => {
                         onPressSend={_onPressSend}
                     />
                     {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >Chat services seems to be not connected, trying to reconnect you</Text>
+                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >{Language.chat_services_down}</Text>
                     </View> : null}
                 </View>
 

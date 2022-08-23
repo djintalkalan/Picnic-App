@@ -23,7 +23,7 @@ const Login: FC = () => {
     const [isTerms, setTerms] = useState(__DEV__);
     const { loadVideo } = useVideoPlayer()
 
-    const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<LoginFormType>({
+    const { control, handleSubmit, getValues, setValue, formState: { errors, isValid } } = useForm<LoginFormType>({
         defaultValues: __DEV__ ? Platform.OS == 'ios' ? {
             // email: "mukeshkaushal2008@gmail.com",
             // password: "Mukesh@123",
@@ -58,12 +58,6 @@ const Login: FC = () => {
         // loadVideo("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
         dispatch(doLogin(data))
     })(), []);
-
-    const calculateButtonDisability = useCallback(() => {
-        if (!isTerms || !getValues('email') || !getValues('password') || (errors && (errors.email || errors.password)))
-            return true
-        return false
-    }, [errors, isTerms])
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
@@ -152,7 +146,7 @@ const Login: FC = () => {
                         </Text>
                     </View>
 
-                    <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.login} onPress={onSubmit} />
+                    <Button disabled={!isTerms || !isValid} containerStyle={{ marginTop: scaler(20) }} title={Language.login} onPress={onSubmit} />
 
                     <Text style={styles.notAMember} >{Language.not_a_member}
                         <Text onPress={() => NavigationService.navigate("SendOtp")} style={[styles.notAMember, { color: colors.colorPrimary }]} > {Language.sign_up}</Text></Text>

@@ -36,7 +36,7 @@ const SignUp3: FC<any> = props => {
     getValues,
     setValue,
     setError,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     defaultValues: {
       // username: "deepaktesting1",
@@ -77,12 +77,6 @@ const SignUp3: FC<any> = props => {
   // }, [])
 
   // console.log("Database.DefaultCountry", Database.DefaultCountry)
-
-  const calculateButtonDisability = useCallback(() => {
-    if (!isTerms || (errors && errors.phone)) return true;
-    return false;
-  }, [errors, isTerms]);
-
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <Stepper isBackButton step={4} totalSteps={4} />
@@ -144,7 +138,7 @@ const SignUp3: FC<any> = props => {
           </View>
 
           <Button
-            disabled={calculateButtonDisability()}
+            disabled={!isTerms || !isValid}
             containerStyle={{ marginTop: scaler(25) }}
             title={Language.sign_up}
             onPress={onSubmit}

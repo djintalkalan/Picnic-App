@@ -398,4 +398,11 @@ export const en = {
   additional_photos: "Additional Photos and Videos",
   single_ticket: 'Single ticket',
   multiple_ticket: 'Multiple ticket',
+  chat_services_down: "Chat services seems to be not connected, trying to reconnect you",
+  copied: "Copied",
+  english: "English",
+  spanish: "Español",
+  current_password_required: "Current Password is required",
+  new_password_required: "New Password is required",
+  invalid_qr_code: "Invalid QR Code",
 }

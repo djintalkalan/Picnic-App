@@ -42,7 +42,7 @@ const CreateGroup: FC<any> = (props) => {
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
   const [pinLocation, setPinLocation] = useState(false);
-  const { control, handleSubmit, getValues, setValue, formState: { errors }, setError } = useForm<FormType>({
+  const { control, handleSubmit, getValues, setValue, formState: { errors, isValid }, setError } = useForm<FormType>({
     defaultValues: __DEV__ ? {
       name: "Test Group",
       purpose: "Personal",
@@ -128,13 +128,6 @@ const CreateGroup: FC<any> = (props) => {
       }
     }))
   }, [pinLocation])
-
-  const calculateButtonDisability = useCallback(() => {
-    if (!getValues('name') || !getValues('purpose') || !getValues('location')
-      || (errors && (errors.name || errors.purpose || errors.location)))
-      return true
-    return false
-  }, [errors])
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
@@ -351,7 +344,7 @@ const CreateGroup: FC<any> = (props) => {
             />
           </View>
 
-          <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }}
+          <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }}
             title={group ? Language.update_group : Language.create_group}
             onPress={onSubmit} />
 

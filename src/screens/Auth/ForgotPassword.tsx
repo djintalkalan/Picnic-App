@@ -18,7 +18,7 @@ type FormType = {
 
 const ForgotPassword: FC = () => {
 
-    const { control, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormType>({
+    const { control, handleSubmit, setValue, getValues, formState: { errors, isValid } } = useForm<FormType>({
         defaultValues: {
             // email: "deepak@shinewebservices.com",
         },
@@ -33,13 +33,6 @@ const ForgotPassword: FC = () => {
     })(), []);
 
     const usernameRef = useRef()
-
-    const calculateButtonDisability = useCallback(() => {
-        if (!getValues('email') || (errors && (errors.email)))
-            return true
-        return false
-    }, [errors])
-
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
@@ -72,7 +65,7 @@ const ForgotPassword: FC = () => {
                 />
 
                 <Button
-                    disabled={calculateButtonDisability()}
+                    disabled={!isValid}
                     containerStyle={{ marginTop: scaler(25) }}
                     title={Language.submit} onPress={onSubmit} />
 

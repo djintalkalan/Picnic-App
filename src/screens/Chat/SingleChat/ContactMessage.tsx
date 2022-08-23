@@ -160,7 +160,7 @@ export const ContactMessageReplied = memo((props: IContactMessageReplied) => {
     }} >
         <View style={{ padding: scaler(5), flexGrow: 1, paddingEnd: scaler(10), justifyContent: 'center' }} >
             <Text style={{ fontSize: scaler(12), color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
-            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >Contact</Text>
+            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >{Language.contact}</Text>
         </View>
         <View style={{ height: scaler(40), width: scaler(40), alignItems: 'center', justifyContent: 'center', borderRadius: scaler(30), marginRight: scaler(10), backgroundColor: colors.colorBlackText }} >
             <Text style={{ color: colors.colorWhite, fontSize: scaler(16), fontWeight: '500' }} >{contact.givenName?.[0]?.toUpperCase()}</Text>

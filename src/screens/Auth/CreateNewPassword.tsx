@@ -20,7 +20,7 @@ type FormType = {
 const CreateNewPassword: FC<any> = (props) => {
     const [isSecure1, setSecure1] = useState(true)
     const [isSecure2, setSecure2] = useState(true)
-    const { control, handleSubmit, getValues, formState: { errors, } } = useForm<FormType>({
+    const { control, handleSubmit, getValues, formState: { errors, isValid } } = useForm<FormType>({
         defaultValues: {
 
         },
@@ -38,12 +38,6 @@ const CreateNewPassword: FC<any> = (props) => {
 
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
-
-    const calculateButtonDisability = useCallback(() => {
-        if (!getValues('confirmPassword') || !getValues('password') || (errors && (errors.confirmPassword || errors.password)))
-            return true
-        return false
-    }, [errors])
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
@@ -90,7 +84,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     control={control}
                     errors={errors}
                 />
-                <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(25) }} textStyle={{ textTransform: 'capitalize' }} title={Language.reset_password} onPress={onSubmit} />
+                <Button disabled={!isValid} containerStyle={{ marginTop: scaler(25) }} textStyle={{ textTransform: 'capitalize' }} title={Language.reset_password} onPress={onSubmit} />
 
             </View>
         </SafeAreaViewWithStatusBar>
