@@ -3,7 +3,7 @@ import { createGroup, uploadFile } from 'app-store/actions'
 import { colors, Fonts, Images } from 'assets'
 import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Text, TextInput, useKeyboardService } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
-import { capitalize, round } from 'lodash'
+import { round } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Dimensions, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
@@ -30,7 +30,7 @@ type FormType = {
   radio_frequency: string
 }
 
-const DropDownData = ["Personal", "Professional", "Charitable"]
+const DropDownData = ["personal", "professional", "charitable"]
 const { height, width } = Dimensions.get('screen')
 
 const CreateGroup: FC<any> = (props) => {
@@ -45,7 +45,7 @@ const CreateGroup: FC<any> = (props) => {
   const { control, handleSubmit, getValues, setValue, formState: { errors, isValid }, setError } = useForm<FormType>({
     defaultValues: __DEV__ ? {
       name: "Test Group",
-      purpose: "Personal",
+      purpose: "personal",
       location: "Sahibzada Ajit Singh Nagar, Punjab, India"
     } : {},
     mode: 'onChange'
@@ -88,7 +88,7 @@ const CreateGroup: FC<any> = (props) => {
       setValue('location', group?.address)
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
-      setValue('purpose', capitalize(group?.category ?? ""))
+      setValue('purpose', group?.category ?? "")
       setPinLocation(group?.is_direction == '1' ? true : false)
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
@@ -181,9 +181,9 @@ const CreateGroup: FC<any> = (props) => {
               visible={true}
               relative
               containerStyle={{ width: w }}
-              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+              data={DropDownData.map((_, i) => ({ id: i, data: _, title: (Language as any)?.[_] }))}
               onSelect={(data) => {
-                setValue("purpose", data?.title, { shouldValidate: true })
+                setValue("purpose", data?.data, { shouldValidate: true })
                 _hideTouchAlert()
               }}
             />
@@ -241,6 +241,7 @@ const CreateGroup: FC<any> = (props) => {
               borderColor={colors.colorTextInputBackground}
               backgroundColor={colors.colorTextInputBackground}
               name={'purpose'}
+              format={(_: string) => ((Language as any)?.[_])}
               icon={Images.ic_arrow_dropdown}
               onPress={(e) => {
                 showPurposeDropDown(e)
