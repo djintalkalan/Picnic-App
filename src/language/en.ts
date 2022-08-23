@@ -427,8 +427,8 @@ export const en = {
   tax: 'Tax',
   donation: 'Donation',
   total: 'Total',
-  uploading_file: "Uploading file",
-  starting_upload: "Starting upload",
-  finalizing_upload: "Finalizing upload...",
-  cancel_upload: "Cancel upload",
+  uploading_file: 'Uploading file',
+  starting_upload: 'Starting upload...',
+  finalizing_upload: 'Finalizing upload...',
+  cancel_upload: 'Cancel upload',
 }

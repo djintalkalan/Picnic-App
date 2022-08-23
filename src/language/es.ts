@@ -427,7 +427,9 @@ export const es = {
     tax: 'Impuesto',
     donation: '',
     total: '',
-    uploading_file: "Cargando archivo",
-    cancel_upload: "Cancelar carga",
+    uploading_file: 'Cargando archivo',
+    starting_upload: 'Starting upload...',
+    finalizing_upload: 'Finalizing upload...',
+    cancel_upload: 'Cancelar carga',
 
 }
