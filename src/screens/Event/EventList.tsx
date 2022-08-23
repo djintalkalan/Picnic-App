@@ -178,8 +178,8 @@ const EventList: FC<any> = (props) => {
     // console.log(allEvents);
 
 
-    const _renderItem = useCallback(({ item }, rowMap) => {
-        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_free_event, event_start_date_time, event_currency, event_fees, } = item
+    const _renderItem = useCallback(({ item, index }, rowMap) => {
+        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_donation_enabled, is_free_event, event_start_date_time, event_currency, event_fees, } = item
         if (ticket_type == 'multiple') {
             var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = getFreeTicketsInMultiple(ticket_plans)
         } else {
@@ -219,6 +219,7 @@ const EventList: FC<any> = (props) => {
                 date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={""}
                 free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
+                is_donation_enabled={is_free_event && is_donation_enabled == 1}
                 price={!is_free_event ? formatAmount(event_currency, event_fees) : ""} />
         )
     }, [])
