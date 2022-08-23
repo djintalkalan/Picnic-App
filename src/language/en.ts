@@ -402,7 +402,6 @@ export const en = {
   reserve: 'Reserve',
   donate_and_book_event: 'Donate and reserve',
   are_you_sure_you_want_to_reserve_using: 'Are you sure you want to reserve using',
-  paypal_detail: 'PayPal Details',
   help_and_support: 'Help and Support',
   additional_photos: 'Additional Photos and Videos',
   single_ticket: 'Single ticket',
@@ -428,4 +427,8 @@ export const en = {
   tax: 'Tax',
   donation: 'Donation',
   total: 'Total',
+  uploading_file: 'Uploading file',
+  starting_upload: 'Starting upload...',
+  finalizing_upload: 'Finalizing upload...',
+  cancel_upload: 'Cancel upload',
 }
