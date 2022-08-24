@@ -386,9 +386,9 @@ export const es = {
     two_factor_auth: 'Autenticación de Dos Factores',
     add_location_to_chat: 'Compartir localización en pantalla del chat de tu grupo',
     click_to_see_tutorial: 'Click para ver tutorial',
-    pay_by_credit: '',
-    donate_by_credit: '',
-    cutoff_date_title: 'período de gracia para registrarse (opcional)',
+    pay_by_credit: 'Pagar con tarjeta de crédito',
+    donate_by_credit: 'Donación en tarjeta de crédito',
+    cutoff_date_title: 'Período de gracia para registrarse (opcional)',
     cutoff_date: '',
     cutoff_time: '',
     number_of_free_tickets: 'Número de entradas gratuitas (opcional)',
@@ -431,5 +431,6 @@ export const es = {
     starting_upload: 'Starting upload...',
     finalizing_upload: 'Finalizing upload...',
     cancel_upload: 'Cancelar carga',
+    invalid_minimum_ticket_price: '',
 
 }

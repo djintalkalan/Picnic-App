@@ -32,14 +32,6 @@ export const EventMemberList: FC<any> = (props) => {
     const getButtons = useCallback((item: any) => {
         console.log('items', item)
         const buttons: Array<IBottomMenuButton> = []
-        // buttons.push({
-        //     title: Language.block_from_chat, onPress: () => {
-        //         // dispatch(setActiveEvent(item))
-        //         // setTimeout(() => {
-        //         //     NavigationService.navigate('EditEvent', { id: _id })
-        //         // }, 0);
-        //     }
-        // })
         buttons.push({
             title: Language.report_member, onPress: () => {
                 _showPopUpAlert({
