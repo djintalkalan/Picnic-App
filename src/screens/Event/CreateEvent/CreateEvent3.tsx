@@ -208,7 +208,7 @@ const CreateEvent3: FC<any> = props => {
     //   cutoffDate: getCutoffDateTime(event),
     //   cutoffTime: getCutoffDateTime(event),
     // })
-  }, [ticketPlans, event])
+  }, [event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
     if (_?.plan_id) {
