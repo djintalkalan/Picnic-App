@@ -388,7 +388,7 @@ export const es = {
     click_to_see_tutorial: 'Click para ver tutorial',
     pay_by_credit: '',
     donate_by_credit: '',
-    cutoff_date_title: 'período de gracia para registrarse (opcional)',
+    cutoff_date_title: 'Período de gracia para registrarse (opcional)',
     cutoff_date: '',
     cutoff_time: '',
     number_of_free_tickets: 'Número de entradas gratuitas (opcional)',
