@@ -431,5 +431,6 @@ export const es = {
     starting_upload: 'Starting upload...',
     finalizing_upload: 'Finalizing upload...',
     cancel_upload: 'Cancelar carga',
+    invalid_minimum_ticket_price: '',
 
 }
