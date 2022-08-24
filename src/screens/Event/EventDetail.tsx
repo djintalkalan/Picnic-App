@@ -238,7 +238,6 @@ const EventDetail: FC<any> = (props) => {
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     _hideTouchAlert()
                                     NavigationService.navigate('CreateEvent1', { id: event?._id })
-                                    // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                         _hideTouchAlert()
