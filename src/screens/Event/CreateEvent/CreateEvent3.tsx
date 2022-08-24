@@ -197,14 +197,14 @@ const CreateEvent3: FC<any> = props => {
         cutoffDate: getCutoffDateTime(event),
         cutoffTime: getCutoffDateTime(event),
       },
-      ...ticketPlans
+      ...getValues('ticketPlans')
     ])
     // insert(0, {
     //   ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
     //   cutoffDate: getCutoffDateTime(event),
     //   cutoffTime: getCutoffDateTime(event),
     // })
-  }, [ticketPlans, event])
+  }, [event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
     if (_?.plan_id) {
@@ -318,7 +318,7 @@ const CreateEvent3: FC<any> = props => {
           _hidePopUpAlert()
         },
         cancelButtonText: Language.no_thanks_create_my_event,
-        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
+        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage(Language.you_need_subscription) }
       })
     } else next(payload)
 
