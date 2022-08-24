@@ -223,13 +223,21 @@ const EventDetail: FC<any> = (props) => {
                 },
                 transparent: true,
                 alertComponent: () => {
+                    if (event?.is_admin && eventDate < new Date()) {
+                        return <Card cardElevation={2} style={styles.fabActionContainer} >
+                            <InnerButton hideBorder visible={true} onPress={() => {
+                                _hideTouchAlert()
+                                onCopyEvent()
+                            }} title={Language.copy} />
+                        </Card>
+                    }
+
                     return (
                         <Card cardElevation={2} style={styles.fabActionContainer} >
                             {event?.is_admin ?
                                 <><InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                     _hideTouchAlert()
                                     NavigationService.navigate('CreateEvent1', { id: event?._id })
-                                    // NavigationService.navigate('EditEvent', { id: event?._id })
                                 }} title={Language.edit} />
                                     <InnerButton visible={event?.is_admin ? true : false} onPress={() => {
                                         _hideTouchAlert()
@@ -412,7 +420,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {eventDate >= new Date() && event.status == 1 ?
+                    {event.status == 1 && (eventDate >= new Date() || event?.is_admin) ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -539,24 +547,44 @@ const EventDetail: FC<any> = (props) => {
                         </View> : <View style={{ marginBottom: scaler(15) }} />
                     }
                     {/* <View style={{ height: 1, width: '100%', backgroundColor: colors.colorTextPlaceholder, marginVertical: scaler(5) }} /> */}
-                    {activeTicket?.amount ?
+                    {activeTicket?.amount || activeTicket?.payment_method == 'free' ?
                         !activeTicket?.is_donation ?
                             <><Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
                                 <View style={{ marginBottom: scaler(15) }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingStart: scaler(10), paddingEnd: scaler(30), }}>
                                         <View style={{ flex: 1, }}>
-                                            <Text style={styles.ticketInfo}>
-                                                <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets > 1 ? 's' : "")]}
-                                            </Text>
+                                            {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 0 ?
+                                                <Text style={styles.ticketInfo}>
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0)} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 1 ? 's' : "")]}
+                                                </Text> : null}
+                                            {activeTicket?.no_of_free_tickets_used ?
+                                                <Text style={styles.ticketInfo}>
+                                                    <Text style={[styles.ticketInfo, activeTicket?.ticket_name ? {} : { fontStyle: 'italic', fontWeight: '500' }]}>{activeTicket?.ticket_name || Language.standard}</Text>  x {activeTicket?.no_of_free_tickets_used} {(Language as any)?.['ticket' + (activeTicket?.no_of_free_tickets_used > 1 ? 's' : "")]} <Image
+                                                        style={{
+                                                            width: scaler(18),
+                                                            height: scaler(18),
+                                                            resizeMode: 'contain',
+                                                        }}
+                                                        source={Images.ic_free_ticket_icon}
+                                                    /> <Text
+                                                        style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500', color: colors.colorPrimary }]}>{Language.free}</Text>
+                                                </Text>
+                                                : null}
                                             <Text style={styles.ticketInfo}>
                                                 {Language.tax} ({activeTicket?.event_tax_rate}%)
                                             </Text>
 
                                         </View>
                                         <View style={{ alignItems: 'flex-end', marginLeft: scaler(10), }}>
-                                            <Text style={styles.ticketInfo}>
-                                                {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount)}
-                                            </Text>
+                                            {activeTicket?.no_of_tickets - (activeTicket?.no_of_free_tickets_used || 0) > 0 ?
+                                                <Text style={styles.ticketInfo}>
+                                                    {formatAmount(activeTicket?.currency, activeTicket?.total_tickets_amount)}
+                                                </Text> : null}
+                                            {activeTicket?.no_of_free_tickets_used ?
+                                                <Text style={styles.ticketInfo}>
+                                                    {formatAmount(activeTicket?.currency, 0)}
+                                                </Text>
+                                                : null}
                                             <Text style={styles.ticketInfo}>
                                                 {formatAmount(activeTicket?.currency, activeTicket?.event_tax_amount)}
                                             </Text>
@@ -587,16 +615,8 @@ const EventDetail: FC<any> = (props) => {
                                         </Text>
                                     </View>
                                 </View>
-                            </View> : activeTicket?.payment_method == 'free' ?
-                            <View style={{ marginBottom: scaler(10) }}>
-                                <Text style={{ fontWeight: '500', fontSize: scaler(15), marginVertical: scaler(5) }}>{Language.ticket_purchased}</Text>
-                                <View style={{ paddingStart: scaler(10), paddingEnd: scaler(30) }}>
-                                    <Text style={styles.ticketInfo}>
-                                        <Text style={[styles.ticketInfo, { fontStyle: 'italic', fontWeight: '500' }]}>{'Free'}</Text>  x {activeTicket?.no_of_tickets} {(Language as any)?.['ticket' + (activeTicket?.no_of_tickets > 1 ? 's' : "")]}
-                                    </Text>
-                                </View>
                             </View>
-                            : null}
+                        : null}
 
                     {event.status == 1 && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>

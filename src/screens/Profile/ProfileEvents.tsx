@@ -90,11 +90,11 @@ const ProfileEventsList: FC<any> = (props) => {
                 onPress={() => {
                     dispatch(setActiveEvent(item?.event))
                     setTimeout(() => {
-                        if (item?.event?.is_event_member) {
-                            NavigationService.navigate("EventChats", { id: item?.event?._id })
-                        } else {
-                            NavigationService.navigate("EventDetail", { id: item?.event?._id, type: type })
-                        }
+                        // if (item?.event?.is_event_member) {
+                        //     NavigationService.navigate("EventChats", { id: item?.event?._id })
+                        // } else {
+                        NavigationService.navigate("EventDetail", { id: item?.event?._id, type: type })
+                        // }
                     }, 0);
 
 

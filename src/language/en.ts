@@ -431,4 +431,7 @@ export const en = {
   starting_upload: 'Starting upload...',
   finalizing_upload: 'Finalizing upload...',
   cancel_upload: 'Cancel upload',
+  invalid_minimum_ticket_price: 'Invalid ticket price',
+  you_need_subscription: 'You need subscription for a paid event.',
+
 }

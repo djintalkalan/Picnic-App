@@ -204,7 +204,7 @@ const CreateEvent3: FC<any> = props => {
     //   cutoffDate: getCutoffDateTime(event),
     //   cutoffTime: getCutoffDateTime(event),
     // })
-  }, [ticketPlans, event])
+  }, [event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
     if (_?.plan_id) {
@@ -509,6 +509,9 @@ const CreateEvent3: FC<any> = props => {
                               if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                 return Language.invalid_ticket_price
                               }
+                              // if (parseInt(v) < 1) {
+                              //   return Language.invalid_minimum_ticket_price
+                              // }
                             }
                             catch (e) { }
 
@@ -712,6 +715,9 @@ const CreateEvent3: FC<any> = props => {
                                           if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                             return Language.invalid_ticket_price
                                           }
+                                          // if (parseInt(v) < 1) {
+                                          //   return Language.invalid_minimum_ticket_price
+                                          // }
                                         }
                                         catch (e) { }
 
