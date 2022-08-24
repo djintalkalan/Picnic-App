@@ -5,6 +5,7 @@ import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, GestureResponderEvent, Image, TouchableOpacity, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Language from 'src/language/Language'
 import { getDisplayName, launchMap, scaler } from 'utils'
 import { ContactMessageReplied } from './ContactMessage'
 import { ImageMessageReplied } from './ImageMessage'
@@ -176,7 +177,7 @@ export const LocationMessageReplied = memo((props: ILocationMessageReplied) => {
     }} >
         <View style={{ padding: scaler(5), flexGrow: 1, paddingEnd: scaler(10), justifyContent: 'center' }} >
             <Text style={{ fontSize: scaler(12), color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
-            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >Location</Text>
+            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >{Language.location}</Text>
         </View>
 
         <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images.ic_marker} />

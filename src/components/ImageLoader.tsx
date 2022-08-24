@@ -119,11 +119,15 @@ const ImageLoader = (props: IImageLoader) => {
             </FastImage>
 
             {(loaded && placeholderSource && (!loading && error)) || !source ?
-                <Image
-                    //@ts-ignore
-                    style={[{ position: 'absolute', zIndex: -10 }, placeholderStyle ?? styles?.mainStyle]}
-                    source={placeholderSource ?? null}
-                />
+                <View style={[styles.mainStyle, { position: 'absolute', zIndex: -10 }]} >
+                    <View style={styles.viewImageStyles} >
+                        <Image
+                            //@ts-ignore
+                            style={[{ position: 'absolute' }, placeholderStyle ?? styles?.mainStyle]}
+                            source={placeholderSource ?? null}
+                        />
+                    </View>
+                </View>
                 : null}
         </TouchableOpacity>
     );

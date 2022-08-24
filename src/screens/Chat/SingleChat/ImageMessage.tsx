@@ -7,6 +7,7 @@ import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, GestureResponderEvent, Image, TouchableOpacity, View } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { EMIT_PERSONAL_LIKE_UNLIKE, SocketService } from 'socket'
+import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, scaler, _showToast, _zoomImage } from 'utils'
 import { ContactMessageReplied } from './ContactMessage'
 import { LocationMessageReplied } from './LocationMessage'
@@ -40,15 +41,15 @@ interface IImageMessageReplied {
 export const ImageMessage = memo((props: IImageMessage) => {
     const { _id, onPressOpenActionMenu, text, image, isMyMessage, parent_message, sender, person, is_message_liked_by_me, message_liked_by_users } = props
     const likeString = useMemo<React.ReactNode>(() => {
-        let string: any = [<Text key='1' >Like</Text>]
+        let string: any = [<Text key='1' >{Language.like}</Text>]
         if (is_message_liked_by_me) {
-            string = [<Text key='2'>Liked by </Text>, <Text key='3' style={{ fontWeight: '600' }} >You</Text>]
+            string = [<Text key='2'>{Language.liked_by} </Text>, <Text key='3' style={{ fontWeight: '600' }} >You</Text>]
             if (message_liked_by_users?.length == 2) {
-                string.push(<Text key='4'> and </Text>)
+                string.push(<Text key='4'> {Language.and} </Text>)
                 string.push(<Text key='5' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>)
             }
         } else if (message_liked_by_users?.length) {
-            string = [<Text key='6'>Liked by </Text>, <Text key='7' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>]
+            string = [<Text key='6'>{Language.liked_by} </Text>, <Text key='7' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>]
         }
         return string
     }, [is_message_liked_by_me, message_liked_by_users, props])
@@ -177,7 +178,7 @@ export const ImageMessageReplied = memo((props: IImageMessageReplied) => {
     }} >
         <View style={{ padding: scaler(5), flexGrow: 1, paddingEnd: scaler(10) }} >
             <Text style={{ color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
-            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >Photo</Text>
+            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >{Language.photo}</Text>
         </View>
 
         <ImageLoader

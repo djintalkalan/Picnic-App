@@ -32,7 +32,7 @@ const SignUp1: FC<any> = (props) => {
     control,
     handleSubmit,
     getValues,
-    formState: { errors },
+    formState: { errors, isValid },
     setError,
   } = useForm<FormType>({
     mode: 'onChange',
@@ -70,36 +70,6 @@ const SignUp1: FC<any> = (props) => {
       dispatch(setLoadingAction(false))
     })
   })(), []);
-
-  const calculateButtonDisability = useCallback(() => {
-    if (
-      !getValues('username') ||
-      !getValues('confirmPassword') ||
-      !getValues('password') ||
-      (errors && (errors.confirmPassword || errors.username || errors.password))
-    )
-      return true;
-    return false;
-  }, [errors]);
-
-  // const onBlurEmail = useCallback(() => {
-  //   if (validateEmail(getValues('email'))) {
-  //     dispatch(
-  //       checkEmail({
-  //         email: getValues('email'),
-  //         onSuccess: (errorMessage: string) => {
-  //           if (errorMessage) {
-  //             setError('email', { message: errorMessage });
-  //             isValidEmail.current = false;
-  //           } else {
-  //             isValidEmail.current = true;
-  //             onSubmit();
-  //           }
-  //         },
-  //       }),
-  //     );
-  //   }
-  // }, []);
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -160,38 +130,13 @@ const SignUp1: FC<any> = (props) => {
             iconSize={scaler(18)}
           />
 
-          {/* <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(20), justifyContent: 'center' }} >
-                        <CheckBox checked={isTerms} setChecked={setTerms} />
-                        <Text
-                            onPress={() => {
-                                setTerms(_ => !_)
-                            }}
-                            style={styles.iAccept} >{Language.i_accept_the}
-                            <Text
-                                onPress={() => {
-
-                                }}
-                                style={[styles.iAccept, { color: colors.colorPrimary }]} > {Language.term_of_service}</Text>
-                        </Text>
-                    </View> */}
-
           <Button
-            disabled={calculateButtonDisability()}
+            disabled={!isValid}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={onSubmit}
           />
 
-          {/* <Text style={styles.notAMember}>
-            {Language.already_a_member}{' '}
-            <Text
-              onPress={() => {
-                NavigationService.navigate('Login');
-              }}
-              style={[styles.notAMember, { color: colors.colorPrimary }]}>
-              {Language.log_in}
-            </Text>
-          </Text> */}
         </View>
       </ScrollView>
     </SafeAreaViewWithStatusBar>
