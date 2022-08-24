@@ -22,7 +22,7 @@ const CreateNewPassword: FC<any> = (props) => {
     const [isSecure1, setSecure1] = useState(true)
     const [isSecure2, setSecure2] = useState(true)
     const [isSecure3, setSecure3] = useState(true)
-    const { control, handleSubmit, getValues, formState: { errors, } } = useForm<FormType>({
+    const { control, handleSubmit, getValues, formState: { errors, isValid } } = useForm<FormType>({
         defaultValues: {
 
         },
@@ -40,12 +40,6 @@ const CreateNewPassword: FC<any> = (props) => {
     const passwordRef = useRef()
     const confirmPasswordRef = useRef()
 
-    const calculateButtonDisability = useCallback(() => {
-        if (!getValues('confirmPassword') || !getValues('password') || (errors && (errors.confirmPassword || errors.password)))
-            return true
-        return false
-    }, [errors])
-
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.change_password} />
@@ -57,7 +51,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     placeholder={Language.old_password}
                     name={'oldPassword'}
                     rules={{
-                        required: "Current Password is required"
+                        required: Language.current_password_required
                     }}
                     onPressIcon={() => setSecure1(!isSecure1)}
                     secureTextEntry={isSecure1}
@@ -71,7 +65,7 @@ const CreateNewPassword: FC<any> = (props) => {
                 <TextInput
                     ref={passwordRef}
                     placeholder={Language.new_password}
-                    rules={{ ...PasswordValidations, required: "New Password is required" }}
+                    rules={{ ...PasswordValidations, required: Language.new_password_required }}
                     name={'password'}
                     onPressIcon={() => setSecure3(!isSecure3)}
                     secureTextEntry={isSecure3}

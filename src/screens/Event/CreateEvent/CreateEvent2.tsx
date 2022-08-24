@@ -108,21 +108,11 @@ const CreateEvent2: FC<any> = props => {
     setValue,
     clearErrors,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange',
     shouldFocusError: false
   });
-
-  const calculateButtonDisability = useCallback(() => {
-    if (!getValues('eventDate') ||
-      !getValues('startTime') ||
-      (errors && (errors.eventDate || errors.startTime))
-    ) {
-      return true;
-    }
-    return false;
-  }, [errors]);
 
   const openDatePicker = useCallback((type: "eventDate" | "startTime" | "endTime" | "endDate") => {
     eventDateTime.current.selectedType = type
@@ -302,7 +292,7 @@ const CreateEvent2: FC<any> = props => {
               errors={errors}
             />
             <Button
-              disabled={calculateButtonDisability()}
+              disabled={!isValid}
               containerStyle={{ marginTop: scaler(20) }}
               title={Language.next}
               onPress={onPressSubmit}

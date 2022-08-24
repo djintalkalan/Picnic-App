@@ -73,29 +73,16 @@ const CreateEvent1: FC<any> = props => {
     control,
     getValues,
     setValue,
+    resetField,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange',
-    defaultValues: __DEV__ ? {
+    defaultValues: __DEV__ && !eventId ? {
       eventName: "Test Event",
       location: "Sahibzada Ajit Singh Nagar, Punjab, India"
     } : {}
   });
-
-
-
-  const calculateButtonDisability = useCallback(() => {
-    if (
-      !getValues('eventName') ||
-      !getValues('location') ||
-      !getValues('selectGroup') ||
-      !selectedGroupRef.current ||
-      (errors && (errors.eventName || errors.location))
-    )
-      return true;
-    return false;
-  }, [errors]);
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
@@ -169,10 +156,19 @@ const CreateEvent1: FC<any> = props => {
 
     selectedGroupRef.current = event?.event_group
     setMultiImageArray(event.event_images || [])
+
+    // reset({
+    //   eventName: event?.name,
+    //   location: event?.address,
+    //   selectGroup: event?.event_group?.name,
+    //   aboutEvent: event?.short_description,
+    // })
+
     setValue('eventName', event?.name)
     setValue('location', event?.address)
     setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
+    resetField('aboutEvent', { defaultValue: event?.short_description })
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
     setPinLocation(event?.is_direction == 1 ? true : false)
     if (event?.image) {
@@ -180,7 +176,6 @@ const CreateEvent1: FC<any> = props => {
     } else {
       setEventImage(null)
     }
-
   }, [])
 
   const next = useCallback(handleSubmit((data) => {
@@ -376,7 +371,7 @@ const CreateEvent1: FC<any> = props => {
           </View>
 
           <Button
-            disabled={calculateButtonDisability()}
+            disabled={!selectedGroupRef.current || !isValid}
             containerStyle={{ marginTop: scaler(20) }}
             title={Language.next}
             onPress={next}

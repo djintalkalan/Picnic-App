@@ -257,7 +257,7 @@ const CreateEvent3: FC<any> = props => {
                                     <><Text style={{ marginTop: scaler(10) }}>{Language.tax_amount}</Text>
                                         <TextInput
                                             containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                            placeholder={'Tax Price'}
+                                            placeholder={Language.tax_price}
                                             style={{ paddingLeft: scaler(20) }}
                                             borderColor={colors.colorTextInputBackground}
                                             backgroundColor={colors.colorTextInputBackground}
@@ -271,15 +271,17 @@ const CreateEvent3: FC<any> = props => {
 
                         {isPayByPaypal ?
                             <View style={{ marginTop: scaler(15) }}>
-                                <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', }}>
                                     <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1 }}>
                                         {Language.paypal_details}
                                     </Text>
-                                    <MaterialCommunityIcons
-                                        name='information'
-                                        color={colors.colorPrimary}
-                                        size={scaler(25)}
-                                        onPress={() => setInfoVisible(true)} />
+                                    <TouchableOpacity onPress={() => setInfoVisible(true)} style={{ paddingLeft: scaler(5), alignItems: 'center', flexDirection: 'row', }}  >
+                                        <Text style={{ fontSize: scaler(12.5), color: colors.colorPrimary, marginEnd: scaler(5) }} >{Language.click_to_see_tutorial}</Text>
+                                        <MaterialCommunityIcons
+                                            name='information'
+                                            color={colors.colorPrimary}
+                                            size={scaler(25)} />
+                                    </TouchableOpacity>
                                 </View>
                                 <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}

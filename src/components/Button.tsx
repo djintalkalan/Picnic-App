@@ -74,6 +74,7 @@ export const Button = (props: ButtonProps) => {
                 fontSize,
                 color: fontColor,
                 fontWeight: '500',
+                textAlign: 'center',
                 ...StyleSheet.flatten(textStyle) //Object.assign({}, ...(Array.isArray(textStyle) ? textStyle : [textStyle]))
 
             }

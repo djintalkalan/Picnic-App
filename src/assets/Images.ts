@@ -73,6 +73,7 @@ export const Images = {
   ic_chat_background: require("./images/ic_chat_background.png"),
   ic_paypal_info: require("./images/ic_paypal_info.gif"),
   ic_delete_red: require("./images/ic_delete_red.png"),
+  ic_credit_card: require("./images/ic_credit_card.png"),
   ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
   ic_no_longer_available: require("./images/ic_no_longer_available.png"),
   ic_sold_out: require("./images/ic_sold_out.png"),

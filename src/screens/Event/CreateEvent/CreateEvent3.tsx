@@ -18,7 +18,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
-import Language from 'src/language/Language';
+import Language, { useLanguage } from 'src/language/Language';
 import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
@@ -60,7 +60,6 @@ const emptyTicketType: TicketType = {
   plan_id: ""
 }
 const DropDownData = ['USD', 'EUR', 'GBP'];
-const TicketTypeData = [{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
@@ -102,13 +101,15 @@ const CreateEvent3: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const { current: event } = useRef(store.getState().createEventState)
   const [toggle, setToggle] = useState(true)
+  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]), [useLanguage()])
+
   const {
     control,
     setValue,
     handleSubmit,
     getValues,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormType>({
     mode: 'onChange', shouldFocusError: true, defaultValues: {
       ticketPlans: [{
@@ -199,14 +200,14 @@ const CreateEvent3: FC<any> = props => {
         cutoffDate: getCutoffDateTime(event),
         cutoffTime: getCutoffDateTime(event),
       },
-      ...ticketPlans
+      ...getValues('ticketPlans')
     ])
     // insert(0, {
     //   ...emptyTicketType, currency: getValues('ticketPlans')[0].currency,
     //   cutoffDate: getCutoffDateTime(event),
     //   cutoffTime: getCutoffDateTime(event),
     // })
-  }, [ticketPlans, event])
+  }, [event])
 
   const deleteTicket = useCallback((i: number, _: any) => {
     if (_?.plan_id) {
@@ -334,7 +335,7 @@ const CreateEvent3: FC<any> = props => {
           _hidePopUpAlert()
         },
         cancelButtonText: Language.no_thanks_create_my_event,
-        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
+        onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage(Language.you_need_subscription) }
       })
     } else next(payload)
 
@@ -535,6 +536,9 @@ const CreateEvent3: FC<any> = props => {
                               if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                 return Language.invalid_ticket_price
                               }
+                              // if (parseInt(v) < 1) {
+                              //   return Language.invalid_minimum_ticket_price
+                              // }
                             }
                             catch (e) { }
 
@@ -697,7 +701,7 @@ const CreateEvent3: FC<any> = props => {
                                 name={`ticketPlans.${i}.ticketTitle`}
                                 required={Language.title_required}
                                 control={control}
-                                errors={errors.ticketPlans?.[i]}
+                                errors={(errors?.ticketPlans as any)?.[i]}
                               />
 
 
@@ -714,7 +718,7 @@ const CreateEvent3: FC<any> = props => {
                                     control={control}
                                     iconContainerStyle={{ end: scaler(4) }}
                                     onPress={() => { setMultiTicketCurrencyIndex(_ => (_ != -1 ? -1 : i)) }}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -738,6 +742,9 @@ const CreateEvent3: FC<any> = props => {
                                           if (parseFloat(v) == 0 || (v?.includes(".") && (v?.indexOf(".") != v?.lastIndexOf(".") || v?.lastIndexOf(".") == v?.length - 1) || (v.split(".")?.[1]?.trim()?.length > 2))) {
                                             return Language.invalid_ticket_price
                                           }
+                                          // if (parseInt(v) < 1) {
+                                          //   return Language.invalid_minimum_ticket_price
+                                          // }
                                         }
                                         catch (e) { }
 
@@ -747,7 +754,7 @@ const CreateEvent3: FC<any> = props => {
                                       Language.ticket_price_required
                                     }
                                     control={control}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                 </View>
                                 <FixedDropdown
@@ -800,7 +807,7 @@ const CreateEvent3: FC<any> = props => {
                                     }}
                                     keyboardType={'number-pad'}
                                     control={control}
-                                    errors={errors.ticketPlans?.[i]}
+                                    errors={(errors?.ticketPlans as any)?.[i]}
                                   />
                                 }
 
@@ -821,7 +828,7 @@ const CreateEvent3: FC<any> = props => {
                                   }}
                                   keyboardType={'number-pad'}
                                   control={control}
-                                  errors={errors.ticketPlans?.[i]}
+                                  errors={(errors?.ticketPlans as any)?.[i]}
                                 />
 
                                 <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5) }} >{Language.cutoff_date_title}</Text>
@@ -845,7 +852,7 @@ const CreateEvent3: FC<any> = props => {
                                         cutoffTime: null
                                       })
                                     } : undefined}
-                                    errors={errors?.ticketPlans?.[i]} />
+                                    errors={(errors?.ticketPlans as any)?.[i]} />
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                                     placeholder={Language.cutoff_time}
@@ -864,7 +871,7 @@ const CreateEvent3: FC<any> = props => {
                                       })
                                     } : undefined}
                                     control={control}
-                                    errors={errors?.ticketPlans?.[i]} />
+                                    errors={(errors?.ticketPlans as any)?.[i]} />
                                 </View>
 
                                 <TextInput
@@ -878,7 +885,7 @@ const CreateEvent3: FC<any> = props => {
                                   backgroundColor={colors.colorTextInputBackground}
                                   required={Language.description_required}
                                   control={control}
-                                  errors={errors.ticketPlans?.[i]}
+                                  errors={(errors?.ticketPlans as any)?.[i]}
                                 />
                               </View>
                             </View>

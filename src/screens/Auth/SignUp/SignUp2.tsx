@@ -25,7 +25,7 @@ const SignUp2: FC<any> = (props) => {
     const birthDate = useRef<Date>(maxDate)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-    const { control, handleSubmit, getValues, setValue, formState: { errors } } = useForm<FormType>({
+    const { control, handleSubmit, getValues, setValue, formState: { errors, isValid } } = useForm<FormType>({
         defaultValues: __DEV__ ? {
             firstName: "Deepak",
             lastName: "Jaglan"
@@ -47,12 +47,6 @@ const SignUp2: FC<any> = (props) => {
     const openDatePicker = useCallback(() => {
         setDatePickerVisibility(true)
     }, [])
-
-    const calculateButtonDisability = useCallback(() => {
-        if (!getValues('firstName') || !getValues('lastName') || !getValues('dob') || (errors && (errors.firstName || errors.lastName || errors.dob)))
-            return true
-        return false
-    }, [errors])
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
@@ -116,7 +110,7 @@ const SignUp2: FC<any> = (props) => {
 
 
 
-                    <Button disabled={calculateButtonDisability()} containerStyle={{ marginTop: scaler(20) }} title={Language.next} onPress={onSubmit} />
+                    <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }} title={Language.next} onPress={onSubmit} />
 
                     {/* <Text style={styles.notAMember} >{Language.already_a_member} <Text onPress={() => {
                         NavigationService.navigate("Login")
@@ -129,19 +123,18 @@ const SignUp2: FC<any> = (props) => {
                 isVisible={isDatePickerVisible}
                 mode="date"
                 customConfirmButtonIOS={(props) => (
-                    <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorPrimary, textAlign: 'center', padding: scaler(10) }} >Confirm
+                    <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorPrimary, textAlign: 'center', padding: scaler(10) }} >{Language.confirm}
                     </Text>
                 )}
                 customCancelButtonIOS={(props) => (
                     <View style={{ padding: scaler(7), backgroundColor: 'white', borderRadius: scaler(10), marginBottom: scaler(10) }} >
-                        <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorBlack, textAlign: 'center', padding: scaler(5) }} >Cancel</Text>
+                        <Text onPress={props.onPress} style={{ fontWeight: '500', fontSize: scaler(18), color: colors.colorBlack, textAlign: 'center', padding: scaler(5) }} >{Language.cancel}</Text>
                     </View>
                 )}
                 date={birthDate.current}
                 maximumDate={maxDate}
                 onConfirm={(date: Date) => {
                     console.log("date", date);
-
                     birthDate.current = date
                     setValue("dob", dateFormat(date, "MMM DD, YYYY"), { shouldValidate: true })
                     setDatePickerVisibility(false);

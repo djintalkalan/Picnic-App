@@ -82,7 +82,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
         InteractionManager.runAfterInteractions(() => {
             setTimeout(() => {
                 placeInputRef?.current?.focus()
-            }, 500);
+            }, 1000);
         })
     }, [])
 
