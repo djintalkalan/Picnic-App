@@ -101,8 +101,7 @@ const CreateEvent3: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const { current: event } = useRef(store.getState().createEventState)
   const [toggle, setToggle] = useState(true)
-  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }])
-    , [useLanguage()])
+  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]), [useLanguage()])
 
   const {
     control,
