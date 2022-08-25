@@ -3,9 +3,8 @@ import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Button, MyHeader, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { EmailValidations } from 'custom-components/TextInput/rules';
 import { useDatabase } from 'database/Database';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import CryptoJS from "react-native-crypto-js";
@@ -24,12 +23,10 @@ type FormType = {
 const PaypalDetails: FC = () => {
 
     const dispatch = useDispatch()
-    const { handleSubmit, control, formState: { errors, isValid }, getValues, setValue } = useForm<FormType>({
+    const { handleSubmit, trigger, control, formState: { errors, isValid }, getValues, setValue } = useForm<FormType>({
         mode: 'onChange',
     });
     const [userData] = useDatabase("userData")
-    const [toggle, setToggle] = useState(false)
-    console.log("isValid", isValid);
 
     useEffect(() => {
         try {
@@ -40,13 +37,13 @@ const PaypalDetails: FC = () => {
                         const token = res?.data?.token
                         const bytes = CryptoJS.AES.decrypt(token, userData?._id);
                         const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
                         setValue('payment_api_password', decryptedData?.payment_api_password)
                         setValue('payment_api_signature', decryptedData?.payment_api_signature)
                         setValue('payment_api_username', decryptedData?.payment_api_username)
-                        setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
-                        setToggle(_ => !_)
-                        console.log("data", decryptedData);
+                        setValue('payment_email', decryptedData?.payment_email)
+                        if (Object.values(decryptedData).reduce((p: any, c: any) => ((c || "")?.trim() ? ((p || 0) + 1) : p), 0) == 4) {
+                            setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
+                        }
                     }
                 }
             ).catch(e => console.log(e))
@@ -91,7 +88,7 @@ const PaypalDetails: FC = () => {
                         autoCapitalize={'none'}
                         autoCorrect={false}
                         required={Language.paypal_id_required}
-                        rules={EmailValidations}
+                        // rules={EmailValidations}
                         control={control}
                         errors={errors} />
                     <TextInput
