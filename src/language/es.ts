@@ -433,5 +433,8 @@ export const es = {
     cancel_upload: 'Cancelar carga',
     invalid_minimum_ticket_price: '',
     you_need_subscription: '',
+    downloading_update: "Downloading update",
+    installing_update: "Installing update",
+    please_wait_to_update: "",
 
 }

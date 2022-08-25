@@ -34,6 +34,7 @@ local.properties
 google-services.json
 *.apk
 *.aab
+*appcenter-config.json
 
 # node.js
 #
