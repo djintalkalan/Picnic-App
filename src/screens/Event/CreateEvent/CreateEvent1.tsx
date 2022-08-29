@@ -7,7 +7,6 @@ import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Te
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
-import { getTimezoneOffset } from 'date-fns-tz';
 import { isArray, isEmpty, isEqual } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -181,9 +180,9 @@ const CreateEvent1: FC<any> = props => {
   const next = useCallback(handleSubmit((data) => {
     console.log('multiImageArray', eventImage, multiImageArray)
     const { latitude, longitude, address, otherData } = locationRef.current ?? {};
-    let timezone = ""
+    let event_timezone = ""
     if (latitude && longitude) {
-      timezone = TZ(latitude, longitude);
+      event_timezone = TZ(latitude, longitude);
     }
 
     const payload = {
@@ -192,8 +191,7 @@ const CreateEvent1: FC<any> = props => {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      timezone,
-      timezoneOffset: getTimezoneOffset(timezone),
+      event_timezone,
       address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,

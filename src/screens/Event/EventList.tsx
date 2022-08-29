@@ -16,9 +16,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateFormat, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import TZ from "tz-lookup";
+import { dateFormatInSpecificZone, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
-// import TZ from "tz-lookup"
 
 
 const ITEM_HEIGHT = scaler(140)
@@ -188,6 +188,11 @@ const EventList: FC<any> = (props) => {
             var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = item
         }
 
+        const region = {
+            latitude: parseFloat(item?.location?.coordinates?.[1] ?? 0),
+            longitude: parseFloat(item?.location?.coordinates?.[0] ?? 0),
+        }
+
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -217,8 +222,8 @@ const EventList: FC<any> = (props) => {
                         NavigationService.navigate("EventDetail", { id: item?._id });
                     }, 0);
                 }}
-                // date={dateFormatInSpecificZone(event_start_date_time, TZ(region?.latitude, region?.longitude), "MMM DD, YYYY")}
-                date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
+                date={dateFormatInSpecificZone(event_start_date_time, (item?.event_timezone || TZ(region?.latitude, region?.longitude)), "MMM DD, YYYY")}
+                // date={dateFormat(new Date(event_start_date_time), "MMM DD, YYYY")}
                 currency={""}
                 free_tickets={!is_free_event ? (total_free_tickets - total_free_tickets_consumed) : 0}
                 is_donation_enabled={is_free_event && is_donation_enabled == 1}
