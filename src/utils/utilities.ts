@@ -10,8 +10,8 @@ import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat } from 'date-fns';
 import { format as TZFormat, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
-
 import { decode } from 'html-entities';
+import moment from 'moment-timezone';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
@@ -884,6 +884,11 @@ export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) =>
 
 
 export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, format: string) => {
+
+    return moment(iso)
+        .tz(timezone)
+        .format(format)
+
     return formatInTimeZone(iso, timezone, getFormat(format))
     const zoned = getZonedDate(timezone, iso)
     return TZFormat(zoned, getFormat(format), {
