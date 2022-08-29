@@ -133,7 +133,7 @@ const App: FC = () => {
     }, [])
 
     const getCodePushUpdate = useCallback(() => {
-        const isDev = config.APP_TYPE == 'dev'
+        const isDev = config.APP_TYPE == 'dev' || __DEV__
         let codePushOptions: SyncOptions = {
             deploymentKey: config.CODEPUSH_DEPLOY_KEY,
             installMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
@@ -179,10 +179,6 @@ const App: FC = () => {
         }, ({ receivedBytes, totalBytes }) => {
             /* Update download modal progress */
             console.log(receivedBytes + "/" + totalBytes,);
-
-            if (!isDev && !__DEV__) {
-                return
-            }
 
             const percent = round(receivedBytes / totalBytes * 100, 2)
             let stringText = "Byte"
