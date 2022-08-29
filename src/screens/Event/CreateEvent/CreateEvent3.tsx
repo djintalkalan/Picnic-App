@@ -19,7 +19,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateFormat, getReadableDate, getReadableTime, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 type FormType = {
@@ -63,11 +63,15 @@ const DropDownData = ['USD', 'EUR', 'GBP'];
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
-    if (event?.sales_ends_on)
-      return new Date(event?.sales_ends_on)
+    console.log("event?.sales_ends_on", event?.sales_ends_on);
 
-    const startDate = new Date(event?.event_start_date_time)
-    const endDate = new Date(event?.event_end_date_time)
+    if (event?.sales_ends_on)
+      return getZonedDate(event?.timezone, event?.sales_ends_on)
+
+    const startDate = stringToDate(event?.event_date + " " + event?.event_start_time)
+    const endDate = event?.is_multi_day_event == 1 ?
+      stringToDate(event?.event_end_date + " " + event?.event_end_time) :
+      stringToDate(event?.event_date + " " + (event?.event_end_time || "23:59:00"))
 
     if (differenceInMinutes(endDate, startDate) > 60) {
       return add(startDate, { minutes: 60 })
@@ -97,8 +101,7 @@ const CreateEvent3: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const { current: event } = useRef(store.getState().createEventState)
   const [toggle, setToggle] = useState(true)
-  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }])
-    , [useLanguage()])
+  const TicketTypeData = useMemo(() => ([{ text: Language.single_ticket, value: 'single' }, { text: Language.multiple_ticket, value: 'multiple' }]), [useLanguage()])
 
   const {
     control,
@@ -253,6 +256,8 @@ const CreateEvent3: FC<any> = props => {
   }, []);
 
   const onSubmit = useCallback(() => handleSubmit((data: FormType) => {
+    console.log("data", data);
+
     const payload: any = {
       is_free_event: '0',
       is_donation_enabled: '0',
@@ -262,7 +267,11 @@ const CreateEvent3: FC<any> = props => {
       payload.is_free_event = '1'
       payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
       payload.capacity = data.capacity
-      payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : ''
+
+
+      payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
+      console.log(payload.sales_ends_on);
+
       if (isDonationAccepted) {
         payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
@@ -273,20 +282,24 @@ const CreateEvent3: FC<any> = props => {
       payload.event_fees = 0
       payload.event_currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
-        payload.ticket_plans = data.ticketPlans?.map(_ => ({
-          _id: _?.plan_id || undefined,
-          name: _.ticketTitle,
-          amount: _.ticketPrice,
-          event_tax_rate: "0",
-          event_tax_amount: "0",
-          currency: _.currency?.toLowerCase(),
-          description: _.ticketDescription,
-          status: _.status == 2 ? 2 : undefined,
-          sales_ends_on: _.cutoffTime ? _.cutoffTime?.toISOString() : '',
-          total_free_tickets: _?.noOfFreeTickets || 0,
-          capacity: _?.capacity,
-          capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
-        }))
+        payload.ticket_plans = data.ticketPlans?.map(_ => {
+          const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.timezone, _?.cutoffTime)?.toISOString() : ''
+
+          return ({
+            _id: _?.plan_id || undefined,
+            name: _.ticketTitle,
+            amount: _.ticketPrice,
+            event_tax_rate: "0",
+            event_tax_amount: "0",
+            currency: _.currency?.toLowerCase(),
+            description: _.ticketDescription,
+            status: _.status == 2 ? 2 : undefined,
+            sales_ends_on,
+            total_free_tickets: _?.noOfFreeTickets || 0,
+            capacity: _?.capacity,
+            capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
+          })
+        })
         payload.total_free_tickets = undefined
         payload.capacity_type = undefined
         payload.capacity = ''
@@ -297,9 +310,13 @@ const CreateEvent3: FC<any> = props => {
         payload.total_free_tickets = data.noOfFreeTickets || 0
         payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
-        payload.sales_ends_on = data?.cutoffTime ? data?.cutoffTime?.toISOString() : ''
+        payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
+
       }
     }
+
+    console.log("payload", payload);
+
     dispatch(updateCreateEvent(payload))
 
     const userData = Database.getStoredValue("userData")
@@ -336,9 +353,20 @@ const CreateEvent3: FC<any> = props => {
   const [datePickerVisibility, setDatePickerVisibility] = useState<any>();
   const selectedIndexRef = useRef(0);
   // console.log("Date", ticketPlans[selectedIndex]);
-  // console.log("event", event);
+  console.log("event", event);
 
   const datePickerRef = useRef<DateTimePickerModal>(null)
+
+  const getMinDate = useCallback(() => {
+    const currentDate = getZonedDate(event?.timezone);
+    switch (datePickerVisibility) {
+      case "date":
+        return currentDate;
+      default:
+        return undefined
+    }
+
+  }, [datePickerVisibility])
 
   const getCurrentDate = () => {
     if (!datePickerVisibility) return undefined
@@ -886,7 +914,7 @@ const CreateEvent3: FC<any> = props => {
         ref={datePickerRef}
         style={{ zIndex: 20 }}
         isVisible={datePickerVisibility ? true : false}
-        minimumDate={datePickerVisibility == 'date' ? new Date() : undefined}
+        minimumDate={getMinDate()}
         // maximumDate={stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")}
         mode={datePickerVisibility}
         customConfirmButtonIOS={props => (
@@ -938,7 +966,8 @@ const CreateEvent3: FC<any> = props => {
           if (datePickerVisibility == 'date') {
             const eventEndDate = (event.event_end_date || event.event_date).replace(/-/g, "")
             const chosenDate = dateFormat(date, "YYYYMMDD")
-            const thisDate = dateFormat(new Date(), "YYYYMMDD")
+            const thisDate = dateFormat(getZonedDate(event?.timezone), "YYYYMMDD")
+
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff date should be less than event end date")
               return setDatePickerVisibility(null)
@@ -957,9 +986,9 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = null
           } else {
-            const eventEndDate = new Date(event?.event_end_date_time)
+            const eventEndDate = getZonedDate(event?.timezone, event?.event_end_date_time)
             const chosenDate = date
-            const thisDate = new Date()
+            const thisDate = getZonedDate(event?.timezone);
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff time should be less than event end time")
               return setDatePickerVisibility(null)

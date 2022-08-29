@@ -4,6 +4,7 @@ import { colors, Images } from 'assets';
 import { Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useDatabase } from 'database';
+import { formatInTimeZone } from 'date-fns-tz';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -16,7 +17,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
+import { dateFormat, getFromZonedDate, getZonedDate, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
 type FormType = {
   eventDate: string;
@@ -65,10 +66,10 @@ const CreateEvent2: FC<any> = props => {
   const setEventValues = useCallback(() => {
     if (event?.is_copied_event != '1') {
       eventDateTime.current = {
-        eventDate: event?.event_date ? new Date(event?.event_start_date_time) : new Date(),
-        startTime: event?.event_date ? new Date(event?.event_start_date_time) : defaultTime,
-        endDate: event?.event_end_date ? new Date(event?.event_end_date_time) : new Date(),
-        endTime: event?.event_end_time ? new Date(event?.event_end_date_time) : defaultTime,
+        eventDate: getZonedDate(event?.timezone, event?.event_start_date_time),
+        startTime: getZonedDate(event?.timezone, event?.event_date ? event?.event_start_date_time : defaultTime),
+        endDate: getZonedDate(event?.timezone, event?.event_end_date_time),
+        endTime: getZonedDate(event?.timezone, event?.event_end_time ? event?.event_end_date_time : defaultTime,),
         selectedType: 'eventDate',
       }
       setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
@@ -122,42 +123,28 @@ const CreateEvent2: FC<any> = props => {
 
   const getMinDate = useCallback(() => {
     const { startTime, endTime, eventDate, selectedType, endDate } = eventDateTime.current
-
+    const currentDate = getZonedDate(event?.timezone);
     switch (selectedType) {
       case "eventDate":
-        return new Date();
       case "endDate":
-        return new Date();
-      case "startTime":
-        return undefined
-      // if (eventDate && currentDateString == eventDateString) {
-      //   return new Date()
-      // } else {
-      //   return undefined
-      // }
-      case "endTime":
-        return undefined
-
-        if (startTime) {
-          return startTime
-        } else {
-          return undefined
-          // if (eventDate && dateFormat(eventDate, "DD-MM-YYYY") == dateFormat(new Date(), "DD-MM-YYYY")) {
-          //   return new Date()
-          // } else {
-          //   return undefined
-          // }
-        }
+        return currentDate;
       default:
-        break;
+        return undefined
     }
 
   }, [])
 
   const onPressSubmit = useCallback(() => handleSubmit((data) => {
     const { endTime, endDate } = data
+    const event: any = store.getState().createEventState
+
     const { startTime: startTimeDate, endTime: endTimeDate, endDate: endEventDate, eventDate } = eventDateTime.current
-    const currentDate = new Date()
+
+
+    const currentDate = getZonedDate(event?.timezone);
+
+    // console.log("currentDateNew", new Date());
+    // return
     if (startTimeDate <= currentDate) {
       _showErrorMessage(Language.start_time_invalid)
       return
@@ -176,19 +163,21 @@ const CreateEvent2: FC<any> = props => {
       event_date: dateFormat(eventDate, "YYYY-MM-DD"),
       event_end_date: isMultidayEvent ? dateFormat(endEventDate, "YYYY-MM-DD") : '',
       event_start_time: dateFormat(startTimeDate, "HH:mm:ss"),
-      event_end_time: data.endTime ? dateFormat(endTimeDate, "HH:mm") : "",
+      event_end_time: data.endTime ? dateFormat(endTimeDate, "HH:mm:ss") : "",
       details: data.additionalInfo
     }
-    payload.event_start_date_time = stringToDate(payload?.event_date + " " + payload?.event_start_time)
+    payload.event_start_date_time = getFromZonedDate(event?.timezone, stringToDate(payload?.event_date + " " + payload?.event_start_time))
+
     payload.event_end_date_time = isMultidayEvent ?
-      stringToDate(payload?.event_end_date + " " + payload?.event_end_time) :
-      stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59"))
-    const event: any = store.getState().createEventState
+      getFromZonedDate(event?.timezone, stringToDate(payload?.event_end_date + " " + payload?.event_end_time)) :
+      getFromZonedDate(event?.timezone, stringToDate(payload?.event_date + " " + (payload?.event_end_time || "23:59:00")))
+    console.log("payload.event_end_date_time", payload.event_end_date_time);
+
     if (event?.event_start_date_time && !(event.event_start_date_time instanceof Date)) {
-      event.event_start_date_time = new Date(event?.event_start_date_time)
+      event.event_start_date_time = getFromZonedDate(event?.timezone, getZonedDate(event?.timezone, event?.event_start_date_time))
     }
     if (event?.event_end_date_time && !(event.event_end_date_time instanceof Date)) {
-      event.event_end_date_time = new Date(event?.event_end_date_time)
+      event.event_end_date_time = getFromZonedDate(event?.timezone, getZonedDate(event?.timezone, event?.event_end_date_time))
     }
     if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
       if (event?.event_start_date_time?.toString() != payload.event_start_date_time?.toString() ||
@@ -209,6 +198,10 @@ const CreateEvent2: FC<any> = props => {
       <ScrollView enableResetScrollToCoords={false} ref={scrollViewRef} nestedScrollEnabled keyboardShouldPersistTaps={'handled'}>
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
+
+          <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{Language.selected_timezone}</Text>
+          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{formatInTimeZone(new Date(), event?.timezone, 'zzzz')} ({formatInTimeZone(new Date(), event?.timezone, 'zzz')})</Text>
+
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
               eventDateTime.current = initialDateTime
@@ -310,6 +303,7 @@ const CreateEvent2: FC<any> = props => {
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
           minimumDate={getMinDate()}
+          // timeZoneOffsetInMinutes={event?.timezoneOffset}
           mode={(eventDateTime.current?.selectedType?.includes('Date')) ? 'date' : "time"}
           customConfirmButtonIOS={props => (
             <Text
@@ -351,9 +345,12 @@ const CreateEvent2: FC<any> = props => {
           //   //   maximumDate={sub(new Date(), {
           //     years: 15,
           //   })}
-          onConfirm={(cDate: Date) => {
+          onConfirm={(date: Date) => {
             const { selectedType, eventDate } = eventDateTime.current
-            const date = selectedType?.includes('Date') ? cDate : new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), cDate?.getHours(), cDate?.getMinutes(), cDate?.getSeconds());
+
+            if (!selectedType?.includes('Date')) {
+              date = new Date(eventDate?.getFullYear(), eventDate.getMonth(), eventDate?.getDate(), date?.getHours(), date?.getMinutes(), date?.getSeconds())
+            }
             // const utcDate = new Date(eventDate?.getFullYear(), eventDate.getUTCMonth(), eventDate?.getUTCDate(), cDate?.getUTCHours(), cDate?.getUTCMinutes(), cDate?.getUTCSeconds());
             // console.log(" eventDate", eventDate);
             // console.log(" Date", date);
@@ -361,15 +358,16 @@ const CreateEvent2: FC<any> = props => {
             // console.log("new Date", new Date());
 
             eventDateTime.current = { ...eventDateTime?.current, [selectedType]: date };
-            let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
-            let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-            let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
+            // let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
+            // let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
+            // let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
             if (selectedType == 'eventDate' || selectedType == 'endDate') {
               console.log('date selected', date);
 
               setValue(selectedType, dateFormat(date, 'MMM DD, YYYY'), {
                 shouldValidate: true,
               });
+
               if (!isMultidayEvent) {
                 setValue('startTime', "")
                 setValue('endTime', "")
@@ -380,7 +378,8 @@ const CreateEvent2: FC<any> = props => {
             else {
               if (!isMultidayEvent)
                 setValue('endTime', "");
-              setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
+              // setValue(selectedType, hour + ':' + min + ' ' + isAMPM, { shouldValidate: true })
+              setValue(selectedType, dateFormat(date, 'hh:mm A'), { shouldValidate: true })
             }
             if (getValues('endTime')) {
               setTimeout(() => {

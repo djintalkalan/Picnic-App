@@ -66,6 +66,8 @@ export interface ICreateEventReducer {
     event_start_date_time: string
     event_end_date_time: string
     is_creators_paypal_configured?: number
+    timezone: string
+    timezoneOffset: number
 }
 
 export const createEventReducer = (state: ICreateEventReducer = initialCreateEventState, action: action): ICreateEventReducer => {
