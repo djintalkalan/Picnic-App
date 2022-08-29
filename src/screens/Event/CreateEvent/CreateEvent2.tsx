@@ -4,7 +4,6 @@ import { colors, Images } from 'assets';
 import { Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useDatabase } from 'database';
-import { formatInTimeZone } from 'date-fns-tz';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -17,7 +16,7 @@ import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-awa
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { dateFormat, getFromZonedDate, getZonedDate, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
+import { dateFormat, dateFormatInSpecificZone, getFromZonedDate, getZonedDate, NavigationService, scaler, stringToDate, _showErrorMessage } from 'utils';
 
 type FormType = {
   eventDate: string;
@@ -200,7 +199,7 @@ const CreateEvent2: FC<any> = props => {
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
           <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{Language.selected_timezone}</Text>
-          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{formatInTimeZone(new Date(), event?.event_timezone, 'zzzz')} ({formatInTimeZone(new Date(), event?.event_timezone, 'zzz')})</Text>
+          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text>
 
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
