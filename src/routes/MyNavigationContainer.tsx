@@ -51,6 +51,7 @@ import GroupDetail from 'screens/Group/GroupDetail';
 import BlockedMembers from 'screens/Profile/BlockedMembers';
 import HiddenPosts from 'screens/Profile/HiddenPosts';
 import MutedGroupsEvents from 'screens/Profile/MutedGroupsEvents';
+import PaypalDetails from 'screens/Profile/PaypalDetails';
 import PrivacyScreen from 'screens/Profile/PrivacyScreen';
 import ProfileEvents from 'screens/Profile/ProfileEvents';
 import ProfileGroups from 'screens/Profile/ProfileGroups';
@@ -119,6 +120,7 @@ const dashboardScreens = {
   PersonChat: PersonChat,
   SelectTicket: SelectTicket,
   TwoFactorAuth: TwoFactorAuth,
+  PaypalDetails: PaypalDetails,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

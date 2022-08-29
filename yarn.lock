@@ -2637,6 +2637,11 @@
   resolved "https://registry.yarnpkg.com/@types/react-native-aws3/-/react-native-aws3-0.0.1.tgz#8ff069e68f25f4b1d7454b5a3c245ecd367232fe"
   integrity sha512-fbwBMQX9hv7xT98TCSS5FFRcSzrUADrW0rhi4yGH/L3WSKaKxC/fJh6jKj3BiD0GjaRFW3ukCkgQWbkG10YFuQ==
 
+"@types/react-native-crypto-js@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-crypto-js/-/react-native-crypto-js-1.0.0.tgz#1bbe9b469f0f97e0689eb6fb51b836cd70ea92d2"
+  integrity sha512-YqNZiTWsEoP0bqN7gQShOjskK/cJFpBhgVMMIGfUnbGeSytHT2SSrT1TVW1f9yNP5x4uSpry2Rq2BQS7qcC4fQ==
+
 "@types/react-native-indicators@^0.16.1":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@types/react-native-indicators/-/react-native-indicators-0.16.2.tgz#f57c9bbf05aa9abefc0ef4b3b7c09e10eecccf3e"
@@ -7863,6 +7868,11 @@ react-native-contacts@^7.0.4:
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-7.0.4.tgz#6f084f651bb5dde433acc22553c6d1ca909e46b7"
   integrity sha512-x6K9TMC0XBH/yyfqYh5BGS9JI1PpA2Ac/XHVVFVP8F8lPLNexQ0qPsNBo1cy9l2pPqlijpC33+FU0ty/N5iOWA==
+
+react-native-crypto-js@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-crypto-js/-/react-native-crypto-js-1.0.0.tgz#e677e022e147f41b35614416c92d655f87e2450a"
+  integrity sha512-FNbLuG/HAdapQoybeZSoes1PWdOj0w242gb+e1R0hicf3Gyj/Mf8M9NaED2AnXVOX01b2FXomwUiw1xP1K+8sA==
 
 react-native-device-info@^8.7.0:
   version "8.7.1"
