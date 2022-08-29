@@ -66,7 +66,7 @@ const getCutoffDateTime = (event: ICreateEventReducer) => {
     console.log("event?.sales_ends_on", event?.sales_ends_on);
 
     if (event?.sales_ends_on)
-      return getZonedDate(event?.timezone, event?.sales_ends_on)
+      return getZonedDate(event?.event_timezone, event?.sales_ends_on)
 
     const startDate = stringToDate(event?.event_date + " " + event?.event_start_time)
     const endDate = event?.is_multi_day_event == 1 ?
@@ -269,7 +269,7 @@ const CreateEvent3: FC<any> = props => {
       payload.capacity = data.capacity
 
 
-      payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
+      payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.event_timezone, data?.cutoffTime)?.toISOString() : ''
       console.log(payload.sales_ends_on);
 
       if (isDonationAccepted) {
@@ -283,7 +283,7 @@ const CreateEvent3: FC<any> = props => {
       payload.event_currency = data.currency?.toLowerCase()
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => {
-          const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.timezone, _?.cutoffTime)?.toISOString() : ''
+          const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.event_timezone, _?.cutoffTime)?.toISOString() : ''
 
           return ({
             _id: _?.plan_id || undefined,
@@ -310,7 +310,7 @@ const CreateEvent3: FC<any> = props => {
         payload.total_free_tickets = data.noOfFreeTickets || 0
         payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
-        payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.timezone, data?.cutoffTime)?.toISOString() : ''
+        payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.event_timezone, data?.cutoffTime)?.toISOString() : ''
 
       }
     }
@@ -358,7 +358,7 @@ const CreateEvent3: FC<any> = props => {
   const datePickerRef = useRef<DateTimePickerModal>(null)
 
   const getMinDate = useCallback(() => {
-    const currentDate = getZonedDate(event?.timezone);
+    const currentDate = getZonedDate(event?.event_timezone);
     switch (datePickerVisibility) {
       case "date":
         return currentDate;
@@ -966,7 +966,7 @@ const CreateEvent3: FC<any> = props => {
           if (datePickerVisibility == 'date') {
             const eventEndDate = (event.event_end_date || event.event_date).replace(/-/g, "")
             const chosenDate = dateFormat(date, "YYYYMMDD")
-            const thisDate = dateFormat(getZonedDate(event?.timezone), "YYYYMMDD")
+            const thisDate = dateFormat(getZonedDate(event?.event_timezone), "YYYYMMDD")
 
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff date should be less than event end date")
@@ -986,9 +986,9 @@ const CreateEvent3: FC<any> = props => {
             }
             updatedTicket.cutoffTime = null
           } else {
-            const eventEndDate = getZonedDate(event?.timezone, event?.event_end_date_time)
+            const eventEndDate = getZonedDate(event?.event_timezone, event?.event_end_date_time)
             const chosenDate = date
-            const thisDate = getZonedDate(event?.timezone);
+            const thisDate = getZonedDate(event?.event_timezone);
             if (chosenDate > eventEndDate) {
               _showErrorMessage("Cutoff time should be less than event end time")
               return setDatePickerVisibility(null)
