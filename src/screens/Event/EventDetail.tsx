@@ -464,7 +464,7 @@ const EventDetail: FC<any> = (props) => {
                                     <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                         source={Images.ic_group_events} />
                                     <Text style={styles.events}>
-                                        {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM, DD, YYYY')}
+                                        {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
                                     </Text>
                                 </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
@@ -484,7 +484,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.start_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM, DD, YYYY')}
+                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>
                                                 {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A z')}
@@ -499,7 +499,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.end_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'MMMM, DD, YYYY')}
+                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>
                                                 {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'hh:mm A z')}
