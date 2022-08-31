@@ -433,5 +433,6 @@ export const es = {
     cancel_upload: 'Cancelar carga',
     invalid_minimum_ticket_price: '',
     you_need_subscription: '',
+    timezone: '',
 
 }
