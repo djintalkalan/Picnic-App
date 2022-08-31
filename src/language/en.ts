@@ -435,7 +435,7 @@ export const en = {
   downloading_update: 'Downloading update',
   installing_update: 'Installing update',
   please_wait_to_update: 'Please wait until we finish installing the available update. It won\'t take much time.',
-  use_paypal_business_account: "Use PayPal business account",
+  use_paypal_business_account: 'Use PayPal business account',
   timezone: 'Timezone',
 
 }
