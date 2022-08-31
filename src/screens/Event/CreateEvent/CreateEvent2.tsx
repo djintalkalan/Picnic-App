@@ -198,9 +198,6 @@ const CreateEvent2: FC<any> = props => {
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
-          <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{Language.selected_timezone}</Text>
-          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text>
-
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
               eventDateTime.current = initialDateTime
@@ -275,6 +272,11 @@ const CreateEvent2: FC<any> = props => {
                 icon={Images.ic_clock}
                 control={control}
                 errors={errors} />
+            </View>
+
+            <View style={{ flexDirection: 'row', marginTop: scaler(5), }} >
+              <Text style={{ fontWeight: '400', marginLeft: scaler(5), fontSize: scaler(12) }} >{Language.timezone} : </Text>
+              <Text style={{ fontSize: scaler(12) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text>
             </View>
 
             <TextInput
