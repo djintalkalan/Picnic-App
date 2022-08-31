@@ -52,7 +52,7 @@ const BookEvent: FC = (props: any) => {
         else {
             setSelectedTicket({
                 amount: event?.event_fees,
-                event_tax_amount: event?.event_tax_amount,
+                event_tax_rate: event?.event_tax_rate,
                 currency: event?.event_currency,
                 capacity_type: event?.capacity_type,
                 capacity: event?.capacity,
@@ -149,11 +149,17 @@ const BookEvent: FC = (props: any) => {
 
     const getTotalPayment = useCallback(() => {
         let paidTicketsSelected = free_tickets > parseInt(noOfTickets) ? 0 : parseInt(noOfTickets) - free_tickets
+        let paidTicketsPrice = paidTicketsSelected * selectedTicket.amount
+        let totalTax = paidTicketsPrice * selectedTicket.event_tax_rate / 100
         let payment = {
             freeTicketsSelected: free_tickets > parseInt(noOfTickets) ? parseInt(noOfTickets) : free_tickets,
             paidTicketsSelected: paidTicketsSelected,
-            paidTicketsPrice: round(paidTicketsSelected * (parseFloat(selectedTicket.amount + (selectedTicket.event_tax_amount ?? 0))), 2)
+            paidTicketPriceWithoutTax: round(paidTicketsPrice, 2),
+            totalTax: round(totalTax, 2),
+            paidTicketsPrice: round(paidTicketsPrice + totalTax, 2),
         }
+        console.log("payment", payment);
+
         return payment
     }, [noOfTickets, free_tickets, selectedTicket])
 
@@ -260,7 +266,7 @@ const BookEvent: FC = (props: any) => {
                                 {Language.applicable_tax}
                             </Text>
                             <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, round(getTotalPayment()?.paidTicketsSelected * selectedTicket?.event_tax_amount, 2)) : formatAmount(selectedTicket.currency, 0)}
+                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, getTotalPayment()?.totalTax, 2) : formatAmount(selectedTicket.currency, 0)}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                             {getTotalPayment().paidTicketsSelected != 0 ? <>
