@@ -154,10 +154,10 @@ const showNotification = async (id: string, p: IProgress, currentCount: number, 
     if (!activeUploads.includes(id)) {
         store.dispatch(setLoadingAction(true))
         activeUploads.push(id)
-        title = Language.getString('starting_upload')
+        title = Language.getString('starting_uploads') + "..."
 
     } else if (finalize) {
-        title = Language.getString('finalizing_upload')
+        title = Language.getString('finalizing_uploads') + "..."
     } else progress = { max: p?.total, current: p?.loaded, }
     store.dispatch(setLoadingMsg(JSON.stringify(p) + "%"))
     isAndroid && await notifee.displayNotification({
