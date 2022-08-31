@@ -433,5 +433,6 @@ export const en = {
   cancel_upload: 'Cancel upload',
   invalid_minimum_ticket_price: 'Invalid ticket price',
   you_need_subscription: 'You need subscription for a paid event.',
+  use_paypal_business_account: "Use PayPal business account",
 
 }
