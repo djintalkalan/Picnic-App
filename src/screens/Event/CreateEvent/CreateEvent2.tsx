@@ -198,9 +198,6 @@ const CreateEvent2: FC<any> = props => {
         <Stepper step={2} totalSteps={4} paddingHorizontal={scaler(20)} />
         <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
-          {/* <Text style={{ fontWeight: '500', marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{Language.selected_timezone}</Text>
-          <Text style={{ marginTop: scaler(10), marginHorizontal: scaler(5), fontSize: scaler(14) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text> */}
-
           <TouchableOpacity onPress={() => {
             setIsMultidayEvent((b) => {
               eventDateTime.current = initialDateTime
@@ -246,9 +243,6 @@ const CreateEvent2: FC<any> = props => {
                 required={Language.start_time_required}
                 onPress={() => (openDatePicker("startTime"))}
                 icon={Images.ic_clock}
-                // format={!isMultidayEvent ? (text: string) => {
-                //   return text?.trim() ? (text + " " + dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')) : ""
-                // } : null}
                 control={control}
                 errors={errors} />
             </View>
@@ -275,18 +269,15 @@ const CreateEvent2: FC<any> = props => {
                 required={isMultidayEvent ? Language.end_time_required : false}
                 onPress={() => (openDatePicker("endTime"))}
                 iconSize={scaler(18)}
-                // format={!isMultidayEvent ? (text: string) => {
-                //   return text?.trim() ? (text + " " + dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')) : ""
-                // } : null}
                 icon={Images.ic_clock}
                 control={control}
                 errors={errors} />
             </View>
 
-            {isMultidayEvent || true ? <View style={{ flexDirection: 'row' }} >
-              <Text style={{ fontWeight: '400', marginTop: scaler(10), marginLeft: scaler(5), fontSize: scaler(12) }} >{Language.timezone} : </Text>
-              <Text style={{ marginTop: scaler(10), fontSize: scaler(12) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text>
-            </View> : null}
+            <View style={{ flexDirection: 'row', marginTop: scaler(5), }} >
+              <Text style={{ fontWeight: '400', marginLeft: scaler(5), fontSize: scaler(12) }} >{Language.timezone} : </Text>
+              <Text style={{ fontSize: scaler(12) }} >{dateFormatInSpecificZone(new Date(), event?.event_timezone, 'z')}</Text>
+            </View>
 
             <TextInput
               placeholder={Language.write_additional_information_about_event}
