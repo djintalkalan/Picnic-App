@@ -436,5 +436,6 @@ export const es = {
     downloading_update: "Downloading update",
     installing_update: "Installing update",
     please_wait_to_update: "",
+    use_paypal_business_account: 'Usar cuenta de negocios de Paypal',
 
 }

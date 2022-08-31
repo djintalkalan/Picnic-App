@@ -435,6 +435,7 @@ export const en = {
   you_need_subscription: 'You need subscription for a paid event.',
   downloading_update: 'Downloading update',
   installing_update: 'Installing update',
-  please_wait_to_update: 'Please wait until we finish installing the available update. It won\'t take much time.'
+  please_wait_to_update: 'Please wait until we finish installing the available update. It won\'t take much time.',
+  use_paypal_business_account: "Use PayPal business account",
 
 }

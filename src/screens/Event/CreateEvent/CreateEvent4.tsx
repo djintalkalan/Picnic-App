@@ -307,7 +307,7 @@ const CreateEvent3: FC<any> = props => {
                                     <Switch active={usePaypalBusinessAccount} onChange={() => setPaypalBusinessAccount(!usePaypalBusinessAccount)} />
 
                                     <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1, marginHorizontal: scaler(10) }}>
-                                        Use PayPal business account
+                                        {Language.use_paypal_business_account}
                                     </Text>
                                 </View>
 
