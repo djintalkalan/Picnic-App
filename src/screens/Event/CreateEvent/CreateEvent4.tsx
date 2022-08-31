@@ -318,7 +318,7 @@ const CreateEvent3: FC<any> = props => {
                                             {Language.paypal_details}
                                         </Text>
                                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setInfoVisible(true)}>
-                                            <Text style={{ fontSize: scaler(12), color: colors.colorPrimary, marginEnd: scaler(4) }} >{Language.see_tutorial}</Text>
+                                            <Text style={{ fontSize: scaler(12), color: colors.colorPrimary, marginEnd: scaler(4) }} >{Language.click_to_see_tutorial}</Text>
                                             <MaterialCommunityIcons
                                                 name='information'
                                                 color={colors.colorPrimary}
