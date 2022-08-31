@@ -40,6 +40,7 @@ import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
 import CreateEvent4 from 'screens/Event/CreateEvent/CreateEvent4';
+import SelectGroup from 'screens/Event/CreateEvent/SelectGroup';
 import EventDetail from 'screens/Event/EventDetail';
 import EventMembers from 'screens/Event/EventMembers';
 import Payment from 'screens/Event/Payment';
@@ -119,6 +120,7 @@ const dashboardScreens = {
   PersonChat: PersonChat,
   SelectTicket: SelectTicket,
   TwoFactorAuth: TwoFactorAuth,
+  SelectGroup,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();
