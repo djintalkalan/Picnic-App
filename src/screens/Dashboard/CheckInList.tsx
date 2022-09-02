@@ -10,7 +10,8 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, Image, StyleSheet, TextInput, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils'
+import TZ from "tz-lookup"
+import { dateFormatInSpecificZone, getImageUrl, NavigationService, scaler } from 'utils'
 
 const CheckInList: FC<any> = (props) => {
     const LOADING = useRef(true)
@@ -42,6 +43,11 @@ const CheckInList: FC<any> = (props) => {
     const _renderItem = useCallback(({ item, index }) => {
         const { name, image, city, state, country } = item
 
+        const region = {
+            latitude: parseFloat(item?.location?.coordinates?.[1] ?? 0),
+            longitude: parseFloat(item?.location?.coordinates?.[0] ?? 0),
+        }
+
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
@@ -49,7 +55,9 @@ const CheckInList: FC<any> = (props) => {
                 //@ts-ignore
                 icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
-                subtitle={getCityOnly(city, state, country)}
+                // subtitle={getCityOnly(city, state, country)}
+                subtitle={dateFormatInSpecificZone(item?.event_start_date_time, (item?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY hh:mm A z')}
+
                 // isSelected={is_group_member}
                 onPress={() => {
                     NavigationService.navigate('EventMembers', { id: item?._id })
