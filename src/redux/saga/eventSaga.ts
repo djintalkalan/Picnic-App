@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, onFetchEventsForCheckIn, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { setCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
@@ -150,7 +150,6 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
                     // if (!res?.data?.data[index]?.capacity) {
                     const eventCapacityType = res?.data?.data[index]?.capacity_type
                     const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited') ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
-                    console.log("totalCapacity", totalCapacity);
 
                     res.data.data[index].capacity_type = totalCapacity?.capacity_type
                     res.data.data[index].capacity = totalCapacity?.capacity
@@ -457,6 +456,64 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     }
 }
 
+function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any, any> {
+    let { pagination: { total, ...pagination }, events } = store.getState()?.eventForCheckIn
+
+    if (payload?._id !== "") {
+        if (total <= events?.length && total > 0) {
+            return
+        }
+    }
+    yield put(setLoadingAction(true));
+
+    try {
+        let res = yield call(ApiProvider._getMyEventForCheckIn, { ...pagination, ...payload });
+        if (res.status == 200) {
+
+            if (!res?.data?.data?.length) {
+                res.data.data = []
+            }
+            for (const index in res?.data?.data) {
+                if (res?.data?.data[index].ticket_type == 'multiple') {
+                    const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+
+                    res.data.data[index].event_fees = leastTicket.amount?.toString()
+                    res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
+                    res.data.data[index].event_currency = leastTicket.currency
+
+                    // if (!res?.data?.data[index]?.capacity) {
+                    const eventCapacityType = res?.data?.data[index]?.capacity_type
+                    const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited') ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
+
+                    res.data.data[index].capacity_type = totalCapacity?.capacity_type
+                    res.data.data[index].capacity = totalCapacity?.capacity
+                    // }
+                }
+            }
+
+            yield put(onFetchEventsForCheckIn({
+                pagination: {
+                    _id: res.data.data?.length ? res.data.data?.[res.data.data?.length - 1]._id : "",
+                    total: res?.data?.pagination?.[0]?.total || 0,
+                    q: payload?.q,
+                    limit: 20
+                },
+                events: [...(payload?._id !== "" && pagination?._id ? events : []), ...res?.data?.data]
+            }))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -475,4 +532,5 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
     yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);
     yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
+    yield takeLatest(ActionTypes.GET_EVENTS_FOR_CHECK_IN, _fetchEventForCheckIn);
 };

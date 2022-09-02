@@ -527,4 +527,8 @@ export const _totalSoldTickets = async (body: any) => {
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
 }
 
+export const _getMyEventForCheckIn = async (body: any) => {
+    console.log("---------- _getMyEventForCheckIn Api Call ---------------")
+    return fetchApiData('event/get-my-upcoming-events?' + (new URLSearchParams(body)).toString())
+}
 
