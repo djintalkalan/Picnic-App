@@ -337,7 +337,7 @@ const EventDetail: FC<any> = (props) => {
 
 
     const calculateButtonDisability = useCallback(() => {
-        if (!event?.payment_api_username &&
+        if (!(event?.payment_api_username || event?.payment_email) &&
             (!event?.payment_method?.includes('cash') &&
                 !event?.is_free_event)) {
             return true;
