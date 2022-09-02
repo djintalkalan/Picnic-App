@@ -115,7 +115,7 @@ const GooglePlacesTextInput: FC<any> = (props) => {
                         // filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
                         query={{
                             key: config.GOOGLE_MAP_API_KEY,
-                            language: 'en',
+                            language: Language.getLanguage(),
                             // types: '(cities)',
                         }}
                         onPress={_onPress}

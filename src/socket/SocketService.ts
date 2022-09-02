@@ -4,7 +4,7 @@ import Database from "database";
 import { Dispatch } from "react";
 import { DeviceEventEmitter } from "react-native";
 import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
-import Language, { LanguageType } from "src/language/Language";
+import Language, { DefaultLanguage, LanguageType } from "src/language/Language";
 import { getChatUsers, mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
 import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT, ON_SET_CHAT_BACKGROUND } from "./SocketEvents";
 
@@ -26,7 +26,7 @@ class Service {
         if (!this.socket) {
             if (isLogin) {
                 const authToken = Database.getStoredValue('authToken')
-                const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
+                const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || DefaultLanguage
 
                 const url = config.SOCKET_URL + (config?.SOCKET_PORT ? (":" + config?.SOCKET_PORT) : "")
                 const options: Partial<ManagerOptions & SocketOptions> = {
@@ -166,7 +166,7 @@ class Service {
 
     private onSetChatBackground = (e: any) => {
         console.log("onSetChatBackground", e)
-        if (e?.data) { 
+        if (e?.data) {
             this.dispatch(setChatBackgroundSuccess(e.data))
         }
     }
