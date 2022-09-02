@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import LocalizedStrings, { GlobalStrings } from 'react-native-localization';
+import Localize from 'react-native-localize';
 import Database, { useDatabase } from 'src/database/Database';
 import { en } from './en';
 import { es } from './es';
-
 export type LanguageType = 'en' | 'es';
 export type ILanguages = GlobalStrings<typeof en>
 
-const DefaultLanguage: LanguageType = 'en';
+export const DefaultLanguage: LanguageType = ((Localize?.getLocales()?.[0].languageCode as LanguageType) || "")?.includes('es') ? 'es' : 'en' || 'en' // 'en';
 export const DefaultLanguages: ILanguages = {
   en,
   es
