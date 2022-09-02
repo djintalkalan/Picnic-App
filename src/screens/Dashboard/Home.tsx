@@ -197,20 +197,6 @@ const Home: FC = () => {
               }}
               icon={Images.ic_host_event}
             />
-            {!userData?.is_premium ?
-              <InnerButton
-                title={Language.join_now}
-                onPress={() => {
-                  NavigationService.navigate('Subscription', { from: 'settings' });
-                  setTimeout(() => {
-                    setFABOpen(false);
-                  }, 1000);
-                }}
-                imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
-                icon={addIcon}
-              /> : null}
-
-
             <InnerButton
               title={Language.check_in}
               onPress={() => {
@@ -222,6 +208,18 @@ const Home: FC = () => {
               // imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
               icon={Images.ic_fab_check_in}
             />
+            {!userData?.is_premium ?
+              <InnerButton
+                title={Language.join_now}
+                onPress={() => {
+                  NavigationService.navigate('Subscription', { from: 'settings' });
+                  setTimeout(() => {
+                    setFABOpen(false);
+                  }, 1000);
+                }}
+                imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(3) }}
+                icon={addIcon}
+              /> : null}
           </Card>
         )}
         <TouchableOpacity
