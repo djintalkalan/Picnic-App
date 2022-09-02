@@ -438,4 +438,5 @@ export const es = {
     use_paypal_business_account: 'Usar cuenta de negocios de Paypal',
     timezone: 'Zona Horaria',
     select_event: '',
+
 }
