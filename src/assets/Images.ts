@@ -77,5 +77,6 @@ export const Images = {
   ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
   ic_no_longer_available: require("./images/ic_no_longer_available.png"),
   ic_sold_out: require("./images/ic_sold_out.png"),
-  // ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
+  ic_fab_check_in: require("./images/ic_fab_check_in.png"),
+  // ic_fab_check_in: require("./images/ic_fab_check_in.png"),
 };

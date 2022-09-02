@@ -209,6 +209,19 @@ const Home: FC = () => {
                 imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
                 icon={addIcon}
               /> : null}
+
+
+            <InnerButton
+              title={Language.check_in}
+              onPress={() => {
+                NavigationService.navigate('CheckInList');
+                setTimeout(() => {
+                  setFABOpen(false);
+                }, 1000);
+              }}
+              // imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
+              icon={Images.ic_fab_check_in}
+            />
           </Card>
         )}
         <TouchableOpacity

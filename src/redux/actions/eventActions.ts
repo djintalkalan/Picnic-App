@@ -136,6 +136,17 @@ export const authorizePayment = (payload: any) => ({
     payload
 })
 
+export const getEventsForCheckIn = (payload: any) => ({
+    type: ActionTypes.GET_EVENTS_FOR_CHECK_IN,
+    payload
+})
+
+export const onFetchEventsForCheckIn = (payload: any) => ({
+    type: ActionTypes.ON_FETCH_EVENT_FOR_CHECK_IN,
+    payload
+})
+
+
 
 
 

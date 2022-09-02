@@ -127,3 +127,39 @@ export const activeEventReducer = (state: any = null, action: action): any => {
             return state
     }
 }
+
+interface CurserPagination {
+    q: string
+    _id: string
+    limit: number
+    total: number
+}
+export interface IEventForCheckInReducer {
+    pagination: CurserPagination,
+    events: any[]
+
+}
+
+const initialCursorPagination: CurserPagination = {
+    q: "",
+    _id: "",
+    limit: 20,
+    total: -1
+}
+
+const initialCheckInState: IEventForCheckInReducer = {
+    pagination: initialCursorPagination,
+    events: []
+}
+
+export const eventForCheckInReducer = (state: IEventForCheckInReducer = { ...initialCheckInState }, action: action): IEventForCheckInReducer => {
+    switch (action.type) {
+        case ActionTypes.ON_FETCH_EVENT_FOR_CHECK_IN:
+            return action?.payload
+        case ActionTypes.RESET_STATE_ON_LOGIN:
+        case ActionTypes.RESET_STATE_ON_LOGOUT:
+            return { ...initialCheckInState }
+        default:
+            return state
+    }
+}
