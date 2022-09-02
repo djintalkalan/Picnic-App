@@ -9,7 +9,9 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat } from 'date-fns';
+import { format as TZFormat, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { decode } from 'html-entities';
+import moment from 'moment-timezone';
 import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
@@ -114,18 +116,21 @@ export const dateStringFormat = (dateString: string, toFormat: string, fromForma
         return dateString
     }
 }
-
+const getFormat = (toFormat: string) => {
+    toFormat = toFormat.replace("YYYY", 'yyyy')
+    toFormat = toFormat.replace("YYY", 'yyy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("DDD", 'ddd')
+    toFormat = toFormat.replace("DD", 'dd')
+    toFormat = toFormat.replace("D", 'd')
+    toFormat = toFormat.replace("A", 'a')
+    return toFormat
+}
 export const dateFormat = (date: Date, toFormat: string) => {
     if (!date) return ""
     try {
-        toFormat = toFormat.replace("YYYY", 'yyyy')
-        toFormat = toFormat.replace("YYY", 'yyy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("DDD", 'ddd')
-        toFormat = toFormat.replace("DD", 'dd')
-        toFormat = toFormat.replace("D", 'd')
-        toFormat = toFormat.replace("A", 'a')
+        toFormat = getFormat(toFormat);
         return FNSFormat(date, toFormat)
     }
     catch (e) {
@@ -856,3 +861,39 @@ export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
         total_free_tickets_consumed: 0
     }
 }
+
+export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
+    if (!ISODate) {
+        ISODate = new Date()
+    }
+    if (!(ISODate instanceof Date)) {
+        ISODate = new Date(ISODate)
+    }
+    return utcToZonedTime(ISODate?.toISOString(), timezone);
+}
+
+export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) => {
+    if (!zonedDate) {
+        zonedDate = new Date()
+    }
+    if (!(zonedDate instanceof Date)) {
+        zonedDate = new Date(zonedDate)
+    }
+    return zonedTimeToUtc(zonedDate, timezone)
+}
+
+
+export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, format: string) => {
+
+    return moment(iso)
+        .tz(timezone)
+        .format(format)
+
+    return formatInTimeZone(iso, timezone, getFormat(format))
+    const zoned = getZonedDate(timezone, iso)
+    return TZFormat(zoned, getFormat(format), {
+        timeZone: timezone,
+    })
+}
+
+

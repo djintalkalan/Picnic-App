@@ -15,6 +15,10 @@ import '@formatjs/intl-numberformat/locale-data/en'
 import '@formatjs/intl-numberformat/locale-data/en-GB'
 import '@formatjs/intl-numberformat/locale-data/de'
 
+import '@formatjs/intl-datetimeformat/polyfill'
+import '@formatjs/intl-datetimeformat/locale-data/en' // locale-data for en
+import '@formatjs/intl-datetimeformat/locale-data/es' // locale-data for en
+import '@formatjs/intl-datetimeformat/add-all-tz' // Add ALL tz data
 
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
