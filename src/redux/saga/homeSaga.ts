@@ -57,7 +57,7 @@ function* _refreshLanguage({ type, payload, }: action): Generator<any, any, any>
             Object.keys(allLanguages).forEach((l: string) => {
                 Object.keys(allLanguages[l]).forEach((k: string) => {
                     // @ts-ignore
-                    allLanguages[l][k] = newLanguages?.[l]?.[k] || allLanguages[l][k] || allLanguages['en'][k]
+                    allLanguages[l][k] = newLanguages?.[l]?.[k] || allLanguages[l][k] || allLanguages[DefaultLanguage][k]
                 })
             })
             Database.setAllLanguages(allLanguages)
