@@ -167,7 +167,7 @@ const CreateEvent3: FC<any> = props => {
     }, []);
 
     const calculateButtonDisability = useCallback(() => {
-        if ((!isPayByPaypal && !isPayByCash)
+        if ((!isPayByPaypal && !isPayByCash) && event?.is_booking_enabled == 1
         ) {
             return true;
         }

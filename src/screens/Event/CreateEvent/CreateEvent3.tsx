@@ -83,6 +83,7 @@ const getCutoffDateTime = (event: ICreateEventReducer) => {
 
 const CreateEvent3: FC<any> = props => {
   const [isFreeEvent, setIsFreeEvent] = useState(false);
+  const [isBookingEnabled, setBookingEnabled] = useState(true);
   const uploadedImage = useRef<string>('');
   const uploadedImageArray = useRef<Array<any>>([]);
   const ticketTypeRef = useRef<string>('single')
@@ -179,6 +180,8 @@ const CreateEvent3: FC<any> = props => {
     }
     setIsFreeEvent(event?.is_free_event == 1 ? true : false)
     uploadedImage.current = event?.image?.path ? '' : event.image
+    setBookingEnabled(parseInt(event?.is_booking_enabled?.toString() || '1') !== 0)
+
   }, [])
 
 
@@ -256,6 +259,7 @@ const CreateEvent3: FC<any> = props => {
     const payload: any = {
       is_free_event: '0',
       is_donation_enabled: '0',
+      is_booking_enabled: isBookingEnabled ? '1' : '0'
     }
 
     if (isFreeEvent) {
@@ -322,7 +326,7 @@ const CreateEvent3: FC<any> = props => {
       })
     } else next(payload)
 
-  })(), [isFreeEvent, handleSubmit, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
+  })(), [isFreeEvent, isBookingEnabled, handleSubmit, isDonationAccepted, ticketPlans, isUnlimitedCapacity])
 
   const openDatePicker = useCallback((i: number, isTime: any = false) => {
     // eventDateTime.current.selectedType = type
@@ -360,6 +364,13 @@ const CreateEvent3: FC<any> = props => {
           <View style={{ width: '100%', paddingHorizontal: scaler(20), paddingVertical: scaler(15), }}>
 
             <TouchableOpacity onPress={() => {
+              setBookingEnabled(!isBookingEnabled)
+            }} style={{ flexDirection: 'row', marginBottom: scaler(10), alignItems: 'center' }}>
+              <CheckBox checked={!isBookingEnabled} />
+              <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => {
               setIsTicketTypeDropdown(false)
               setIsFreeEvent((b) => {
                 if (!b) {
@@ -370,7 +381,7 @@ const CreateEvent3: FC<any> = props => {
                 }
                 return !b
               })
-            }} style={{ flexDirection: 'row' }}>
+            }} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <CheckBox checked={isFreeEvent}
 
               />
