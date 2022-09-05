@@ -31,7 +31,7 @@ const CheckInList: FC<any> = (props) => {
         }, 2000);
         dispatch(getEventsForCheckIn({
             q: text,
-            _id: "",
+            page: 1,
         }))
     }, 500), [])
 

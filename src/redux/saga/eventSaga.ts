@@ -457,17 +457,20 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
 }
 
 function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any, any> {
-    let { pagination: { total, ...pagination }, events } = store.getState()?.eventForCheckIn
+    let { pagination: { totalPages, ...pagination }, events } = store.getState()?.eventForCheckIn
 
-    if (payload?._id !== "") {
-        if (total <= events?.length && total > 0) {
+    if (totalPages !== -1 && payload?.page != 1) {
+        if (totalPages <= pagination?.page) {
             return
         }
     }
+
+    pagination.page = pagination?.page + 1
+    const body = { ...pagination, ...payload }
     yield put(setLoadingAction(true));
 
     try {
-        let res = yield call(ApiProvider._getMyEventForCheckIn, { ...pagination, ...payload });
+        let res = yield call(ApiProvider._getMyEventForCheckIn, body);
         if (res.status == 200) {
 
             if (!res?.data?.data?.length) {
@@ -493,12 +496,12 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
 
             yield put(onFetchEventsForCheckIn({
                 pagination: {
-                    _id: res.data.data?.length ? res.data.data?.[res.data.data?.length - 1]._id : "",
-                    total: res?.data?.pagination?.[0]?.total || 0,
-                    q: payload?.q,
+                    page: body?.page,
+                    totalPages: res?.data?.pagination?.totalPages || -1,
+                    q: body?.q,
                     limit: 20
                 },
-                events: [...(payload?._id !== "" && pagination?._id ? events : []), ...res?.data?.data]
+                events: [...(body?.page == 1 ? [] : events), ...res?.data?.data]
             }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
