@@ -411,7 +411,7 @@ export const en = {
   single_ticket: 'Single ticket',
   multiple_ticket: 'Multiple ticket',
   selected_timezone: 'Selected Timezone',
-  chat_services_down: 'Chat services seems to be not connected, trying to reconnect you',
+  chat_services_down: 'Service unavailable, trying to connect',
   copied: 'Copied',
   english: 'English',
   spanish: 'Español',

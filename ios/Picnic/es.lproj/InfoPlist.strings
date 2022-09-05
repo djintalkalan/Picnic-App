@@ -1,7 +1,7 @@
-"NSCalendarsUsageDescription"="We requires access to your calender to let you add events in calender.";
-"NSCameraUsageDescription"="We would like access to your camera to scan the QR code to complete ticket booking flow.";
-"NSContactsUsageDescription"="We requires access to your contacts to let you choose contact for sharing in groups and events.";
-"NSLocationAlwaysAndWhenInUseUsageDescription"="We requires your location to improve your app experience by fetching nearby groups and events for you.";
-"NSLocationWhenInUseUsageDescription"="We requires your location to improve your app experience by fetching nearby groups and events for you.";
-"NSPhotoLibraryAddUsageDescription"="We would like to save photos to your photo gallery.";
-"NSPhotoLibraryUsageDescription"="We requires access to your photo gallery to let you choose photos for your profile picture as well as for groups and events.";
+"NSCalendarsUsageDescription"="Picnic Groups requiere acceso a su calendario para agregar eventos.";
+"NSCameraUsageDescription"="Picnic Groups requiere acceso a su cámara para escanear el código QR.";
+"NSContactsUsageDescription"="Grupos de picnic requiere acceso a sus contactos para compartir grupos y eventos.";
+"NSLocationAlwaysAndWhenInUseUsageDescription"="Picnic Groups requiere su ubicación para encontrar grupos y eventos cercanos para usted.";
+"NSLocationWhenInUseUsageDescription"="Picnic Groups requiere su ubicación para encontrar grupos y eventos cercanos para usted.";
+"NSPhotoLibraryAddUsageDescription"="Picnic Groups desea guardar fotos en su galería de fotos.";
+"NSPhotoLibraryUsageDescription"="Picnic Groups requiere acceso a su galería de fotos para permitirle elegir compartir imágenes.";
