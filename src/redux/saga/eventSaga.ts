@@ -464,7 +464,6 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
             return
         }
     }
-    console.log("pagination");
 
     pagination.page = pagination?.page + 1
     const body = { ...pagination, ...payload }
