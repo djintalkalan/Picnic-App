@@ -97,10 +97,11 @@ interface ITicketView {
     total_sold_tickets: number | string,
     capacity: number | string
     is_event_member: boolean,
+    is_booking_enabled: number
     size: 'small' | 'normal'
 }
 
-export const TicketView: FC<ITicketView> = ({ size = 'normal', capacity_type, is_event_admin = false, capacity = 0, is_event_member = false, total_sold_tickets = 0 }) => {
+export const TicketView: FC<ITicketView> = ({ size = 'normal', capacity_type, is_event_admin = false, capacity = 0, is_event_member = false, total_sold_tickets = 0, is_booking_enabled = 1 }) => {
     const styles = useMemo(() => {
         const color = (is_event_member && !is_event_admin) ? colors.colorPrimary : "#DBDBDB"
         const tintColor = (is_event_member && !is_event_admin) ? colors.colorPrimary : colors.colorBlackText
@@ -131,7 +132,8 @@ export const TicketView: FC<ITicketView> = ({ size = 'normal', capacity_type, is
 
     }, [is_event_member, is_event_admin, size])
 
-
+    if (!is_booking_enabled)
+        return <Text style={{ fontSize: scaler(12), fontWeight: '500', color: colors.colorPrimary }} >{Language.coming_soon}</Text>
 
     return <View style={styles?.container} >
         <Image style={styles.image} source={is_event_admin ? Images.ic_crown : Images.ic_ticket_2} />
