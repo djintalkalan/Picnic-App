@@ -128,23 +128,23 @@ export const activeEventReducer = (state: any = null, action: action): any => {
     }
 }
 
-interface CurserPagination {
+interface CheckInPagination {
     q: string
-    _id: string
+    page: number
     limit: number
-    total: number
+    totalPages: number
 }
 export interface IEventForCheckInReducer {
-    pagination: CurserPagination,
+    pagination: CheckInPagination,
     events: any[]
 
 }
 
-const initialCursorPagination: CurserPagination = {
+const initialCursorPagination: CheckInPagination = {
     q: "",
-    _id: "",
+    page: 1,
     limit: 20,
-    total: -1
+    totalPages: -1
 }
 
 const initialCheckInState: IEventForCheckInReducer = {
