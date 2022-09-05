@@ -680,60 +680,94 @@ const EventDetail: FC<any> = (props) => {
             </ScrollView>
 
             {event?.status == 1 ?
-                <>
-                    {(event?.is_admin || event?.is_event_member) ?
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                            {eventDate >= new Date() ?
+                event?.is_booking_enabled != 0 ?
+                    <>
+                        {(event?.is_admin || event?.is_event_member) ?
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
+                                {eventDate >= new Date() ?
+                                    <View style={{ flex: 1 }}>
+                                        <Button onPress={() => {
+                                            try {
+                                                const startDate = eventDate?.toISOString()
+                                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                                presentEventCreatingDialog({
+                                                    startDate,
+                                                    endDate,
+                                                    allDay: false,
+                                                    location: event?.address,
+                                                    title: '"' + event?.name + '" event from Picnic Groups',
+                                                    notes: event?.name
+                                                }).then(res => {
+                                                    console.log("Res", res);
+
+                                                }).catch(e => {
+                                                    console.log("E", e);
+                                                })
+                                            }
+                                            catch (e) {
+                                                console.log("Error", e);
+
+                                            }
+                                        }} title={Language.add_to_calender} />
+                                    </View> : undefined}
                                 <View style={{ flex: 1 }}>
-                                    <Button onPress={() => {
-                                        try {
-                                            const startDate = eventDate?.toISOString()
-                                            const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
-                                            presentEventCreatingDialog({
-                                                startDate,
-                                                endDate,
-                                                allDay: false,
-                                                location: event?.address,
-                                                title: '"' + event?.name + '" event from Picnic Groups',
-                                                notes: event?.name
-                                            }).then(res => {
-                                                console.log("Res", res);
+                                    <Button title={Language.start_chat}
+                                        onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
+                                        fontColor={eventDate >= new Date() ? 'black' : 'white'}
+                                        backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
+                                        buttonStyle={{
+                                            borderColor: 'black',
+                                            borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                        }}
+                                        textStyle={{ fontWeight: '400' }} />
+                                </View>
+                            </View> :
+                            (endSales >= new Date() &&
+                                ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
+                                <View style={{ marginHorizontal: scaler(10) }}>
+                                    <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                        disabled={calculateButtonDisability()}
+                                        onPress={() => {
+                                            event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
+                                                NavigationService.navigate('BookEvent', { id: event?._id })
+                                        }}
+                                    />
+                                </View> : null
+                        }
+                    </> :
+                    <>
+                        <Button title={Language.coming_soon}
+                            // backgroundColor={colors.colorTextPlaceholder}
+                            disabled
+                            containerStyle={{ marginHorizontal: scaler(10) }}
+                        />
+                        <Button onPress={() => {
+                            try {
+                                const startDate = eventDate?.toISOString()
+                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                presentEventCreatingDialog({
+                                    startDate,
+                                    endDate,
+                                    allDay: false,
+                                    location: event?.address,
+                                    title: '"' + event?.name + '" event from Picnic Groups',
+                                    notes: event?.name
+                                }).then(res => {
+                                    console.log("Res", res);
 
-                                            }).catch(e => {
-                                                console.log("E", e);
-                                            })
-                                        }
-                                        catch (e) {
-                                            console.log("Error", e);
+                                }).catch(e => {
+                                    console.log("E", e);
+                                })
+                            }
+                            catch (e) {
+                                console.log("Error", e);
 
-                                        }
-                                    }} title={Language.add_to_calender} />
-                                </View> : undefined}
-                            <View style={{ flex: 1 }}>
-                                <Button title={Language.start_chat}
-                                    onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
-                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
-                                    buttonStyle={{
-                                        borderColor: 'black',
-                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
-                                    }}
-                                    textStyle={{ fontWeight: '400' }} />
-                            </View>
-                        </View> :
-                        (endSales >= new Date() &&
-                            ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
-                            <View style={{ marginHorizontal: scaler(10) }}>
-                                <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
-                                    disabled={calculateButtonDisability()}
-                                    onPress={() => {
-                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
-                                            NavigationService.navigate('BookEvent', { id: event?._id })
-                                    }}
-                                />
-                            </View> : null
-                    }
-                </> :
+                            }
+                        }} title={Language.add_to_calender}
+                            containerStyle={{ marginHorizontal: scaler(10) }}
+                        />
+                    </>
+                :
                 event?.is_event_member ?
                     <>
                         <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
