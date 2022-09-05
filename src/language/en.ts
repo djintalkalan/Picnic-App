@@ -438,5 +438,7 @@ export const en = {
   use_paypal_business_account: 'Use PayPal business account',
   timezone: 'Timezone',
   select_event: 'Select event',
+  save_the_date: 'Save the Date - Ticketing is on hold',
+  coming_soon: 'Coming Soon',
 
 }
