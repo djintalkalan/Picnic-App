@@ -140,17 +140,24 @@ const CreateEvent1: FC<any> = props => {
   const setEventValues = useCallback((event: any) => {
     if (loaded.current) return
     loaded.current = true
-    const addressObject = getFormattedAddress2(event?.address, event?.city, event?.state, event?.country)
-    locationRef.current = (event?.location?.coordinates[0] && event?.location?.coordinates[1]) ? {
-      latitude: event?.location?.coordinates[1],
-      longitude: event?.location?.coordinates[0],
+    var { location, address, city, state, country } = event?.event_group || {}
+
+    if (event?.location && (event?.address || event?.city || event?.state || event?.country)) {
+      var { location, address, city, state, country } = event || {}
+
+    }
+    const addressObject = getFormattedAddress2(address, city, state, country)
+    locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
+      latitude: location?.coordinates[1],
+      longitude: location?.coordinates[0],
       address: addressObject,
       otherData: {
-        city: event?.city,
-        state: event?.state,
-        country: event?.country
+        city: city,
+        state: state,
+        country: country
       }
     } : null
+
 
     selectedGroupRef.current = event?.event_group
     setMultiImageArray(event.event_images || [])
@@ -163,7 +170,7 @@ const CreateEvent1: FC<any> = props => {
     // })
 
     setValue('eventName', event?.name)
-    setValue('location', event?.address)
+    setValue('location', address)
     setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
     resetField('aboutEvent', { defaultValue: event?.short_description })
@@ -272,11 +279,33 @@ const CreateEvent1: FC<any> = props => {
             />
             <FixedDropdown
               visible={isDropdown}
-              data={myGroups.map((_, i) => ({ id: _?._id, data: _?.data, title: _?.name }))}
+              data={myGroups.map((_, i) => ({ id: _?._id, data: _, title: _?.name }))}
               onSelect={data => {
                 setDropdown(false);
                 selectedGroupRef.current = data;
+                console.log("Data", data);
+
                 setValue('selectGroup', data?.title, { shouldValidate: true });
+                const { location, address = "", city, state, country } = data?.data || {}
+
+                // if (event?.location && (event?.address || event?.city || event?.state || event?.country)) {
+                //   var { location, address, city, state, country } = event || {}
+
+                // }
+                const addressObject = getFormattedAddress2(address, city, state, country)
+                locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
+                  latitude: location?.coordinates[1],
+                  longitude: location?.coordinates[0],
+                  address: addressObject,
+                  otherData: {
+                    city: city,
+                    state: state,
+                    country: country
+                  }
+                } : null
+                setValue('location', address)
+                console.log("locationRef.current", locationRef.current);
+
               }}
             />
             <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>
