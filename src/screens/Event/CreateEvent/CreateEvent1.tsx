@@ -286,11 +286,13 @@ const CreateEvent1: FC<any> = props => {
                 console.log("Data", data);
 
                 setValue('selectGroup', data?.title, { shouldValidate: true });
+
                 const { location, address = "", city, state, country } = data?.data || {}
+                const addressObject = getFormattedAddress2(address, city, state, country)
                 locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
                   latitude: location?.coordinates[1],
                   longitude: location?.coordinates[0],
-                  address: address,
+                  address: addressObject,
                   otherData: {
                     city: city,
                     state: state,
