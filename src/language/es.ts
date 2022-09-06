@@ -442,5 +442,5 @@ export const es = {
     use_paypal_business_account: 'Usar cuenta de negocios de Paypal',
     timezone: 'Zona Horaria',
     tap_to_scan: 'Toca para escanear',
-    qr_code: 'código QR',
+    qr_code: 'el código QR',
 }
