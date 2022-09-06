@@ -680,7 +680,7 @@ const EventDetail: FC<any> = (props) => {
             </ScrollView>
 
             {event?.status == 1 ?
-                event?.is_booking_enabled != 0 ?
+                (!event?.is_booking_disabled || event?.is_booking_disabled == 0) ?
                     <>
                         {(event?.is_admin || event?.is_event_member) ?
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
