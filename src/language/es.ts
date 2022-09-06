@@ -445,5 +445,5 @@ export const es = {
     save_the_date: '',
     coming_soon: '',
     tap_to_scan: 'Toca para escanear',
-    qr_code: 'código QR',
+    qr_code: 'el código QR',
 }
