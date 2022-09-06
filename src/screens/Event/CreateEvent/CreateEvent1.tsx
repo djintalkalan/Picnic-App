@@ -3,7 +3,7 @@ import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
-import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
@@ -41,7 +41,7 @@ const { width } = Dimensions.get('screen')
 const CreateEvent1: FC<any> = props => {
   const { loadVideo } = useVideoPlayer()
   const [eventImage, setEventImage] = useState<any>();
-  const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
+  const locationRef: MutableRefObject<ILocation | null> = useRef(null);
   const locationInputRef = useRef<RNTextInput>(null);
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
@@ -78,7 +78,7 @@ const CreateEvent1: FC<any> = props => {
     mode: 'onChange',
     defaultValues: __DEV__ && !eventId ? {
       eventName: "Test Event",
-      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+      // location: "Sahibzada Ajit Singh Nagar, Punjab, India"
     } : {}
   });
 
@@ -142,7 +142,7 @@ const CreateEvent1: FC<any> = props => {
     loaded.current = true
     var { location, address, city, state, country } = event?.event_group || {}
 
-    if (event?.location && (event?.address || event?.city || event?.state || event?.country)) {
+    if (event?.location?.coordinates && event?.address && (event?.city || event?.state || event?.country)) {
       var { location, address, city, state, country } = event || {}
 
     }
@@ -287,16 +287,10 @@ const CreateEvent1: FC<any> = props => {
 
                 setValue('selectGroup', data?.title, { shouldValidate: true });
                 const { location, address = "", city, state, country } = data?.data || {}
-
-                // if (event?.location && (event?.address || event?.city || event?.state || event?.country)) {
-                //   var { location, address, city, state, country } = event || {}
-
-                // }
-                const addressObject = getFormattedAddress2(address, city, state, country)
                 locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
                   latitude: location?.coordinates[1],
                   longitude: location?.coordinates[0],
-                  address: addressObject,
+                  address: address,
                   otherData: {
                     city: city,
                     state: state,
