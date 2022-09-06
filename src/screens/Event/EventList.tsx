@@ -179,7 +179,7 @@ const EventList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }, rowMap) => {
-        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_donation_enabled, is_free_event, event_start_date_time, event_currency, event_fees, } = item
+        const { ticket_type, ticket_plans = [], is_event_member, city, state, country, is_donation_enabled, is_free_event, event_start_date_time, event_currency, event_fees, is_booking_disabled } = item
         if (ticket_type == 'multiple') {
             var { total_free_tickets = 0, total_free_tickets_consumed = 0 } = getFreeTicketsInMultiple(ticket_plans)
         } else {
@@ -198,6 +198,7 @@ const EventList: FC<any> = (props) => {
                 subtitle={getCityOnly(city, state, country)}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView size='small' {...item} />}
+                is_booking_disabled={is_booking_disabled}
                 onPress={() => {
                     dispatch(setActiveEvent(item));
                     setTimeout(() => {

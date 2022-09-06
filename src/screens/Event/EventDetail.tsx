@@ -529,7 +529,7 @@ const EventDetail: FC<any> = (props) => {
 
                             </View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {event?.is_booking_disabled == 1 ? null : <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_events_tickets} />
                                 <Text style={styles.events} >
@@ -538,7 +538,7 @@ const EventDetail: FC<any> = (props) => {
                                             ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
                                             : Language.unlimited_entry}
                                 </Text>
-                            </View>
+                            </View>}
                         </View>
                     </View>
                     {event?.short_description ?
