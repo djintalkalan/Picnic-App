@@ -437,5 +437,5 @@ export const es = {
     invalid_minimum_ticket_price: '',
     you_need_subscription: '',
     tap_to_scan: 'Toca para escanear',
-    qr_code: 'código QR',
+    qr_code: 'el código QR',
 }
