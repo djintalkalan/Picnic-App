@@ -402,7 +402,7 @@ export const es = {
     read_more: '',
     show_less: '',
     end_time_required: '',
-    check_in: '',
+    check_in: 'Registrarse',
     reserve: 'Reservar',
     donate_and_book_event: '',
     are_you_sure_you_want_to_reserve_using: '',
@@ -441,5 +441,6 @@ export const es = {
     please_wait_to_update: '',
     use_paypal_business_account: 'Usar cuenta de negocios de Paypal',
     timezone: 'Zona Horaria',
-
+    tap_to_scan: 'Toca para escanear',
+    qr_code: 'código QR',
 }
