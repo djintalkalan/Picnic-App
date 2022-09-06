@@ -444,5 +444,6 @@ export const en = {
   select_event: 'Select event',
   save_the_date: 'Save the Date - Ticketing is on hold',
   coming_soon: 'Coming Soon',
-
+  tap_to_scan: 'Tap to scan',
+  qr_code: 'QR Code',
 }

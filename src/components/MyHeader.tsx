@@ -3,6 +3,7 @@ import { Text, useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
 import { GestureResponderEvent, Image, ImageURISource, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
+import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 interface MyHeaderProps {
     onPress?: (e?: GestureResponderEvent) => void
@@ -45,8 +46,8 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
                     flexDirection: 'row'
                 }]} >
                     {scanText ? <View>
-                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >Tap to scan</Text>
-                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >QR code</Text>
+                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >{Language.tap_to_scan}</Text>
+                        <Text style={{ textAlign: 'center', fontSize: scaler(11), marginEnd: scaler(10), color: colors.colorPrimary }} >{Language.qr_code}</Text>
                     </View> : null}
                     <Image source={rightIcon} style={{ height: scaler(22), width: scaler(22), resizeMode: 'contain' }} />
                 </TouchableOpacity>}
