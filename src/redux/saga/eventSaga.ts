@@ -97,6 +97,9 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         const data = store.getState().createEventState
+        if (data?.is_free_event == 1 && data?.is_donation_enabled == 0) {
+            data.is_booking_disabled = '0' as unknown as number
+        }
         let res = yield call(data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
