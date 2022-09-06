@@ -402,7 +402,7 @@ export const es = {
     read_more: '',
     show_less: '',
     end_time_required: '',
-    check_in: '',
+    check_in: 'Registrarse',
     reserve: 'Reservar',
     donate_and_book_event: '',
     are_you_sure_you_want_to_reserve_using: '',
@@ -436,4 +436,6 @@ export const es = {
     cancel_upload: 'Cancelar carga',
     invalid_minimum_ticket_price: '',
     you_need_subscription: '',
+    tap_to_scan: 'Toca para escanear',
+    qr_code: 'código QR',
 }
