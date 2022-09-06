@@ -33,7 +33,7 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
 
 
     return (
-        <View style={styles.container} >
+        <View style={[styles.container, scanText ? { justifyContent: 'flex-start', paddingHorizontal: scaler(42) } : {}]} >
             {backEnabled &&
                 <TouchableOpacity onPress={onPressDefault} style={[styles.button, {
                 }]} >
