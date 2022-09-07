@@ -434,5 +434,6 @@ export const es = {
     you_need_subscription: '',
     timezone: 'Zona Horaria',
     select_event: '',
+    search_event: '',
 
 }

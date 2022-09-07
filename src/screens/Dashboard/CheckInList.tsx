@@ -89,7 +89,7 @@ const CheckInList: FC<any> = (props) => {
                 // autoFocus={true}
                 style={styles.searchInput}
                 // value={searchedText}
-                placeholder={Language.search_here}
+                placeholder={Language.search_event}
             />
             <View style={styles.imagePlaceholderContainer} >
                 <Image style={styles.imagePlaceholder} source={Images.ic_lens} />

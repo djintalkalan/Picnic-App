@@ -434,5 +434,6 @@ export const en = {
   you_need_subscription: 'You need subscription for a paid event.',
   timezone: 'Timezone',
   select_event: "Select event",
+  search_event: 'Search event',
 
 }
