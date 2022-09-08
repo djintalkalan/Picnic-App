@@ -34,6 +34,7 @@ export const EMIT_SEND_PERSONAL_MESSAGE = 'sendMessage';
 export const EMIT_PERSONAL_LIKE_UNLIKE = 'oneToOneLikeUnlike';
 export const EMIT_PERSONAL_MESSAGE_DELETE = 'oneToOneDeleteMessage';
 export const EMIT_JOIN_PERSONAL_ROOM = 'joinOneToOneRoom';
+export const EMIT_READ_ONE_TO_ONE_MESSAGE = 'readOneToOneMessage';
 
 /********************************************************************************************************/
 /********************************************************************************************************/
