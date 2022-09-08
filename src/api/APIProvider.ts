@@ -520,4 +520,9 @@ export const _totalSoldTickets = async (body: any) => {
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
 }
 
+export const _getAdminChatCount = async (body: any) => {
+    console.log("---------- _getAdminChatCount Api Call ---------------")
+    return fetchApiData('chat/get-other-member-chat-count?user_id=' + body)
+}
+
 
