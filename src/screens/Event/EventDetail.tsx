@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
-import { _copyEvent } from 'api/APIProvider'
+import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
 import { RootState } from 'app-store'
 import { deleteEvent, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -11,7 +12,7 @@ import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
@@ -19,7 +20,6 @@ import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
@@ -46,6 +46,8 @@ const EventDetail: FC<any> = (props) => {
         eventMembers: state?.eventDetails?.[props?.route?.params?.id]?.eventMembers ?? [],
     }), isEqual)
     const [isOpened, setOpened] = useState(false)
+    const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
+
     const eventDate = new Date(event?.event_start_date_time);
 
     const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
@@ -84,10 +86,28 @@ const EventDetail: FC<any> = (props) => {
         setTimeout(() => {
             // NavigationService.goBack()
             dispatch(getEventDetail(props?.route?.params?.id))
-            dispatch(getEventMembersList(props?.route?.params?.id))
 
         }, 200);
     }, [])
+
+    useFocusEffect(useCallback(() => {
+        console.log("event", event);
+
+        InteractionManager.runAfterInteractions(() => {
+            if (event?.is_admin == 1) {
+                dispatch(getEventMembersList(props?.route?.params?.id))
+            } else {
+                if (event?.is_event_member && event?.creator_of_event?._id)
+                    _getAdminChatCount(event?.creator_of_event?._id).then(res => {
+                        if (res?.status == 200) {
+                            setUnreadCountOfAdmin(res?.data?.unread_count || 0)
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                    })
+            }
+        })
+    }, [event]))
 
     useEffect(() => {
         if (event?.image || event?.event_images) {
@@ -333,12 +353,18 @@ const EventDetail: FC<any> = (props) => {
             <MemberListItem
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : <MaterialIcons
-                    onPress={() => {
-                        console.log("person", item?.user);
-                        NavigationService.navigate("PersonChat", { person: item?.user })
-                    }}
-                    size={scaler(20)} name='chat' />}
+                customRightText={item?.is_admin ? Language?.admin : <TouchableOpacity style={{ paddingHorizontal: scaler(5) }} onPress={() => {
+                    console.log("person", item?.user);
+                    NavigationService.navigate("PersonChat", { person: item?.user })
+                }}>
+                    <Image
+                        source={Images.ic_chat_message}
+                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                    />
+                    {(item?.unread_count?.count || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(1), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{item?.unread_count?.count || 0}</Text>
+                    </View>}
+                </TouchableOpacity>}
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_home_profile}
             />
@@ -635,14 +661,18 @@ const EventDetail: FC<any> = (props) => {
                                 {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                             </Text>
                             {event?.is_event_member ?
-                                <MaterialIcons
-                                    color={colors.colorPrimary}
-                                    style={{ marginEnd: scaler(10) }}
-                                    onPress={() => {
-                                        console.log("person", event?.creator_of_event);
-                                        NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
-                                    }}
-                                    size={scaler(20)} name='chat' />
+                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
+                                    console.log("person", event?.creator_of_event);
+                                    NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+                                }}>
+                                    <Image
+                                        source={Images.ic_chat_message}
+                                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                                    />
+                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
+                                    </View>}
+                                </TouchableOpacity>
                                 : undefined}
                         </View>
                     </>}
@@ -1013,3 +1043,4 @@ const styles = StyleSheet.create({
         color: colors.colorBlack,
     },
 })
+
