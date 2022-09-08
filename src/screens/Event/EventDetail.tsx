@@ -1,16 +1,16 @@
 import { config } from 'api'
 import { _copyEvent } from 'api/APIProvider'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
+import { deleteEvent, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
-import { ListItem } from 'custom-components/ListItem/ListItem'
+import { ListItem, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
@@ -19,6 +19,7 @@ import Carousel from 'react-native-looped-carousel'
 import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
@@ -40,10 +41,11 @@ const EventDetail: FC<any> = (props) => {
     const { loadVideo } = useVideoPlayer()
     const [imageArray, setImageArray] = useState<Array<any>>([])
     const [selectedBullet, setSelectedBullet] = useState<number>(0)
-    const { event } = useSelector((state: RootState) => ({
+    const { event, eventMembers } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
+        eventMembers: state?.eventDetails?.[props?.route?.params?.id]?.eventMembers ?? [],
     }), isEqual)
-
+    const [isOpened, setOpened] = useState(false)
     const eventDate = new Date(event?.event_start_date_time);
 
     const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
@@ -82,6 +84,7 @@ const EventDetail: FC<any> = (props) => {
         setTimeout(() => {
             // NavigationService.goBack()
             dispatch(getEventDetail(props?.route?.params?.id))
+            dispatch(getEventMembersList(props?.route?.params?.id))
 
         }, 200);
     }, [])
@@ -118,25 +121,6 @@ const EventDetail: FC<any> = (props) => {
             buttonText: Language.yes_cancel,
         })
     }, [event, activeTicket])
-
-
-
-    // const _renderGroupMembers = useCallback(({ item, index }) => {
-    //     return (
-    //         <MemberListItem
-    //             onLongPress={item?.is_admin ? undefined : () => {
-    //                 _showBottomMenu({
-    //                     buttons: getBottomMenuButtons(item)
-    //                 })
-    //             }}
-    //             containerStyle={{ paddingHorizontal: scaler(0) }}
-    //             title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-    //             customRightText={item?.is_admin ? Language?.admin : ""}
-    //             icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
-    //             defaultIcon={Images.ic_home_profile}
-    //         />
-    //     )
-    // }, [])
 
     const region = useMemo(() => ({
         latitude: parseFloat(event?.location?.coordinates?.[1] ?? 0),
@@ -343,6 +327,23 @@ const EventDetail: FC<any> = (props) => {
         }
         return false;
     }, [event]);
+
+    const _renderEventMembers = useCallback(({ item, index }) => {
+        return (
+            <MemberListItem
+                containerStyle={{ paddingHorizontal: scaler(0) }}
+                title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
+                customRightText={item?.is_admin ? Language?.admin : <MaterialIcons
+                    onPress={() => {
+                        console.log("person", item?.user);
+                        NavigationService.navigate("PersonChat", { person: item?.user })
+                    }}
+                    size={scaler(20)} name='chat' />}
+                icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
+                defaultIcon={Images.ic_home_profile}
+            />
+        )
+    }, [])
 
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
@@ -623,16 +624,26 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         : null}
 
-                    {event.status == 1 && <>
+                    {event.status == 1 && !event?.is_admin && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10) }}>
+                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
                                 {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                             </Text>
+                            {event?.is_event_member ?
+                                <MaterialIcons
+                                    color={colors.colorPrimary}
+                                    style={{ marginEnd: scaler(10) }}
+                                    onPress={() => {
+                                        console.log("person", event?.creator_of_event);
+                                        NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+                                    }}
+                                    size={scaler(20)} name='chat' />
+                                : undefined}
                         </View>
                     </>}
 
@@ -668,12 +679,34 @@ const EventDetail: FC<any> = (props) => {
                         </> : <View />
                     }
                     {event?.is_admin ?
-                        <TouchableOpacity style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}
+                        <TouchableOpacity style={{ marginTop: scaler(20), paddingVertical: scaler(10), flexDirection: 'row', alignItems: 'center' }}
                             onPress={() => NavigationService.navigate('EventMembers', { id: event?._id })}>
-                            <Text style={{ flex: 1 }}>{Language.members}</Text>
+                            <Text style={{ flex: 1 }}>{Language.check_in}</Text>
                             <Text style={styles.address} >{event?.total_event_members_count}</Text>
                             <Image style={{ height: scaler(14), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
                         </TouchableOpacity>
+                        : undefined}
+                    {event?.is_admin ?
+                        <>
+                            <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
+                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({eventMembers?.length})</Text></Text>
+
+                            {(isOpened ? eventMembers : eventMembers.slice(0, 5)).map((item, index) => {
+                                return <Fragment key={index} >
+                                    {index > 0 &&
+                                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                    }
+                                    {_renderEventMembers({ item, index })}
+                                </Fragment>
+                            })}
+                            {(!isOpened && eventMembers?.length > 5) && <>
+                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
+                                    <Text style={styles.events} >{(eventMembers?.length - 5)} {Language.more}</Text>
+                                    <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
+                                </TouchableOpacity>
+                            </>}
+                        </>
                         : undefined}
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
@@ -973,5 +1006,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorBlack,
         borderRadius: scaler(8),
         marginHorizontal: scaler(3),
-    }
+    },
+    membersCount: {
+        fontSize: scaler(11),
+        fontWeight: '400',
+        color: colors.colorBlack,
+    },
 })
