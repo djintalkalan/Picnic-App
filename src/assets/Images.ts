@@ -79,5 +79,6 @@ export const Images = {
   ic_sold_out: require("./images/ic_sold_out.png"),
   ic_paypal_icon: require("./images/ic_paypal_icon.png"),
   ic_fab_check_in: require("./images/ic_fab_check_in.png"),
-  // ic_fab_check_in: require("./images/ic_fab_check_in.png"),
+  ic_chat_message: require("./images/ic_chat_message.png"),
+  // ic_chat_message: require("./images/ic_chat_message.png"),
 };

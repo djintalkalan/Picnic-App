@@ -531,4 +531,9 @@ export const _getMyEventForCheckIn = async (body: any) => {
     console.log("---------- _getMyEventForCheckIn Api Call ---------------")
     return fetchApiData('event/get-my-upcoming-events?' + (new URLSearchParams(body)).toString())
 }
+export const _getAdminChatCount = async (body: any) => {
+    console.log("---------- _getAdminChatCount Api Call ---------------")
+    return fetchApiData('chat/get-other-member-chat-count?user_id=' + body)
+}
+
 
