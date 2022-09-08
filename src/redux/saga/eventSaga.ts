@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, onFetchEventsForCheckIn, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, onFetchEventsForCheckIn, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setEventMembersList, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { setCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
@@ -382,6 +382,28 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
     }
 }
 
+function* _getEventMembersList({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let res = yield call(ApiProvider._getEventMembersList, payload);
+        if (res.status == 200) {
+
+            yield put(setEventMembersList({
+                eventId: payload,
+                data: { eventMembers: res?.data }
+            }))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 function* _removeEventMember({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
@@ -534,6 +556,7 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
     yield takeLatest(ActionTypes.LEAVE_EVENT, _leaveEvent);
     yield takeLatest(ActionTypes.GET_EVENT_MEMBERS, _getEventMembers);
+    yield takeLatest(ActionTypes.GET_EVENT_MEMBERS_LIST, _getEventMembersList);
     yield takeLatest(ActionTypes.REMOVE_EVENT_MEMBER, _removeEventMember);
     yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
     yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);

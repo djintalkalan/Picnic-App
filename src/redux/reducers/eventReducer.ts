@@ -10,12 +10,14 @@ export interface IEventDetail {
     is_event_joined: any,
     eventMembersCheckedIn: Array<any>
     eventMembersNotCheckedIn: Array<any>
+    eventMembers: any[]
 }
 const initialEventDetailState = {
     event: null,
     is_event_joined: 0,
     eventMembersCheckedIn: [],
-    eventMembersNotCheckedIn: []
+    eventMembersNotCheckedIn: [],
+    eventMembers: []
 }
 const initialEventState = {
     allEvents: [],
@@ -93,6 +95,11 @@ export const eventDetailReducer = (state: IEventDetailReducer = {}, action: acti
                 state[action?.payload?.eventId] = initialEventDetailState
             }
             return { ...state, [action?.payload?.eventId]: { ...state?.[action?.payload?.eventId], ...action?.payload?.data } }
+        case ActionTypes.SET_EVENT_MEMBERS_LIST:
+            if (!state?.[action?.payload?.eventId]) {
+                state[action?.payload?.eventId] = initialEventDetailState
+            }
+            return { ...state, [action?.payload?.eventId]: { ...state?.[action?.payload?.eventId], ...action?.payload?.data } }
         case ActionTypes.REMOVE_EVENT_MEMBER_SUCCESS:
             if (!state?.[action?.payload?.eventId]) {
                 state[action?.payload?.eventId] = initialEventDetailState
@@ -101,7 +108,8 @@ export const eventDetailReducer = (state: IEventDetailReducer = {}, action: acti
                 ...state, [action?.payload?.eventId]: {
                     ...state?.[action?.payload?.eventId],
                     eventMembersCheckedIn: state?.[action?.payload?.eventId]?.eventMembersCheckedIn?.filter(_ => _.user_id != action?.payload?.data),
-                    eventMembersNotCheckedIn: state?.[action?.payload?.eventId]?.eventMembersNotCheckedIn?.filter(_ => _.user_id != action?.payload?.data)
+                    eventMembersNotCheckedIn: state?.[action?.payload?.eventId]?.eventMembersNotCheckedIn?.filter(_ => _.user_id != action?.payload?.data),
+                    eventMembers: state?.[action?.payload?.eventId]?.eventMembers?.filter(_ => _.user_id != action?.payload?.data)
                 }
             }
         case ActionTypes.RESET_STATE_ON_LOGIN:

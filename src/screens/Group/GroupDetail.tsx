@@ -134,7 +134,7 @@ const GroupDetail: FC<any> = (props) => {
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : <TouchableOpacity onPress={() => {
+                customRightText={item?.is_admin ? Language?.admin : <TouchableOpacity style={{ paddingHorizontal: scaler(5) }} onPress={() => {
                     console.log("person", item?.user);
                     NavigationService.navigate("PersonChat", { person: item?.user })
                 }}>
@@ -142,7 +142,7 @@ const GroupDetail: FC<any> = (props) => {
                         source={Images.ic_chat_message}
                         style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
                     />
-                    {(item?.unread_count?.count || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: -scaler(3), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                    {(item?.unread_count?.count || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(1), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
                         <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{item?.unread_count?.count || 0}</Text>
                     </View>}
                 </TouchableOpacity>
@@ -462,7 +462,7 @@ const GroupDetail: FC<any> = (props) => {
                                 {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
                             </Text>
                             {group?.is_group_member ?
-                                <TouchableOpacity style={{ marginEnd: scaler(10) }} onPress={() => {
+                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
                                     console.log("person", group?.creator_of_group);
                                     NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
                                 }}>
@@ -470,7 +470,7 @@ const GroupDetail: FC<any> = (props) => {
                                         source={Images.ic_chat_message}
                                         style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
                                     />
-                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: -scaler(3), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
                                         <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
                                     </View>}
                                 </TouchableOpacity>
