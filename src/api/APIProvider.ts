@@ -399,6 +399,11 @@ export const _getEventMembers = async (body: string) => {
     return fetchApiData('event/get-event-members?_id=' + body)
 }
 
+export const _getEventMembersList = async (body: string) => {
+    console.log("---------- _getEventMembers Api Call ---------------")
+    return fetchApiData('event/members-with-count?id=' + body)
+}
+
 export const _removeEventMember = async (body: any) => {
     console.log("---------- _removeEventMember Api Call ---------------")
     return fetchApiData('event/delete-event-member', "DELETE", body)
