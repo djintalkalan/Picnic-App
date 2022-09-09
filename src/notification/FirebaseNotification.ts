@@ -1,6 +1,6 @@
 
 // import PushNotification from "react-native-push-notification";
-import notifee, { AndroidColor, AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, EventType, Notification } from "@notifee/react-native";
+import notifee, { AndroidColor, AndroidDefaults, AndroidGroupAlertBehavior, AndroidImportance, AndroidLaunchActivityFlag, EventType, Notification } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import messaging from '@react-native-firebase/messaging';
 import { config } from "api";
@@ -195,7 +195,12 @@ const showIntercomNotification = (data: any) => {
             sound: 'default',
             // category: AndroidCategory.ALARM,
             defaults: [AndroidDefaults.ALL],
-            color: AndroidColor.RED
+            color: AndroidColor.RED,
+            pressAction: {
+                id: 'default',
+                launchActivity: 'default',
+                launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+            },
         },
         ios: {
             sound: 'default',
@@ -241,7 +246,12 @@ const showNotification = async (message: any, isBackground: boolean) => {
                             channelId: CHANNEL_NAME,
                             groupSummary: true,
                             groupId: data?.chat_room_id,
-                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                            pressAction: {
+                                id: 'default',
+                                launchActivity: 'default',
+                                launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+                            },
                         },
                     });
 
@@ -256,7 +266,12 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         // category: AndroidCategory.ALARM,
                         defaults: [AndroidDefaults.ALL],
                         groupId: data?.chat_room_id,
-                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                        pressAction: {
+                            id: 'default',
+                            launchActivity: 'default',
+                            launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+                        },
                     },
                     ios: {
                         sound: 'default',
@@ -298,7 +313,12 @@ const showNotification = async (message: any, isBackground: boolean) => {
                             channelId: CHANNEL_NAME,
                             groupSummary: true,
                             groupId: (data?.group || data?.event)?._id,
-                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                            groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                            pressAction: {
+                                id: 'default',
+                                launchActivity: 'default',
+                                launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+                            },
                         },
                     });
 
@@ -313,7 +333,12 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         // category: AndroidCategory.ALARM,
                         defaults: [AndroidDefaults.ALL],
                         groupId: (data?.group || data?.event)?._id,
-                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN
+                        groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                        pressAction: {
+                            id: 'default',
+                            launchActivity: 'default',
+                            launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+                        },
                     },
                     ios: {
                         sound: 'default',

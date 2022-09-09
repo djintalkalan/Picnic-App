@@ -1,6 +1,6 @@
 "NSCalendarsUsageDescription"="Picnic Groups requiere acceso a su calendario para agregar eventos.";
 "NSCameraUsageDescription"="Picnic Groups requiere acceso a su cámara para escanear el código QR.";
-"NSContactsUsageDescription"="Grupos de picnic requiere acceso a sus contactos para compartir grupos y eventos.";
+"NSContactsUsageDescription"="Picnic groups requiere acceso a sus contactos para compartir en al chat.";
 "NSLocationAlwaysAndWhenInUseUsageDescription"="Picnic Groups requiere su ubicación para encontrar grupos y eventos cercanos para usted.";
 "NSLocationWhenInUseUsageDescription"="Picnic Groups requiere su ubicación para encontrar grupos y eventos cercanos para usted.";
 "NSPhotoLibraryAddUsageDescription"="Picnic Groups desea guardar fotos en su galería de fotos.";

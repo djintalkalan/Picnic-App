@@ -57,7 +57,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>${APP_NAME} requires access to your camera to scan the QR code.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>${APP_NAME} requires access to your contacts to share groups and events.</string>
+	<string>${APP_NAME} requires access to your contacts to share in chat.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>${APP_NAME} requires your location to find nearby groups and events for you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

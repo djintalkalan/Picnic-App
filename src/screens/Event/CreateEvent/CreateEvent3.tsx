@@ -321,7 +321,7 @@ const CreateEvent3: FC<any> = props => {
 
     const userData = Database.getStoredValue("userData")
 
-    if (!userData?.is_premium) {
+    if (false && !userData?.is_premium) {
       _showPopUpAlert({
         message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
         buttonText: Language.join_now,
