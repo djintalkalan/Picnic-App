@@ -53,19 +53,19 @@
 		<true/>
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>${APP_NAME} requires access to your calender to let you add events in calender.</string>
+	<string>${APP_NAME} requires access to your calendar to add events.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>${APP_NAME} would like access to your camera to scan the QR code to complete ticket booking flow.</string>
+	<string>${APP_NAME} requires access to your camera to scan the QR code.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>${APP_NAME} requires access to your contacts to let you choose contact for sharing in groups and events.</string>
+	<string>${APP_NAME} requires access to your contacts to share in chat.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>${APP_NAME} requires your location to improve your app experience by fetching nearby groups and events for you.</string>
+	<string>${APP_NAME} requires your location to find nearby groups and events for you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>${APP_NAME} requires your location to improve your app experience by fetching nearby groups and events for you.</string>
+	<string>${APP_NAME} requires your location to find nearby groups and events for you.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>${APP_NAME} would like to save photos to your photo gallery.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>${APP_NAME} requires access to your photo gallery to let you choose photos for your profile picture as well as for groups and events.</string>
+	<string>${APP_NAME} requires access to your photo gallery to let you choose share pictures.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -129,5 +129,10 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CFBundleLocalizations</key>
+<array>
+    <string>en</string>
+    <string>es</string>
+</array>
 </dict>
 </plist>

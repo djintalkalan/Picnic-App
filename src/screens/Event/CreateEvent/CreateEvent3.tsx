@@ -304,7 +304,7 @@ const CreateEvent3: FC<any> = props => {
 
     const userData = Database.getStoredValue("userData")
 
-    if (!userData?.is_premium) {
+    if (false && !userData?.is_premium) {
       _showPopUpAlert({
         message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
         buttonText: Language.join_now,
@@ -939,11 +939,12 @@ const CreateEvent3: FC<any> = props => {
             const chosenDate = dateFormat(date, "YYYYMMDD")
             const thisDate = dateFormat(new Date(), "YYYYMMDD")
             if (chosenDate > eventEndDate) {
-              _showErrorMessage("Cutoff date should be less than event end date")
+              _showErrorMessage(Language.cutoff_date_less_than_end)
+
               return setDatePickerVisibility(null)
             }
             if (chosenDate < thisDate) {
-              _showErrorMessage("Cutoff date should be greater than current date")
+              _showErrorMessage(Language.cutoff_date_greater_than_current)
               return setDatePickerVisibility(null)
             }
             try {
@@ -960,11 +961,11 @@ const CreateEvent3: FC<any> = props => {
             const chosenDate = date
             const thisDate = new Date()
             if (chosenDate > eventEndDate) {
-              _showErrorMessage("Cutoff time should be less than event end time")
+              _showErrorMessage(Language.cutoff_time_less_than_end)
               return setDatePickerVisibility(null)
             }
             if (chosenDate < thisDate) {
-              _showErrorMessage("Cutoff time should be greater than current time")
+              _showErrorMessage(Language.cutoff_time_greater_than_current)
               return setDatePickerVisibility(null)
             }
           }
