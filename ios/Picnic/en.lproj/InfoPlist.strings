@@ -1,6 +1,6 @@
 "NSCalendarsUsageDescription"="Picnic Groups requires access to your calendar to add events.";
 "NSCameraUsageDescription"="Picnic Groups requires access to your camera to scan the QR code.";
-"NSContactsUsageDescription"="Picnic Groups requires access to your contacts to share groups and events.";
+"NSContactsUsageDescription"="Picnic Groups requires access to your contacts to share in chat.";
 "NSLocationAlwaysAndWhenInUseUsageDescription"="Picnic Groups requires your location to find nearby groups and events for you.";
 "NSLocationWhenInUseUsageDescription"="Picnic Groups requires your location to find nearby groups and events for you.";
 "NSPhotoLibraryAddUsageDescription"="Picnic Groups would like to save photos to your photo gallery.";

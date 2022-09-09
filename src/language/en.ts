@@ -261,7 +261,7 @@ export const en = {
   min_characters_event_name: 'Event name should have atleast 3 characters',
   invalid_seat_quantity: 'Invalid seat quantity',
   drag_pin_to_select_location: 'Drag pin to select location',
-  app_needs_location_permission: 'Permission is required to fetch nearby groups and events of your location',
+  app_needs_location_permission: 'Permission is required to find nearby groups and events for you',
   app_needs_contact_permission: 'Permission is required to let you share contacts in chats',
   unsupported_txt: 'Unsupported file, only TXT files are acceptable',
   unsupported_json: 'Unsupported file, only JSON files are acceptable',
