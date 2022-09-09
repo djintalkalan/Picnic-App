@@ -255,7 +255,7 @@ export const es = {
     select_contact: '',
     add_to_contacts: '',
     search_messages_here: '',
-    search_here: '',
+    search_here: 'Busca aquí',
     event_max_price: '',
     min_characters_group_name: '',
     min_characters_event_name: '',
@@ -433,7 +433,7 @@ export const es = {
     invalid_minimum_ticket_price: '',
     you_need_subscription: '',
     timezone: 'Zona Horaria',
-    select_event: '',
-    search_event: '',
+    select_event: 'Selecciona evento',
+    search_event: 'Busca evento',
 
 }
