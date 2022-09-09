@@ -443,8 +443,8 @@ export const es = {
     timezone: 'Zona Horaria',
     select_event: 'Selecciona evento',
     search_event: 'Busca evento',
-    save_the_date: '',
-    coming_soon: '',
+    save_the_date: 'Guarda la fecha - Boletos todavía no están disponibles',
+    coming_soon: 'En breve',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
 
