@@ -59,7 +59,7 @@
     "@formatjs/intl-numberformat": "^8.0.4",
     "@formatjs/intl-pluralrules": "^5.0.3",
     "@intercom/intercom-react-native": "3.0.0",
-    "@notifee/react-native": "^4.0.1",
+    "@notifee/react-native": "^5.7.0",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/datetimepicker": "^3.5.2",
