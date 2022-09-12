@@ -198,12 +198,7 @@ const CreateEvent3: FC<any> = props => {
                     <Stepper step={4} totalSteps={4} paddingHorizontal={scaler(20)} />
 
                     <View style={styles.eventView}>
-                        <TouchableOpacity onPress={() => {
-                            setBookingDisabled(!isBookingDisabled)
-                        }} style={{ flexDirection: 'row', marginBottom: scaler(20), alignItems: 'center' }}>
-                            <CheckBox checked={isBookingDisabled} />
-                            <Text style={{ color: colors.colorBlack, fontWeight: '500', marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
-                        </TouchableOpacity>
+
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {event.is_donation_enabled == 1 ? Language.select_donation_options : Language.select_payment_options}
                         </Text>
@@ -348,6 +343,13 @@ const CreateEvent3: FC<any> = props => {
                                     control={control}
                                     errors={errors} />
                             </View> : undefined}
+
+                        <TouchableOpacity onPress={() => {
+                            setBookingDisabled(!isBookingDisabled)
+                        }} style={{ flexDirection: 'row', marginVertical: scaler(20), alignItems: 'center' }}>
+                            <CheckBox checked={isBookingDisabled} />
+                            <Text style={{ color: colors.colorBlack, fontWeight: '500', marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
+                        </TouchableOpacity>
 
                         <Button
                             disabled={calculateButtonDisability()}
