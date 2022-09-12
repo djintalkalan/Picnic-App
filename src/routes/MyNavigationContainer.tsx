@@ -33,6 +33,7 @@ import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
 import ImagePreview from 'screens/Chat/ImagePreview';
 import SearchChatScreen from 'screens/Chat/SearchChat/SearchChatScreen';
 import PersonChat from 'screens/Chat/SingleChat/PersonChat';
+import CheckInList from 'screens/Dashboard/CheckInList';
 import Home from 'screens/Dashboard/Home';
 import ProfileScreen from 'screens/Dashboard/ProfileScreen';
 import BookEvent from 'screens/Event/BookEvent';
@@ -121,6 +122,7 @@ const dashboardScreens = {
   SelectTicket: SelectTicket,
   TwoFactorAuth: TwoFactorAuth,
   PaypalDetails: PaypalDetails,
+  CheckInList,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

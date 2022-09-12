@@ -4,7 +4,7 @@ import React, { MutableRefObject } from 'react';
 import { DeviceEventEmitter, Platform } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
-import { LanguageType } from 'src/language/Language';
+import { DefaultLanguage, LanguageType } from 'src/language/Language';
 import { _showErrorMessage } from 'utils';
 
 interface header {
@@ -104,7 +104,7 @@ async function callApi(url: string, header: header, body: any, method?: Method):
 async function fetchApiData(url: string, method?: Method, body?: any) {
     const isMultipart = (body && body instanceof FormData) ? true : false
     const authToken = Database.getStoredValue('authToken')
-    const selectedLanguage = Database.getStoredValue<LanguageType>('selectedLanguage') || "en"
+    const selectedLanguage = url?.includes('auth/signup') ? DefaultLanguage : (Database.getStoredValue<LanguageType>('selectedLanguage') || DefaultLanguage)
     try {
         const header = {
             "Content-Type": (isMultipart) ? "multipart/form-data" : "application/json",
@@ -399,6 +399,11 @@ export const _getEventMembers = async (body: string) => {
     return fetchApiData('event/get-event-members?_id=' + body)
 }
 
+export const _getEventMembersList = async (body: string) => {
+    console.log("---------- _getEventMembers Api Call ---------------")
+    return fetchApiData('event/members-with-count?id=' + body)
+}
+
 export const _removeEventMember = async (body: any) => {
     console.log("---------- _removeEventMember Api Call ---------------")
     return fetchApiData('event/delete-event-member', "DELETE", body)
@@ -525,6 +530,15 @@ export const _enableDisable2FA = async (body: any) => {
 export const _totalSoldTickets = async (body: any) => {
     console.log("---------- _enableDisable2FA Api Call ---------------")
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
+}
+
+export const _getMyEventForCheckIn = async (body: any) => {
+    console.log("---------- _getMyEventForCheckIn Api Call ---------------")
+    return fetchApiData('event/get-my-upcoming-events?' + (new URLSearchParams(body)).toString())
+}
+export const _getAdminChatCount = async (body: any) => {
+    console.log("---------- _getAdminChatCount Api Call ---------------")
+    return fetchApiData('chat/get-other-member-chat-count?user_id=' + body)
 }
 
 

@@ -255,7 +255,7 @@ export const es = {
     select_contact: '',
     add_to_contacts: '',
     search_messages_here: '',
-    search_here: '',
+    search_here: 'Busca aquí',
     event_max_price: '',
     min_characters_group_name: 'El nombre del grupo debe tener al menos 3 caracteres',
     min_characters_event_name: 'El nombre del evento debe tener al menos 3 caracteres',
@@ -441,6 +441,11 @@ export const es = {
     please_wait_to_update: '',
     use_paypal_business_account: 'Usar cuenta de negocios de Paypal',
     timezone: 'Zona Horaria',
+    select_event: 'Selecciona evento',
+    search_event: 'Busca evento',
+    save_the_date: 'Guarda la fecha - Boletos todavía no están disponibles',
+    coming_soon: 'En breve',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
+
 }

@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
+import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, onFetchEventsForCheckIn, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setEventMembersList, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { setCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
@@ -97,6 +97,9 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         const data = store.getState().createEventState
+        if (data?.is_free_event == 1 && data?.is_donation_enabled == 0) {
+            data.is_booking_disabled = '0' as unknown as number
+        }
         let res = yield call(data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, data);
         if (res.status == 200) {
             _showSuccessMessage(res.message);
@@ -150,7 +153,6 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
                     // if (!res?.data?.data[index]?.capacity) {
                     const eventCapacityType = res?.data?.data[index]?.capacity_type
                     const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited') ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
-                    console.log("totalCapacity", totalCapacity);
 
                     res.data.data[index].capacity_type = totalCapacity?.capacity_type
                     res.data.data[index].capacity = totalCapacity?.capacity
@@ -380,6 +382,28 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
     }
 }
 
+function* _getEventMembersList({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let res = yield call(ApiProvider._getEventMembersList, payload);
+        if (res.status == 200) {
+
+            yield put(setEventMembersList({
+                eventId: payload,
+                data: { eventMembers: res?.data }
+            }))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 
 function* _removeEventMember({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
@@ -457,6 +481,67 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     }
 }
 
+function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any, any> {
+    let { pagination: { totalPages, ...pagination }, events } = store.getState()?.eventForCheckIn
+
+    if (totalPages !== -1 && payload?.page != 1) {
+        if (totalPages <= pagination?.page) {
+            return
+        }
+    }
+
+    pagination.page = pagination?.page + 1
+    const body = { ...pagination, ...payload }
+    yield put(setLoadingAction(true));
+
+    try {
+        let res = yield call(ApiProvider._getMyEventForCheckIn, body);
+        if (res.status == 200) {
+
+            if (!res?.data?.data?.length) {
+                res.data.data = []
+            }
+            for (const index in res?.data?.data) {
+                if (res?.data?.data[index].ticket_type == 'multiple') {
+                    const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+
+                    res.data.data[index].event_fees = leastTicket.amount?.toString()
+                    res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
+                    res.data.data[index].event_currency = leastTicket.currency
+
+                    // if (!res?.data?.data[index]?.capacity) {
+                    const eventCapacityType = res?.data?.data[index]?.capacity_type
+                    const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited') ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
+
+                    res.data.data[index].capacity_type = totalCapacity?.capacity_type
+                    res.data.data[index].capacity = totalCapacity?.capacity
+                    // }
+                }
+            }
+
+            yield put(onFetchEventsForCheckIn({
+                pagination: {
+                    page: body?.page,
+                    totalPages: res?.data?.pagination?.totalPages || -1,
+                    q: body?.q,
+                    limit: 20
+                },
+                events: [...(body?.page == 1 ? [] : events), ...res?.data?.data]
+            }))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -471,8 +556,10 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
     yield takeLatest(ActionTypes.LEAVE_EVENT, _leaveEvent);
     yield takeLatest(ActionTypes.GET_EVENT_MEMBERS, _getEventMembers);
+    yield takeLatest(ActionTypes.GET_EVENT_MEMBERS_LIST, _getEventMembersList);
     yield takeLatest(ActionTypes.REMOVE_EVENT_MEMBER, _removeEventMember);
     yield takeLatest(ActionTypes.VERIFY_QR_CODE, _verifyQrCode);
     yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);
     yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
+    yield takeLatest(ActionTypes.GET_EVENTS_FOR_CHECK_IN, _fetchEventForCheckIn);
 };

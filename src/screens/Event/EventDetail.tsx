@@ -1,17 +1,18 @@
+import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
-import { _copyEvent } from 'api/APIProvider'
+import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
+import { deleteEvent, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
-import { ListItem } from 'custom-components/ListItem/ListItem'
+import { ListItem, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
@@ -41,9 +42,12 @@ const EventDetail: FC<any> = (props) => {
     const { loadVideo } = useVideoPlayer()
     const [imageArray, setImageArray] = useState<Array<any>>([])
     const [selectedBullet, setSelectedBullet] = useState<number>(0)
-    const { event } = useSelector((state: RootState) => ({
+    const { event, eventMembers } = useSelector((state: RootState) => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
+        eventMembers: state?.eventDetails?.[props?.route?.params?.id]?.eventMembers ?? [],
     }), isEqual)
+    const [isOpened, setOpened] = useState(false)
+    const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
 
     const eventDate = new Date(event?.event_start_date_time);
 
@@ -87,6 +91,25 @@ const EventDetail: FC<any> = (props) => {
         }, 200);
     }, [])
 
+    useFocusEffect(useCallback(() => {
+        console.log("event", event);
+
+        InteractionManager.runAfterInteractions(() => {
+            if (event?.is_admin == 1) {
+                dispatch(getEventMembersList(props?.route?.params?.id))
+            } else {
+                if (event?.is_event_member && event?.creator_of_event?._id)
+                    _getAdminChatCount(event?.creator_of_event?._id).then(res => {
+                        if (res?.status == 200) {
+                            setUnreadCountOfAdmin(res?.data?.unread_count || 0)
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                    })
+            }
+        })
+    }, [event]))
+
     useEffect(() => {
         if (event?.image || event?.event_images) {
             setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
@@ -119,25 +142,6 @@ const EventDetail: FC<any> = (props) => {
             buttonText: Language.yes_cancel,
         })
     }, [event, activeTicket])
-
-
-
-    // const _renderGroupMembers = useCallback(({ item, index }) => {
-    //     return (
-    //         <MemberListItem
-    //             onLongPress={item?.is_admin ? undefined : () => {
-    //                 _showBottomMenu({
-    //                     buttons: getBottomMenuButtons(item)
-    //                 })
-    //             }}
-    //             containerStyle={{ paddingHorizontal: scaler(0) }}
-    //             title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-    //             customRightText={item?.is_admin ? Language?.admin : ""}
-    //             icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
-    //             defaultIcon={Images.ic_home_profile}
-    //         />
-    //     )
-    // }, [])
 
     const region = useMemo(() => ({
         latitude: parseFloat(event?.location?.coordinates?.[1] ?? 0),
@@ -345,6 +349,29 @@ const EventDetail: FC<any> = (props) => {
         return false;
     }, [event]);
 
+    const _renderEventMembers = useCallback(({ item, index }) => {
+        return (
+            <MemberListItem
+                containerStyle={{ paddingHorizontal: scaler(0) }}
+                title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
+                customRightText={item?.is_admin ? Language?.admin : <TouchableOpacity style={{ paddingHorizontal: scaler(5) }} onPress={() => {
+                    console.log("person", item?.user);
+                    NavigationService.navigate("PersonChat", { person: item?.user })
+                }}>
+                    <Image
+                        source={Images.ic_chat_message}
+                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                    />
+                    {(item?.unread_count?.count || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(1), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{item?.unread_count?.count || 0}</Text>
+                    </View>}
+                </TouchableOpacity>}
+                icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
+                defaultIcon={Images.ic_home_profile}
+            />
+        )
+    }, [])
+
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
             <View style={styles.placeholder}>
@@ -538,7 +565,7 @@ const EventDetail: FC<any> = (props) => {
 
                             </View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {event?.is_booking_disabled == 1 ? null : <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                     source={Images.ic_events_tickets} />
                                 <Text style={styles.events} >
@@ -547,7 +574,7 @@ const EventDetail: FC<any> = (props) => {
                                             ? event?.capacity - event?.total_sold_tickets + ' ' + Language.tickets_available
                                             : Language.unlimited_entry}
                                 </Text>
-                            </View>
+                            </View>}
                         </View>
                     </View>
                     {event?.short_description ?
@@ -632,16 +659,30 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         : null}
 
-                    {event.status == 1 && <>
+                    {event.status == 1 && !event?.is_admin && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10) }}>
+                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
                                 {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                             </Text>
+                            {event?.is_event_member ?
+                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
+                                    console.log("person", event?.creator_of_event);
+                                    NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+                                }}>
+                                    <Image
+                                        source={Images.ic_chat_message}
+                                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                                    />
+                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
+                                    </View>}
+                                </TouchableOpacity>
+                                : undefined}
                         </View>
                     </>}
 
@@ -677,72 +718,128 @@ const EventDetail: FC<any> = (props) => {
                         </> : <View />
                     }
                     {event?.is_admin ?
-                        <TouchableOpacity style={{ marginTop: scaler(20), flexDirection: 'row', alignItems: 'center' }}
+                        <TouchableOpacity style={{ marginTop: scaler(20), paddingVertical: scaler(10), flexDirection: 'row', alignItems: 'center' }}
                             onPress={() => NavigationService.navigate('EventMembers', { id: event?._id })}>
-                            <Text style={{ flex: 1 }}>{Language.members}</Text>
+                            <Text style={{ flex: 1 }}>{Language.check_in}</Text>
                             <Text style={styles.address} >{event?.total_event_members_count}</Text>
                             <Image style={{ height: scaler(14), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
                         </TouchableOpacity>
+                        : undefined}
+                    {event?.is_admin ?
+                        <>
+                            <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
+                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({eventMembers?.length})</Text></Text>
+
+                            {(isOpened ? eventMembers : eventMembers.slice(0, 5)).map((item, index) => {
+                                return <Fragment key={index} >
+                                    {index > 0 &&
+                                        <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                    }
+                                    {_renderEventMembers({ item, index })}
+                                </Fragment>
+                            })}
+                            {(!isOpened && eventMembers?.length > 5) && <>
+                                <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
+                                <TouchableOpacity onPress={() => setOpened(true)} style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: scaler(15), paddingHorizontal: scaler(10) }} >
+                                    <Text style={styles.events} >{(eventMembers?.length - 5)} {Language.more}</Text>
+                                    <Image style={{ transform: [{ rotate: '90deg' }], height: scaler(12), resizeMode: 'contain' }} source={Images.ic_right} />
+                                </TouchableOpacity>
+                            </>}
+                        </>
                         : undefined}
                 </View>
                 <View style={{ height: 1, width: '90%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
             </ScrollView>
 
             {event?.status == 1 ?
-                <>
-                    {(event?.is_admin || event?.is_event_member) ?
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
-                            {eventDate >= new Date() ?
+                (!event?.is_booking_disabled || event?.is_booking_disabled == 0) ?
+                    <>
+                        {(event?.is_admin || event?.is_event_member) ?
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
+                                {eventDate >= new Date() ?
+                                    <View style={{ flex: 1 }}>
+                                        <Button onPress={() => {
+                                            try {
+                                                const startDate = eventDate?.toISOString()
+                                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                                presentEventCreatingDialog({
+                                                    startDate,
+                                                    endDate,
+                                                    allDay: false,
+                                                    location: event?.address,
+                                                    title: '"' + event?.name + '" event from Picnic Groups',
+                                                    notes: event?.name
+                                                }).then(res => {
+                                                    console.log("Res", res);
+
+                                                }).catch(e => {
+                                                    console.log("E", e);
+                                                })
+                                            }
+                                            catch (e) {
+                                                console.log("Error", e);
+
+                                            }
+                                        }} title={Language.add_to_calender} />
+                                    </View> : undefined}
                                 <View style={{ flex: 1 }}>
-                                    <Button onPress={() => {
-                                        try {
-                                            const startDate = eventDate?.toISOString()
-                                            const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
-                                            presentEventCreatingDialog({
-                                                startDate,
-                                                endDate,
-                                                allDay: false,
-                                                location: event?.address,
-                                                title: '"' + event?.name + '" event from Picnic Groups',
-                                                notes: event?.name
-                                            }).then(res => {
-                                                console.log("Res", res);
+                                    <Button title={Language.start_chat}
+                                        onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
+                                        fontColor={eventDate >= new Date() ? 'black' : 'white'}
+                                        backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
+                                        buttonStyle={{
+                                            borderColor: 'black',
+                                            borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                        }}
+                                        textStyle={{ fontWeight: '400' }} />
+                                </View>
+                            </View> :
+                            (endSales >= new Date() &&
+                                ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
+                                <View style={{ marginHorizontal: scaler(10) }}>
+                                    <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
+                                        disabled={calculateButtonDisability()}
+                                        onPress={() => {
+                                            event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
+                                                NavigationService.navigate('BookEvent', { id: event?._id })
+                                        }}
+                                    />
+                                </View> : null
+                        }
+                    </> :
+                    <>
+                        <Button title={Language.coming_soon}
+                            // backgroundColor={colors.colorTextPlaceholder}
+                            disabled
+                            containerStyle={{ marginHorizontal: scaler(10) }}
+                        />
+                        <Button onPress={() => {
+                            try {
+                                const startDate = eventDate?.toISOString()
+                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+                                presentEventCreatingDialog({
+                                    startDate,
+                                    endDate,
+                                    allDay: false,
+                                    location: event?.address,
+                                    title: '"' + event?.name + '" event from Picnic Groups',
+                                    notes: event?.name
+                                }).then(res => {
+                                    console.log("Res", res);
 
-                                            }).catch(e => {
-                                                console.log("E", e);
-                                            })
-                                        }
-                                        catch (e) {
-                                            console.log("Error", e);
+                                }).catch(e => {
+                                    console.log("E", e);
+                                })
+                            }
+                            catch (e) {
+                                console.log("Error", e);
 
-                                        }
-                                    }} title={Language.add_to_calender} />
-                                </View> : undefined}
-                            <View style={{ flex: 1 }}>
-                                <Button title={Language.start_chat}
-                                    onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
-                                    fontColor={eventDate >= new Date() ? 'black' : 'white'}
-                                    backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
-                                    buttonStyle={{
-                                        borderColor: 'black',
-                                        borderWidth: eventDate >= new Date() ? scaler(1) : 0
-                                    }}
-                                    textStyle={{ fontWeight: '400' }} />
-                            </View>
-                        </View> :
-                        (endSales >= new Date() &&
-                            ((event?.capacity - event?.total_sold_tickets) > 0 || event?.capacity_type != 'limited')) ?
-                            <View style={{ marginHorizontal: scaler(10) }}>
-                                <Button title={isCancelledByMember ? Language.want_to_book_again : Language.confirm}
-                                    disabled={calculateButtonDisability()}
-                                    onPress={() => {
-                                        event?.ticket_type == 'multiple' ? NavigationService.navigate('SelectTicket', { id: event?._id }) :
-                                            NavigationService.navigate('BookEvent', { id: event?._id })
-                                    }}
-                                />
-                            </View> : null
-                    }
-                </> :
+                            }
+                        }} title={Language.add_to_calender}
+                            containerStyle={{ marginHorizontal: scaler(10) }}
+                        />
+                    </>
+                :
                 event?.is_event_member ?
                     <>
                         <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
@@ -982,5 +1079,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorBlack,
         borderRadius: scaler(8),
         marginHorizontal: scaler(3),
-    }
+    },
+    membersCount: {
+        fontSize: scaler(11),
+        fontWeight: '400',
+        color: colors.colorBlack,
+    },
 })
+

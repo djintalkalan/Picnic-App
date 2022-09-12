@@ -3,7 +3,7 @@ import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/action
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
-import { BackButton, Button, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { Switch } from 'custom-components/Switch';
 import Database from 'database/Database';
@@ -31,6 +31,7 @@ type FormType = {
 const { height, width } = Dimensions.get('screen')
 
 const CreateEvent3: FC<any> = props => {
+    const [isBookingDisabled, setBookingDisabled] = useState(true);
     const [isPayByCash, setIsPayByCash] = useState(false)
     const [isSecure, setSecure] = useState(true)
     const [infoVisible, setInfoVisible] = useState<boolean>(false)
@@ -106,6 +107,8 @@ const CreateEvent3: FC<any> = props => {
         if (event?.payment_api_signature || event?.is_creators_paypal_configured == 1) {
             setPaypalBusinessAccount(true)
         }
+        setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
+
     }, [])
     console.log("event", event);
 
@@ -136,13 +139,14 @@ const CreateEvent3: FC<any> = props => {
             }
         },
 
-        [isPayByPaypal, isPayByCash, event, usePaypalBusinessAccount],
+        [isPayByPaypal, isPayByCash, event, usePaypalBusinessAccount, isBookingDisabled],
     );
 
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
 
         const payload: any = {
             is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
+            is_booking_disabled: isBookingDisabled ? '1' : '0',
             payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
             payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
             payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
@@ -185,15 +189,15 @@ const CreateEvent3: FC<any> = props => {
             );
 
         }, 0);
-    }, [usePaypalBusinessAccount]);
+    }, [usePaypalBusinessAccount, isBookingDisabled]);
 
     const calculateButtonDisability = useCallback(() => {
-        if ((!isPayByPaypal && !isPayByCash)
+        if ((!isPayByPaypal && !isPayByCash) && !isBookingDisabled
         ) {
             return true;
         }
         return false;
-    }, [isPayByPaypal, isPayByCash]);
+    }, [isPayByPaypal, isPayByCash, isBookingDisabled]);
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
@@ -215,6 +219,7 @@ const CreateEvent3: FC<any> = props => {
                     <Stepper step={4} totalSteps={4} paddingHorizontal={scaler(20)} />
 
                     <View style={styles.eventView}>
+
                         <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                             {event.is_donation_enabled == 1 ? Language.select_donation_options : Language.select_payment_options}
                         </Text>
@@ -377,6 +382,13 @@ const CreateEvent3: FC<any> = props => {
                                     control={control}
                                     errors={errors} />
                             </View> : undefined}
+
+                        <TouchableOpacity onPress={() => {
+                            setBookingDisabled(!isBookingDisabled)
+                        }} style={{ flexDirection: 'row', marginVertical: scaler(20), alignItems: 'center' }}>
+                            <CheckBox checked={isBookingDisabled} />
+                            <Text style={{ color: colors.colorBlack, fontWeight: '500', marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
+                        </TouchableOpacity>
 
                         <Button
                             disabled={calculateButtonDisability()}
