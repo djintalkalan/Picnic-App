@@ -151,7 +151,8 @@ const EventDetail: FC<any> = (props) => {
     const shareEvent = useCallback(() => {
         shareDynamicLink(event?.name, {
             type: "event-detail",
-            id: event?._id
+            id: event?._id,
+            // image: getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' })
         });
     }, [event])
 
