@@ -214,6 +214,14 @@ const CreateEvent3: FC<any> = props => {
                             <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                         </TouchableOpacity>
                     </View>
+
+                    <TouchableOpacity onPress={() => {
+                        setBookingDisabled(!isBookingDisabled)
+                    }} style={{ flexDirection: 'row', marginTop: scaler(20), marginHorizontal: scaler(15), alignItems: 'center' }}>
+                        <CheckBox checked={isBookingDisabled} />
+                        <Text style={{ color: colors.colorBlack, fontWeight: '500', flex: 1, marginLeft: scaler(10), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
+                    </TouchableOpacity>
+
                     <View
                         style={{
                             width: '100%',
@@ -344,12 +352,7 @@ const CreateEvent3: FC<any> = props => {
                                     errors={errors} />
                             </View> : undefined}
 
-                        <TouchableOpacity onPress={() => {
-                            setBookingDisabled(!isBookingDisabled)
-                        }} style={{ flexDirection: 'row', marginVertical: scaler(20), alignItems: 'center' }}>
-                            <CheckBox checked={isBookingDisabled} />
-                            <Text style={{ color: colors.colorBlack, fontWeight: '500', marginLeft: scaler(8), fontSize: scaler(14) }}>{Language.save_the_date}</Text>
-                        </TouchableOpacity>
+
 
                         <Button
                             disabled={calculateButtonDisability()}
