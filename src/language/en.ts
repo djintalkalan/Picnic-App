@@ -447,5 +447,8 @@ export const en = {
   coming_soon: 'Coming Soon',
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
+  checkout_this: 'Checkout this',
+  picnic_share_line: 'We invite you to join us here and discover a familiar face encouraging you to participate in real-life experiences. An app you can enjoy with everyday ease. Loved by locals and locally loved, because we are always honest about how we work.',
+  download_app_here: 'Download app here',
 
 }

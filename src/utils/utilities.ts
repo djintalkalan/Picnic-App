@@ -1,5 +1,5 @@
 
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+import dynamicLinks, { FirebaseDynamicLinksTypes } from '@react-native-firebase/dynamic-links';
 import AnalyticService from 'analytics';
 import { config } from 'api';
 import { store } from 'app-store';
@@ -32,6 +32,8 @@ try {
 
 }
 const urlRegx = /[?&]([^=#]+)=([^&#]*)/g
+
+const logoUrl = 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/0e/fa/de/0efade76-c963-6e51-722b-2a0bfba89a3c/AppIcon-0-0-1x_U007emarketing-0-0-0-10-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1024x1024bb.png'
 
 export const launchMap = async (address: string | { lat: number, long: number },) => {
     let app = null;
@@ -621,7 +623,7 @@ export const getDetailsFromDynamicUrl = (url: string): { id?: string, type?: IDy
     }
 }
 
-const buildLink = async (l: string) => {
+const buildLink = async (l: string, social?: FirebaseDynamicLinksTypes.DynamicLinkSocialParameters) => {
     const link = `${config.BASE_URL}/download${l}`
     const dynamicLink = await dynamicLinks().buildShortLink({
         link,
@@ -630,6 +632,7 @@ const buildLink = async (l: string) => {
             packageName: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
         },
+        social: social,
         ios: {
             bundleId: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
@@ -644,19 +647,19 @@ const buildLink = async (l: string) => {
 
 export const shareDynamicLink = async (name: string, { type, id, image }: { type: IDynamicType, id: string, image?: any }) => {
     try {
-        let base64 = ""
-        if (image) {
-            base64 = await getBase64FromUrl(image) as string
-            console.log("base64", base64);
-
-        }
         store.dispatch(setLoadingAction(true))
-        const link = await buildLink("?t=" + type + "&i=" + id)
+        const t = type == 'event-detail' ? 'event' : 'group'
+        const link = await buildLink("?t=" + type + "&i=" + id, {
+            descriptionText: Language?.checkout_this + " " + Language?.[t]?.toLowerCase() + " `" + name + "` " + Language?.here,
+            title: "Picnic Groups",
+            imageUrl: image || logoUrl
+        })
         store.dispatch(setLoadingAction(false))
+        const shareString = Language?.checkout_this + " " + Language?.[t]?.toLowerCase() + " `" + name + "` " + Language?.here + " : " + link
         setTimeout(async () => {
             try {
-                const shareResult = await share("Share " + name, link, base64,)
-                handleShareAction(shareResult, type == 'event-detail' ? 'event' : 'group', id)
+                const shareResult = await share("Share " + name, shareString)
+                handleShareAction(shareResult, t, id)
             }
             catch (e) {
                 e && console.log("share error ", e);
@@ -686,6 +689,11 @@ export const shareAppLink = async (name: string) => {
             packageName: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
         },
+        social: {
+            title: "Picnic Groups",
+            descriptionText: Language.picnic_share_line,
+            imageUrl: logoUrl,
+        },
         ios: {
             bundleId: config.BUNDLE_ID_PACKAGE_NAME,
             fallbackUrl: link
@@ -695,8 +703,10 @@ export const shareAppLink = async (name: string) => {
         }
     });
 
+    const line = Language.picnic_share_line + '\n' + Language.download_app_here + " : " + dynamicLink
+
     try {
-        const shareResult = await share("Share " + name, dynamicLink)
+        const shareResult = await share("Share " + name, line)
         handleShareAction(shareResult, 'application', Platform.OS)
     }
     catch (e) {

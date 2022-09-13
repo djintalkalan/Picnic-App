@@ -50,7 +50,8 @@ const EventList: FC<any> = (props) => {
                 title: Language.share_event, onPress: () => {
                     shareDynamicLink(name, {
                         type: "event-detail",
-                        id: _id
+                        id: _id,
+                        image: item?.image ? getImageUrl(item?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
                     });
                 }
             })

@@ -300,7 +300,8 @@ const GroupDetail: FC<any> = (props) => {
     const shareGroup = useCallback(() => {
         shareDynamicLink(group?.name, {
             type: "group-detail",
-            id: group?._id
+            id: group?._id,
+            image: group?.image ? getImageUrl(group?.image, { width: 0 + scaler(400), type: 'groups' }) : undefined
         }).then(() => {
             _hideTouchAlert();
         }).catch(() => {
