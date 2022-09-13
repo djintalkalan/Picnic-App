@@ -181,6 +181,12 @@ const CreateEvent1: FC<any> = props => {
     } else {
       setEventImage(null)
     }
+    locationInputRef?.current?.setNativeProps({
+      selection: {
+        start: 0,
+        end: 0,
+      },
+    });
   }, [])
 
   const next = useCallback(handleSubmit((data) => {
@@ -300,6 +306,12 @@ const CreateEvent1: FC<any> = props => {
                   }
                 } : null
                 setValue('location', address)
+                locationInputRef?.current?.setNativeProps({
+                  selection: {
+                    start: 0,
+                    end: 0,
+                  },
+                });
                 console.log("locationRef.current", locationRef.current);
 
               }}
