@@ -443,4 +443,8 @@ export const es = {
     timezone: 'Zona Horaria',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
+    checkout_this: 'Revisa este',
+    picnic_share_line: '',
+    download_app_here: '',
+
 }

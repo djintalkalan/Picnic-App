@@ -16,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, _hideTouchAlert, _showTouchAlert } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
@@ -220,13 +220,6 @@ const EventChats: FC<any> = (props) => {
                 isMember={eventDetail?.status == 1 && eventDetail?.is_event_member}
                 setRepliedMessage={setRepliedMessage}
             />)
-    }, [eventDetail])
-
-    const shareEvent = useCallback(() => {
-        shareDynamicLink(eventDetail?.name, {
-            type: "event-detail",
-            id: eventDetail?._id
-        });
     }, [eventDetail])
 
     const [activeBackgroundColor, setActiveBackgroundColor] = useState<ColorValue>(eventDetail?.background_color || DEFAULT_CHAT_BACKGROUND)

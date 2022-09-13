@@ -152,7 +152,7 @@ const EventDetail: FC<any> = (props) => {
         shareDynamicLink(event?.name, {
             type: "event-detail",
             id: event?._id,
-            // image: getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' })
+            image: event?.image ? getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
         });
     }, [event])
 
