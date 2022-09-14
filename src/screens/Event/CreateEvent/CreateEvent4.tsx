@@ -126,7 +126,12 @@ const CreateEvent3: FC<any> = props => {
 
         const payload: any = {
             is_booking_disabled: isBookingDisabled ? '1' : '0',
-            payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
+            payment_method: (() => {
+                const methods = []
+                isPayByCash && methods.push('cash');
+                isPayByPaypal && methods.push('paypal');
+                return methods
+            })(),
             payment_email: data?.paypalEmail?.trim() ?? '',
             payment_api_username: data?.apiUserName?.trim() ?? '',
             payment_api_password: data?.apiPassword?.trim() ?? '',
