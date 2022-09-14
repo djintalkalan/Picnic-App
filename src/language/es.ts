@@ -445,4 +445,5 @@ export const es = {
     qr_code: 'el código QR',
     allow_everyone_to_host_event: '',
     host_event_in_this_group: '',
+    post_in_local_groups: '',
 }

@@ -6,7 +6,12 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
 import _, { isEqual } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, StyleSheet, TextInput, View } from 'react-native';
+import {
+    // ActivityIndicator,
+    FlatList,
+    // Image,
+    StyleSheet, TextInput, View
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils';
@@ -64,7 +69,7 @@ const SelectGroup: FC<any> = (props) => {
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
             <MyHeader title={Language.select_group} />
-            <View style={{
+            {/* <View style={{
                 paddingVertical: scaler(15),
                 borderBottomColor: 'rgba(0, 0, 0, 0.04)',
                 borderBottomWidth: 2,
@@ -89,8 +94,8 @@ const SelectGroup: FC<any> = (props) => {
                 {searchLoader && <View style={[styles.imagePlaceholderContainer, { top: scaler(25), left: undefined, right: scaler(30), alignItems: 'center', justifyContent: 'center' }]} >
                     <ActivityIndicator color={colors.colorPrimary} size={scaler(24)} />
                 </View>}
-            </View>
-            <View style={{ flex: 1 }} >
+            </View> */}
+            <View style={{ flex: 1, borderTopColor: 'rgba(0, 0, 0, 0.06)', borderTopWidth: scaler(1.5), marginTop: scaler(10) }} >
                 <FlatList
                     style={{ flex: 1 }}
                     keyboardShouldPersistTaps={'handled'}

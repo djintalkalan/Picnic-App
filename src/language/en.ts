@@ -445,4 +445,5 @@ export const en = {
   qr_code: 'QR Code',
   allow_everyone_to_host_event: 'Allow everyone to host events in this group',
   host_event_in_this_group: 'Host event in this group',
+  post_in_local_groups: 'Post in local groups',
 }

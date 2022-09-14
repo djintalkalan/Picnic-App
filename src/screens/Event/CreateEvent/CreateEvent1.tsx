@@ -3,7 +3,7 @@ import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
-import { Button, CheckBox, defaultLocation, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
@@ -64,7 +64,12 @@ const CreateEvent1: FC<any> = props => {
 
 
   const { myGroups } = useSelector((state: RootState) => ({
-    myGroups: state?.group?.myGroups
+    myGroups: [...state?.group?.myGroups, {
+      _id: -1,
+      name: Language.post_in_local_groups,
+      data: {},
+      textStyle: { color: colors.colorPrimary }
+    }]
   }))
 
   const dispatch = useDispatch();
@@ -115,6 +120,31 @@ const CreateEvent1: FC<any> = props => {
     // dispatch(restorePurchase())
     if (eventId) {
       dispatch(getEditEventDetail(eventId))
+    }
+
+    const group = props?.route?.params?.group
+    // console.log("group", group);
+    if (group) {
+      const addressObject = getFormattedAddress2(group?.address, group?.city, group?.state, group?.country)
+      locationRef.current = (group?.location?.coordinates[0] && group?.location?.coordinates[1]) ? {
+        latitude: group?.location?.coordinates[1],
+        longitude: group?.location?.coordinates[0],
+        address: addressObject,
+        otherData: {
+          city: group?.city,
+          state: group?.state,
+          country: group?.country
+        }
+      } : null
+      selectedGroupRef.current = group
+      setValue('location', group?.address)
+      setValue('selectGroup', group?.name)
+      locationInputRef?.current?.setNativeProps({
+        selection: {
+          start: 0,
+          end: 0,
+        },
+      });
     }
 
     return () => {
@@ -210,10 +240,11 @@ const CreateEvent1: FC<any> = props => {
   }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation])
 
   const onSelectGroup = useCallback(data => {
-    setDropdown(false);
     selectedGroupRef.current = data;
     setValue('selectGroup', data?.name, { shouldValidate: true });
+    setDropdown(false);
   }, [])
+
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={eventId ? props?.route?.params?.copy ? Language.copy_event : Language.edit_event : Language.host_an_event} />
@@ -267,44 +298,6 @@ const CreateEvent1: FC<any> = props => {
             control={control}
             errors={errors}
           />
-
-          <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>
-            <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
-            <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
-              {Language.online_event}
-            </Text>
-          </TouchableOpacity>
-
-          <TextInput
-            containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-            placeholder={Language.select_location}
-            borderColor={colors.colorTextInputBackground}
-            backgroundColor={colors.colorTextInputBackground}
-            name={'location'}
-            ref={locationInputRef}
-            icon={Images.ic_gps}
-            onPress={() => {
-              NavigationService.navigate('SelectLocation', {
-                prevSelectedLocation: locationRef.current,
-                onSelectLocation: (location: ILocation) => {
-                  locationRef.current = location;
-                  // console.log("LOCATION:", location)
-                  // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
-                  setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
-                  locationInputRef?.current?.setNativeProps({
-                    selection: {
-                      start: 0,
-                      end: 0,
-                    },
-                  });
-                },
-              });
-            }}
-            required={Language.group_location_required}
-            control={control}
-            errors={errors}
-          />
-
           <View style={{ flex: 1, width: '100%' }}>
             <TextInput
               containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -315,25 +308,62 @@ const CreateEvent1: FC<any> = props => {
               required={Language.group_name_required}
               icon={Images.ic_arrow_dropdown}
               onPress={() => {
-                // setDropdown(!isDropdown);
-                if (locationRef.current?.longitude) {
-                  NavigationService.navigate("SelectGroup", { location: locationRef?.current, onSelectGroup: onSelectGroup })
-                } else {
-                  _showErrorMessage(Language.please_select_location_first)
-                }
+                setDropdown(!isDropdown);
               }}
               control={control}
               errors={errors}
             />
-            {/* <FixedDropdown
+            <FixedDropdown
+              maxHeight={scaler(250)}
               visible={isDropdown}
-              data={myGroups.map((_, i) => ({ id: _?._id, data: _?.data, title: _?.name }))}
+              data={myGroups.map((_, i) => ({ id: _?._id, data: {}, title: _?.name, textStyle: _?.textStyle }))}
               onSelect={data => {
+                if (data?.id < 0) {
+                  NavigationService.navigate("SelectGroup", { onSelectGroup: onSelectGroup })
+                  return
+                }
+
                 setDropdown(false);
                 selectedGroupRef.current = data;
                 setValue('selectGroup', data?.title, { shouldValidate: true });
               }}
-            /> */}
+            />
+            <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>
+              <CheckBox checked={isOnlineEvent} setChecked={setIsOnlineEvent} />
+              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+                {Language.online_event}
+              </Text>
+            </TouchableOpacity>
+
+            <TextInput
+              containerStyle={{ flex: 1, marginEnd: scaler(4) }}
+              placeholder={Language.select_location}
+              borderColor={colors.colorTextInputBackground}
+              backgroundColor={colors.colorTextInputBackground}
+              name={'location'}
+              ref={locationInputRef}
+              icon={Images.ic_gps}
+              onPress={() => {
+                NavigationService.navigate('SelectLocation', {
+                  prevSelectedLocation: locationRef.current,
+                  onSelectLocation: (location: ILocation) => {
+                    locationRef.current = location;
+                    // console.log("LOCATION:", location)
+                    // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
+                    setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
+                    locationInputRef?.current?.setNativeProps({
+                      selection: {
+                        start: 0,
+                        end: 0,
+                      },
+                    });
+                  },
+                });
+              }}
+              required={Language.group_location_required}
+              control={control}
+              errors={errors}
+            />
 
             <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
               <CheckBox checked={pinLocation} setChecked={setPinLocation} />
