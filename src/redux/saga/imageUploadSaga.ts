@@ -1,5 +1,5 @@
 import { CreateJobCommand, CreateJobCommandInput, ElasticTranscoderClient, waitUntilJobComplete } from "@aws-sdk/client-elastic-transcoder";
-import notifee, { AndroidProgress } from "@notifee/react-native";
+import notifee, { AndroidLaunchActivityFlag, AndroidProgress } from "@notifee/react-native";
 import { config } from 'api';
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction, setLoadingMsg } from "app-store/actions";
@@ -154,10 +154,10 @@ const showNotification = async (id: string, p: IProgress, currentCount: number, 
     if (!activeUploads.includes(id)) {
         store.dispatch(setLoadingAction(true))
         activeUploads.push(id)
-        title = Language.getString('starting_upload')
+        title = Language.getString('starting_upload') + "..."
 
     } else if (finalize) {
-        title = Language.getString('finalizing_upload')
+        title = Language.getString('finalizing_upload') + "..."
     } else progress = { max: p?.total, current: p?.loaded, }
     store.dispatch(setLoadingMsg(JSON.stringify(p) + "%"))
     isAndroid && await notifee.displayNotification({
@@ -167,6 +167,11 @@ const showNotification = async (id: string, p: IProgress, currentCount: number, 
             onlyAlertOnce: true,
             progress,
             channelId: "upload",
+            pressAction: {
+                id: 'default',
+                launchActivity: 'default',
+                launchActivityFlags: [AndroidLaunchActivityFlag.SINGLE_TOP],
+            },
         },
         ios: {
 

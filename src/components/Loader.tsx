@@ -93,7 +93,7 @@ const ProgressIndicator = ({ progress: { loaded, total, percent, currentCount = 
             progress={toNumber(percent) / 100} />
         <View style={{ alignItems: 'center', flexDirection: 'row', width: width / 1.5, paddingHorizontal: scaler(5), justifyContent: currentCount ? 'space-between' : 'center' }} >
             <Text style={{ fontSize: scaler(14), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
-                toNumber(percent) < 10 ? "Starting upload" : toNumber(percent) == 100 ? "Finalizing upload" : Language.getString('uploading_file')
+                toNumber(percent) < 10 ? Language.starting_upload : toNumber(percent) == 100 ? Language.finalizing_upload : Language.getString('uploading_file')
             }</Text>
             {currentCount ? <Text style={{ fontSize: scaler(12), fontWeight: '500', color: colors.colorPrimary, marginTop: scaler(10) }} >{
                 currentCount + "/" + length

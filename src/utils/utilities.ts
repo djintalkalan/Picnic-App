@@ -9,11 +9,15 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat } from 'date-fns';
+import { format as TZFormat, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { decode } from 'html-entities';
-import { Keyboard, Linking, Platform, Share, ShareAction } from 'react-native';
+import moment from 'moment-timezone';
+import { Keyboard, Linking, Platform } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
+import Share from 'react-native-share';
+import { ShareOpenResult } from 'react-native-share/lib/typescript/types';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
 import Language, { LanguageType } from 'src/language/Language';
@@ -60,8 +64,9 @@ export const launchMap = async (address: string | { lat: number, long: number },
 };
 
 export const share = async (title: string, message: string, url?: string | undefined) => {
-    return await Share.share({
-        title, message, url
+    return Share.open({
+        title, message,
+        url,
     })
 };
 
@@ -114,18 +119,21 @@ export const dateStringFormat = (dateString: string, toFormat: string, fromForma
         return dateString
     }
 }
-
+const getFormat = (toFormat: string) => {
+    toFormat = toFormat.replace("YYYY", 'yyyy')
+    toFormat = toFormat.replace("YYY", 'yyy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("YY", 'yy')
+    toFormat = toFormat.replace("DDD", 'ddd')
+    toFormat = toFormat.replace("DD", 'dd')
+    toFormat = toFormat.replace("D", 'd')
+    toFormat = toFormat.replace("A", 'a')
+    return toFormat
+}
 export const dateFormat = (date: Date, toFormat: string) => {
     if (!date) return ""
     try {
-        toFormat = toFormat.replace("YYYY", 'yyyy')
-        toFormat = toFormat.replace("YYY", 'yyy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("YY", 'yy')
-        toFormat = toFormat.replace("DDD", 'ddd')
-        toFormat = toFormat.replace("DD", 'dd')
-        toFormat = toFormat.replace("D", 'd')
-        toFormat = toFormat.replace("A", 'a')
+        toFormat = getFormat(toFormat);
         return FNSFormat(date, toFormat)
     }
     catch (e) {
@@ -634,15 +642,21 @@ const buildLink = async (l: string) => {
     return dynamicLink;
 }
 
-export const shareDynamicLink = async (name: string, { type, id }: { type: IDynamicType, id: string }) => {
+export const shareDynamicLink = async (name: string, { type, id, image }: { type: IDynamicType, id: string, image?: any }) => {
     try {
+        let base64 = ""
+        if (image) {
+            base64 = await getBase64FromUrl(image) as string
+            console.log("base64", base64);
+
+        }
         store.dispatch(setLoadingAction(true))
         const link = await buildLink("?t=" + type + "&i=" + id)
         store.dispatch(setLoadingAction(false))
         setTimeout(async () => {
             try {
-                const shareAction = await share("Share " + name, link)
-                handleShareAction(shareAction, type == 'event-detail' ? 'event' : 'group', id)
+                const shareResult = await share("Share " + name, link, base64,)
+                handleShareAction(shareResult, type == 'event-detail' ? 'event' : 'group', id)
             }
             catch (e) {
                 e && console.log("share error ", e);
@@ -655,19 +669,11 @@ export const shareDynamicLink = async (name: string, { type, id }: { type: IDyna
 
 }
 
-const handleShareAction = (shareAction: ShareAction | null, type: string, id: string) => {
-    if (shareAction) {
-        console.log(shareAction);
-        switch (shareAction?.action) {
-            case 'dismissedAction':
+const handleShareAction = (shareResult: ShareOpenResult | null, type: string, id: string) => {
+    console.log("shareResult", shareResult);
 
-                break;
-            case 'sharedAction':
-                AnalyticService.logShare(id, type, shareAction?.activityType)
-                break;
-            default:
-                break;
-        }
+    if (shareResult?.success) {
+        AnalyticService.logShare(id, type, shareResult.message)
     }
 }
 
@@ -690,13 +696,27 @@ export const shareAppLink = async (name: string) => {
     });
 
     try {
-        const shareAction = await share("Share " + name, dynamicLink)
-        handleShareAction(shareAction, 'application', Platform.OS)
+        const shareResult = await share("Share " + name, dynamicLink)
+        handleShareAction(shareResult, 'application', Platform.OS)
     }
     catch (e) {
         e && console.log("share error ", e);
     }
 
+}
+
+const getBase64FromUrl = async (url: string) => {
+    const data = await fetch(url);
+    const blob = await data.blob();
+    // blob.Properties.ContentType = "image/png"
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+            const base64data = reader.result;
+            resolve("data:image/png;base64," + (base64data as string)?.split('base64,')[1]);
+        }
+    });
 }
 
 export const getDisplayName = (user: {
@@ -856,3 +876,39 @@ export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
         total_free_tickets_consumed: 0
     }
 }
+
+export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
+    if (!ISODate) {
+        ISODate = new Date()
+    }
+    if (!(ISODate instanceof Date)) {
+        ISODate = new Date(ISODate)
+    }
+    return utcToZonedTime(ISODate?.toISOString(), timezone);
+}
+
+export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) => {
+    if (!zonedDate) {
+        zonedDate = new Date()
+    }
+    if (!(zonedDate instanceof Date)) {
+        zonedDate = new Date(zonedDate)
+    }
+    return zonedTimeToUtc(zonedDate, timezone)
+}
+
+
+export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, format: string) => {
+
+    return moment(iso)
+        .tz(timezone)
+        .format(format)
+
+    return formatInTimeZone(iso, timezone, getFormat(format))
+    const zoned = getZonedDate(timezone, iso)
+    return TZFormat(zoned, getFormat(format), {
+        timeZone: timezone,
+    })
+}
+
+

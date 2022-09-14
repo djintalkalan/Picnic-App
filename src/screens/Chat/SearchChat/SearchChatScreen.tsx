@@ -69,7 +69,28 @@ const SearchChatScreen: FC<any> = (props) => {
                 text
             }).then(res => {
                 dispatch(setLoadingAction(false))
-                res?.data?.data && setEvents(res?.data?.data)
+
+                if (res?.data?.data) {
+                    for (const index in res?.data?.data) {
+                        if (res?.data?.data[index].ticket_type == 'multiple') {
+                            const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
+
+                            res.data.data[index].event_fees = leastTicket.amount?.toString()
+                            res.data.data[index].event_tax_rate = leastTicket.event_tax_rate?.toString()
+                            res.data.data[index].event_currency = leastTicket.currency
+
+                            // if (!res?.data?.data[index]?.capacity) {
+                            const eventCapacityType = res?.data?.data[index]?.capacity_type
+                            const totalCapacity = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => (((c?.capacity_type || eventCapacityType) == 'unlimited' || (p?.capacity_type || eventCapacityType) == 'unlimited') ? { capacity_type: 'unlimited', capacity: 0 } : { capacity_type: 'limited', capacity: p?.capacity + c.capacity }))
+                            // console.log("totalCapacity", totalCapacity);
+
+                            res.data.data[index].capacity_type = totalCapacity?.capacity_type
+                            res.data.data[index].capacity = totalCapacity?.capacity
+                            // }
+                        }
+                    }
+                    setEvents(res?.data?.data)
+                }
             }).catch(e => {
                 dispatch(setLoadingAction(false))
                 console.log(e)

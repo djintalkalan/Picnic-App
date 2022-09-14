@@ -18,6 +18,10 @@ import com.facebook.react.bridge.JSIModulePackage;
 import com.rollbar.RollbarReactNative;
 import com.intercom.reactnative.IntercomModule;
 
+// Code Push
+import com.microsoft.codepush.react.CodePush;
+
+
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
 
@@ -26,6 +30,11 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
                 @Override
                 public boolean getUseDeveloperSupport() {
                     return BuildConfig.DEBUG;
+                }
+
+                @Override
+                protected String getJSBundleFile() {
+                    return CodePush.getJSBundleFile();
                 }
 
                 @Override

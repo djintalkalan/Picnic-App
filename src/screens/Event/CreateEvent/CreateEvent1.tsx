@@ -1,6 +1,6 @@
 import { config } from 'api';
 import { RootState } from 'app-store';
-import { getEditEventDetail, getMyGroups, restorePurchase } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, defaultLocation, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
@@ -17,6 +17,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
+import TZ from "tz-lookup";
 import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils';
 import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
 
@@ -111,7 +112,7 @@ const CreateEvent1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
-    dispatch(restorePurchase())
+    // dispatch(restorePurchase())
     if (eventId) {
       dispatch(getEditEventDetail(eventId))
     }
@@ -179,12 +180,18 @@ const CreateEvent1: FC<any> = props => {
   const next = useCallback(handleSubmit((data) => {
     console.log('multiImageArray', eventImage, multiImageArray)
     const { latitude, longitude, address, otherData } = locationRef.current ?? {};
+    let event_timezone = ""
+    if (latitude && longitude) {
+      event_timezone = TZ(latitude, longitude);
+    }
+
     const payload = {
       name: data.eventName?.trim(),
       location: {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
+      event_timezone,
       address: formattedAddressToString(address),
       city: otherData?.city,
       state: otherData?.state,

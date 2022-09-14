@@ -21,7 +21,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import { dateFormat, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import TZ from "tz-lookup"
+import { dateFormatInSpecificZone, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 
 const { height, width } = Dimensions.get('screen')
@@ -150,7 +151,8 @@ const EventDetail: FC<any> = (props) => {
     const shareEvent = useCallback(() => {
         shareDynamicLink(event?.name, {
             type: "event-detail",
-            id: event?._id
+            id: event?._id,
+            // image: getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' })
         });
     }, [event])
 
@@ -336,7 +338,7 @@ const EventDetail: FC<any> = (props) => {
 
 
     const calculateButtonDisability = useCallback(() => {
-        if (!event?.payment_api_username &&
+        if (!(event?.payment_api_username || event?.payment_email) &&
             (!event?.payment_method?.includes('cash') &&
                 !event?.is_free_event)) {
             return true;
@@ -463,13 +465,15 @@ const EventDetail: FC<any> = (props) => {
                                     <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                         source={Images.ic_group_events} />
                                     <Text style={styles.events}>
-                                        {dateFormat(new Date(event?.event_start_date_time), 'MMMMMM, DD, YYYY')}
+                                        {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
                                     </Text>
                                 </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_event_time} />
-                                        <Text style={styles.events}>
-                                            {dateFormat(new Date(event?.event_start_date_time), 'hh:mm A')}
+                                        <Text style={[styles.events, { marginRight: scaler(5), flex: 1 }]}>
+                                            {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')}
+                                            {event?.event_date ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
+                                            {" " + dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'z')}
                                         </Text>
                                     </View></>
                                 : <>
@@ -481,7 +485,10 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.start_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormat(new Date(event?.event_start_date_time), 'MMMMMM, DD, YYYY hh:mm A')}
+                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
+                                            </Text>
+                                            <Text style={styles.events}>
+                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A z')}
                                             </Text>
                                         </View>
 
@@ -493,7 +500,10 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.end_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormat(new Date(event?.event_end_date_time), 'MMMMMM, DD, YYYY hh:mm A')}
+                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'MMMM DD, YYYY')}
+                                            </Text>
+                                            <Text style={styles.events}>
+                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'hh:mm A z')}
                                             </Text>
                                         </View>
 
