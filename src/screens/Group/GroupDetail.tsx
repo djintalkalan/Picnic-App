@@ -128,6 +128,19 @@ const GroupDetail: FC<any> = (props) => {
 
     const renderBottomActionButtons = useCallback(() => {
         return <View style={{ paddingHorizontal: scaler(15), paddingBottom: scaler(20) }} >
+
+            {(group?.status == 1 && (group?.is_admin || (group?.is_group_member && group?.can_anyone_host_events == 1))) ?
+                <BottomButton
+                    title={Language.host_event_in_this_group}
+                    icon={Images.ic_calender}
+                    buttonTextColor={colors.colorPrimary}
+                    onPress={() => {
+                        NavigationService.navigate("CreateEvent1", {
+                            group
+                        })
+                    }} />
+                : undefined}
+
             <BottomButton
                 title={Language.delete_group}
                 icon={Images.ic_delete}
@@ -143,6 +156,8 @@ const GroupDetail: FC<any> = (props) => {
                         buttonText: Language.yes_delete
                     })
                 }} />
+
+
 
             {(!group?.is_admin || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
@@ -461,12 +476,13 @@ interface IBottomButton {
     onPress?: (e?: GestureResponderEvent) => void
     hideBottomBar?: boolean
     buttonTextColor?: ColorValue
+    noTint?: boolean
 }
-const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false, buttonTextColor = colors.colorRed }) => {
+const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false, buttonTextColor = colors.colorRed, noTint = false }) => {
     return visibility ? (
         <>
             <TouchableOpacity onPress={onPress} activeOpacity={1} style={{ backgroundColor: colors.colorWhite, paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
-                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: buttonTextColor }} />
+                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: noTint ? undefined : buttonTextColor }} />
                 <Text style={{ color: buttonTextColor, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>
             {!hideBottomBar && <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />}

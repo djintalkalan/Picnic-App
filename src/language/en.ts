@@ -444,4 +444,5 @@ export const en = {
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
   allow_everyone_to_host_event: 'Allow everyone to host events in this group',
+  host_event_in_this_group: 'Host event in this group',
 }
