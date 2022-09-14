@@ -3,7 +3,7 @@ import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
-import { Button, CheckBox, defaultLocation, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
+import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
@@ -42,7 +42,7 @@ const { width } = Dimensions.get('screen')
 const CreateEvent1: FC<any> = props => {
   const { loadVideo } = useVideoPlayer()
   const [eventImage, setEventImage] = useState<any>();
-  const locationRef: MutableRefObject<ILocation | null> = useRef(__DEV__ ? defaultLocation : null);
+  const locationRef: MutableRefObject<ILocation | null> = useRef(null);
   const locationInputRef = useRef<RNTextInput>(null);
   const selectedGroupRef = useRef<any>(null);
   const [isOnlineEvent, setIsOnlineEvent] = useState(false);
@@ -84,7 +84,7 @@ const CreateEvent1: FC<any> = props => {
     mode: 'onChange',
     defaultValues: __DEV__ && !eventId ? {
       eventName: "Test Event",
-      location: "Sahibzada Ajit Singh Nagar, Punjab, India"
+      // location: "Sahibzada Ajit Singh Nagar, Punjab, India"
     } : {}
   });
 
@@ -125,26 +125,7 @@ const CreateEvent1: FC<any> = props => {
     const group = props?.route?.params?.group
     // console.log("group", group);
     if (group) {
-      const addressObject = getFormattedAddress2(group?.address, group?.city, group?.state, group?.country)
-      locationRef.current = (group?.location?.coordinates[0] && group?.location?.coordinates[1]) ? {
-        latitude: group?.location?.coordinates[1],
-        longitude: group?.location?.coordinates[0],
-        address: addressObject,
-        otherData: {
-          city: group?.city,
-          state: group?.state,
-          country: group?.country
-        }
-      } : null
-      selectedGroupRef.current = group
-      setValue('location', group?.address)
-      setValue('selectGroup', group?.name)
-      locationInputRef?.current?.setNativeProps({
-        selection: {
-          start: 0,
-          end: 0,
-        },
-      });
+      onSelectGroup(group)
     }
 
     return () => {
@@ -171,19 +152,12 @@ const CreateEvent1: FC<any> = props => {
   const setEventValues = useCallback((event: any) => {
     if (loaded.current) return
     loaded.current = true
-    const addressObject = getFormattedAddress2(event?.address, event?.city, event?.state, event?.country)
-    locationRef.current = (event?.location?.coordinates[0] && event?.location?.coordinates[1]) ? {
-      latitude: event?.location?.coordinates[1],
-      longitude: event?.location?.coordinates[0],
-      address: addressObject,
-      otherData: {
-        city: event?.city,
-        state: event?.state,
-        country: event?.country
-      }
-    } : null
-
-    selectedGroupRef.current = event?.event_group
+    let group = event?.event_group || {}
+    if (event?.location?.coordinates && event?.address && (event?.city || event?.state || event?.country)) {
+      const { location, address, city, state, country } = event || {}
+      group = { ...group, location, address, city, state, country }
+    }
+    onSelectGroup(group)
     setMultiImageArray(event.event_images || [])
 
     // reset({
@@ -194,8 +168,6 @@ const CreateEvent1: FC<any> = props => {
     // })
 
     setValue('eventName', event?.name)
-    setValue('location', event?.address)
-    setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
     resetField('aboutEvent', { defaultValue: event?.short_description })
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
@@ -242,6 +214,25 @@ const CreateEvent1: FC<any> = props => {
   const onSelectGroup = useCallback(data => {
     selectedGroupRef.current = data;
     setValue('selectGroup', data?.name, { shouldValidate: true });
+    const { location, address = "", city, state, country } = data || {}
+    const addressObject = getFormattedAddress2(address, city, state, country)
+    locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
+      latitude: location?.coordinates[1],
+      longitude: location?.coordinates[0],
+      address: addressObject,
+      otherData: {
+        city: city,
+        state: state,
+        country: country
+      }
+    } : null
+    setValue('location', address)
+    locationInputRef?.current?.setNativeProps({
+      selection: {
+        start: 0,
+        end: 0,
+      },
+    });
     setDropdown(false);
   }, [])
 
@@ -316,16 +307,13 @@ const CreateEvent1: FC<any> = props => {
             <FixedDropdown
               maxHeight={scaler(250)}
               visible={isDropdown}
-              data={myGroups.map((_, i) => ({ id: _?._id, data: {}, title: _?.name, textStyle: _?.textStyle }))}
+              data={myGroups.map((_, i) => ({ id: _?._id, data: _, title: _?.name, textStyle: _?.textStyle }))}
               onSelect={data => {
                 if (data?.id < 0) {
                   NavigationService.navigate("SelectGroup", { onSelectGroup: onSelectGroup })
                   return
                 }
-
-                setDropdown(false);
-                selectedGroupRef.current = data;
-                setValue('selectGroup', data?.title, { shouldValidate: true });
+                onSelectGroup(data?.data)
               }}
             />
             <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>
