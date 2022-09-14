@@ -383,13 +383,13 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leaveGroup, payload);
         if (res.status == 200) {
-            yield put(leaveGroupSuccess(payload))
+            yield put(leaveGroupSuccess(payload?.groupId))
             SocketService?.emit(EMIT_LEAVE_ROOM, {
-                resource_id: payload
+                resource_id: payload?.groupId
             })
             const name = NavigationService?.getCurrentScreen()?.name
             if (name != "HomeGroupTab" && name != "Home") {
-                yield put(getGroupDetail(payload))
+                yield put(getGroupDetail(payload?.groupId))
                 NavigationService.goBack()
             }
         } else if (res.status == 400) {

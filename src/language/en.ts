@@ -443,4 +443,5 @@ export const en = {
   timezone: 'Timezone',
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
+  lead_the_group: 'Lead the group',
 }

@@ -7,6 +7,7 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
+import { useDatabase } from 'database/Database'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -103,6 +104,10 @@ const GroupDetail: FC<any> = (props) => {
             dispatch(getGroupDetail(props?.route?.params?.id))
         }, 200)
     }, [])
+
+    const [userData] = useDatabase('userData');
+
+    const isAdminLeft = userData?._id == group?.creator_of_group?._id // && group?.creator_of_group?.status == 7
 
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
@@ -202,12 +207,13 @@ const GroupDetail: FC<any> = (props) => {
                     title={Language.leave_group}
                     icon={Images.ic_leave_group}
                     hideBottomBar
-                    visibility={group?.is_group_member && !group?.is_admin}
+                    buttonTextColor={colors.colorPrimary}
+                    visibility={group?.is_group_member}
                     onPress={() => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup(group?._id))
+                                dispatch(leaveGroup({ groupId: group?._id, isAdmin: group?.is_admin }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
@@ -431,9 +437,18 @@ const GroupDetail: FC<any> = (props) => {
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
-                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
-                                {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
-                            </Text>
+                            <View style={{ marginLeft: scaler(10), flex: 1 }} >
+                                {group?.creator_of_group?.status == 7 ? undefined : <>
+                                    <Text >
+                                        {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
+                                    </Text>
+                                    {isAdminLeft ?
+                                        <Text style={{ fontSize: scaler(11), color: colors.colorPlaceholder, fontStyle: 'italic' }} >
+                                            {"You have left this group"}
+                                        </Text>
+                                        : undefined}
+                                </>}
+                            </View>
                             {group?.is_group_member ?
                                 <MaterialIcons
                                     color={colors.colorPrimary}

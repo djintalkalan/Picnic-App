@@ -282,7 +282,7 @@ export const _joinGroup = async (body: string) => {
 
 export const _leaveGroup = async (body: any) => {
     console.log("---------- _leaveGroup Api Call ---------------")
-    return fetchApiData('group/leave/' + body, "PUT")
+    return fetchApiData(`group/leave${(body?.isAdmin ? '-group-as-creator' : '')}/` + body?.groupId, "PUT")
 }
 
 export const _removeGroupMember = async (body: any) => {

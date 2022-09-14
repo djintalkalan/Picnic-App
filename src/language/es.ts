@@ -112,7 +112,7 @@ export const es = {
     more: 'Más',
     delete_group: 'Borrar grupo',
     delete_account: 'Eliminar cuenta',
-    leave_group: 'Salir del grupo',
+    leave_group: 'Abandonar group',
     report_group: 'Reportar grupo',
     admin: 'Administrador',
     edit: 'Editar',
@@ -443,4 +443,5 @@ export const es = {
     timezone: 'Zona Horaria',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
+    lead_the_group: 'Liderar el grupo',
 }

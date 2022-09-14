@@ -68,7 +68,7 @@ const GroupList: FC<any> = (props) => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup(_id))
+                                dispatch(leaveGroup({ groupId: _id, isAdmin: is_group_admin }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
