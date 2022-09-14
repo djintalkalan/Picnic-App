@@ -147,7 +147,7 @@ const CreateEvent3: FC<any> = props => {
         const payload: any = {
             is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             is_booking_disabled: isBookingDisabled ? '1' : '0',
-            payment_method: isPayByCash && isPayByPaypal ? ['cash', 'paypal'] : isPayByPaypal ? ['paypal'] : ['cash'],
+            payment_method: (() => { const methods = []; isPayByCash && methods.push('cash'); isPayByPaypal && methods.push('paypal'); return methods; })(),
             payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
             payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
             payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
