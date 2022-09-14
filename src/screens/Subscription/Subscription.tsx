@@ -7,8 +7,7 @@ import Database from 'database/Database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
-import * as InAppPurchases from 'react-native-iap';
-import { requestSubscription } from 'react-native-iap';
+import { clearTransactionIOS, endConnection, finishTransaction, getSubscriptions, IAPErrorCode, initConnection, PurchaseError, purchaseErrorListener, purchaseUpdatedListener, requestSubscription, Subscription as TSubscription, SubscriptionPurchase } from 'react-native-iap';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
@@ -34,11 +33,11 @@ const Subscription: FC = (props: any) => {
     const loadingRef = useRef(false)
     const [restorable, setRestorable] = useState(true)
 
-    const [subscriptions, setSubscriptions] = useState<Array<InAppPurchases.Subscription>>([])
-    // const [products, setProducts] = useState<Array<InAppPurchases.Product>>()
+    const [subscriptions, setSubscriptions] = useState<Array<TSubscription>>([])
+    // const [products, setProducts] = useState<Array<Product>>()
 
     const initializeIAPConnection = useCallback(async () => {
-        await InAppPurchases.initConnection()
+        await initConnection()
             .then(async (connection) => {
                 console.log('IAP connection result', connection);
                 getItems();
@@ -49,7 +48,7 @@ const Subscription: FC = (props: any) => {
     }, [])
 
     const closeConnection = useCallback(async () => {
-        await InAppPurchases.endConnection()
+        await endConnection()
             .then(async () => {
                 console.log('IAP connection closed');
             })
@@ -60,7 +59,7 @@ const Subscription: FC = (props: any) => {
 
     const getItems = useCallback(async () => {
         try {
-            const subscriptions = await InAppPurchases.getSubscriptions(subscriptionIds);
+            const subscriptions = await getSubscriptions({ skus: subscriptionIds });
             console.log('ALL SUBSCRIPTIONS ', subscriptions);
             if (subscriptions?.length) {
                 setSubscriptions(subscriptions)
@@ -78,9 +77,9 @@ const Subscription: FC = (props: any) => {
         let purchaseUpdateSubscription: EmitterSubscription
         let purchaseErrorSubscription: EmitterSubscription
         setTimeout(async () => {
-            await InAppPurchases.clearTransactionIOS();
-            purchaseUpdateSubscription = InAppPurchases.purchaseUpdatedListener(handlePurchase);
-            purchaseErrorSubscription = InAppPurchases.purchaseErrorListener(handleError);
+            await clearTransactionIOS();
+            purchaseUpdateSubscription = purchaseUpdatedListener(handlePurchase);
+            purchaseErrorSubscription = purchaseErrorListener(handleError);
         }, 1000);
         initializeIAPConnection();
         Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
@@ -91,7 +90,7 @@ const Subscription: FC = (props: any) => {
         }
     }, []);
 
-    const handlePurchase = useCallback(async (purchase: InAppPurchases.SubscriptionPurchase | null) => {
+    const handlePurchase = useCallback(async (purchase: SubscriptionPurchase | null) => {
         if (!purchase || loadingRef.current) return
         try {
             loadingRef.current = true
@@ -113,7 +112,7 @@ const Subscription: FC = (props: any) => {
 
             _authorizeMembership(payload).then(async (res) => {
                 if (res?.status == 200 && res?.data) {
-                    await InAppPurchases.finishTransaction(purchase) // ,consumeItem);
+                    await finishTransaction({ purchase }) // ,consumeItem);
                     _captureMembership({
                         _id: res?.data?._id
                     }).then((res) => {
@@ -141,26 +140,26 @@ const Subscription: FC = (props: any) => {
         }
     }, [])
 
-    const handleError = useCallback((error: InAppPurchases.PurchaseError) => {
+    const handleError = useCallback((error: PurchaseError) => {
         switch (error?.code) {
-            case InAppPurchases.IAPErrorCode.E_DEFERRED_PAYMENT:
+            case IAPErrorCode.E_DEFERRED_PAYMENT:
                 console.log("User does not have permissions to buy but requested parental approval (iOS only)");
                 break;
-            case InAppPurchases.IAPErrorCode.E_NETWORK_ERROR:
-            case InAppPurchases.IAPErrorCode.E_SERVICE_ERROR:
-            case InAppPurchases.IAPErrorCode.E_REMOTE_ERROR:
+            case IAPErrorCode.E_NETWORK_ERROR:
+            case IAPErrorCode.E_SERVICE_ERROR:
+            case IAPErrorCode.E_REMOTE_ERROR:
                 console.log("Lost internet connection. Try again with a stable connection.");
                 break;
-            case InAppPurchases.IAPErrorCode.E_BILLING_RESPONSE_JSON_PARSE_ERROR:
+            case IAPErrorCode.E_BILLING_RESPONSE_JSON_PARSE_ERROR:
                 console.log("Billing service was not reached. Check again later.");
                 break;
-            case InAppPurchases.IAPErrorCode.E_ITEM_UNAVAILABLE:
+            case IAPErrorCode.E_ITEM_UNAVAILABLE:
                 console.log("Memberships are unavailable at the moment. Check again later.");
                 break;
-            case InAppPurchases.IAPErrorCode.E_DEVELOPER_ERROR:
+            case IAPErrorCode.E_DEVELOPER_ERROR:
                 console.log("Email us! You found a mistake we did!");
                 break;
-            case InAppPurchases.IAPErrorCode.E_ALREADY_OWNED:
+            case IAPErrorCode.E_ALREADY_OWNED:
                 continueToMemberShip(Language.you_are_already_a_member)
                 console.log("You're already a member!");
                 break;
@@ -201,7 +200,7 @@ const Subscription: FC = (props: any) => {
     const callPurchase = useCallback(async (i) => {
         dispatch(setLoadingAction(true))
         // let restorable = false
-        // await InAppPurchases.getAvailablePurchases().then(async (products) => {
+        // await getAvailablePurchases().then(async (products) => {
         //     console.log("getAvailablePurchases", products?.length);
         // const lastProduct = products?.length > 1 ? products.reduce((p, c) => {
         //     if (p.transactionDate > c.transactionDate) {
