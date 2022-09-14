@@ -143,6 +143,16 @@ export const setChatBackgroundSuccess = (payload: { resource_id: string, backgro
     payload
 })
 
+export const leadGroup = (payload: string) => ({
+    type: ActionTypes.LEAD_GROUP,
+    payload
+})
+
+export const leadGroupSuccess = (payload: any) => ({
+    type: ActionTypes.LEAD_GROUP_SUCCESS,
+    payload
+})
+
 
 
 

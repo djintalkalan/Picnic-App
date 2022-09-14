@@ -527,4 +527,9 @@ export const _totalSoldTickets = async (body: any) => {
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
 }
 
+export const _leadGroup = async (body: any) => {
+    console.log("---------- _leadGroup Api Call ---------------")
+    return fetchApiData('group/lead-group-as-creator/' + body, "PUT")
+}
+
 
