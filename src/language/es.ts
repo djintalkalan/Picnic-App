@@ -443,8 +443,6 @@ export const es = {
     timezone: 'Zona Horaria',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
-    lead_the_group: 'Liderar el grupo',
-    you_no_longer_admin: '',
     this_will_transfer_admin: '',
     yes_change_admin: '',
     select_admin: '',
