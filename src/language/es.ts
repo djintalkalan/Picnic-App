@@ -196,7 +196,7 @@ export const es = {
     edit_event: 'Editar evento',
     chat: 'Chats',
     upcoming: 'Próximamente',
-    type_a_message: 'Escribir un mensaje',
+    type_a_message: 'Escribe un mensaje',
     reply: 'Responder',
     delete: 'Eliminar',
     replied_to: 'Responder a',
@@ -446,5 +446,14 @@ export const es = {
     coming_soon: 'En breve',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
+    has_removed: 'ha removido a',
+    from_the_group: 'del grupo',
+    from_the_event: 'del evento',
+    has_joined_the_group: 'se ha unido al grupo',
+    has_joined_the_event: 'se ha unido al evento',
+    has_deleted_post_from: 'ha borrado un mensaje de',
+    has_created_the_group: 'ha creado el grupo',
+    has_created_the_event: 'ha creado el evento',
+    directions_at_below: 'Direcciones a siguiente',
 
 }

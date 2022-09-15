@@ -11,13 +11,17 @@ import { find as findUrl } from 'linkifyjs'
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Contacts, { Contact } from 'react-native-contacts'
+//@ts-ignore
+import Handlebars from 'handlebars/lib/handlebars'
 import MapView, { Marker } from 'react-native-maps'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
-import Language from 'src/language/Language'
+import Language, { useSystemMessageTemplate } from 'src/language/Language'
 import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+
+
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
     if (i < 0) {
         return text
@@ -70,6 +74,8 @@ const DefaultDelta = {
 const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
     const [link, setLink] = useState("")
+
+    const systemMessageTemplate = useSystemMessageTemplate()
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
@@ -344,15 +350,15 @@ const ChatItem = (props: IChatItem) => {
 
     if (is_system_message) {
         const adminName = getDisplayName(message_deleted_by_user || member_deleted_by_user)
-        let m = message
-        m = insertAtIndex(m, m?.indexOf("{{display_name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{display_name}}"), "{{display_name}}"?.length)
-        m = insertAtIndex(m, m.indexOf("{{name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{name}}"), "{{name}}"?.length)
-        m = insertAtIndex(m, m.indexOf("{{admin_name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{admin_name}}"), "{{admin_name}}"?.length)
-        m = '“' + m?.replace("{{display_name}}", display_name)?.replace("{{name}}", group?.name)?.replace("{{admin_name}}", adminName) + '”'
-        return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={m} />
+        const template = Handlebars.compile(message)
+        const m = template({
+            display_name: "**" + display_name + "**",
+            name: "**" + group?.name + "**",
+            admin_name: "**" + adminName + "**",
+            ...systemMessageTemplate
+        })
+
+        return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={'“' + m + '”'} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 
