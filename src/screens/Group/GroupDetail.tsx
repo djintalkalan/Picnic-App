@@ -8,6 +8,7 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
+import { useDatabase } from 'database/Database'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -124,6 +125,8 @@ const GroupDetail: FC<any> = (props) => {
         }, 200)
     }, [])
 
+    const [userData] = useDatabase('userData');
+
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
             <MemberListItem
@@ -171,7 +174,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} />
 
-            {(!group?.is_admin || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
+            {(!(group?.is_admin) || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
@@ -184,7 +187,7 @@ const GroupDetail: FC<any> = (props) => {
                     }}>
                         <TouchableOpacity onPress={() => {
                             const buttons: Array<IBottomMenuButton> = []
-                            if (!group?.is_admin) {
+                            if (!(group?.is_admin)) {
                                 buttons.push({
                                     title: Language.mute_group, onPress: () => {
                                         _showPopUpAlert({
@@ -229,12 +232,25 @@ const GroupDetail: FC<any> = (props) => {
                     title={Language.leave_group}
                     icon={Images.ic_leave_group}
                     hideBottomBar
-                    visibility={group?.is_group_member && !group?.is_admin}
+                    buttonTextColor={colors.colorPrimary}
+                    visibility={group?.is_group_member}
                     onPress={() => {
+                        if (group?.is_admin) {
+                            _showPopUpAlert({
+                                message: Language.you_no_longer_admin + "\n" + Language.this_will_transfer_admin,
+                                onPressButton: () => {
+                                    NavigationService.navigate("SelectAdmin", { id: props?.route?.params?.id })
+                                    _hidePopUpAlert()
+                                },
+                                buttonStyle: { backgroundColor: colors.colorPrimary },
+                                buttonText: Language.yes_change_admin
+                            })
+                            return
+                        }
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup(group?._id))
+                                dispatch(leaveGroup({ groupId: group?._id }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
@@ -382,8 +398,8 @@ const GroupDetail: FC<any> = (props) => {
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
                     {group?.status == 1 ?
-                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => group?.is_admin ? openEditButton(e) : shareGroup()} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => (group?.is_admin) ? openEditButton(e) : shareGroup()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={(group?.is_admin) ? Images.ic_more_group : Images.ic_leave_in_group} />
                         </TouchableOpacity> : undefined}
                 </View>
                 <View style={styles.infoContainer} >

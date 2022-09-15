@@ -49,6 +49,7 @@ import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
+import SelectAdmin from 'screens/Group/SelectAdmin';
 import BlockedMembers from 'screens/Profile/BlockedMembers';
 import HiddenPosts from 'screens/Profile/HiddenPosts';
 import MutedGroupsEvents from 'screens/Profile/MutedGroupsEvents';
@@ -123,6 +124,7 @@ const dashboardScreens = {
   TwoFactorAuth: TwoFactorAuth,
   PaypalDetails: PaypalDetails,
   CheckInList,
+  SelectAdmin,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

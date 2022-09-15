@@ -383,13 +383,13 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leaveGroup, payload);
         if (res.status == 200) {
-            yield put(leaveGroupSuccess(payload))
+            yield put(leaveGroupSuccess(payload?.groupId))
             SocketService?.emit(EMIT_LEAVE_ROOM, {
-                resource_id: payload
+                resource_id: payload?.groupId
             })
             const name = NavigationService?.getCurrentScreen()?.name
             if (name != "HomeGroupTab" && name != "Home") {
-                yield put(getGroupDetail(payload))
+                yield put(getGroupDetail(payload?.groupId))
                 NavigationService.goBack()
             }
         } else if (res.status == 400) {
@@ -452,6 +452,25 @@ function* _deleteGroupSuccess({ type, payload, }: action): Generator<any, any, a
     }
 }
 
+function* _leadGroup({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        yield put(setLoadingAction(true));
+        let res = yield call(ApiProvider._leadGroup, payload);
+        if (res.status == 200) {
+            yield put(getGroupDetail(payload))
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 // Watcher: watch auth request
 export default function* watchGroups() {
     yield takeEvery(ActionTypes.GET_MUTED_RESOURCES, _getMutedResources);
@@ -470,5 +489,6 @@ export default function* watchGroups() {
     yield takeLatest(ActionTypes.DELETE_GROUP, _deleteGroup);
     yield takeEvery(ActionTypes.DELETE_GROUP_SUCCESS, _deleteGroupSuccess);
     yield takeEvery(ActionTypes.GET_MY_EVENTS, _getMyEvents);
+    yield takeEvery(ActionTypes.LEAD_GROUP, _leadGroup);
 
 };

@@ -67,9 +67,9 @@ interface MemberListItemProps {
 
 export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
     return (
-        <TouchableHighlight onLongPress={onLongPress} onPress={onPressImage} underlayColor={colors.colorWhite} >
+        <TouchableHighlight onLongPress={onLongPress} onPress={onPress || onPressImage} underlayColor={colors.colorWhite} >
             <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
-                <TouchableHighlight style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
+                <TouchableHighlight disabled={!onPressImage} style={{ alignSelf: 'center' }} onPress={onPressImage} underlayColor={colors.colorFadedPrimary} >
                     <ImageLoader
                         placeholderSource={defaultIcon}
                         //@ts-ignore

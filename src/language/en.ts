@@ -449,5 +449,9 @@ export const en = {
   checkout_this: 'Checkout this',
   picnic_share_line: 'We invite you to join us here and discover a familiar face encouraging you to participate in real-life experiences. An app you can enjoy with everyday ease. Loved by locals and locally loved, because we are always honest about how we work.',
   download_app_here: 'Download app here',
-
+  lead_the_group: 'Lead the group',
+  you_no_longer_admin: 'You’ll no longer be an admin of this group.',
+  this_will_transfer_admin: 'This will transfer the full admin rights.',
+  yes_change_admin: 'Yes, Change admin',
+  select_admin: 'Select admin',
 }
