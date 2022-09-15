@@ -449,6 +449,7 @@ export const es = {
     checkout_this: 'Revisa este',
     picnic_share_line: '',
     download_app_here: '',
+    you_no_longer_admin: '',
     this_will_transfer_admin: '',
     yes_change_admin: '',
     select_admin: '',
