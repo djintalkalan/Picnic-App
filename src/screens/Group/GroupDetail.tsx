@@ -1,8 +1,8 @@
 import { _whatsappImport } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leadGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, Card, Text } from 'custom-components'
+import { Card, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -107,8 +107,6 @@ const GroupDetail: FC<any> = (props) => {
 
     const [userData] = useDatabase('userData');
 
-    const isAdminLeft = userData?._id == group?.creator_of_group?._id // && group?.creator_of_group?.status == 7
-
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
             <MemberListItem
@@ -136,7 +134,7 @@ const GroupDetail: FC<any> = (props) => {
             <BottomButton
                 title={Language.delete_group}
                 icon={Images.ic_delete}
-                visibility={group?.is_admin && !group?.is_admin_left_group}
+                visibility={group?.is_admin}
                 onPress={() => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_delete_group,
@@ -149,7 +147,7 @@ const GroupDetail: FC<any> = (props) => {
                     })
                 }} />
 
-            {(!(group?.is_admin && !group?.is_admin_left_group) || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
+            {(!(group?.is_admin) || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', }} >
@@ -162,7 +160,7 @@ const GroupDetail: FC<any> = (props) => {
                     }}>
                         <TouchableOpacity onPress={() => {
                             const buttons: Array<IBottomMenuButton> = []
-                            if (!(group?.is_admin && !group?.is_admin_left_group)) {
+                            if (!(group?.is_admin)) {
                                 buttons.push({
                                     title: Language.mute_group, onPress: () => {
                                         _showPopUpAlert({
@@ -210,10 +208,22 @@ const GroupDetail: FC<any> = (props) => {
                     buttonTextColor={colors.colorPrimary}
                     visibility={group?.is_group_member}
                     onPress={() => {
+                        if (group?.is_admin) {
+                            _showPopUpAlert({
+                                message: Language.you_no_longer_admin + "\n" + Language.this_will_transfer_admin,
+                                onPressButton: () => {
+                                    NavigationService.navigate("SelectAdmin", { id: props?.route?.params?.id })
+                                    _hidePopUpAlert()
+                                },
+                                buttonStyle: { backgroundColor: colors.colorPrimary },
+                                buttonText: Language.yes_change_admin
+                            })
+                            return
+                        }
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup({ groupId: group?._id, isAdmin: group?.is_admin }))
+                                dispatch(leaveGroup({ groupId: group?._id }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
@@ -360,8 +370,8 @@ const GroupDetail: FC<any> = (props) => {
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
                     {group?.status == 1 ?
-                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => (group?.is_admin && !group?.is_admin_left_group) ? openEditButton(e) : shareGroup()} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={(group?.is_admin && !group?.is_admin_left_group) ? Images.ic_more_group : Images.ic_leave_in_group} />
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => (group?.is_admin) ? openEditButton(e) : shareGroup()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={(group?.is_admin) ? Images.ic_more_group : Images.ic_leave_in_group} />
                         </TouchableOpacity> : undefined}
                 </View>
                 <View style={styles.infoContainer} >
@@ -382,7 +392,7 @@ const GroupDetail: FC<any> = (props) => {
                     <Text autoLink style={styles.about} >{group?.details}</Text>
                 </View>
                 <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />
-                {group?.is_admin && !group?.is_admin_left_group ?
+                {group?.is_admin ?
                     <>
                         <View style={styles.memberContainer} >
                             <TouchableOpacity onPress={() => {
@@ -432,53 +442,30 @@ const GroupDetail: FC<any> = (props) => {
                     group?.status != 6 &&
                     <>
                         <Text style={{ padding: scaler(15), fontWeight: '500', fontSize: scaler(15) }}>{Language.group_admin}</Text>
-                        {group?.is_admin_left_group && !group?.is_admin ?
-                            <Button onPress={() => {
-                                _showPopUpAlert({
-                                    title: Language?.lead_the_group,
-                                    message: "Are you sure you want to lead this group",
-                                    buttonText: "Yes, Lead",
-                                    cancelButtonText: Language.close,
-                                    onPressButton: () => {
-                                        dispatch(leadGroup(group?._id))
-                                        _hidePopUpAlert();
-                                    },
-                                })
-                            }} title={Language.lead_the_group} containerStyle={{ marginHorizontal: scaler(10) }} />
-                            :
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>
-                                <ImageLoader
-                                    placeholderSource={Images.ic_home_profile}
-                                    source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
-                                    style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
-                                <View style={{ marginLeft: scaler(10), flex: 1 }} >
-                                    <>
-                                        <Text >
-                                            {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
-                                        </Text>
-                                        {isAdminLeft ?
-                                            <Text style={{ fontSize: scaler(11), color: colors.colorPlaceholder, fontStyle: 'italic' }} >
-                                                {"You have left this group"}
-                                            </Text>
-                                            : undefined}
-                                    </>
-                                </View>
-                                {group?.is_group_member ?
-                                    <MaterialIcons
-                                        color={colors.colorPrimary}
-                                        style={{ marginEnd: scaler(10) }}
-                                        onPress={() => {
-                                            console.log("person", group?.creator_of_group);
-                                            NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
-                                        }}
-                                        size={scaler(20)} name='chat' />
-                                    : undefined}
-                            </View>}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(15), marginBottom: scaler(15) }}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
+                                style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
+                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
+                                {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
+                            </Text>
+                            {group?.is_group_member ?
+                                <MaterialIcons
+                                    color={colors.colorPrimary}
+                                    style={{ marginEnd: scaler(10) }}
+                                    onPress={() => {
+                                        console.log("person", group?.creator_of_group);
+                                        NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                                    }}
+                                    size={scaler(20)} name='chat' />
+                                : undefined}
+                        </View>
                     </>
                 }
 
             </ScrollView>
-            {group?.is_admin && !group?.is_admin_left_group ? null : renderBottomActionButtons()}
+            {group?.is_admin ? null : renderBottomActionButtons()}
         </SafeAreaViewWithStatusBar>
     )
     return null

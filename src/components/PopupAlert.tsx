@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
         // flex: 1,
     },
     button: {
-        width: '70%',
+        minWidth: '70%',
         marginTop: scaler(20)
     },
     cancelText: {
