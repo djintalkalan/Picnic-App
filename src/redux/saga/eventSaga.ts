@@ -18,7 +18,7 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
         if (res.status == 200) {
             if (!res?.data?.length) {
                 _showPopUpAlert({
-                    title: Language.group_not_available,
+                    title: Language.groups_not_available,
                     message: Language.please_create_a_group,
                     buttonText: Language.create_group,
                     cancelButtonText: Language.go_to_home,
