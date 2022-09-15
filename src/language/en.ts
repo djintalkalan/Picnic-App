@@ -453,4 +453,14 @@ export const en = {
   this_will_transfer_admin: 'This will transfer the full admin rights.',
   yes_change_admin: 'Yes, Change admin',
   select_admin: 'Select admin',
+  has_removed: 'has removed',
+  from_the_group: 'from the group',
+  from_the_event: 'from the event',
+  has_joined_the_group: 'has joined the group',
+  has_joined_the_event: 'has joined the event',
+  has_deleted_post_from: 'has deleted post from',
+  has_created_the_group: 'has created the group',
+  has_created_the_event: 'has created the event',
+  directions_at_below: 'Directions at below',
+
 }

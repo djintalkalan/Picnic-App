@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import LocalizedStrings, { GlobalStrings } from 'react-native-localization';
 import Localize from 'react-native-localize';
 import Database, { useDatabase } from 'src/database/Database';
@@ -33,5 +33,22 @@ export const useUpdateLanguage = () => {
 
   return (updateLanguage);
 };
+
+export const useSystemMessageTemplate = () => {
+  const language = useLanguage()
+  return useMemo(() => {
+    return {
+      has_removed: Language?.has_removed,
+      from_the_group: Language?.from_the_group,
+      has_joined_the_group: Language?.has_joined_the_group,
+      has_deleted_post_from: Language?.has_deleted_post_from,
+      has_created_the_group: Language?.has_created_the_group,
+      from_the_event: Language?.from_the_event,
+      has_joined_the_event: Language?.has_joined_the_event,
+      has_created_the_event: Language?.has_created_the_event,
+      directions_at_below: Language?.directions_at_below,
+    }
+  }, [language])
+}
 
 export default Language;
