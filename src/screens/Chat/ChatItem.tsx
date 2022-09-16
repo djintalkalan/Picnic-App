@@ -19,7 +19,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language, { useSystemMessageTemplate } from 'src/language/Language'
-import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+import { getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
 
 
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
@@ -78,6 +78,7 @@ const ChatItem = (props: IChatItem) => {
     const systemMessageTemplate = useSystemMessageTemplate()
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+        event: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
         text, member_deleted_by_user,
@@ -188,6 +189,26 @@ const ChatItem = (props: IChatItem) => {
                 </MapView>
             </View>
         </TouchableOpacity>
+    }
+
+    const eventOfGroupMessage = () => {
+        return <View style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(7),
+            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
+        }} >
+            <View style={{ flex: 1, overflow: 'hidden', borderRadius: scaler(10), }} pointerEvents='none' >
+                <ImageLoader
+                    placeholderSource={Images.ic_event_placeholder}
+                    borderRadius={scaler(15)}
+                    resizeMode={eventInMessage?.image ? 'cover' : 'contain'}
+                    onPress={() => _zoomImage(getImageUrl(eventInMessage?.image, { type: 'events' }))}
+                    source={{ uri: getImageUrl(eventInMessage?.image, { type: 'events' }) }}
+                    //@ts-ignore
+                    style={{ resizeMode: eventInMessage?.image ? 'cover' : 'contain', borderRadius: scaler(10), height: '100%', width: '100%' }} />
+
+            </View>
+        </View>
     }
 
     const { remainingNames, myMessage } = useMemo(() => {
@@ -483,6 +504,48 @@ const ChatItem = (props: IChatItem) => {
                                 onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
                         </View>
                     </View>
+                </View>
+            </View>
+        </View>
+    }
+
+    if (message_type == 'event_of_group') {
+        if (!eventInMessage) return null
+        if (!myMessage) {
+            return <View style={styles.myContainer} >
+                <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                    NavigationService?.navigate("EventDetail", { id: eventInMessage?._id })
+                }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
+                    {eventOfGroupMessage()}
+                    <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
+                        <Text style={{ fontSize: scaler(13), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
+                        {eventInMessage?.short_description ? <Text ellipsizeMode='tail' numberOfLines={3} style={{ marginBottom: scaler(10), flex: 1, fontSize: scaler(12), color: '#444444', fontWeight: '500' }}>{eventInMessage?.short_description} </Text> : null}
+                    </View>
+
+                </TouchableOpacity>
+            </View>
+        }
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                    </View>
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                        NavigationService?.navigate("EventDetail", { id: eventInMessage?._id })
+                    }} style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
+                        {eventOfGroupMessage()}
+                        <View style={{ marginHorizontal: scaler(10), marginBottom: scaler(5), flexShrink: 1 }}>
+                            <Text style={{ fontSize: scaler(13), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
+                            {eventInMessage?.short_description ? <Text ellipsizeMode='tail' numberOfLines={3} style={{ marginBottom: scaler(10), flex: 1, fontSize: scaler(12), color: '#444444', fontWeight: '500' }}>{eventInMessage?.short_description} </Text> : null}
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
