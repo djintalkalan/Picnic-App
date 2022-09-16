@@ -61,7 +61,8 @@ interface IChatItem {
     isMember: boolean
 }
 
-const DELETE_TEXT = "{{admin_name}} has deleted post from {{display_name}}"
+const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
+
 
 const { height, width } = Dimensions.get('screen')
 
@@ -656,7 +657,7 @@ const ChatItem = (props: IChatItem) => {
 
                                                 </MapView>
                                             </View>
-                                            : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? "Message Deleted" : parent_message?.message}</Text>
+                                            : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? Language?.message_deleted : parent_message?.message}</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -753,7 +754,7 @@ const ChatItem = (props: IChatItem) => {
                                                             </Marker>
                                                         </MapView>
                                                     </View>
-                                                    : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? "Message Deleted" : parent_message?.message}</Text>
+                                                    : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? Language?.message_deleted : parent_message?.message}</Text>
                                         }
                                     </TouchableOpacity>
                                 </View>
