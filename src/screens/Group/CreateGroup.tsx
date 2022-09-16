@@ -95,6 +95,12 @@ const CreateGroup: FC<any> = (props) => {
       } else {
         setProfileImage(null)
       }
+      locationInputRef?.current?.setNativeProps({
+        selection: {
+          start: 0,
+          end: 0
+        }
+      })
     }
   }, [group])
 
