@@ -182,6 +182,7 @@ const CreateEvent3: FC<any> = props => {
     }
     setIsFreeEvent(event?.is_free_event == 1 ? true : false)
     uploadedImage.current = event?.image?.path ? '' : event.image
+
   }, [])
 
 
@@ -399,7 +400,7 @@ const CreateEvent3: FC<any> = props => {
                 }
                 return !b
               })
-            }} style={{ flexDirection: 'row' }}>
+            }} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <CheckBox checked={isFreeEvent}
 
               />

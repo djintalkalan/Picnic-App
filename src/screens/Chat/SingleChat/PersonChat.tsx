@@ -12,7 +12,7 @@ import { DeviceEventEmitter, Dimensions, EmitterSubscription, FlatList, Image, I
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
-import { EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
+import { EMIT_READ_ONE_TO_ONE_MESSAGE, EMIT_SEND_PERSONAL_MESSAGE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
@@ -173,6 +173,26 @@ const PersonChat: FC<any> = (props) => {
     const { chats } = useSelector((state: RootState) => ({
         chats: state?.personChat?.chatRooms?.[person?._id]?.chats || [],
     }))
+
+    useEffect(() => {
+        setTimeout(() => {
+
+            if (chats?.length > 0) {
+                const lastMessage = chats[0]
+                console.log("lastMessage", lastMessage);
+                console.log("person?._id", person?._id);
+                if (lastMessage?.user_id == person?._id) {
+                    SocketService.emit(EMIT_READ_ONE_TO_ONE_MESSAGE, {
+                        chat_room_id: chatRoomIdRef?.current,
+                        user_id: person?._id,
+                        last_read_message_id: lastMessage?._id,
+                    })
+                }
+            }
+        }, 500);
+
+    }, [(chats || [])?.[0]])
+
 
     const dispatch = useDispatch()
 

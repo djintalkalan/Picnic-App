@@ -40,6 +40,7 @@ export const Images = {
   ic_more_group: require('./images/ic_more_group.png'),
   ic_delete: require('./images/ic_delete.png'),
   ic_leave_group: require('./images/ic_leave_group.png'),
+  ic_join_group: require('./images/ic_join_group.png'),
   ic_report_group: require('./images/ic_report_group.png'),
   ic_member_tick: require('./images/ic_member_tick.png'),
   ic_leave_in_group: require('./images/ic_leave_in_group.png'),
@@ -78,5 +79,7 @@ export const Images = {
   ic_no_longer_available: require("./images/ic_no_longer_available.png"),
   ic_sold_out: require("./images/ic_sold_out.png"),
   ic_paypal_icon: require("./images/ic_paypal_icon.png"),
-  // ic_free_ticket_icon: require("./images/ic_free_ticket_icon.png"),
+  ic_fab_check_in: require("./images/ic_fab_check_in.png"),
+  ic_chat_message: require("./images/ic_chat_message.png"),
+  // ic_chat_message: require("./images/ic_chat_message.png"),
 };

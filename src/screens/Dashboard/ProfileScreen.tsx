@@ -115,6 +115,12 @@ const ProfileScreen: FC<any> = (props) => {
         setValue("phone_dialCode", dial_code)
         setValue("phone_countryCode", phone_country_code)
         setValue("location", address)
+        locationInputRef?.current?.setNativeProps({
+            selection: {
+                start: 0,
+                end: 0
+            }
+        })
     }, [])
 
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {

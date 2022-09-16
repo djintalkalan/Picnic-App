@@ -99,11 +99,10 @@ export const getEventMembers = (payload: any) => ({
     payload
 })
 
-export const setEventMembers = (payload:
-    { eventId: string, data: { eventMembersCheckedIn: Array<any>, eventMembersNotCheckedIn: Array<any> } }) => ({
-        type: ActionTypes.SET_EVENT_MEMBERS,
-        payload
-    })
+export const setEventMembers = (payload: { eventId: string, data: { eventMembersCheckedIn: Array<any>, eventMembersNotCheckedIn: Array<any> } }) => ({
+    type: ActionTypes.SET_EVENT_MEMBERS,
+    payload
+})
 
 export const removeEventMember = (payload: any) => ({
     type: ActionTypes.REMOVE_EVENT_MEMBER,
@@ -133,6 +132,27 @@ export const capturePayment = (payload: any) => ({
 
 export const authorizePayment = (payload: any) => ({
     type: ActionTypes.AUTHORIZE_PAYMENT,
+    payload
+})
+
+export const getEventsForCheckIn = (payload: any) => ({
+    type: ActionTypes.GET_EVENTS_FOR_CHECK_IN,
+    payload
+})
+
+export const onFetchEventsForCheckIn = (payload: any) => ({
+    type: ActionTypes.ON_FETCH_EVENT_FOR_CHECK_IN,
+    payload
+})
+
+
+export const getEventMembersList = (payload: any) => ({
+    type: ActionTypes.GET_EVENT_MEMBERS_LIST,
+    payload
+})
+
+export const setEventMembersList = (payload: { eventId: string, data: { eventMembers: Array<any> } }) => ({
+    type: ActionTypes.SET_EVENT_MEMBERS_LIST,
     payload
 })
 
