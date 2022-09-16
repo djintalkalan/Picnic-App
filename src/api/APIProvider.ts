@@ -550,4 +550,8 @@ export const _leadGroup = async (body: any) => {
     return fetchApiData('group/lead-group-as-creator/' + body, "PUT")
 }
 
+export const _getAllPublicGroupNearMe = async (body: any) => {
+    console.log("---------- _getAdminChatCount Api Call ---------------")
+    return fetchApiData('event/get-all-public-groups?' + (new URLSearchParams(body)).toString())
 
+}

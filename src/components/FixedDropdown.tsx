@@ -1,7 +1,7 @@
 import { colors } from 'assets'
 import { Card } from 'custom-components'
 import React, { FC, useCallback } from 'react'
-import { FlatList, StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
+import { FlatList, StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native'
 import { scaler } from 'utils'
 
 interface IFixedDropdown {
@@ -11,23 +11,24 @@ interface IFixedDropdown {
     selectedId?: number
     onSelect?: (selectedItem: IFixedDropdownItem) => void
     relative?: boolean
+    maxHeight?: number
 }
 
 interface IFixedDropdownItem {
     id: number,
     title: string,
-    data: any
+    data: any,
+    textStyle?: StyleProp<TextStyle>
 }
 
 export const FixedDropdown: FC<IFixedDropdown> = (props) => {
-    const { containerStyle = {}, visible, data, selectedId, onSelect, relative = false } = props
-
+    const { containerStyle = {}, visible, data, selectedId, onSelect, relative = false, maxHeight = scaler(150) } = props
 
     const _renderDropdownItem = useCallback(({ item, index }) => {
         return <TouchableOpacity
             onPress={() => { onSelect && onSelect(item) }}
             style={{ paddingHorizontal: scaler(15), paddingVertical: scaler(8) }} >
-            <Text style={styles.title} >{item?.title}</Text>
+            <Text style={[styles.title, (item?.textStyle || {})]} >{item?.title}</Text>
         </TouchableOpacity>
     }, [onSelect])
 
@@ -37,7 +38,7 @@ export const FixedDropdown: FC<IFixedDropdown> = (props) => {
             cardElevation={2}
             cornerRadius={scaler(10)} >
             <FlatList
-                style={{ maxHeight: scaler(150) }}
+                style={{ maxHeight }}
                 nestedScrollEnabled contentContainerStyle={{ paddingVertical: scaler(8) }}
                 data={data}
                 keyExtractor={(_, i) => i.toString()}

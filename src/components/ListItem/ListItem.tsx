@@ -20,9 +20,10 @@ interface ListItemProps {
     textContainerStyle?: StyleProp<ViewStyle>
     titleTextStyle?: StyleProp<TextStyle>
     subtitleTextStyle?: StyleProp<TextStyle>
+    borderEnabled?: boolean
 }
 
-export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, subtitleTextStyle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, subtitleTextStyle, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle, borderEnabled = false }) => {
     const style = useMemo(() => StyleSheet.create({
         containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
         textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) },
@@ -38,7 +39,10 @@ export const ListItem: FC<ListItemProps> = ({ title, subtitle, titleTextStyle, s
                         placeholderSource={defaultIcon}
                         //@ts-ignore
                         source={icon}
-                        style={styles.iconStyle} />
+                        style={[styles.iconStyle, borderEnabled ? {
+                            borderColor: colors.colorPrimary,
+                            borderWidth: scaler(2),
+                        } : {}]} />
                 </TouchableHighlight>
                 <View style={style.textContainer} >
                     <Text style={style.title} numberOfLines={2} ellipsizeMode={'tail'} >{title}</Text>
@@ -63,9 +67,10 @@ interface MemberListItemProps {
     onPressImage?: (e?: GestureResponderEvent) => void
     onPress?: (e?: GestureResponderEvent) => void
     onLongPress?: (e?: GestureResponderEvent) => void
+    borderEnabled?: boolean
 }
 
-export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false }) => {
+export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, onPressImage, title, customRightText, customRightTextStyle, icon, defaultIcon, containerStyle, isSelected = false, borderEnabled = false }) => {
     return (
         <TouchableHighlight onLongPress={onLongPress} onPress={onPress || onPressImage} underlayColor={colors.colorWhite} >
             <View style={[styles.container, { ...StyleSheet.flatten(containerStyle) }]} >
@@ -77,7 +82,10 @@ export const MemberListItem: FC<MemberListItemProps> = ({ onPress, onLongPress, 
                         style={[styles.iconStyle, {
                             height: scaler(40),
                             width: scaler(40),
-                        }]} />
+                        }, borderEnabled ? {
+                            borderColor: colors.colorPrimary,
+                            borderWidth: scaler(2),
+                        } : {}]} />
                 </TouchableHighlight>
                 <View style={[styles.textContainer, { justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row' }]} >
                     <Text style={styles.memberListTitle} >{title}</Text>
