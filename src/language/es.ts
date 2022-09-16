@@ -462,8 +462,8 @@ export const es = {
     has_created_the_group: 'ha creado el grupo',
     has_created_the_event: 'ha creado el evento',
     directions_at_below: 'Direcciones a siguiente',
-    allow_everyone_to_host_event: '',
+    allow_everyone_to_host_event: 'Permitir eventos de miembros locales',
     host_event_in_this_group: '',
-    post_in_local_groups: '',
+    post_in_local_groups: 'Publicar en grupos locales',
 
 }

@@ -462,7 +462,7 @@ export const en = {
   has_created_the_group: 'has created the group',
   has_created_the_event: 'has created the event',
   directions_at_below: 'Directions at below',
-  allow_everyone_to_host_event: 'Allow everyone to host events in this group',
+  allow_everyone_to_host_event: 'Allow events from local members',
   host_event_in_this_group: 'Host event in this group',
   post_in_local_groups: 'Post in local groups',
 

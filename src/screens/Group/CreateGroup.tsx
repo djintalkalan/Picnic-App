@@ -284,12 +284,7 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
 
-            <TouchableOpacity style={styles.eventView} onPress={() => setPublicGroup(!isPublicGroup)}>
-              <CheckBox checked={isPublicGroup} />
-              <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
-                {Language.allow_everyone_to_host_event}
-              </Text>
-            </TouchableOpacity>
+
 
             <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
               <CheckBox checked={pinLocation} />
@@ -354,6 +349,13 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
           </View>
+
+          <TouchableOpacity style={styles.eventView} onPress={() => setPublicGroup(!isPublicGroup)}>
+            <CheckBox checked={isPublicGroup} />
+            <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+              {Language.allow_everyone_to_host_event}
+            </Text>
+          </TouchableOpacity>
 
           <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }}
             title={group ? Language.update_group : Language.create_group}
