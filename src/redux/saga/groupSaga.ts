@@ -405,6 +405,8 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
     }
 }
 
+
+
 function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
     try {
         if (!payload?.noLoader)

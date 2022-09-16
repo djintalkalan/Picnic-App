@@ -1,10 +1,12 @@
-import { RootState } from 'app-store';
-import { getMyGroups } from 'app-store/actions';
+import { _getAllPublicGroupNearMe } from 'api';
+import { setLoadingAction } from 'app-store/actions';
+import { RootState } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
-import _, { isEqual } from 'lodash';
+import Database, { ILocation } from 'database/Database';
+import _ from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {
     // ActivityIndicator,
@@ -18,9 +20,44 @@ import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils';
 
 
 const SelectGroup: FC<any> = (props) => {
+    const pagination = useRef({
+        limit: 20,
+        page: 0,
+        total: -1
+
+    })
     const [text, setText] = useState('')
     const inputRef = useRef<TextInput>(null)
     const [searchLoader, setSearchLoader] = useState(false)
+
+    const isLoading = useSelector<RootState, boolean>(_ => _?.isLoading)
+    const [groups, setGroups] = useState([])
+
+
+    const getPublicGroups = useCallback(() => {
+        const { total, page, limit } = pagination.current
+        if (total < page && !isLoading) {
+            const location = Database.getStoredValue<ILocation>('selectedLocation')
+            dispatch(setLoadingAction(true))
+            _getAllPublicGroupNearMe({
+                page: page + 1,
+                limit,
+                lat: location?.latitude,
+                lng: location?.longitude,
+            }).then(res => {
+                pagination.current = {
+                    ...pagination.current,
+                    page: res?.data?.pagination?.currentPage,
+                    total: res?.data?.pagination?.totalPages,
+                }
+                setGroups(res?.data?.data)
+                dispatch(setLoadingAction(false))
+            }).catch(e => {
+                dispatch(setLoadingAction(false))
+                console.log(e);
+            })
+        }
+    }, [isLoading])
 
     useEffect(() => {
         debounceSearch(text)
@@ -28,19 +65,12 @@ const SelectGroup: FC<any> = (props) => {
     const dispatch = useDispatch()
     const debounceSearch = useCallback(_.debounce((text) => {
         console.log("text", text);
-        dispatch(getMyGroups())
+        getPublicGroups()
         setTimeout(() => {
             setSearchLoader(false)
         }, 2000);
-    }, 500), [])
+    }, 500), [getPublicGroups])
 
-    const { myGroups } = useSelector((state: RootState) => ({
-        myGroups: state?.group?.myGroups
-    }))
-
-    const { allGroups, searchedGroups } = useSelector<RootState, any>((state) => ({
-        allGroups: state?.group?.allGroups,
-    }), isEqual)
 
 
     const _renderItem = useCallback(({ item, index }) => {
@@ -99,12 +129,17 @@ const SelectGroup: FC<any> = (props) => {
                 <FlatList
                     style={{ flex: 1 }}
                     keyboardShouldPersistTaps={'handled'}
-                    data={allGroups}
+                    data={groups}
                     // extraData={chats?.length}
-                    keyExtractor={_ => _?._id}
+                    keyExtractor={(_, i) => i?.toString()}
                     bounces={false}
                     ItemSeparatorComponent={ListItemSeparator}
                     renderItem={_renderItem}
+                    onEndReached={() => {
+                        setTimeout(() => {
+                            getPublicGroups()
+                        }, 200);
+                    }}
                 />
             </View>
         </SafeAreaViewWithStatusBar>
