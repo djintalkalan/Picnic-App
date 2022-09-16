@@ -446,8 +446,8 @@ export const es = {
     coming_soon: 'En breve',
     tap_to_scan: 'Toca para escanear',
     qr_code: 'el código QR',
-    allow_everyone_to_host_event: '',
+    allow_everyone_to_host_event: 'Permitir eventos de miembros locales',
     host_event_in_this_group: '',
-    post_in_local_groups: '',
+    post_in_local_groups: 'Publicar en grupos locales',
 
 }
