@@ -55,6 +55,7 @@ interface IChatItem {
     coordinates: { lat: string, lng: string }
     text: string
     isMember: boolean
+    event_detail: any,
 }
 
 const DELETE_TEXT = "{{admin_name}} has deleted post from {{display_name}}"
@@ -72,7 +73,7 @@ const ChatItem = (props: IChatItem) => {
     const [link, setLink] = useState("")
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
-        event: eventInMessage,
+        event_detail: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
         text, member_deleted_by_user,
@@ -512,7 +513,7 @@ const ChatItem = (props: IChatItem) => {
                 }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {eventOfGroupMessage()}
                     <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
-                        <Text style={{ fontSize: scaler(13), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
+                        <Text style={{ fontSize: scaler(13), marginBottom: scaler(5), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
                         {eventInMessage?.short_description ? <Text ellipsizeMode='tail' numberOfLines={3} style={{ marginBottom: scaler(10), flex: 1, fontSize: scaler(12), color: '#444444', fontWeight: '500' }}>{eventInMessage?.short_description} </Text> : null}
                     </View>
 
