@@ -372,13 +372,13 @@ const ChatItem = (props: IChatItem) => {
 
     if (is_system_message) {
         const adminName = getDisplayName(message_deleted_by_user || member_deleted_by_user)
-        const template = Handlebars.compile(message)
-        const m = template({
+        const template = message?.trim() ? Handlebars.compile(message) : null
+        const m = template ? template({
             display_name: "**" + display_name + "**",
             name: "**" + group?.name + "**",
             admin_name: "**" + adminName + "**",
             ...systemMessageTemplate
-        })
+        }) : message
 
         return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={'“' + m + '”'} />
     }
@@ -470,8 +470,8 @@ const ChatItem = (props: IChatItem) => {
 
     if (message_type == 'resource_direction') {
         if (group?.is_direction != '1') return <View />
-        const template = Handlebars.compile(message)
-        const m = template(systemMessageTemplate)
+        const template = message?.trim() ? Handlebars.compile(message) : null
+        const m = template ? template(systemMessageTemplate) : message
         if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
