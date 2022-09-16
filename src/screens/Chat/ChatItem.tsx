@@ -509,7 +509,7 @@ const ChatItem = (props: IChatItem) => {
         if (!myMessage) {
             return <View style={styles.myContainer} >
                 <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                    NavigationService?.navigate("EventDetail", { id: eventInMessage?._id })
+                    NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
                 }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {eventOfGroupMessage()}
                     <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
@@ -533,7 +533,7 @@ const ChatItem = (props: IChatItem) => {
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                     </View>
                     <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                        NavigationService?.navigate("EventDetail", { id: eventInMessage?._id })
+                        NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
                     }} style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
                         {eventOfGroupMessage()}
                         <View style={{ marginHorizontal: scaler(10), marginBottom: scaler(5), flexShrink: 1 }}>
