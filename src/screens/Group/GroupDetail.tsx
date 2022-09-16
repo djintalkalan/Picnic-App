@@ -1,6 +1,7 @@
-import { _whatsappImport } from 'api'
+import { useFocusEffect } from '@react-navigation/native'
+import { _getAdminChatCount, _whatsappImport } from 'api'
 import { RootState } from 'app-store'
-import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
+import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, getGroupMembers, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -9,12 +10,11 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
 import LinearGradient from 'react-native-linear-gradient'
 import { SwipeRow } from 'react-native-swipe-list-view'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_MEMBER_DELETE, SocketService } from 'socket'
 import Language, { useLanguage } from 'src/language/Language'
@@ -24,6 +24,7 @@ const gradientColors = ['rgba(255,255,255,0)', 'rgba(255,255,255,0.535145)', '#f
 const GroupDetail: FC<any> = (props) => {
 
     const swipeRef = useRef<SwipeRow<any>>(null)
+
 
     const language = useLanguage()
     const getBottomMenuButtons = useCallback((item) => {
@@ -91,12 +92,31 @@ const GroupDetail: FC<any> = (props) => {
 
     const [isOpened, setOpened] = useState(false)
     const dispatch = useDispatch()
-
+    const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
     const { group, groupMembers, } = useSelector((state: RootState) => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
         groupMembers: state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [],
     }), isEqual)
 
+
+    useFocusEffect(useCallback(() => {
+        console.log("group", group);
+
+        InteractionManager.runAfterInteractions(() => {
+            if (group?.is_admin == 1) {
+                dispatch(getGroupMembers(props?.route?.params?.id))
+            } else {
+                if (group?.is_group_member && group?.creator_of_group?._id)
+                    _getAdminChatCount(group?.creator_of_group?._id).then(res => {
+                        if (res?.status == 200) {
+                            setUnreadCountOfAdmin(res?.data?.unread_count || 0)
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                    })
+            }
+        })
+    }, [group]))
 
     useLayoutEffect(() => {
         setTimeout(() => {
@@ -114,12 +134,19 @@ const GroupDetail: FC<any> = (props) => {
                 }}
                 containerStyle={{ paddingHorizontal: scaler(0) }}
                 title={item?.user?.first_name + " " + (item?.user?.last_name ?? "")}
-                customRightText={item?.is_admin ? Language?.admin : <MaterialIcons
-                    onPress={() => {
-                        console.log("person", item?.user);
-                        NavigationService.navigate("PersonChat", { person: item?.user })
-                    }}
-                    size={scaler(20)} name='chat' />}
+                customRightText={item?.is_admin ? Language?.admin : <TouchableOpacity style={{ paddingHorizontal: scaler(5) }} onPress={() => {
+                    console.log("person", item?.user);
+                    NavigationService.navigate("PersonChat", { person: item?.user })
+                }}>
+                    <Image
+                        source={Images.ic_chat_message}
+                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                    />
+                    {(item?.unread_count?.count || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(1), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{item?.unread_count?.count || 0}</Text>
+                    </View>}
+                </TouchableOpacity>
+                }
                 icon={item?.user?.image ? { uri: getImageUrl(item?.user?.image, { type: 'users', width: scaler(50) }) } : null}
                 defaultIcon={Images.ic_home_profile}
             />
@@ -232,7 +259,7 @@ const GroupDetail: FC<any> = (props) => {
                     :
                     <BottomButton
                         title={Language.join_now}
-                        icon={Images.ic_leave_group}
+                        icon={Images.ic_join_group}
                         hideBottomBar
                         visibility={!group?.is_group_member && group?.status == 1}
                         buttonTextColor={colors.colorPrimary}
@@ -450,14 +477,18 @@ const GroupDetail: FC<any> = (props) => {
                                 {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
                             </Text>
                             {group?.is_group_member ?
-                                <MaterialIcons
-                                    color={colors.colorPrimary}
-                                    style={{ marginEnd: scaler(10) }}
-                                    onPress={() => {
-                                        console.log("person", group?.creator_of_group);
-                                        NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
-                                    }}
-                                    size={scaler(20)} name='chat' />
+                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
+                                    console.log("person", group?.creator_of_group);
+                                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                                }}>
+                                    <Image
+                                        source={Images.ic_chat_message}
+                                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                                    />
+                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
+                                    </View>}
+                                </TouchableOpacity>
                                 : undefined}
                         </View>
                     </>

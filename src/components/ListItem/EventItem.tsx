@@ -25,9 +25,10 @@ interface EventProps {
     price?: string
     is_donation_enabled?: boolean
     free_tickets?: number
+    is_booking_disabled?: number
 }
 
-const EventItemS: FC<EventProps> = ({ title, subtitle, is_donation_enabled, date, currency, price, free_tickets = 0, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle }) => {
+const EventItemS: FC<EventProps> = ({ title, subtitle, is_donation_enabled, date, currency, price, free_tickets = 0, icon, defaultIcon, onPressImage, onPress, isSelected = false, customView: CustomView, containerStyle, textContainerStyle, is_booking_disabled = 0 }) => {
     const style = useMemo(() => StyleSheet.create({
         containerStyle: { ...styles.container, ...StyleSheet.flatten(containerStyle) },
         textContainer: { ...styles.textContainer, ...StyleSheet.flatten(textContainerStyle) }
@@ -43,12 +44,11 @@ const EventItemS: FC<EventProps> = ({ title, subtitle, is_donation_enabled, date
 
                     <View style={{ flex: 1, marginVertical: scaler(5), justifyContent: 'flex-end' }} >
 
-                        {free_tickets > 0 ?
+                        {free_tickets > 0 && is_booking_disabled != 1 ?
                             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                                 <Image style={{ width: scaler(18), aspectRatio: 1 }} source={Images.ic_free_ticket_icon} />
                                 <Text style={{ color: colors.colorPrimary, fontSize: scaler(12) }} > {free_tickets} {Language.x_free_ticket_available}</Text>
                             </View>
-
                             : null}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }} >
                             <View>
