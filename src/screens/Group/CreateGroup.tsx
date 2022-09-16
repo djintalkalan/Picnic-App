@@ -89,7 +89,7 @@ const CreateGroup: FC<any> = (props) => {
       setValue('location', group?.address)
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
-      setValue('purpose', group?.category ?? "")
+      setValue('purpose', group?.category ?? "", { shouldValidate: true })
       setPinLocation(group?.is_direction == '1')
       setPublicGroup(group?.can_anyone_host_events == '1');
       if (group?.image) {
