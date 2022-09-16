@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
-import Language from 'src/language/Language'
+import Language, { useSystemMessageTemplate } from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
@@ -209,12 +209,13 @@ const EventChats: FC<any> = (props) => {
         }
     }, [eventDetail]))
 
-
+    const systemMessageTemplate = useSystemMessageTemplate()
 
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
             <ChatItem
                 {...item}
+                systemMessageTemplate={systemMessageTemplate}
                 event={eventDetail}
                 isAdmin={eventDetail?.is_admin}
                 isMember={eventDetail?.status == 1 && eventDetail?.is_event_member}

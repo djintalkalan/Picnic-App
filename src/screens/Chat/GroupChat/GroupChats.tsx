@@ -12,7 +12,7 @@ import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_GROUP_REPLY, EMIT_SEND_GROUP_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
-import Language from 'src/language/Language'
+import Language, { useSystemMessageTemplate } from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND, UPDATE_COLOR_EVENT } from 'utils/Constants'
 import ChatInput from '../ChatInput'
@@ -200,11 +200,12 @@ export const GroupChats: FC<any> = (props) => {
             setActiveBackgroundColor(groupDetail?.background_color)
         }
     }, [groupDetail?.background_color])
-
+    const systemMessageTemplate = useSystemMessageTemplate()
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
             <ChatItem
                 {...item}
+                systemMessageTemplate={systemMessageTemplate}
                 isGroupType={true}
                 group={groupDetail}
                 isMember={groupDetail?.status == 1 && groupDetail?.is_group_member && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium))}

@@ -18,7 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
-import Language, { useSystemMessageTemplate } from 'src/language/Language'
+import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
 
 
@@ -59,6 +59,7 @@ interface IChatItem {
     coordinates: { lat: string, lng: string }
     text: string
     isMember: boolean
+    systemMessageTemplate: any
 }
 
 const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
@@ -76,8 +77,6 @@ const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
     const [link, setLink] = useState("")
 
-    const systemMessageTemplate = useSystemMessageTemplate()
-
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
@@ -87,7 +86,7 @@ const ChatItem = (props: IChatItem) => {
         // message_liked_by_user_name,
         // parent_id,
         message_liked_by_users,
-        message_total_likes_count, isMuted, isMember } = props ?? {}
+        message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
@@ -449,12 +448,14 @@ const ChatItem = (props: IChatItem) => {
 
     if (message_type == 'resource_direction') {
         if (group?.is_direction != '1') return <View />
+        const template = Handlebars.compile(message)
+        const m = template(systemMessageTemplate)
         if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {pinLocation()}
                     <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
-                        <Text style={styles.myMessage}>{message} </Text>
+                        <Text style={styles.myMessage}>{m} </Text>
                         <Text style={{ color: 'blue', fontSize: scaler(13) }}
                             onLongPress={_onCopy}
                             onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
@@ -478,7 +479,7 @@ const ChatItem = (props: IChatItem) => {
                     <View style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
                         {pinLocation()}
                         <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5), flexShrink: 1 }}>
-                            <Text style={styles.myMessage}>{message} </Text>
+                            <Text style={styles.myMessage}>{m} </Text>
                             <Text style={{ color: 'blue', fontSize: scaler(13) }}
                                 onLongPress={_onCopy}
                                 onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
