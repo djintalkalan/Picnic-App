@@ -103,7 +103,7 @@ const ChatItem = (props: IChatItem) => {
     // }
 
     useEffect(() => {
-        if (message_type == 'text') {
+        if (message_type == 'text' && message?.trim()) {
             const matches = findUrl(message?.toLowerCase())
             let found = false
             matches?.some((link) => {
@@ -350,14 +350,21 @@ const ChatItem = (props: IChatItem) => {
 
     if (is_system_message) {
         const adminName = getDisplayName(message_deleted_by_user || member_deleted_by_user)
-        const template = message?.trim() ? Handlebars.compile(message) : null
-        const m = template ? template({
-            display_name: "**" + display_name + "**",
-            name: "**" + group?.name + "**",
-            admin_name: "**" + adminName + "**",
-            ...systemMessageTemplate
-        }) : message
+        let m = message || ''
+        try {
+            if (message?.trim()) {
+                const template = Handlebars.compile(message)
+                m = template({
+                    display_name: "**" + display_name + "**",
+                    name: "**" + group?.name + "**",
+                    admin_name: "**" + adminName + "**",
+                    ...systemMessageTemplate
+                })
+            }
+        }
+        catch (e) {
 
+        }
         return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={'“' + m + '”'} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
@@ -448,8 +455,16 @@ const ChatItem = (props: IChatItem) => {
 
     if (message_type == 'resource_direction') {
         if (group?.is_direction != '1') return <View />
-        const template = message?.trim() ? Handlebars.compile(message) : null
-        const m = template ? template(systemMessageTemplate) : message
+        let m = message || ''
+        try {
+            if (message?.trim()) {
+                const template = message?.trim() ? Handlebars.compile(message) : null
+                m = template(systemMessageTemplate)
+            }
+        }
+        catch (e) {
+
+        }
         if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
