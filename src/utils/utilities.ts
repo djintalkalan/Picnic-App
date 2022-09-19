@@ -922,3 +922,11 @@ export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, f
 }
 
 
+export const calculateImageUrl = (image: string, images: any[] = []) => {
+    if (!image) {
+        return images?.find(_ => _?.type == 'image')?.name
+    }
+    return image
+}
+
+

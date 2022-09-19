@@ -19,7 +19,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+import { calculateImageUrl, getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
 
 
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
@@ -193,6 +193,7 @@ const ChatItem = (props: IChatItem) => {
     }
 
     const eventOfGroupMessage = () => {
+        const eventImage = calculateImageUrl(eventInMessage?.image, eventInMessage?.event_images)
         return <View style={{
             borderRadius: scaler(15), overflow: 'hidden',
             padding: scaler(7),
@@ -202,11 +203,11 @@ const ChatItem = (props: IChatItem) => {
                 <ImageLoader
                     placeholderSource={Images.ic_event_placeholder}
                     borderRadius={scaler(15)}
-                    resizeMode={eventInMessage?.image ? 'cover' : 'contain'}
-                    onPress={() => _zoomImage(getImageUrl(eventInMessage?.image, { type: 'events' }))}
-                    source={{ uri: getImageUrl(eventInMessage?.image, { type: 'events' }) }}
+                    resizeMode={eventImage ? 'cover' : 'contain'}
+                    onPress={() => _zoomImage(getImageUrl(eventImage, { type: 'events' }))}
+                    source={{ uri: getImageUrl(eventImage, { type: 'events' }) }}
                     //@ts-ignore
-                    style={{ resizeMode: eventInMessage?.image ? 'cover' : 'contain', borderRadius: scaler(10), height: '100%', width: '100%' }} />
+                    style={{ resizeMode: eventImage ? 'cover' : 'contain', borderRadius: scaler(10), height: '100%', width: '100%' }} />
 
             </View>
         </View>
