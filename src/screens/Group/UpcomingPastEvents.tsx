@@ -9,7 +9,7 @@ import React, { FC, useCallback, useEffect } from 'react'
 import { FlatList, InteractionManager, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootParams } from 'src/routes/Routes'
-import { dateFormat, getImageUrl, NavigationService, scaler } from 'utils'
+import { calculateImageUrl, dateFormat, getImageUrl, NavigationService, scaler } from 'utils'
 
 
 const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEvents'>> = ({ route, navigation }) => {
@@ -28,6 +28,8 @@ const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEve
 
     const _renderItem = useCallback(({ item, index }) => {
 
+        const eventImage = calculateImageUrl(item?.image, item?.event_images)
+
         return (
             <ListItem
                 title={item?.name}
@@ -40,7 +42,7 @@ const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEve
                     dispatch(setActiveEvent(item))
                     NavigationService.navigate('EventDetail', { id: item?._id })
                 }}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 customView={<TicketView {...item} is_event_admin={item?.is_event_admin ?? true} />}
             >
