@@ -16,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { EMIT_EVENT_REPLY, EMIT_SEND_EVENT_MESSAGE, EMIT_SET_CHAT_BACKGROUND, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
+import { calculateImageUrl, getCityOnly, getImageUrl, NavigationService, scaler, shareDynamicLink, _hideTouchAlert, _showTouchAlert } from 'utils'
 import { DEFAULT_CHAT_BACKGROUND } from 'utils/Constants'
 import { ChatHeader } from '../ChatHeader'
 import ChatInput from '../ChatInput'
@@ -177,7 +177,8 @@ const EventChats: FC<any> = (props) => {
         chats: state?.eventChat?.events?.[state?.activeEvent?._id]?.chats ?? [],
     }))
 
-    const { name, city, image, state, country, _id } = eventDetail ?? activeEvent
+    const { name, city, image, state, country, event_images, _id } = eventDetail ?? activeEvent
+    const eventImage = calculateImageUrl(image, event_images)
     const colorPickerButtonRef = useRef<TouchableOpacity>(null)
 
     const dispatch = useDispatch()
@@ -272,7 +273,7 @@ const EventChats: FC<any> = (props) => {
                 }}
                 // subtitle={(city ?? "") + ", " + (state ? (state + ", ") : "") + (country ?? "")}
                 subtitle={getCityOnly(city, state, country)}
-                icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { width: scaler(50), type: 'events' }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 rightView={<View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onPress={() => NavigationService.navigate('SearchChatScreen', {
