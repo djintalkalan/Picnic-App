@@ -72,7 +72,7 @@ export const Text: FC<TextProps> = (props) => {
             }
             if (styles?.fontStyle == 'italic' && fontType != 'regular') {
                 //@ts-ignore
-                fontType = fontType.replace("Italic", '') + "Italic"
+                fontType = fontType?.replace("Italic", '') + "Italic"
                 console.log("fontType", fontType);
                 delete styles.fontStyle
             }
@@ -145,7 +145,7 @@ export const InnerBoldText = ({ text: IText, style, fontWeight = "500" }: { text
                 if (text.includes('**')) {
                     return (
                         <Text key={index} style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-                            {text.replace('**', '')?.replace('**', '')}{' '}
+                            {text?.replace('**', '')?.replace('**', '')}{' '}
                         </Text>
                     );
                 }
@@ -161,13 +161,16 @@ export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { tex
     return <Text style={style} >
         {IText?.substring(0, startBoldIndex)}
         <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-            {IText?.substring(startBoldIndex, endBoldIndex + 2).replaceAll('**', '')}
+            {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replaceAll('**', '')}
         </Text>
         {IText?.substring(endBoldIndex + 2)}
     </Text>
-};
+}
 
 export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text: string, style: StyleProp<TextStyle>, fontWeight?: IFontWeight }) => {
+    if (!IText?.trim()) {
+        return null
+    }
 
     const thisStyle = useMemo(() => {
         const flatten = StyleSheet.flatten(style)
@@ -186,7 +189,7 @@ export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text
 
     let boldString = ""
     let normalString = ""
-    arr.forEach((s: string, i: number) => {
+    arr?.forEach((s: string, i: number) => {
         if (isStart == false)
             boldString += s
         else {
@@ -195,17 +198,17 @@ export const MultiBoldText = ({ text: IText, style, fontWeight = "500" }: { text
         if ((s + (arr?.[i + 1] || "")) == "**") {
             if (isStart) {
                 isStart = false
-                finalStrings.push(<Text style={thisStyle.style} key={i}>{normalString.replace(/\*/g, "")}</Text>)
+                finalStrings.push(<Text style={thisStyle.style} key={i}>{normalString?.replace(/\*/g, "")}</Text>)
                 normalString = ""
             }
             else {
                 isStart = true
-                finalStrings.push(<Text style={thisStyle.boldStyle} key={i}>{boldString.replace(/\*/g, "")}</Text>)
+                finalStrings.push(<Text style={thisStyle.boldStyle} key={i}>{boldString?.replace(/\*/g, "")}</Text>)
                 boldString = ""
             }
         }
     })
-    finalStrings.push(<Text key={arr?.length + 1}>{normalString.replace(/\*/g, "")}</Text>)
+    finalStrings.push(<Text key={arr?.length + 1}>{normalString?.replace(/\*/g, "")}</Text>)
     return <Text children={finalStrings} style={style} />
 
 };
@@ -236,7 +239,7 @@ export const MultiBoldTextOld = ({ text: IText, style, fontWeight = "500" }: { t
             return <Fragment key={i.toString()} >
                 {IText?.substring(i == 0 ? 0 : indexArray[i - 1].end, startBoldIndex)?.replace('**', '')}
                 <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-                    {IText?.substring(startBoldIndex, endBoldIndex + 2).replaceAll('**', '')}
+                    {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replaceAll('**', '')}
                 </Text>
                 {IText?.substring(endBoldIndex + 2, i == indexArray.length - 1 ? undefined : endBoldIndex + 2)?.replace('**', '')}
             </Fragment>
