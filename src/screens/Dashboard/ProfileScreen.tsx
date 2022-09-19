@@ -115,6 +115,12 @@ const ProfileScreen: FC<any> = (props) => {
         setValue("phone_dialCode", dial_code)
         setValue("phone_countryCode", phone_country_code)
         setValue("location", address)
+        locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
+            selection: {
+                start: 0,
+                end: 0
+            }
+        })
     }, [])
 
     const callUpdateApi = useCallback((data: any, imageFile?: string) => {
@@ -280,7 +286,7 @@ const ProfileScreen: FC<any> = (props) => {
                                     locationRef.current = location;
                                     // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
                                     setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
-                                    locationInputRef?.current?.setNativeProps({
+                                    locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
                                         selection: {
                                             start: 0,
                                             end: 0
