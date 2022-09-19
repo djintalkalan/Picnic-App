@@ -446,9 +446,9 @@ export const en = {
   coming_soon: 'Coming Soon',
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
-  you_no_longer_admin: 'You’ll no longer be an admin of this group.',
-  this_will_transfer_admin: 'This will transfer the full admin rights.',
-  yes_change_admin: 'Yes, Change admin',
-  select_admin: 'Select admin',
+  you_no_longer_admin: 'You’ll no longer be an leader of this group.',
+  this_will_transfer_admin: 'This will transfer the full leader rights.',
+  yes_change_admin: 'Yes, Change leader',
+  select_admin: 'Select leader',
 
 }
