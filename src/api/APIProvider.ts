@@ -535,6 +535,11 @@ export const _totalSoldTickets = async (body: any) => {
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
 }
 
+export const _leadGroup = async (body: any) => {
+    console.log("---------- _leadGroup Api Call ---------------")
+    return fetchApiData('group/lead-group-as-creator/' + body, "PUT")
+}
+
 export const _getMyEventForCheckIn = async (body: any) => {
     console.log("---------- _getMyEventForCheckIn Api Call ---------------")
     return fetchApiData('event/get-my-upcoming-events?' + (new URLSearchParams(body)).toString())
@@ -543,11 +548,6 @@ export const _getMyEventForCheckIn = async (body: any) => {
 export const _getAdminChatCount = async (body: any) => {
     console.log("---------- _getAdminChatCount Api Call ---------------")
     return fetchApiData('chat/get-other-member-chat-count?user_id=' + body)
-}
-
-export const _leadGroup = async (body: any) => {
-    console.log("---------- _leadGroup Api Call ---------------")
-    return fetchApiData('group/lead-group-as-creator/' + body, "PUT")
 }
 
 export const _getAllPublicGroupNearMe = async (body: any) => {
