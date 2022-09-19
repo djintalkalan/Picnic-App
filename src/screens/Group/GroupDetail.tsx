@@ -244,7 +244,7 @@ const GroupDetail: FC<any> = (props) => {
                     :
                     <BottomButton
                         title={Language.join_now}
-                        icon={Images.ic_leave_group}
+                        icon={Images.ic_join_group}
                         hideBottomBar
                         visibility={!group?.is_group_member && group?.status == 1}
                         buttonTextColor={colors.colorPrimary}
