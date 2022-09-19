@@ -649,7 +649,7 @@ export const shareDynamicLink = async (name: string, { type, id, image }: { type
     try {
         store.dispatch(setLoadingAction(true))
         const t = type == 'event-detail' ? 'event' : 'group'
-        const link = await buildLink("?t=" + type + "&i=" + id, {
+        const link = await buildLink("?t=" + type + "&i=" + id + "&language=" + Database.getStoredValue("selectedLanguage"), {
             descriptionText: Language?.checkout_this + " " + Language?.[t]?.toLowerCase() + " `" + name + "` " + Language?.here,
             title: "Picnic Groups",
             imageUrl: image || logoUrl
@@ -681,7 +681,7 @@ const handleShareAction = (shareResult: ShareOpenResult | null, type: string, id
 }
 
 export const shareAppLink = async (name: string) => {
-    const link = `${config.BASE_URL}/download`
+    const link = `${config.BASE_URL}/download?language=${Database.getStoredValue("selectedLanguage")}`
     const dynamicLink = await dynamicLinks().buildShortLink({
         link,
         domainUriPrefix: "https://" + config.DYNAMIC_LINK_DOMAIN,
