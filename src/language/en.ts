@@ -301,7 +301,6 @@ export const en = {
   add_caption_here: 'Add caption here',
   processing: 'Processing',
   loading: 'Loading',
-  group_not_available: 'Groups not available',
   please_create_a_group: 'Please create a group before continuing',
   go_to_home: 'Go to Home',
   username_required: 'Username is required',
@@ -441,10 +440,15 @@ export const en = {
   please_wait_to_update: 'Please wait until we finish installing the available update. It won\'t take much time.',
   use_paypal_business_account: 'Use PayPal business account',
   timezone: 'Timezone',
+  select_event: 'Select event',
+  search_event: 'Search event',
+  save_the_date: 'Save the Date - Ticketing is on hold',
+  coming_soon: 'Coming Soon',
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
   you_no_longer_admin: 'You’ll no longer be an admin of this group.',
   this_will_transfer_admin: 'This will transfer the full admin rights.',
   yes_change_admin: 'Yes, Change admin',
   select_admin: 'Select admin',
+
 }

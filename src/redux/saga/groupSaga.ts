@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, getGroupMembers, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
@@ -269,8 +269,8 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
 
             res.data.group.is_group_member = res.data?.is_group_joined ? true : false
             res.data.group.is_group_admin = res.data?.group?.is_admin ? true : false
-            if (res?.data?.group?.is_admin)
-                yield put(getGroupMembers(payload))
+            // if (res?.data?.group?.is_admin)
+            //     yield put(getGroupMembers(payload))
             yield put(setGroupDetail({ groupId: payload, data: res?.data }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

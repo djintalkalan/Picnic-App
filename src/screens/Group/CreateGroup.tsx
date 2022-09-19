@@ -88,13 +88,19 @@ const CreateGroup: FC<any> = (props) => {
       setValue('location', group?.address)
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
-      setValue('purpose', group?.category ?? "")
+      setValue('purpose', group?.category ?? "", { shouldValidate: true })
       setPinLocation(group?.is_direction == '1' ? true : false)
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
       } else {
         setProfileImage(null)
       }
+      locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
+        selection: {
+          start: 0,
+          end: 0
+        }
+      })
     }
   }, [group])
 
@@ -265,7 +271,7 @@ const CreateGroup: FC<any> = (props) => {
                     locationRef.current = location;
                     // setValue("location", location?.otherData?.city + (location?.otherData?.state ? (", " + location?.otherData?.state) : "") + (location?.otherData?.country ? (", " + location?.otherData?.country) : ""), { shouldValidate: true })
                     setValue("location", location?.address?.main_text + (location?.address?.secondary_text ? (", " + location?.address?.secondary_text) : ""), { shouldValidate: true })
-                    locationInputRef?.current?.setNativeProps({
+                    locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
                       selection: {
                         start: 0,
                         end: 0
