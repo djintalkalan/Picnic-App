@@ -452,7 +452,7 @@ export const es = {
     you_no_longer_admin: '',
     this_will_transfer_admin: '',
     yes_change_admin: '',
-    select_admin: '',
+    select_admin: 'Seleccionar lider',
     has_removed: 'ha removido a',
     from_the_group: 'del grupo',
     from_the_event: 'del evento',
