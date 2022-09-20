@@ -455,6 +455,6 @@ export const es = {
     has_created_the_group: 'ha creado el grupo',
     has_created_the_event: 'ha creado el evento',
     directions_at_below: 'Direcciones a siguiente',
-    message_deleted: '',
+    message_deleted: 'Mensaje eliminado',
 
 }
