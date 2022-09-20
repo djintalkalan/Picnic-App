@@ -2,7 +2,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AnalyticService from 'analytics';
-import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
+import { refreshLanguage, setLoadingAction, tokenExpired, updateDeviceLanguage } from 'app-store/actions';
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
@@ -152,6 +152,7 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
+    dispatch(updateDeviceLanguage())
     Rollbar?.init();
     IntercomService.init()
 

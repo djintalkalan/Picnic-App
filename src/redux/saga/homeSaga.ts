@@ -2,6 +2,7 @@ import * as ApiProvider from 'api/APIProvider';
 import ActionTypes, { action } from "app-store/action-types";
 import { setSearchedData } from "app-store/actions";
 import { defaultLocation } from "custom-components";
+import Localize from 'react-native-localize';
 import { call, put, takeLatest } from "redux-saga/effects";
 import Database from "src/database/Database";
 import Language, { DefaultLanguage, DefaultLanguages } from "src/language/Language";
@@ -76,8 +77,26 @@ function* _refreshLanguage({ type, payload, }: action): Generator<any, any, any>
     }
 }
 
+function* _updateDeviceLanguage({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let res = yield call(ApiProvider._updateDeviceLanguage, { default_device_language: Localize?.getLocales()?.[0]?.languageCode });
+        if (res.status == 200) {
+
+            // Database.setSelectedLanguage()
+        } else if (res.status == 400) {
+            // _showErrorMessage(res.message);
+        } else {
+            // _showErrorMessage(Language.something_went_wrong);
+        }
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+    }
+}
+
 
 export default function* watchHome() {
     yield takeLatest(ActionTypes.SEARCH_AT_HOME, _searchAtHome);
     yield takeLatest(ActionTypes.REFRESH_LANGUAGE, _refreshLanguage);
+    yield takeLatest(ActionTypes.UPDATE_DEVICE_LANGUAGE, _updateDeviceLanguage);
 }
