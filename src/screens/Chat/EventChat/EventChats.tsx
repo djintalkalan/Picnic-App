@@ -177,7 +177,7 @@ const EventChats: FC<any> = (props) => {
         chats: state?.eventChat?.events?.[state?.activeEvent?._id]?.chats ?? [],
     }))
 
-    const { name, city, image, state, country, event_images, _id } = eventDetail ?? activeEvent
+    const { name, city, image, state, country, event_images, _id } = eventDetail || activeEvent || {}
     const eventImage = calculateImageUrl(image, event_images)
     const colorPickerButtonRef = useRef<TouchableOpacity>(null)
 
