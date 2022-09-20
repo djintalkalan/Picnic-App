@@ -47,4 +47,7 @@ export const resetStateOnLogout = (payload?: any): action => ({
   payload
 })
 
-
+export const updateDeviceLanguage = (payload?: any): action => ({
+  type: ActionTypes.UPDATE_DEVICE_LANGUAGE,
+  payload
+})

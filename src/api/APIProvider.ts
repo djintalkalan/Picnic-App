@@ -553,5 +553,10 @@ export const _getAdminChatCount = async (body: any) => {
 export const _getAllPublicGroupNearMe = async (body: any) => {
     console.log("---------- _getAdminChatCount Api Call ---------------")
     return fetchApiData('event/get-all-public-groups?' + (new URLSearchParams(body)).toString())
-
 }
+
+export const _updateDeviceLanguage = async (body: any) => {
+    console.log("---------- _updateDeviceLanguage Api Call ---------------")
+    return fetchApiData('user/update-default-mobile-language', 'POST', body)
+}
+
