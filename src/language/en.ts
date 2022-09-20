@@ -323,7 +323,7 @@ export const en = {
   applicable_tax: 'Applicable tax',
   fm_freq: 'FM frequency',
   select: '-- Select --',
-  group_admin: 'Group leader',
+  group_admin: 'Leader',
   subscribers: 'Subscribers',
   only_can_send_messages: 'Only {0} can send messages',
   group_is_no_longer_available: 'Group is no longer available',
