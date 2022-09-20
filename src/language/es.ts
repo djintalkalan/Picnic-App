@@ -323,7 +323,7 @@ export const es = {
     applicable_tax: 'Impuesto aplicable',
     fm_freq: '',
     select: '',
-    group_admin: 'Grupo lider',
+    group_admin: 'Lider',
     subscribers: '',
     only_can_send_messages: '',
     group_is_no_longer_available: '',
