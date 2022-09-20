@@ -465,6 +465,6 @@ export const es = {
     allow_everyone_to_host_event: 'Permitir eventos de miembros locales',
     host_event_in_this_group: '',
     post_in_local_groups: 'Publicar en grupos locales',
-    message_deleted: '',
+    message_deleted: 'Mensaje eliminado',
 
 }
