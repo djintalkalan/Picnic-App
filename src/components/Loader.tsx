@@ -5,7 +5,6 @@ import { isEqual, round, toNumber } from 'lodash';
 import React, { FC } from 'react';
 import { Dimensions, Platform, View } from 'react-native';
 import { Progress as S3Progress } from 'react-native-aws3';
-//@ts-ignore
 import Spinner from "react-native-loading-spinner-overlay";
 import * as Progress from 'react-native-progress';
 import { useDispatch, useSelector } from 'react-redux';
