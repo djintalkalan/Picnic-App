@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
-import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
+import { blockUnblockResource, muteUnmuteResource, reportResource, setActiveEvent } from 'app-store/actions'
 import { colors, Images, MapStyle } from 'assets'
 import { MultiBoldText, Preview, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -510,6 +510,7 @@ const ChatItem = (props: IChatItem) => {
         if (!myMessage) {
             return <View style={styles.myContainer} >
                 <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                    dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
                     NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
                 }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {eventOfGroupMessage()}
@@ -534,6 +535,7 @@ const ChatItem = (props: IChatItem) => {
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                     </View>
                     <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                        dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
                         NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
                     }} style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
                         {eventOfGroupMessage()}
