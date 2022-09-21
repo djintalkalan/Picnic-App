@@ -28,7 +28,7 @@
     "bundle-b": "run-s -c kill-all env-b clean bundle",
     "tcp": "adb reverse tcp:9090 tcp:9090",
     "fix-sdk": "(cd ~/Library/Android/sdk/build-tools/31.0.0 && mv d8 dx && cd lib && mv d8.jar dx.jar)",
-    "postinstall": "(node scripts/fix-browser.js||true) && (node ./scripts/fix-carousel.js||true) && run-s env-d pod",
+    "postinstall": "(node ./scripts/fix-carousel.js||true) && run-s env-d pod",
     "kill-all": "((pkill -f '.*GradleDaemon.*' || ./android/gradlew gradle --stop) && (rm -rf ~/.gradle/daemon || true))",
     "dl": "/usr/bin/xcrun simctl openurl booted ",
     "push-a-d": "yarn env-d && appcenter codepush release-react -a picnicshine/picnic-groups-android -d dev -m --target-binary-version",
