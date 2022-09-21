@@ -449,6 +449,6 @@ export const es = {
     you_no_longer_admin: '',
     this_will_transfer_admin: '',
     yes_change_admin: '',
-    select_admin: 'Seleccionar lider',
+    select_admin: 'Seleccionar líder',
 
 }
