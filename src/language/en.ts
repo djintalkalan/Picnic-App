@@ -449,5 +449,6 @@ export const en = {
   allow_everyone_to_host_event: 'Allow events from local members',
   host_event_in_this_group: 'Host event in this group',
   post_in_local_groups: 'Post in local groups',
+  delete_event: 'Delete event',
 
 }

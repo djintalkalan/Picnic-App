@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
 import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
+import { deleteEvent, deleteEventAsPublicAdmin, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -269,7 +269,26 @@ const EventDetail: FC<any> = (props) => {
                                         // _hidePopUpAlert()
                                         _hideTouchAlert()
                                     }
-                                    } hideBorder /></>
+                                    } hideBorder />
+                                    {!event?.is_admin && event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ?
+                                        <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
+                                            _showPopUpAlert({
+                                                message: Language.delete_event,
+                                                onPressButton: () => {
+                                                    dispatch(deleteEventAsPublicAdmin(event?._id))
+                                                    _hidePopUpAlert()
+                                                },
+                                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                                buttonText: Language.yes_cancel,
+                                            })
+                                            // _hidePopUpAlert()
+                                            _hideTouchAlert()
+                                        }
+                                        } hideBorder />
+                                        :
+                                        null
+                                    }
+                                </>
                                 :
                                 <><InnerButton onPress={() => {
                                     shareEvent();

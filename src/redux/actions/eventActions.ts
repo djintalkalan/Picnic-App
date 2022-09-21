@@ -29,6 +29,11 @@ export const deleteEvent = (payload: any) => ({
     payload
 })
 
+export const deleteEventAsPublicAdmin = (payload: any) => ({
+    type: ActionTypes.DELETE_EVENT_AS_PUBLIC_ADMIN,
+    payload
+})
+
 export const deleteEventSuccess = (payload: any) => ({
     type: ActionTypes.DELETE_EVENT_SUCCESS,
     payload
