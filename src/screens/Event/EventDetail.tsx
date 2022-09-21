@@ -270,24 +270,6 @@ const EventDetail: FC<any> = (props) => {
                                         _hideTouchAlert()
                                     }
                                     } hideBorder />
-                                    {!event?.is_admin && event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ?
-                                        <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
-                                            _showPopUpAlert({
-                                                message: Language.delete_event,
-                                                onPressButton: () => {
-                                                    dispatch(deleteEventAsPublicAdmin(event?._id))
-                                                    _hidePopUpAlert()
-                                                },
-                                                buttonStyle: { backgroundColor: colors.colorErrorRed },
-                                                buttonText: Language.yes_cancel,
-                                            })
-                                            // _hidePopUpAlert()
-                                            _hideTouchAlert()
-                                        }
-                                        } hideBorder />
-                                        :
-                                        null
-                                    }
                                 </>
                                 :
                                 <><InnerButton onPress={() => {
@@ -319,12 +301,29 @@ const EventDetail: FC<any> = (props) => {
                                             // cancelButtonText: Language.cancel
                                         })
                                         _hideTouchAlert()
-                                    }} hideBorder={event?.is_event_member ? false : true} />
+                                    }} hideBorder={event?.is_event_member || event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showCancellationPolicy()
                                             _hideTouchAlert()
-                                        }} hideBorder /> : undefined}
+                                        }} hideBorder={!(event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group)} /> : undefined}
+                                    {event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ?
+                                        <InnerButton title={Language.delete} textColor={colors.colorErrorRed} onPress={() => {
+                                            _showPopUpAlert({
+                                                message: Language.are_you_sure_delete_event,
+                                                onPressButton: () => {
+                                                    dispatch(deleteEventAsPublicAdmin(event?._id))
+                                                    _hidePopUpAlert()
+                                                },
+                                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                                buttonText: Language.yes_delete,
+                                            })
+                                            _hideTouchAlert()
+                                        }
+                                        } hideBorder />
+                                        :
+                                        null
+                                    }
                                 </>
                             }
                         </Card>

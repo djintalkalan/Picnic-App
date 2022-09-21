@@ -272,7 +272,7 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
 function* _deleteEventAsPublicAdmin({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
-        let res = yield call(ApiProvider._deleteEventAsPublicAdmin, payload);
+        let res = yield call(ApiProvider._deleteEventAsPublicAdmin, { resource_id: payload });
         if (res.status == 200) {
             _showSuccessMessage(res.message)
             NavigationService?.navigate("HomeEventTab")
