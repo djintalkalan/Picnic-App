@@ -534,7 +534,9 @@ const ChatItem = (props: IChatItem) => {
             return <View style={styles.myContainer} >
                 <TouchableOpacity activeOpacity={0.8} onPress={() => {
                     dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
-                    NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                    setTimeout(() => {
+                        NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                    }, 0);
                 }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {eventOfGroupMessage()}
                     <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
@@ -559,7 +561,9 @@ const ChatItem = (props: IChatItem) => {
                     </View>
                     <TouchableOpacity activeOpacity={0.8} onPress={() => {
                         dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
-                        NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                        setTimeout(() => {
+                            NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                        }, 0);
                     }} style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
                         {eventOfGroupMessage()}
                         <View style={{ marginHorizontal: scaler(10), marginBottom: scaler(5), flexShrink: 1 }}>
