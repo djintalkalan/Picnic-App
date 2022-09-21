@@ -51,6 +51,7 @@ const CreateEvent1: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
   const eventId = props?.route?.params?.id || null
+  const [isPublicEvent, setPublicEvent] = useState(false)
 
   const event = useSelector((state: RootState) => {
     return state?.createEventState
@@ -125,7 +126,7 @@ const CreateEvent1: FC<any> = props => {
     const group = props?.route?.params?.group
     // console.log("group", group);
     if (group) {
-      onSelectGroup(group)
+      onSelectGroup(group, true)
     }
 
     return () => {
@@ -157,7 +158,7 @@ const CreateEvent1: FC<any> = props => {
       const { location, address, city, state, country } = event || {}
       group = { ...group, location, address, city, state, country }
     }
-    onSelectGroup(group)
+    onSelectGroup(group, true)
     setMultiImageArray(event.event_images || [])
 
     // reset({
@@ -172,6 +173,7 @@ const CreateEvent1: FC<any> = props => {
     resetField('aboutEvent', { defaultValue: event?.short_description })
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
     setPinLocation(event?.is_direction == 1 ? true : false)
+    setPublicEvent(event?.can_anyone_host_events == 1)
     if (event?.image) {
       setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
     } else {
@@ -205,13 +207,14 @@ const CreateEvent1: FC<any> = props => {
       event_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
-      is_direction: pinLocation ? '1' : '0'
+      is_direction: pinLocation ? '1' : '0',
+      can_anyone_host_events: isPublicEvent ? '1' : '0'
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation])
+  }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation, isPublicEvent])
 
-  const onSelectGroup = useCallback(data => {
+  const onSelectGroup = useCallback((data, noUpdate = false) => {
     selectedGroupRef.current = data;
     setValue('selectGroup', data?.name, { shouldValidate: true });
     const { location, address = "", city, state, country } = data || {}
@@ -233,6 +236,9 @@ const CreateEvent1: FC<any> = props => {
         end: 0,
       },
     });
+    if (!noUpdate) {
+      setPublicEvent(data?.can_anyone_host_events == 1)
+    }
     setDropdown(false);
   }, [])
 

@@ -18,6 +18,7 @@ export const EMIT_EVENT_REPLY = 'eventMessageReply';
 export const EMIT_EVENT_MESSAGE_DELETE = 'eventMessageDelete';
 export const EMIT_EVENT_MESSAGE_TYPING = "eventMessageTyping";
 export const EMIT_EVENT_DELETE = "eventDelete";
+export const EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER = "eventDeleteByGroupLeader"
 export const EMIT_EVENT_MEMBER_DELETE = "eventMemberDelete";
 
 //Common Events
