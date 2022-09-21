@@ -137,6 +137,7 @@ export const en = {
   are_you_sure_leave_group: 'Are you sure you want to leave group ?',
   are_you_sure_leave_event: 'Are you sure you want to cancel reservation ?',
   are_you_sure_cancel_event: 'Are you sure you want to cancel event ?',
+  are_you_sure_delete_event: 'Are you sure you want to delete event ?',
   yes_leave: 'Yes, Leave',
   yes_cancel: 'Yes, Cancel',
   are_you_sure_report_group: 'Are you sure you want to report group ?',

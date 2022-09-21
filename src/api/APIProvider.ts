@@ -547,7 +547,7 @@ export const _getAllPublicGroupNearMe = async (body: any) => {
 
 export const _deleteEventAsPublicAdmin = async (body: any) => {
     console.log("---------- _deleteEventAsPublicAdmin Api Call ---------------")
-    return fetchApiData('event/delete-public-event/' + body)
+    return fetchApiData('event/delete-public-event', "POST", body)
 }
 
 
