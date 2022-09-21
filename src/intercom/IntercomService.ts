@@ -9,7 +9,7 @@ const updateUser = (userData: any) => {
         userId: userData?._id,
         name: userData?.first_name + (userData?.last_name?.trim() ? (" " + userData?.last_name?.trim()) : ""),
         phone: userData?.phone_number,
-        // languageOverride: userData?.language,
+        languageOverride: userData?.language,
         // signedUpAt: 1621844451,
         // unsubscribedFromEmails: true,
     });

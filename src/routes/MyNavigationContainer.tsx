@@ -153,11 +153,8 @@ const MyNavigationContainer = () => {
   useEffect(() => {
     dispatch(refreshLanguage())
     Rollbar?.init();
-    IntercomService.init()
-
     return () => {
       Rollbar?.exit();
-      IntercomService.logout()
     }
   }, [isLogin])
 
@@ -168,9 +165,12 @@ const MyNavigationContainer = () => {
       AnalyticService.setUserData(userData)
       // }
       SocketService.init(dispatch);
+      IntercomService.init()
+
     }
     return () => {
       SocketService.closeSocket();
+      IntercomService.logout()
     }
   }, [isLogin, language])
 
