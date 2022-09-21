@@ -6,7 +6,7 @@ import { defaultLocation } from 'custom-components';
 import Database from 'database';
 import { isEmpty } from 'lodash';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { EMIT_EVENT_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
+import { EMIT_EVENT_DELETE, EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
@@ -254,6 +254,29 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
             NavigationService?.navigate("Home")
             // yield put(deleteEventSuccess(payload))
             SocketService.emit(EMIT_EVENT_DELETE, {
+                resource_id: payload
+            })
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _deleteEventAsPublicAdmin({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._deleteEventAsPublicAdmin, payload);
+        if (res.status == 200) {
+            _showSuccessMessage(res.message)
+            NavigationService?.navigate("HomeEventTab")
+            SocketService.emit(EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, {
                 resource_id: payload
             })
         } else if (res.status == 400) {
@@ -552,6 +575,7 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.GET_EDIT_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.DELETE_EVENT, _deleteEvent);
+    yield takeLatest(ActionTypes.DELETE_EVENT_AS_PUBLIC_ADMIN, _deleteEventAsPublicAdmin);
     yield takeLatest(ActionTypes.PIN_EVENT, _pinUnpinEvent);
     yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
     yield takeLatest(ActionTypes.LEAVE_EVENT, _leaveEvent);

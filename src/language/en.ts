@@ -466,4 +466,6 @@ export const en = {
   host_event_in_this_group: 'Host event in this group',
   post_in_local_groups: 'Post in local groups',
   message_deleted: 'Message Deleted',
+  delete_event: 'Delete event',
+
 }

@@ -466,5 +466,6 @@ export const es = {
     host_event_in_this_group: 'Organizar evento en este grupo',
     post_in_local_groups: 'Publicar en grupos locales',
     message_deleted: 'Mensaje eliminado',
+    delete_event: 'Borrar grupo',
 
 }
