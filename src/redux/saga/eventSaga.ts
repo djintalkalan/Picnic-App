@@ -190,9 +190,23 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
-        if (res.status == 200 && !isEmpty(res.data.event)) {
+        if (res.status == 200) {
+            if (isEmpty(res.data.event) || !res?.data?.event?._id) {
+                yield put(setLoadingAction(false));
+
+                // console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "EventDetail" || name == "EventChats") &&
+                    params?.id == payload
+                ) {
+                    _showErrorMessage(Language.getString("this_event_is_not_available"), 5000)
+                    NavigationService.goBack()
+                }
+                yield put(deleteEventSuccess(payload))
+                return
+            }
             if (res?.data?.event?.status == 5) {
-                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                // console.log("SCREEN", NavigationService?.getCurrentScreen());
                 const { name, params } = NavigationService?.getCurrentScreen() ?? {}
                 if ((name == "EventDetail" || name == "EventChats") &&
                     params?.id == payload
@@ -201,6 +215,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
                     NavigationService.navigate("Home")
                 }
                 yield put(deleteEventSuccess(payload))
+                yield put(setLoadingAction(false));
                 return
             }
 
