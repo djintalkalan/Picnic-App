@@ -446,5 +446,6 @@ export const en = {
   coming_soon: 'Coming Soon',
   tap_to_scan: 'Tap to scan',
   qr_code: 'QR Code',
+  this_event_is_not_available: 'This event is not available',
 
 }
