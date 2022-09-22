@@ -468,5 +468,6 @@ export const en = {
   post_in_local_groups: 'Post in local groups',
   message_deleted: 'Message Deleted',
   delete_event: 'Delete event',
+  this_event_is_not_available: 'This event is not available',
 
 }
