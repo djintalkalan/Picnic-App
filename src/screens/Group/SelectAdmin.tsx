@@ -1,7 +1,7 @@
 import { RootState } from 'app-store'
 import { leaveGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { Button, MyHeader } from 'custom-components'
+import { Button, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItemSeparator, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { isEqual } from 'lodash'
@@ -55,6 +55,8 @@ const SelectAdmin: FC<any> = (props) => {
         <SafeAreaViewWithStatusBar style={styles.container} >
 
             <MyHeader title={Language.select_admin} />
+
+            <Text style={{ color: '#9A9A9A', fontSize: scaler(13), marginHorizontal: scaler(20), marginTop: scaler(5) }} >{Language.you_need_to_assign_new_leader}</Text>
 
             <View style={{ flex: 1, width: '100%', paddingVertical: scaler(5), }} >
 

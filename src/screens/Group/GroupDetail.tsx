@@ -9,7 +9,7 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useDatabase } from 'database/Database'
-import { isEqual } from 'lodash'
+import { isEqual, sortBy } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
@@ -96,7 +96,7 @@ const GroupDetail: FC<any> = (props) => {
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
     const { group, groupMembers, } = useSelector((state: RootState) => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
-        groupMembers: state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [],
+        groupMembers: sortBy((state?.groupDetails?.[props?.route?.params?.id]?.groupMembers || []), _ => (!_?.is_admin)),
     }), isEqual)
 
 
@@ -250,13 +250,13 @@ const GroupDetail: FC<any> = (props) => {
                     onPress={() => {
                         if (group?.is_admin) {
                             _showPopUpAlert({
-                                message: Language.you_no_longer_admin + "\n" + Language.this_will_transfer_admin,
+                                message: Language.are_you_sure_leave_group,
                                 onPressButton: () => {
                                     NavigationService.navigate("SelectAdmin", { id: props?.route?.params?.id })
                                     _hidePopUpAlert()
                                 },
-                                buttonStyle: { backgroundColor: colors.colorPrimary },
-                                buttonText: Language.yes_change_admin
+                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                buttonText: Language.yes_leave
                             })
                             return
                         }
