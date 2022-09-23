@@ -450,5 +450,6 @@ export const en = {
   this_will_transfer_admin: 'This will transfer the full leader rights.',
   yes_change_admin: 'Yes, Change leader',
   select_admin: 'Select leader',
+  you_need_to_assign_new_leader: 'You need to assign a new leader before leaving this group.',
 
 }

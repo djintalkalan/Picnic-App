@@ -450,5 +450,6 @@ export const es = {
     this_will_transfer_admin: '',
     yes_change_admin: '',
     select_admin: 'Seleccionar líder',
+    you_need_to_assign_new_leader: 'Debe asignar un nuevo líder antes de abandonar este grupo.',
 
 }
