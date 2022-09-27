@@ -51,7 +51,7 @@ const TwoFactorAuth: FC = () => {
             <MyHeader title={Language.two_factor_auth} backEnabled />
             <View style={styles.authView} >
                 <Text style={styles.textStyle} >{Language.two_factor_auth}</Text>
-                <Switch active={authEnabled} onChange={onChangePermission} />
+                <Switch value={authEnabled} onChange={onChangePermission} />
             </View>
         </SafeAreaViewWithStatusBar>
     )
