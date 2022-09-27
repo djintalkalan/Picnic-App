@@ -13,7 +13,8 @@ export const Switch = ({
     inactiveColor = '#D5D7D6',
     activeColor = colors.colorPrimary,
     size = scaler(40),
-    animationSpeed = 120,
+    duration = 120,
+    springSpeed = 300,
     ...props
 }: SwitchProps) => {
     // const varStyle = StyleSheet.create({
@@ -39,7 +40,8 @@ export const Switch = ({
         activeColor={activeColor}
         inactiveColor={inactiveColor}
         size={size}
-        animationSpeed={animationSpeed}
+        springSpeed={springSpeed}
+        duration={duration}
         {...props}
     />)
 }
