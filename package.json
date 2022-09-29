@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-elastic-transcoder": "^3.170.0",
+    "@bam.tech/react-native-image-resizer": "^3.0.1",
     "@flyerhq/react-native-link-preview": "^1.6.0",
     "@formatjs/intl-datetimeformat": "^6.2.0",
     "@formatjs/intl-getcanonicallocales": "^2.0.4",

@@ -14,7 +14,7 @@ import ActionTypes, { action } from "../action-types";
 
 let activeUploads: Array<string> = []
 
-const isAndroid = Platform.OS == 'android'
+const showLocalNotification = Platform.OS == 'android' && false
 
 const transcoderClient = new ElasticTranscoderClient({
     credentials: {
@@ -160,7 +160,7 @@ const showNotification = async (id: string, p: IProgress, currentCount: number, 
         title = Language.getString('finalizing_upload') + "..."
     } else progress = { max: p?.total, current: p?.loaded, }
     store.dispatch(setLoadingMsg(JSON.stringify(p) + "%"))
-    isAndroid && await notifee.displayNotification({
+    showLocalNotification && await notifee.displayNotification({
         id,
         title,
         android: {
@@ -180,7 +180,7 @@ const showNotification = async (id: string, p: IProgress, currentCount: number, 
     if (finalize) {
         setTimeout(async () => {
             store.dispatch(setLoadingMsg(""))
-            isAndroid && await notifee.cancelNotification(id);
+            showLocalNotification && await notifee.cancelNotification(id);
         }, 1000);
     }
 }

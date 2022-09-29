@@ -5,10 +5,11 @@ import ImageLoader from 'custom-components/ImageLoader'
 import Database, { ILocation } from 'database/Database'
 import React, { Dispatch, ForwardedRef, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
 import { Button, Dimensions, Image, InputAccessoryView, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
-import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker'
+import { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
 import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu, _showErrorMessage } from 'utils'
+import ImagePickerUtils from 'utils/ImagePickerUtils'
 
 interface ChatInputProps {
     value?: string
@@ -65,22 +66,10 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
     const pickImage = useCallback((mediaType: 'photo' | 'video') => {
         console.log("media", mediaType);
         setTimeout(() => {
-            ImagePicker.openPicker({
-                // width: 400,
-                // height: 400,
-                forceJpg: true,
-                // freeStyleCropEnabled: true,
-                compressImageQuality: 0.8,
-                loadingLabelText: Language.processing,
-                // compressImageMaxWidth: 400,
-                // compressImageMaxHeight: 400,
-                enableRotationGesture: true,
-                // cropping: mediaType == 'photo' ? true : undefined,
-                compressVideoPreset: mediaType == 'photo' ? undefined : "MediumQuality",
-                mediaType
-            }).then((image) => {
+            ImagePickerUtils.openPickImageOrVideo(mediaType == 'photo' ? 'PROFILE_IMAGE_PICKER_OPTIONS' : 'CHAT_VIDEO_PICKER_OPTIONS').then((image) => {
+                if (!image) return
                 if (image?.size && image.size < 25000000) {
-                    onChooseImage && onChooseImage(image, mediaType)
+                    onChooseImage && onChooseImage(image as ImageOrVideo, mediaType)
                 } else {
                     _showErrorMessage(Language.file_to_large)
                 }

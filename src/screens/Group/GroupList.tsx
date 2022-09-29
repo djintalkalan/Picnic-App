@@ -128,7 +128,7 @@ const GroupList: FC<any> = (props) => {
                 title={item?.name}
                 titleTextStyle={item?.is_default_group ? { color: colors.colorPrimary, fontSize: scaler(16) } : {}}
                 // highlight={}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(80), type: 'groups' }) } : undefined}
+                icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(120), type: 'groups' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 subtitle={getCityOnly(city, state, country)}
                 customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}

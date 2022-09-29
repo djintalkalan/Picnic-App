@@ -200,7 +200,7 @@ const EventList: FC<any> = (props) => {
                 defaultIcon={Images.ic_event_placeholder}
                 title={item?.name}
                 // highlight={}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT + scaler(30), type: 'events' }) } : undefined}
+                icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT + scaler(50), type: 'events' }) } : undefined}
                 subtitle={getCityOnly(city, state, country)}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView size='small' {...item} />}
