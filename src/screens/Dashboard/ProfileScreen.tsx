@@ -9,14 +9,13 @@ import { sub } from 'date-fns'
 import React, { FC, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
-import ImagePicker from 'react-native-image-crop-picker'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { dateFormat, formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, stringToDate, _zoomImage } from 'utils'
-import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants'
+import ImagePickerUtils from 'utils/ImagePickerUtils'
 type FormType = {
     about: string
     firstName: string
@@ -77,9 +76,11 @@ const ProfileScreen: FC<any> = (props) => {
 
     const pickImage = useCallback(() => {
         setTimeout(() => {
-            ImagePicker.openPicker(PROFILE_IMAGE_PICKER_OPTIONS).then((image) => {
-                console.log(image);
-                setProfileImage(image)
+            ImagePickerUtils.openImagePicker("PROFILE_IMAGE_PICKER_OPTIONS").then((image) => {
+                if (image) {
+                    console.log(image);
+                    setProfileImage(image)
+                }
             }).catch(e => {
                 console.log(e)
             });
@@ -184,7 +185,7 @@ const ProfileScreen: FC<any> = (props) => {
                             style={styles.image}
                             source={
                                 profileImage?.path ? { uri: profileImage?.path } :
-                                    userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } :
+                                    userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(150) }) } :
                                         null
                             }
                             placeholderSource={Images.ic_home_profile}

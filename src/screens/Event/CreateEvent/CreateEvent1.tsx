@@ -11,7 +11,6 @@ import { isArray, isEmpty, isEqual } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -19,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
 import TZ from "tz-lookup";
 import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils';
-import { PROFILE_IMAGE_PICKER_OPTIONS } from 'utils/Constants';
+import ImagePickerUtils from 'utils/ImagePickerUtils';
 
 type FormType = {
   eventName: string;
@@ -91,29 +90,23 @@ const CreateEvent1: FC<any> = props => {
 
   const pickImage = useCallback((isMultiImage: boolean) => {
     setTimeout(() => {
-      ImagePicker.openPicker(isMultiImage ? {
-        multiple: isMultiImage,
-        maxFiles: 10 - multiImageArray?.length,
-        mediaType: 'any',
-        forceJpg: true,
-        compressVideoPreset: "MediumQuality",
-      } : PROFILE_IMAGE_PICKER_OPTIONS)
-        .then(image => {
-          console.log("image", image);
-          const maxSizeInMb = 100
-          if (isMultiImage && isArray(image)) {
-            const index = image?.findIndex(({ size }) => (size > maxSizeInMb * 1000000))
-            if (index == -1) setMultiImageArray((_) => [..._, ...image])
-            else _showErrorMessage(Language.formatString(Language.maximum_file_size_allowed, maxSizeInMb?.toString())?.toString())
-          }
-          else
-            setEventImage(image);
-        })
+      const picker = isMultiImage ? ImagePickerUtils.openPickImageOrVideo : ImagePickerUtils.openImagePicker
+      picker(isMultiImage ? 'MULTIPLE_IMAGE_PICKER_OPTIONS' : 'PROFILE_IMAGE_PICKER_OPTIONS', 10 - multiImageArray?.length,).then(image => {
+        console.log("image", image);
+        const maxSizeInMb = 100
+        if (isMultiImage && isArray(image)) {
+          const index = image?.findIndex(({ size }) => (size > maxSizeInMb * 1000000))
+          if (index == -1) setMultiImageArray((_) => [..._, ...image])
+          else _showErrorMessage(Language.formatString(Language.maximum_file_size_allowed, maxSizeInMb?.toString())?.toString())
+        }
+        else
+          setEventImage(image);
+      })
         .catch(e => {
           console.log(e);
         });
     }, 200);
-  }, [multiImageArray?.length]);
+  }, [multiImageArray?.length, ImagePickerUtils]);
 
 
   useEffect(() => {

@@ -104,7 +104,7 @@ const Home: FC = () => {
           {/*@ts-ignore*/}
           <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
             placeholderSource={Images.ic_home_profile}
-            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(60) }) } : null}
+            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(100) }) } : null}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={onPressSetting} >
