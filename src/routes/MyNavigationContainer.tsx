@@ -1,4 +1,5 @@
 // import { useNetInfo } from '@react-native-community/netinfo';
+import { firebase as firebaseCrashlytics } from '@react-native-firebase/crashlytics';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AnalyticService from 'analytics';
@@ -73,12 +74,15 @@ import { useFirebaseNotifications } from 'src/notification/FirebaseNotification'
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
 
+interface IScreens {
+  [key: string]: React.FC<any>
+}
 
 const NativeStack = createNativeStackNavigator();
 
-const commonScreens = {};
+const commonScreens: IScreens = {};
 
-const authScreens = {
+const authScreens: IScreens = {
   Login: Login,
   ForgotPassword: ForgotPassword,
   VerifyOtp: VerifyOtp,
@@ -89,7 +93,7 @@ const authScreens = {
   SendOtp: SendOtp,
 };
 
-const dashboardScreens = {
+const dashboardScreens: IScreens = {
   Home: Home,
   ProfileScreen: ProfileScreen,
   Settings: Settings,
@@ -165,10 +169,10 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     if (isLogin) {
-      // if (!__DEV__) {
       const userData = Database.getStoredValue("userData")
-      AnalyticService.setUserData(userData)
-      // }
+      firebaseCrashlytics.crashlytics().setCrashlyticsCollectionEnabled(true).then(() => {
+        AnalyticService.setUserData(userData)
+      });
       SocketService.init(dispatch);
       IntercomService.init()
 
@@ -176,6 +180,7 @@ const MyNavigationContainer = () => {
     return () => {
       SocketService.closeSocket();
       IntercomService.logout()
+      firebaseCrashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
     }
   }, [isLogin, language])
 

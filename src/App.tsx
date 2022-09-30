@@ -136,8 +136,10 @@ const App: FC = () => {
         const isDev = config.APP_TYPE == 'dev' || __DEV__
         let codePushOptions: SyncOptions = {
             deploymentKey: config.CODEPUSH_DEPLOY_KEY,
-            installMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
-            mandatoryInstallMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
+            // installMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
+            // mandatoryInstallMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
+            installMode: CodePush.InstallMode.IMMEDIATE,
+            mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
             // updateDialog: {
             //     title: "An update is available!",
             // },
