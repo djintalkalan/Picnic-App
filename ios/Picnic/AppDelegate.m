@@ -49,9 +49,8 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  #if DEBUG
-  
-  #else
+  BOOL *isDevType = [APP_TYPE isEqualToString:@"dev"];
+  #if !DEBUG && !isDevType
     RollbarConfiguration *config = [RollbarConfiguration configuration];
     config.environment = [APP_TYPE isEqualToString:@"dev"]? @"development" : APP_TYPE;
       //Do something on debug
