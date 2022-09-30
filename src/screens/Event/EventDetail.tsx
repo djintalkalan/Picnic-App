@@ -499,7 +499,7 @@ const EventDetail: FC<any> = (props) => {
                                             source={Images.ic_event_time} />
                                         <Text style={[styles.events, { marginRight: scaler(5), flex: 1 }]}>
                                             {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')}
-                                            {event?.event_date ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
+                                            {event?.event_end_date ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
                                             {" " + dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'z')}
                                         </Text>
                                     </View></>
