@@ -8558,10 +8558,10 @@ rn-host-detect@1.2.0:
   resolved "https://registry.yarnpkg.com/rn-host-detect/-/rn-host-detect-1.2.0.tgz#8b0396fc05631ec60c1cb8789e5070cdb04d0da0"
   integrity sha512-btNg5kzHcjZZ7t7mvvV/4wNJ9e3MPgrWivkRgWURzXL0JJ0pwWlU4zrbmdlz3HHzHOxhBhHB4D+/dbMFfu4/4A==
 
-rn-switch-animated@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/rn-switch-animated/-/rn-switch-animated-0.1.5.tgz#c2ca38a084b0263adc77bfc44f6a2cf1b713bb9d"
-  integrity sha512-4lZVmbjkIY9n0lC1tJgIcF0JsvVjHvQKrbjRAJi3vbjiAdCgUwylmOwWRK7oa1+6m7kKYmYoAPHfrVBVz0mQxg==
+rn-switch-animated@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/rn-switch-animated/-/rn-switch-animated-0.1.6.tgz#b9a33460008ff198a5daf1c83dbe1b37d4e6b813"
+  integrity sha512-FnmGxIzys+Axyl1JDmJkwFPrqzSMMT/5Cm+39Svz8oMLpZ/7dGQZAhNnhBNBcx8bVO4QGQqYEeZKiZpV43xjZQ==
 
 rollbar-react-native@^0.9.2:
   version "0.9.2"
