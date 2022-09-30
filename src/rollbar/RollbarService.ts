@@ -15,13 +15,14 @@ class RollbarService {
     }
 
     init = () => {
-        if (__DEV__) return
+        if (__DEV__ || config.APP_TYPE == 'dev') return
         const isLogin = Database.getStoredValue("isLogin")
         const userData = Database.getStoredValue("userData")
         const authToken = Database.getStoredValue("authToken")
         const firebaseToken = Database.getStoredValue("firebaseToken")
         const configurations = new Configuration(config.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, {
-            environment: config.APP_TYPE == 'dev' ? "development" : config.APP_TYPE,
+            environment: config.APP_TYPE,
+            // environment: config.APP_TYPE == 'dev' ? "development" : config.APP_TYPE,
             // endpoint: 'https://api.rollbar.com/api/1/item/',
             // logLevel: 'info',
 
@@ -35,7 +36,7 @@ class RollbarService {
                     authToken,
                 } : {},
                 firebaseToken,
-                'Application-Environment': config.APP_TYPE == 'dev' ? "development" : config.APP_TYPE
+                'Application-Environment': config.APP_TYPE
             }
         });
         this.rollbar = new Client(configurations);
