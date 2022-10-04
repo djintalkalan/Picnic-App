@@ -506,21 +506,24 @@ const EventDetail: FC<any> = (props) => {
                         <View style={{ flex: 1 }} >
 
                             {event?.is_multi_day_event != 1 ?
-                                <><View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                                    <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                                        source={Images.ic_group_events} />
-                                    <Text style={styles.events}>
-                                        {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
-                                    </Text>
-                                </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                            source={Images.ic_group_events} />
+                                        <Text style={styles.events}>
+                                            {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
+                                        </Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_event_time} />
                                         <Text style={[styles.events, { marginRight: scaler(5), flex: 1 }]}>
                                             {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')}
-                                            {event?.event_date ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
+                                            {event?.event_end_time ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
                                             {" " + dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'z')}
                                         </Text>
-                                    </View></>
+                                    </View>
+                                </>
                                 : <>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(16), marginBottom: scaler(8), }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
