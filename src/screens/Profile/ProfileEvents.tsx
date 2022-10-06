@@ -10,7 +10,7 @@ import React, { FC, useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler } from 'utils'
+import { calculateImageUrl, getCityOnly, getImageUrl, NavigationService, scaler } from 'utils'
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 let loadMore = false
@@ -77,13 +77,14 @@ const ProfileEventsList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }) => {
-        const { is_event_member, city, state, country } = item?.event
+        const { is_event_member, city, state, country, image, event_images } = item?.event
+        const eventImage = calculateImageUrl(image, event_images)
         return (
             <ListItem
                 defaultIcon={Images.ic_event_placeholder}
                 title={item?.event?.name}
                 // highlight={}
-                icon={item?.event?.image ? { uri: getImageUrl(item?.event?.image, { width: scaler(50), type: 'events' }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { width: scaler(50), type: 'events' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 subtitle={getCityOnly(city, state, country)}
                 customView={<TicketView {...item?.event} />}

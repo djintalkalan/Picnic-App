@@ -4,7 +4,7 @@ import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListI
 import React, { FC, useCallback } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { dateFormat, getImageUrl, NavigationService, scaler } from 'utils'
+import { calculateImageUrl, dateFormat, getImageUrl, NavigationService, scaler } from 'utils'
 import { useSearchState } from './SearchProvider'
 
 
@@ -14,13 +14,13 @@ const SearchedEvents: FC<any> = ({ route, navigation }) => {
     const { events } = useSearchState()
 
     const _renderItem = useCallback(({ item, index }) => {
-
+        const eventImage = calculateImageUrl(item?.image, item?.event_images)
         return (
             <ListItem
                 title={item?.name}
                 subtitle={dateFormat(new Date(item?.event_start_date_time), "MMMM DD, YYYY, hh:mm A")}
                 onPressImage={() => NavigationService.navigate('EventDetail', { id: item?._id })}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'events', width: scaler(50) }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { type: 'events', width: scaler(50) }) } : undefined}
                 defaultIcon={Images.ic_event_placeholder}
                 customView={<TicketView {...item} is_event_admin={true} />}
             >

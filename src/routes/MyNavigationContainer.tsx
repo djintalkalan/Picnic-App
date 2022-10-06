@@ -3,7 +3,7 @@ import { firebase as firebaseCrashlytics } from '@react-native-firebase/crashlyt
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AnalyticService from 'analytics';
-import { refreshLanguage, setLoadingAction, tokenExpired } from 'app-store/actions';
+import { refreshLanguage, setLoadingAction, tokenExpired, updateDeviceLanguage } from 'app-store/actions';
 import { colors } from 'assets';
 import { Card, PopupAlert } from 'custom-components';
 import { BottomMenu } from 'custom-components/BottomMenu';
@@ -42,6 +42,7 @@ import CreateEvent1 from 'screens/Event/CreateEvent/CreateEvent1';
 import CreateEvent2 from 'screens/Event/CreateEvent/CreateEvent2';
 import CreateEvent3 from 'screens/Event/CreateEvent/CreateEvent3';
 import CreateEvent4 from 'screens/Event/CreateEvent/CreateEvent4';
+import SelectGroup from 'screens/Event/CreateEvent/SelectGroup';
 import EventDetail from 'screens/Event/EventDetail';
 import EventMembers from 'screens/Event/EventMembers';
 import Payment from 'screens/Event/Payment';
@@ -50,6 +51,7 @@ import GooglePlacesTextInput from 'screens/GooglePlacesTextInput';
 import CreateGroup from 'screens/Group/CreateGroup';
 import Events from 'screens/Group/Events';
 import GroupDetail from 'screens/Group/GroupDetail';
+import SelectAdmin from 'screens/Group/SelectAdmin';
 import BlockedMembers from 'screens/Profile/BlockedMembers';
 import HiddenPosts from 'screens/Profile/HiddenPosts';
 import MutedGroupsEvents from 'screens/Profile/MutedGroupsEvents';
@@ -126,7 +128,9 @@ const dashboardScreens: IScreens = {
   SelectTicket: SelectTicket,
   TwoFactorAuth: TwoFactorAuth,
   PaypalDetails: PaypalDetails,
+  SelectGroup,
   CheckInList,
+  SelectAdmin,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();
@@ -156,12 +160,10 @@ const MyNavigationContainer = () => {
 
   useEffect(() => {
     dispatch(refreshLanguage())
+    dispatch(updateDeviceLanguage())
     Rollbar?.init();
-    IntercomService.init()
-
     return () => {
       Rollbar?.exit();
-      IntercomService.logout()
     }
   }, [isLogin])
 
@@ -172,9 +174,12 @@ const MyNavigationContainer = () => {
         AnalyticService.setUserData(userData)
       });
       SocketService.init(dispatch);
+      IntercomService.init()
+
     }
     return () => {
       SocketService.closeSocket();
+      IntercomService.logout()
       firebaseCrashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
     }
   }, [isLogin, language])

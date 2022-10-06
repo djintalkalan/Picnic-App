@@ -50,6 +50,7 @@ const CreateEvent1: FC<any> = props => {
   const keyboardValues = useKeyboardService()
   const [multiImageArray, setMultiImageArray] = useState<Array<any>>([])
   const eventId = props?.route?.params?.id || null
+  const [isPublicEvent, setPublicEvent] = useState(false)
 
   const event = useSelector((state: RootState) => {
     return state?.createEventState
@@ -63,7 +64,12 @@ const CreateEvent1: FC<any> = props => {
 
 
   const { myGroups } = useSelector((state: RootState) => ({
-    myGroups: state?.group?.myGroups
+    myGroups: [...state?.group?.myGroups, {
+      _id: -1,
+      name: Language.post_in_local_groups,
+      data: {},
+      textStyle: { color: colors.colorPrimary }
+    }]
   }))
 
   const dispatch = useDispatch();
@@ -110,6 +116,12 @@ const CreateEvent1: FC<any> = props => {
       dispatch(getEditEventDetail(eventId))
     }
 
+    const group = props?.route?.params?.group
+    // console.log("group", group);
+    if (group) {
+      onSelectGroup(group, true)
+    }
+
     return () => {
       dispatch(resetCreateEvent())
     }
@@ -134,26 +146,12 @@ const CreateEvent1: FC<any> = props => {
   const setEventValues = useCallback((event: any) => {
     if (loaded.current) return
     loaded.current = true
-    var { location, address, city, state, country } = event?.event_group || {}
-
+    let group = event?.event_group || {}
     if (event?.location?.coordinates && event?.address && (event?.city || event?.state || event?.country)) {
-      var { location, address, city, state, country } = event || {}
-
+      const { location, address, city, state, country } = event || {}
+      group = { ...group, location, address, city, state, country }
     }
-    const addressObject = getFormattedAddress2(address, city, state, country)
-    locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
-      latitude: location?.coordinates[1],
-      longitude: location?.coordinates[0],
-      address: addressObject,
-      otherData: {
-        city: city,
-        state: state,
-        country: country
-      }
-    } : null
-
-
-    selectedGroupRef.current = event?.event_group
+    onSelectGroup(group, true)
     setMultiImageArray(event.event_images || [])
 
     // reset({
@@ -164,23 +162,16 @@ const CreateEvent1: FC<any> = props => {
     // })
 
     setValue('eventName', event?.name)
-    setValue('location', address)
-    setValue('selectGroup', event?.event_group?.name)
     setValue('aboutEvent', event?.short_description)
     resetField('aboutEvent', { defaultValue: event?.short_description })
     setIsOnlineEvent(event?.is_online_event == 1 ? true : false)
     setPinLocation(event?.is_direction == 1 ? true : false)
+    setPublicEvent(event?.can_anyone_host_events == 1)
     if (event?.image) {
       setEventImage({ uri: getImageUrl(event?.image, { type: 'events', width: scaler(100) }) })
     } else {
       setEventImage(null)
     }
-    locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
-      selection: {
-        start: 0,
-        end: 0,
-      },
-    });
   }, [])
 
   const next = useCallback(handleSubmit((data) => {
@@ -209,11 +200,40 @@ const CreateEvent1: FC<any> = props => {
       event_images: multiImageArray,
       event_group: undefined,
       is_copied_event: props?.route?.params?.copy ?? (eventId ? "0" : undefined),
-      is_direction: pinLocation ? '1' : '0'
+      is_direction: pinLocation ? '1' : '0',
+      can_anyone_host_events: isPublicEvent ? '1' : '0'
     }
     dispatch(updateCreateEvent(payload))
     NavigationService.navigate('CreateEvent2')
-  }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation])
+  }), [event, isOnlineEvent, eventImage, multiImageArray, pinLocation, isPublicEvent])
+
+  const onSelectGroup = useCallback((data, noUpdate = false) => {
+    selectedGroupRef.current = data;
+    setValue('selectGroup', data?.name, { shouldValidate: true });
+    const { location, address = "", city, state, country } = data || {}
+    const addressObject = getFormattedAddress2(address, city, state, country)
+    locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
+      latitude: location?.coordinates[1],
+      longitude: location?.coordinates[0],
+      address: addressObject,
+      otherData: {
+        city: city,
+        state: state,
+        country: country
+      }
+    } : null
+    setValue('location', address)
+    locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
+      selection: {
+        start: 0,
+        end: 0,
+      },
+    });
+    if (!noUpdate) {
+      setPublicEvent(data?.can_anyone_host_events == 1)
+    }
+    setDropdown(false);
+  }, [])
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
@@ -284,36 +304,15 @@ const CreateEvent1: FC<any> = props => {
               errors={errors}
             />
             <FixedDropdown
+              maxHeight={scaler(250)}
               visible={isDropdown}
-              data={myGroups.map((_, i) => ({ id: _?._id, data: _, title: _?.name }))}
+              data={myGroups.map((_, i) => ({ id: _?._id, data: _, title: _?.name, textStyle: _?.textStyle }))}
               onSelect={data => {
-                setDropdown(false);
-                selectedGroupRef.current = data;
-                console.log("Data", data);
-
-                setValue('selectGroup', data?.title, { shouldValidate: true });
-
-                const { location, address = "", city, state, country } = data?.data || {}
-                const addressObject = getFormattedAddress2(address, city, state, country)
-                locationRef.current = (location?.coordinates[0] && location?.coordinates[1]) ? {
-                  latitude: location?.coordinates[1],
-                  longitude: location?.coordinates[0],
-                  address: addressObject,
-                  otherData: {
-                    city: city,
-                    state: state,
-                    country: country
-                  }
-                } : null
-                setValue('location', address)
-                locationInputRef?.current?.setNativeProps && locationInputRef?.current?.setNativeProps({
-                  selection: {
-                    start: 0,
-                    end: 0,
-                  },
-                });
-                console.log("locationRef.current", locationRef.current);
-
+                if (data?.id < 0) {
+                  NavigationService.navigate("SelectGroup", { onSelectGroup: onSelectGroup })
+                  return
+                }
+                onSelectGroup(data?.data)
               }}
             />
             <TouchableOpacity style={styles.eventView} onPress={() => setIsOnlineEvent(!isOnlineEvent)}>

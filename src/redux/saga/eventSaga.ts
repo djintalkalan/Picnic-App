@@ -6,9 +6,9 @@ import { defaultLocation } from 'custom-components';
 import Database from 'database';
 import { isEmpty } from 'lodash';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { EMIT_EVENT_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
+import { EMIT_EVENT_DELETE, EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
-import { NavigationService, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
+import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
@@ -16,23 +16,23 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getMyGroups);
         if (res.status == 200) {
-            if (!res?.data?.length) {
-                _showPopUpAlert({
-                    title: Language.groups_not_available,
-                    message: Language.please_create_a_group,
-                    buttonText: Language.create_group,
-                    cancelButtonText: Language.go_to_home,
-                    onPressButton: () => {
-                        NavigationService.replace("CreateGroup")
-                        _hidePopUpAlert()
-                    },
-                    onPressCancel: () => {
-                        NavigationService.navigate("Home")
-                        _hidePopUpAlert()
-                    }
-                })
-            }
-            yield put(setMyGroups(res.data))
+            // if (!res?.data?.length) {
+            //     _showPopUpAlert({
+            //         title: Language.groups_not_available,
+            //         message: Language.please_create_a_group,
+            //         buttonText: Language.create_group,
+            //         cancelButtonText: Language.go_to_home,
+            //         onPressButton: () => {
+            //             NavigationService.replace("CreateGroup")
+            //             _hidePopUpAlert()
+            //         },
+            //         onPressCancel: () => {
+            //             NavigationService.navigate("Home")
+            //             _hidePopUpAlert()
+            //         }
+            //     })
+            // }
+            yield put(setMyGroups(res.data || []))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -190,9 +190,23 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
-        if (res.status == 200 && !isEmpty(res.data.event)) {
+        if (res.status == 200) {
+            if (isEmpty(res.data.event) || !res?.data?.event?._id) {
+                yield put(setLoadingAction(false));
+
+                // console.log("SCREEN", NavigationService?.getCurrentScreen());
+                const { name, params } = NavigationService?.getCurrentScreen() ?? {}
+                if ((name == "EventDetail" || name == "EventChats") &&
+                    params?.id == payload
+                ) {
+                    _showErrorMessage(Language.getString("this_event_is_not_available"), 5000)
+                    NavigationService.goBack()
+                }
+                yield put(deleteEventSuccess(payload))
+                return
+            }
             if (res?.data?.event?.status == 5) {
-                console.log("SCREEN", NavigationService?.getCurrentScreen());
+                // console.log("SCREEN", NavigationService?.getCurrentScreen());
                 const { name, params } = NavigationService?.getCurrentScreen() ?? {}
                 if ((name == "EventDetail" || name == "EventChats") &&
                     params?.id == payload
@@ -201,6 +215,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
                     NavigationService.navigate("Home")
                 }
                 yield put(deleteEventSuccess(payload))
+                yield put(setLoadingAction(false));
                 return
             }
 
@@ -254,6 +269,29 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
             NavigationService?.navigate("Home")
             // yield put(deleteEventSuccess(payload))
             SocketService.emit(EMIT_EVENT_DELETE, {
+                resource_id: payload
+            })
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
+function* _deleteEventAsPublicAdmin({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    try {
+        let res = yield call(ApiProvider._deleteEventAsPublicAdmin, { resource_id: payload });
+        if (res.status == 200) {
+            _showSuccessMessage(res.message)
+            NavigationService?.navigate("HomeEventTab")
+            SocketService.emit(EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, {
                 resource_id: payload
             })
         } else if (res.status == 400) {
@@ -552,6 +590,7 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.GET_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.GET_EDIT_EVENT_DETAIL, _getEventDetail);
     yield takeLatest(ActionTypes.DELETE_EVENT, _deleteEvent);
+    yield takeLatest(ActionTypes.DELETE_EVENT_AS_PUBLIC_ADMIN, _deleteEventAsPublicAdmin);
     yield takeLatest(ActionTypes.PIN_EVENT, _pinUnpinEvent);
     yield takeLatest(ActionTypes.JOIN_EVENT, _joinEvent);
     yield takeLatest(ActionTypes.LEAVE_EVENT, _leaveEvent);

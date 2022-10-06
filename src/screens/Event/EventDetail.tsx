@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
 import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
 import { RootState } from 'app-store'
-import { deleteEvent, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
+import { deleteEvent, deleteEventAsPublicAdmin, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -156,7 +156,7 @@ const EventDetail: FC<any> = (props) => {
         shareDynamicLink(event?.name, {
             type: "event-detail",
             id: event?._id,
-            // image: getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' })
+            image: event?.image ? getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
         });
     }, [event])
 
@@ -269,7 +269,8 @@ const EventDetail: FC<any> = (props) => {
                                         // _hidePopUpAlert()
                                         _hideTouchAlert()
                                     }
-                                    } hideBorder /></>
+                                    } hideBorder />
+                                </>
                                 :
                                 <><InnerButton onPress={() => {
                                     shareEvent();
@@ -300,12 +301,29 @@ const EventDetail: FC<any> = (props) => {
                                             // cancelButtonText: Language.cancel
                                         })
                                         _hideTouchAlert()
-                                    }} hideBorder={event?.is_event_member ? false : true} />
+                                    }} hideBorder={event?.is_event_member || event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ? false : true} />
                                     {event?.is_event_member ?
                                         <InnerButton title={Language.cancel} textColor={colors.colorErrorRed} onPress={() => {
                                             _showCancellationPolicy()
                                             _hideTouchAlert()
-                                        }} hideBorder /> : undefined}
+                                        }} hideBorder={!(event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group)} /> : undefined}
+                                    {event?.can_anyone_host_events == 1 && event?.event_group?.is_leader_of_group ?
+                                        <InnerButton title={Language.delete} textColor={colors.colorErrorRed} onPress={() => {
+                                            _showPopUpAlert({
+                                                message: Language.are_you_sure_delete_event,
+                                                onPressButton: () => {
+                                                    dispatch(deleteEventAsPublicAdmin(event?._id))
+                                                    _hidePopUpAlert()
+                                                },
+                                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                                buttonText: Language.yes_delete,
+                                            })
+                                            _hideTouchAlert()
+                                        }
+                                        } hideBorder />
+                                        :
+                                        null
+                                    }
                                 </>
                             }
                         </Card>
@@ -488,21 +506,24 @@ const EventDetail: FC<any> = (props) => {
                         <View style={{ flex: 1 }} >
 
                             {event?.is_multi_day_event != 1 ?
-                                <><View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
-                                    <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
-                                        source={Images.ic_group_events} />
-                                    <Text style={styles.events}>
-                                        {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
-                                    </Text>
-                                </View><View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(16) }}>
+                                        <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
+                                            source={Images.ic_group_events} />
+                                        <Text style={styles.events}>
+                                            {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
+                                        </Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_event_time} />
                                         <Text style={[styles.events, { marginRight: scaler(5), flex: 1 }]}>
                                             {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')}
-                                            {event?.event_date ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
+                                            {event?.event_end_time ? (" to " + dateFormatInSpecificZone(event?.event_end_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A')) : ""}
                                             {" " + dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'z')}
                                         </Text>
-                                    </View></>
+                                    </View>
+                                </>
                                 : <>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(16), marginBottom: scaler(8), }}>
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}

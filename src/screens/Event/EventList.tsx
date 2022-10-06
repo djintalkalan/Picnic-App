@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
 import TZ from "tz-lookup";
-import { dateFormatInSpecificZone, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
+import { calculateImageUrl, dateFormatInSpecificZone, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 
@@ -50,7 +50,8 @@ const EventList: FC<any> = (props) => {
                 title: Language.share_event, onPress: () => {
                     shareDynamicLink(name, {
                         type: "event-detail",
-                        id: _id
+                        id: _id,
+                        image: item?.image ? getImageUrl(item?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
                     });
                 }
             })
@@ -193,6 +194,8 @@ const EventList: FC<any> = (props) => {
             longitude: parseFloat(item?.location?.coordinates?.[0] ?? 0),
         }
 
+        const eventImage = calculateImageUrl(item?.image, item?.event_images)
+
         return (
             <EventItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -200,7 +203,7 @@ const EventList: FC<any> = (props) => {
                 defaultIcon={Images.ic_event_placeholder}
                 title={item?.name}
                 // highlight={}
-                icon={item?.image ? { uri: getImageUrl(item?.image, { width: ITEM_HEIGHT + scaler(50), type: 'events' }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { width: ITEM_HEIGHT + scaler(50), type: 'events' }) } : undefined}
                 subtitle={getCityOnly(city, state, country)}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 customView={<TicketView size='small' {...item} />}

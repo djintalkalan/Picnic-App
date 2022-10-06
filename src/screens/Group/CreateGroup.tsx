@@ -40,6 +40,7 @@ const CreateGroup: FC<any> = (props) => {
   const locationRef = useRef<ILocation | null>(__DEV__ ? defaultLocation : null);
   const locationInputRef = useRef<RNTextInput>(null);
   const [isDropdown, setDropdown] = useState(false)
+  const [isPublicGroup, setPublicGroup] = useState(false);
   const [pinLocation, setPinLocation] = useState(false);
   const { control, handleSubmit, getValues, setValue, formState: { errors, isValid }, setError } = useForm<FormType>({
     defaultValues: __DEV__ ? {
@@ -66,7 +67,7 @@ const CreateGroup: FC<any> = (props) => {
     } else {
       callCreateGroupApi(data);
     }
-  })(), [profileImage, pinLocation]);
+  })(), [profileImage, pinLocation, isPublicGroup]);
 
   useEffect(() => {
     if (group) {
@@ -88,7 +89,8 @@ const CreateGroup: FC<any> = (props) => {
       setValue('name', group?.name)
       setValue('radio_frequency', group?.radio_frequency)
       setValue('purpose', group?.category ?? "", { shouldValidate: true })
-      setPinLocation(group?.is_direction == '1' ? true : false)
+      setPinLocation(group?.is_direction == '1')
+      setPublicGroup(group?.can_anyone_host_events == '1');
       if (group?.image) {
         setProfileImage({ uri: getImageUrl(group?.image, { type: 'groups', width: scaler(100) }) })
       } else {
@@ -119,6 +121,7 @@ const CreateGroup: FC<any> = (props) => {
       state: otherData?.state,
       country: otherData?.country,
       is_direction: pinLocation ? '1' : '0',
+      can_anyone_host_events: isPublicGroup ? '1' : '0',
       location: {
         type: 'Point',
         coordinates: [
@@ -132,7 +135,7 @@ const CreateGroup: FC<any> = (props) => {
         Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
       }
     }))
-  }, [pinLocation])
+  }, [pinLocation, isPublicGroup])
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
@@ -286,6 +289,8 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
 
+
+
             <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
               <CheckBox checked={pinLocation} />
               <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
@@ -349,6 +354,13 @@ const CreateGroup: FC<any> = (props) => {
               errors={errors}
             />
           </View>
+
+          <TouchableOpacity style={styles.eventView} onPress={() => setPublicGroup(!isPublicGroup)}>
+            <CheckBox checked={isPublicGroup} />
+            <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
+              {Language.allow_everyone_to_host_event}
+            </Text>
+          </TouchableOpacity>
 
           <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }}
             title={group ? Language.update_group : Language.create_group}

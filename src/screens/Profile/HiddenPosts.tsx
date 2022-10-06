@@ -8,7 +8,7 @@ import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ChatItem from 'screens/Chat/ChatItem';
-import Language from 'src/language/Language';
+import Language, { useSystemMessageTemplate } from 'src/language/Language';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 const HiddenPosts: FC = () => {
@@ -37,10 +37,12 @@ const HiddenPosts: FC = () => {
     const onSuccess = useCallback(({ pagination }) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
+    const systemMessageTemplate = useSystemMessageTemplate()
 
     const _renderChatItem = useCallback(({ item, index }) => {
         return (
             <ChatItem
+                systemMessageTemplate={systemMessageTemplate}
                 {...item?.muted_messages}
                 isMuted={true}
             />)

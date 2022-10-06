@@ -8,7 +8,8 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
 import { MemberListItem } from 'custom-components/ListItem/ListItem'
-import { isEqual } from 'lodash'
+import { useDatabase } from 'database/Database'
+import { isEqual, sortBy } from 'lodash'
 import React, { FC, Fragment, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { ColorValue, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { pickSingle } from 'react-native-document-picker'
@@ -95,7 +96,7 @@ const GroupDetail: FC<any> = (props) => {
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
     const { group, groupMembers, } = useSelector((state: RootState) => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
-        groupMembers: state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [],
+        groupMembers: sortBy((state?.groupDetails?.[props?.route?.params?.id]?.groupMembers || []), _ => (!_?.is_admin)),
     }), isEqual)
 
 
@@ -123,6 +124,8 @@ const GroupDetail: FC<any> = (props) => {
             dispatch(getGroupDetail(props?.route?.params?.id))
         }, 200)
     }, [])
+
+    const [userData] = useDatabase('userData');
 
     const _renderGroupMembers = useCallback(({ item, index }) => {
         return (
@@ -155,6 +158,19 @@ const GroupDetail: FC<any> = (props) => {
 
     const renderBottomActionButtons = useCallback(() => {
         return <View style={{ paddingHorizontal: scaler(15), paddingBottom: scaler(20) }} >
+
+            {(group?.status == 1 && (group?.is_admin || (group?.is_group_member && group?.can_anyone_host_events == 1))) ?
+                <BottomButton
+                    title={Language.host_event_in_this_group}
+                    icon={Images.ic_calender}
+                    buttonTextColor={colors.colorPrimary}
+                    onPress={() => {
+                        NavigationService.navigate("CreateEvent1", {
+                            group
+                        })
+                    }} />
+                : undefined}
+
             <BottomButton
                 title={Language.delete_group}
                 icon={Images.ic_delete}
@@ -184,7 +200,7 @@ const GroupDetail: FC<any> = (props) => {
                     }}>
                         <TouchableOpacity onPress={() => {
                             const buttons: Array<IBottomMenuButton> = []
-                            if (!group?.is_admin) {
+                            if (!(group?.is_admin)) {
                                 buttons.push({
                                     title: Language.mute_group, onPress: () => {
                                         _showPopUpAlert({
@@ -229,12 +245,25 @@ const GroupDetail: FC<any> = (props) => {
                     title={Language.leave_group}
                     icon={Images.ic_leave_group}
                     hideBottomBar
-                    visibility={group?.is_group_member && !group?.is_admin}
+                    buttonTextColor={colors.colorPrimary}
+                    visibility={group?.is_group_member}
                     onPress={() => {
+                        if (group?.is_admin) {
+                            _showPopUpAlert({
+                                message: Language.are_you_sure_leave_group,
+                                onPressButton: () => {
+                                    NavigationService.navigate("SelectAdmin", { id: props?.route?.params?.id })
+                                    _hidePopUpAlert()
+                                },
+                                buttonStyle: { backgroundColor: colors.colorErrorRed },
+                                buttonText: Language.yes_leave
+                            })
+                            return
+                        }
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup(group?._id))
+                                dispatch(leaveGroup({ groupId: group?._id }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
@@ -300,7 +329,8 @@ const GroupDetail: FC<any> = (props) => {
     const shareGroup = useCallback(() => {
         shareDynamicLink(group?.name, {
             type: "group-detail",
-            id: group?._id
+            id: group?._id,
+            image: group?.image ? getImageUrl(group?.image, { width: 0 + scaler(400), type: 'groups' }) : undefined
         }).then(() => {
             _hideTouchAlert();
         }).catch(() => {
@@ -381,8 +411,8 @@ const GroupDetail: FC<any> = (props) => {
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
                     {group?.status == 1 ?
-                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => group?.is_admin ? openEditButton(e) : shareGroup()} style={styles.backButton} >
-                            <Image style={styles.imgBack} source={group?.is_admin ? Images.ic_more_group : Images.ic_leave_in_group} />
+                        <TouchableOpacity ref={dotMenuButtonRef} onPress={(e) => (group?.is_admin) ? openEditButton(e) : shareGroup()} style={styles.backButton} >
+                            <Image style={styles.imgBack} source={(group?.is_admin) ? Images.ic_more_group : Images.ic_leave_in_group} />
                         </TouchableOpacity> : undefined}
                 </View>
                 <View style={styles.infoContainer} >
@@ -492,12 +522,13 @@ interface IBottomButton {
     onPress?: (e?: GestureResponderEvent) => void
     hideBottomBar?: boolean
     buttonTextColor?: ColorValue
+    noTint?: boolean
 }
-const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false, buttonTextColor = colors.colorRed }) => {
+const BottomButton: FC<IBottomButton> = ({ title, icon, visibility = true, onPress, hideBottomBar = false, buttonTextColor = colors.colorRed, noTint = false }) => {
     return visibility ? (
         <>
             <TouchableOpacity onPress={onPress} activeOpacity={1} style={{ backgroundColor: colors.colorWhite, paddingVertical: scaler(15), flexDirection: 'row', alignItems: 'center' }} >
-                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: buttonTextColor }} />
+                <Image source={icon} style={{ height: scaler(25), width: scaler(25), resizeMode: 'contain', tintColor: noTint ? undefined : buttonTextColor }} />
                 <Text style={{ color: buttonTextColor, marginLeft: scaler(10) }} >{title}</Text>
             </TouchableOpacity>
             {!hideBottomBar && <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB' }} />}

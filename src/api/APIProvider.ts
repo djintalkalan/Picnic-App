@@ -1,5 +1,5 @@
 import { config } from 'api/config';
-import axios, { AxiosResponse, Method } from 'axios';
+import axios, { AxiosRequestHeaders, AxiosResponse, Method } from 'axios';
 import React, { MutableRefObject } from 'react';
 import { DeviceEventEmitter, Platform } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
@@ -97,7 +97,7 @@ async function callApi(url: string, header: header, body: any, method?: Method):
         method: method,
         url: url,
         data: body,
-        headers: header,
+        headers: header as AxiosRequestHeaders,
     })
 }
 
@@ -282,7 +282,10 @@ export const _joinGroup = async (body: string) => {
 
 export const _leaveGroup = async (body: any) => {
     console.log("---------- _leaveGroup Api Call ---------------")
-    return fetchApiData('group/leave/' + body, "PUT")
+    let url = `group/leave/${body?.groupId}`
+    if (body?.userId)
+        url = `group/transfer-group-ownership/${body?.groupId}/${body?.userId}`
+    return fetchApiData(url, "PUT")
 }
 
 export const _removeGroupMember = async (body: any) => {
@@ -515,8 +518,6 @@ export const _updatePaypalInfo = async (body: any) => {
     return fetchApiData('user/update-paypal-details', 'POST', body)
 }
 
-
-
 export const _setChatBackground = async (body: any) => {
     console.log("---------- _setChatBackground Api Call ---------------")
     return fetchApiData('message/set-background-color', "POST", body)
@@ -532,13 +533,33 @@ export const _totalSoldTickets = async (body: any) => {
     return fetchApiData('event/get-total-sold-tickets?' + objectToParamString(body))
 }
 
+export const _leadGroup = async (body: any) => {
+    console.log("---------- _leadGroup Api Call ---------------")
+    return fetchApiData('group/lead-group-as-creator/' + body, "PUT")
+}
+
 export const _getMyEventForCheckIn = async (body: any) => {
     console.log("---------- _getMyEventForCheckIn Api Call ---------------")
     return fetchApiData('event/get-my-upcoming-events?' + (new URLSearchParams(body)).toString())
 }
+
 export const _getAdminChatCount = async (body: any) => {
     console.log("---------- _getAdminChatCount Api Call ---------------")
     return fetchApiData('chat/get-other-member-chat-count?user_id=' + body)
 }
 
+export const _getAllPublicGroupNearMe = async (body: any) => {
+    console.log("---------- _getAdminChatCount Api Call ---------------")
+    return fetchApiData('event/get-all-public-groups?' + (new URLSearchParams(body)).toString())
+}
+
+export const _deleteEventAsPublicAdmin = async (body: any) => {
+    console.log("---------- _deleteEventAsPublicAdmin Api Call ---------------")
+    return fetchApiData('event/delete-public-event', "POST", body)
+}
+
+export const _updateDeviceLanguage = async (body: any) => {
+    console.log("---------- _updateDeviceLanguage Api Call ---------------")
+    return fetchApiData('user/update-default-mobile-language', 'POST', body)
+}
 

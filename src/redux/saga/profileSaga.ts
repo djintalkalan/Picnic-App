@@ -4,6 +4,7 @@ import { setNotificationSettings, setUserGroups, setUserUpcomingPastEvents } fro
 import { store } from 'app-store/store';
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
+import IntercomService from 'src/intercom/IntercomService';
 import Language, { updateLanguageDirect } from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
@@ -26,6 +27,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
                 is_notification_enabled: userData?.is_notification_enabled
             }))
             Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
+            IntercomService.updateUser(userData)
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {
@@ -52,6 +54,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
                 is_notification_enabled: userData?.is_notification_enabled
             }))
             Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
+            IntercomService.updateUser(userData)
             NavigationService.replace("Settings")
         } else if (res.status == 400) {
             _showErrorMessage(res.message);

@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
-import { blockUnblockResource, muteUnmuteResource, reportResource } from 'app-store/actions'
+import { blockUnblockResource, muteUnmuteResource, reportResource, setActiveEvent } from 'app-store/actions'
 import { colors, Images, MapStyle } from 'assets'
 import { MultiBoldText, Preview, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -11,13 +11,17 @@ import { find as findUrl } from 'linkifyjs'
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Contacts, { Contact } from 'react-native-contacts'
+//@ts-ignore
+import Handlebars from 'handlebars/lib/handlebars'
 import MapView, { Marker } from 'react-native-maps'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, launchMap, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+import { calculateImageUrl, getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+
+
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
     if (i < 0) {
         return text
@@ -55,9 +59,12 @@ interface IChatItem {
     coordinates: { lat: string, lng: string }
     text: string
     isMember: boolean
+    systemMessageTemplate: any
+    event_detail: any,
 }
 
-const DELETE_TEXT = "{{admin_name}} has deleted post from {{display_name}}"
+const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
+
 
 const { height, width } = Dimensions.get('screen')
 
@@ -72,6 +79,7 @@ const ChatItem = (props: IChatItem) => {
     const [link, setLink] = useState("")
 
     const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+        event_detail: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
         text, member_deleted_by_user,
@@ -80,7 +88,7 @@ const ChatItem = (props: IChatItem) => {
         // message_liked_by_user_name,
         // parent_id,
         message_liked_by_users,
-        message_total_likes_count, isMuted, isMember } = props ?? {}
+        message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
@@ -97,7 +105,7 @@ const ChatItem = (props: IChatItem) => {
     // }
 
     useEffect(() => {
-        if (message_type == 'text') {
+        if (message_type == 'text' && message?.trim()) {
             const matches = findUrl(message?.toLowerCase())
             let found = false
             matches?.some((link) => {
@@ -182,6 +190,27 @@ const ChatItem = (props: IChatItem) => {
                 </MapView>
             </View>
         </TouchableOpacity>
+    }
+
+    const eventOfGroupMessage = () => {
+        const eventImage = calculateImageUrl(eventInMessage?.image, eventInMessage?.event_images)
+        return <View style={{
+            borderRadius: scaler(15), overflow: 'hidden',
+            padding: scaler(7),
+            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
+        }} >
+            <View style={{ flex: 1, overflow: 'hidden', borderRadius: scaler(10), }} pointerEvents='none' >
+                <ImageLoader
+                    placeholderSource={Images.ic_event_placeholder}
+                    borderRadius={scaler(15)}
+                    resizeMode={eventImage ? 'cover' : 'contain'}
+                    onPress={() => _zoomImage(getImageUrl(eventImage, { type: 'events' }))}
+                    source={{ uri: getImageUrl(eventImage, { type: 'events' }) }}
+                    //@ts-ignore
+                    style={{ resizeMode: eventImage ? 'cover' : 'contain', borderRadius: scaler(10), height: '100%', width: '100%' }} />
+
+            </View>
+        </View>
     }
 
     const { remainingNames, myMessage } = useMemo(() => {
@@ -344,15 +373,22 @@ const ChatItem = (props: IChatItem) => {
 
     if (is_system_message) {
         const adminName = getDisplayName(message_deleted_by_user || member_deleted_by_user)
-        let m = message
-        m = insertAtIndex(m, m?.indexOf("{{display_name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{display_name}}"), "{{display_name}}"?.length)
-        m = insertAtIndex(m, m.indexOf("{{name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{name}}"), "{{name}}"?.length)
-        m = insertAtIndex(m, m.indexOf("{{admin_name}}"))
-        m = insertAtIndex(m, m?.indexOf("{{admin_name}}"), "{{admin_name}}"?.length)
-        m = '“' + m?.replace("{{display_name}}", display_name)?.replace("{{name}}", group?.name)?.replace("{{admin_name}}", adminName) + '”'
-        return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={m} />
+        let m = message || ''
+        try {
+            if (message?.trim()) {
+                const template = Handlebars.compile(message)
+                m = template({
+                    display_name: "**" + display_name + "**",
+                    name: "**" + group?.name + "**",
+                    admin_name: "**" + adminName + "**",
+                    ...systemMessageTemplate
+                })
+            }
+        }
+        catch (e) {
+
+        }
+        return <MultiBoldText fontWeight='600' style={[styles.systemText, { flex: 1 }]} text={'“' + m + '”'} />
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 
@@ -442,12 +478,22 @@ const ChatItem = (props: IChatItem) => {
 
     if (message_type == 'resource_direction') {
         if (group?.is_direction != '1') return <View />
+        let m = message || ''
+        try {
+            if (message?.trim()) {
+                const template = message?.trim() ? Handlebars.compile(message) : null
+                m = template(systemMessageTemplate)
+            }
+        }
+        catch (e) {
+
+        }
         if (myMessage) {
             return <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
                     {pinLocation()}
                     <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
-                        <Text style={styles.myMessage}>{message} </Text>
+                        <Text style={styles.myMessage}>{m} </Text>
                         <Text style={{ color: 'blue', fontSize: scaler(13) }}
                             onLongPress={_onCopy}
                             onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
@@ -471,12 +517,60 @@ const ChatItem = (props: IChatItem) => {
                     <View style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
                         {pinLocation()}
                         <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5), flexShrink: 1 }}>
-                            <Text style={styles.myMessage}>{message} </Text>
+                            <Text style={styles.myMessage}>{m} </Text>
                             <Text style={{ color: 'blue', fontSize: scaler(13) }}
                                 onLongPress={_onCopy}
                                 onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
                         </View>
                     </View>
+                </View>
+            </View>
+        </View>
+    }
+
+    if (message_type == 'event_of_group') {
+        if (!eventInMessage) return null
+        if (!myMessage) {
+            return <View style={styles.myContainer} >
+                <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                    dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
+                    setTimeout(() => {
+                        NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                    }, 0);
+                }} style={[styles.myMessageContainer, { padding: 0, overflow: 'hidden', width: (width - scaler(20)) / 1.5 }]} >
+                    {eventOfGroupMessage()}
+                    <View style={{ marginHorizontal: scaler(8), marginBottom: scaler(5) }}>
+                        <Text style={{ fontSize: scaler(13), marginBottom: scaler(5), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
+                        {eventInMessage?.short_description ? <Text ellipsizeMode='tail' numberOfLines={3} style={{ marginBottom: scaler(10), flex: 1, fontSize: scaler(12), color: '#444444', fontWeight: '500' }}>{eventInMessage?.short_description} </Text> : null}
+                    </View>
+
+                </TouchableOpacity>
+            </View>
+        }
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                    </View>
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                        dispatch(setActiveEvent({ ...eventInMessage, _id: eventInMessage?.event_id }))
+                        setTimeout(() => {
+                            NavigationService?.navigate("EventDetail", { id: eventInMessage?.event_id })
+                        }, 0);
+                    }} style={{ backgroundColor: colors.colorWhite, width: (width - scaler(20)) / 1.5, borderRadius: scaler(15) }}>
+                        {eventOfGroupMessage()}
+                        <View style={{ marginHorizontal: scaler(10), marginBottom: scaler(5), flexShrink: 1 }}>
+                            <Text style={{ fontSize: scaler(13), color: colors.colorPrimary, fontWeight: '500' }}>{eventInMessage?.name} </Text>
+                            {eventInMessage?.short_description ? <Text ellipsizeMode='tail' numberOfLines={3} style={{ marginBottom: scaler(10), flex: 1, fontSize: scaler(12), color: '#444444', fontWeight: '500' }}>{eventInMessage?.short_description} </Text> : null}
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -650,7 +744,7 @@ const ChatItem = (props: IChatItem) => {
 
                                                 </MapView>
                                             </View>
-                                            : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? "Message Deleted" : parent_message?.message}</Text>
+                                            : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.message, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? Language?.message_deleted : parent_message?.message}</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -747,7 +841,7 @@ const ChatItem = (props: IChatItem) => {
                                                             </Marker>
                                                         </MapView>
                                                     </View>
-                                                    : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? "Message Deleted" : parent_message?.message}</Text>
+                                                    : <Text type={parent_message?.message?.includes(DELETE_TEXT) ? 'italic' : undefined} style={[styles.myMessage, { flex: 1, fontSize: scaler(12) }]} >{parent_message?.message?.includes(DELETE_TEXT) ? Language?.message_deleted : parent_message?.message}</Text>
                                         }
                                     </TouchableOpacity>
                                 </View>

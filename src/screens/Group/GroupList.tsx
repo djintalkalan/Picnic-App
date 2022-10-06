@@ -68,7 +68,7 @@ const GroupList: FC<any> = (props) => {
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
-                                dispatch(leaveGroup(_id))
+                                dispatch(leaveGroup({ groupId: _id, isAdmin: is_group_admin }))
                                 _hidePopUpAlert()
                             },
                             buttonStyle: { backgroundColor: colors.colorRed },
@@ -119,12 +119,13 @@ const GroupList: FC<any> = (props) => {
     }, [])
 
     const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_group_member, city, state, country } = item
+        const { is_group_member, city, state, country, can_anyone_host_events = 0 } = item
         return (
             <ListItem
                 containerStyle={{ height: ITEM_HEIGHT }}
                 textContainerStyle={{ justifyContent: 'center' }}
                 defaultIcon={Images.ic_group_placeholder}
+                borderEnabled={can_anyone_host_events == 1}
                 title={item?.name}
                 titleTextStyle={item?.is_default_group ? { color: colors.colorPrimary, fontSize: scaler(16) } : {}}
                 // highlight={}

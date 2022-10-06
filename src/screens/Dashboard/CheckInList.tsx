@@ -11,7 +11,7 @@ import { ActivityIndicator, FlatList, Image, StyleSheet, TextInput, View } from 
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
 import TZ from "tz-lookup"
-import { dateFormatInSpecificZone, getImageUrl, NavigationService, scaler } from 'utils'
+import { calculateImageUrl, dateFormatInSpecificZone, getImageUrl, NavigationService, scaler } from 'utils'
 
 const CheckInList: FC<any> = (props) => {
     const LOADING = useRef(true)
@@ -41,19 +41,21 @@ const CheckInList: FC<any> = (props) => {
 
 
     const _renderItem = useCallback(({ item, index }) => {
-        const { name, image, city, state, country } = item
+        const { name, city, state, country } = item
 
         const region = {
             latitude: parseFloat(item?.location?.coordinates?.[1] ?? 0),
             longitude: parseFloat(item?.location?.coordinates?.[0] ?? 0),
         }
 
+        const eventImage = calculateImageUrl(item?.image, item?.event_images)
+
         return (
             <ListItem
                 defaultIcon={Images.ic_group_placeholder}
                 title={name}
                 //@ts-ignore
-                icon={image ? { uri: getImageUrl(image, { width: scaler(50), type: 'events' }) } : undefined}
+                icon={eventImage ? { uri: getImageUrl(eventImage, { width: scaler(50), type: 'events' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 // subtitle={getCityOnly(city, state, country)}
                 subtitle={dateFormatInSpecificZone(item?.event_start_date_time, (item?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY hh:mm A z')}

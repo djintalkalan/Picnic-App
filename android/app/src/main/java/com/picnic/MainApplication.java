@@ -66,8 +66,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   @Override
   public void onCreate() {
     super.onCreate();
-    if (!BuildConfig.DEBUG) {
-        RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, BuildConfig.APP_TYPE == "dev" ? "development" : BuildConfig.APP_TYPE);
+    if (!BuildConfig.DEBUG && !BuildConfig.APP_TYPE.equals("dev")) {
+        RollbarReactNative.init(this, BuildConfig.ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN, BuildConfig.APP_TYPE);
     }
     SoLoader.init(this, /* native exopackage */ false);
     UltimateConfigModule.setBuildConfig(BuildConfig.class);
