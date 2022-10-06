@@ -6,6 +6,7 @@ import { isArray } from 'lodash';
 import { Platform } from 'react-native';
 import ImagePicker, { Options } from 'react-native-image-crop-picker';
 import Language from 'src/language/Language';
+import { WaitTill } from './utilities';
 
 const PickerOptions = {
     PROFILE_IMAGE_PICKER_OPTIONS: {
@@ -44,6 +45,7 @@ const openImagePicker = async (type: 'PROFILE_IMAGE_PICKER_OPTIONS' | 'MULTIPLE_
         const resizedImage = await openPickImageOrVideo(type, maxFiles)
         if (!resizedImage) return
         const s = Math.min(resizedImage?.width || 0, resizedImage?.height || 0)
+        await WaitTill(100);
         const croppedImage = await ImagePicker.openCropper({
             path: (resizedImage as Response)?.uri,
             mediaType: 'photo',
