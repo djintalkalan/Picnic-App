@@ -743,14 +743,14 @@ const EventDetail: FC<any> = (props) => {
                         <TouchableOpacity style={{ marginTop: scaler(20), paddingVertical: scaler(10), flexDirection: 'row', alignItems: 'center' }}
                             onPress={() => NavigationService.navigate('EventMembers', { id: event?._id })}>
                             <Text style={{ flex: 1 }}>{Language.check_in}</Text>
-                            <Text style={styles.address} >{event?.total_event_members_count}</Text>
+                            <Text style={styles.address} >{event?.total_sold_tickets}</Text>
                             <Image style={{ height: scaler(14), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
                         </TouchableOpacity>
                         : undefined}
                     {event?.is_admin ?
                         <>
                             <View style={{ height: 1, marginVertical: scaler(15), width: '100%', backgroundColor: '#DBDBDB' }} />
-                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({eventMembers?.length})</Text></Text>
+                            <Text style={styles.members} >{Language.members} <Text style={styles.membersCount} >({eventMembers?.length - 1})</Text></Text>
 
                             {(isOpened ? eventMembers : eventMembers.slice(0, 5)).map((item, index) => {
                                 return <Fragment key={index} >

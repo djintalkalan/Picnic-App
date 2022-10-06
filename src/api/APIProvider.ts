@@ -419,7 +419,7 @@ export const _scanTicket = async (body: any) => {
 
 export const _getUpcomingPastEvents = async (body: any, page: number) => {
     console.log("---------- _getUpcomingPastEvents Api Call ---------------")
-    return fetchApiData('user/get-my-upcoming-past-events?page=' + page + '&event_filter_type=' + body?.event_filter_type + '&q=' + (body?.q ?? "") + '&limit=8')
+    return fetchApiData('user/get-my-upcoming-past-events?page=' + page + '&event_filter_type=' + body?.event_filter_type + '&q=' + (body?.q ?? "") + '&limit=20')
 }
 
 export const _getMyAllGroups = async (body: any, page: number) => {
