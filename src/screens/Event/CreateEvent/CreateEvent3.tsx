@@ -59,12 +59,10 @@ const emptyTicketType: TicketType = {
   status: 1,
   plan_id: ""
 }
-const DropDownData = ['USD', 'EUR', 'GBP'];
+const DropDownData = ['USD', 'EUR', 'GBP', 'MXP', 'COP', 'AED'];
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
-    console.log("event?.sales_ends_on", event?.sales_ends_on);
-
     if (event?.sales_ends_on)
       return getZonedDate(event?.event_timezone, event?.sales_ends_on)
 

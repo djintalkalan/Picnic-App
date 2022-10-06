@@ -17,10 +17,13 @@ const EventMembers: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    const { count1, count2 } = useSelector((state: RootState) => ({
-        count1: state?.eventDetails?.[props?.route?.params?.id]?.eventMembersNotCheckedIn?.length,
-        count2: state?.eventDetails?.[props?.route?.params?.id]?.eventMembersCheckedIn?.length,
-    }), isEqual)
+    const { count1, count2 } = useSelector((state: RootState) => {
+        const { eventMembersNotCheckedIn = [], eventMembersCheckedIn = [] } = state?.eventDetails?.[props?.route?.params?.id] || {}
+        let count1 = 0, count2 = 0;
+        eventMembersNotCheckedIn?.forEach(e => count1 += (e?.tickets?.no_of_tickets || 0))
+        eventMembersCheckedIn?.forEach(e => count2 += (e?.tickets?.no_of_tickets || 0))
+        return ({ count1, count2 })
+    }, isEqual)
 
     const tabs = useMemo(() => {
         return [{
