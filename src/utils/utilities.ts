@@ -650,7 +650,7 @@ export const shareDynamicLink = async (name: string, { type, id, image }: { type
         store.dispatch(setLoadingAction(true))
         const t = type == 'event-detail' ? 'event' : 'group'
         const link = await buildLink("?t=" + type + "&i=" + id + "&l=" + Database.getStoredValue("selectedLanguage"), {
-            descriptionText: Language?.checkout_this + " " + Language?.[t]?.toLowerCase() + " `" + name + "` " + Language?.here,
+            descriptionText: Language.join_us_link,// Language?.checkout_this + " " + Language?.[t]?.toLowerCase() + " `" + name + "` " + Language?.here,
             title: "Picnic Groups",
             imageUrl: image || logoUrl
         })
@@ -691,7 +691,7 @@ export const shareAppLink = async (name: string) => {
         },
         social: {
             title: "Picnic Groups",
-            descriptionText: Language.picnic_share_line,
+            descriptionText: Language.join_us_link,
             imageUrl: logoUrl,
         },
         ios: {
