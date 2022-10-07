@@ -153,12 +153,13 @@ const EventDetail: FC<any> = (props) => {
 
 
     const shareEvent = useCallback(() => {
+        const image = imageArray?.find(_ => _?.type == 'image')?.name
         shareDynamicLink(event?.name, {
             type: "event-detail",
             id: event?._id,
-            image: event?.image ? getImageUrl(event?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
+            image: image ? getImageUrl(image, { width: 0 + scaler(400), type: 'events' }) : undefined
         });
-    }, [event])
+    }, [event, imageArray])
 
     const onConfirmCopy = useCallback(() => {
         // _hidePopUpAlert()
