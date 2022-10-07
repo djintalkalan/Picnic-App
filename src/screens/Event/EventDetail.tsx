@@ -332,7 +332,7 @@ const EventDetail: FC<any> = (props) => {
                 }
             })
         })
-    }, [event])
+    }, [event,shareEvent])
 
     const showAllTicketVisible = useCallback((e?: GestureResponderEvent) => {
         priceButtonRef.current?.measureInWindow((x, y, w, h) => {
