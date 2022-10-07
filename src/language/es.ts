@@ -470,5 +470,5 @@ export const es = {
     delete_event: 'Borrar grupo',
     this_event_is_not_available: 'Este evento no disponible',
     you_need_to_assign_new_leader: 'Debe asignar un nuevo líder antes de abandonar este grupo.',
-    join_us_link: 'Únase a nosotros aquí y desbloquee fuera & sobre',
+    join_us_link: 'Únete a nosotros y desbloquea tu vida social.',
 }
