@@ -48,10 +48,11 @@ const EventList: FC<any> = (props) => {
                 })
             buttons.push({
                 title: Language.share_event, onPress: () => {
+                    const eventImage = calculateImageUrl(item?.image, item?.event_images)
                     shareDynamicLink(name, {
                         type: "event-detail",
                         id: _id,
-                        image: item?.image ? getImageUrl(item?.image, { width: 0 + scaler(400), type: 'events' }) : undefined
+                        image: eventImage ? getImageUrl(eventImage, { width: 0 + scaler(400), type: 'events' }) : undefined
                     });
                 }
             })
