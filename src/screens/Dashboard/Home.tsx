@@ -1,4 +1,4 @@
-import { RootState } from 'app-store'
+import { RootState, store } from 'app-store'
 import { getAllCurrencies, getProfile, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, defaultLocation, Text } from 'custom-components'
@@ -7,8 +7,9 @@ import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, ImageStyle, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, AppState, GestureResponderEvent, Image, ImageSourcePropType, ImageStyle, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import RNShake from 'react-native-shake'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Octicons from 'react-native-vector-icons/Octicons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,7 +21,6 @@ import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink } fro
 
 
 const addIcon = Ionicons.getImageSourceSync("add-circle-sharp", 50, colors.colorPrimary)
-
 
 const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
@@ -71,6 +71,21 @@ const Home: FC = () => {
       dispatch(getProfile())
     })
   }, [])
+
+  useEffect(() => {
+    const shakeSubscription = RNShake.addListener(() => {
+      // Your code here...
+      console.log("Shacked", AppState.currentState)
+      if (AppState.currentState == 'active' && !store.getState()?.isLoading && !searchLoader) {
+        NavigationService.navigate("Home")
+      }
+    })
+
+    return () => {
+      shakeSubscription.remove()
+    }
+  }, [searchLoader])
+
 
   const insets = useSafeAreaInsets()
   const bottom = useMemo(() => {
