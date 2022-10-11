@@ -470,5 +470,6 @@ export const en = {
   delete_event: 'Delete event',
   this_event_is_not_available: 'This event is not available',
   you_need_to_assign_new_leader: 'You need to assign a new leader before leaving this group.',
+  undo_check_in: 'Undo check in',
 
 }

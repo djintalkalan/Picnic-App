@@ -1,5 +1,5 @@
 
-import { reportResource, verifyQrCode } from 'app-store/actions';
+import { reportResource, undoCheckIn, verifyQrCode } from 'app-store/actions';
 import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -8,7 +8,7 @@ import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import ImageLoader from 'custom-components/ImageLoader';
 import { capitalize } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { GestureResponderEvent, ImageSourcePropType, StyleProp, StyleSheet, TouchableHighlight, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,6 +64,23 @@ export const EventMemberList: FC<any> = (props) => {
                 }
             })
         }
+        if (props?.route?.params?.isCheckedIn) {
+            buttons.push({
+                title: Language.undo_check_in, onPress: () => {
+                    dispatch(undoCheckIn({
+                        data: {
+                            resource_id: item?._id,
+                            ticket_id: item?.tickets?.ticket_id
+                        },
+                        onSuccess: (b: boolean) => {
+                            if (b) {
+                                NavigationService.navigate("NotCheckedIn")
+                            }
+                        }
+                    }))
+                }
+            })
+        }
 
         return buttons
     }, [useLanguage()])
@@ -103,24 +120,25 @@ export const EventMemberList: FC<any> = (props) => {
                 flexDirection: 'row',
                 justifyContent: 'flex-start'
             }}>
-                <TouchableOpacity onPress={() => {
-                    swipeListRef?.current?.closeAllOpenRows()
-                    dispatch(verifyQrCode({
-                        data: {
-                            resource_id: item?._id,
-                            ticket_id: item?.tickets?.ticket_id
-                        },
-                        onSuccess: (b: boolean) => {
-                            if (b) {
-                                NavigationService.navigate("CheckedIn")
+                {props?.route?.params?.isCheckedIn ? <View /> :
+                    <TouchableOpacity onPress={() => {
+                        swipeListRef?.current?.closeAllOpenRows()
+                        dispatch(verifyQrCode({
+                            data: {
+                                resource_id: item?._id,
+                                ticket_id: item?.tickets?.ticket_id
+                            },
+                            onSuccess: (b: boolean) => {
+                                if (b) {
+                                    NavigationService.navigate("CheckedIn")
+                                }
                             }
-                        }
-                    }))
-                }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-start', width: scaler(70), backgroundColor: colors.colorPrimary }}>
-                    <MaterialCommunityIcons color={colors.colorWhite} name={'cloud-check-outline'} size={scaler(17)} />
-                    <Text style={{ marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{Language.check_in}</Text>
-                </TouchableOpacity>
-
+                        }))
+                    }} style={{ alignItems: 'center', justifyContent: 'center', height: '100%', alignSelf: 'flex-start', width: scaler(70), backgroundColor: colors.colorPrimary }}>
+                        <MaterialCommunityIcons color={colors.colorWhite} name={'cloud-check-outline'} size={scaler(17)} />
+                        <Text style={{ marginTop: scaler(5), fontSize: scaler(11), color: colors.colorWhite }} >{Language.check_in}</Text>
+                    </TouchableOpacity>
+                }
             </View>
 
             <View style={{
@@ -153,29 +171,31 @@ export const EventMemberList: FC<any> = (props) => {
     ), [])
     return (
         <View style={styles.container}>
-            {props?.route?.params?.isCheckedIn ?
+            {/* {props?.route?.params?.isCheckedIn ?
                 <FlatList
                     data={members}
                     keyExtractor={(_, i) => i.toString()}
                     ItemSeparatorComponent={() => <View style={{ flex: 1, height: 1, backgroundColor: '#EBEBEB' }} />}
                     renderItem={_renderEventMembers} />
-                :
-                <SwipeListView
-                    key={swipeKey}
-                    ref={swipeListRef}
-                    keyExtractor={(_, i) => i.toString()}
-                    useFlatList
-                    useNativeDriver
-                    data={members}
-                    renderItem={_renderEventMembers}
-                    renderHiddenItem={_renderHiddenItem}
-                    leftOpenValue={scaler(70)}
-                    rightOpenValue={-scaler(70)}
-                    closeOnRowOpen={true}
-                    // disableLeftSwipe
-                    ItemSeparatorComponent={() => <View style={{ flex: 1, height: 1, backgroundColor: '#EBEBEB' }} />}
-                />
-            }
+                
+                : */}
+            <SwipeListView
+                key={swipeKey}
+                ref={swipeListRef}
+                keyExtractor={(_, i) => i.toString()}
+                useFlatList
+                useNativeDriver
+                data={members}
+                renderItem={_renderEventMembers}
+                renderHiddenItem={_renderHiddenItem}
+                leftOpenValue={props?.route?.params?.isCheckedIn ? 0 : scaler(70)}
+                rightOpenValue={-scaler(70)}
+                disableRightSwipe={props?.route?.params?.isCheckedIn ? true : false}
+                closeOnRowOpen={true}
+                // disableLeftSwipe
+                ItemSeparatorComponent={() => <View style={{ flex: 1, height: 1, backgroundColor: '#EBEBEB' }} />}
+            />
+            {/* } */}
 
         </View>
     )
