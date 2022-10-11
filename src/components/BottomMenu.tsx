@@ -1,7 +1,7 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component } from "react";
-import { BackHandler, FlatList, GestureResponderEvent, Image, ImageSourcePropType, Platform, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import { BackHandler, FlatList, GestureResponderEvent, Image, ImageSourcePropType, StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import { SafeAreaViewWithStatusBar } from "./FocusAwareStatusBar";
@@ -91,7 +91,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
     render() {
         if (this.state.alertVisible && this.buttons?.length)
             return (
-                <SafeAreaViewWithStatusBar translucent style={styles.absolute}  >
+                <SafeAreaViewWithStatusBar translucent style={styles.absolute}>
                     <View style={styles.alertContainer} >
                         <FlatList
                             style={{ width: '100%' }}
@@ -100,7 +100,7 @@ export class BottomMenu extends Component<BottomMenuProps, { alertVisible: boole
                         />
                     </View>
 
-                    <TouchableOpacity onPress={this.onPressCloseButton} activeOpacity={0.9} style={[styles.alertContainer, { paddingVertical: scaler(15), marginBottom: Platform.OS == 'android' ? scaler(10) : 0 }, this.cancelButtonContainerStyle]} >
+                    <TouchableOpacity onPress={this.onPressCloseButton} activeOpacity={0.9} style={[styles.alertContainer, { paddingVertical: scaler(15), marginBottom: scaler(10) }, this.cancelButtonContainerStyle]} >
                         <Text style={[styles.title, this.cancelTextStyle]} >{this.cancelButtonText}</Text>
                     </TouchableOpacity>
 

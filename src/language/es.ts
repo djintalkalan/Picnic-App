@@ -471,4 +471,6 @@ export const es = {
     this_event_is_not_available: 'Este evento no disponible',
     you_need_to_assign_new_leader: 'Debe asignar un nuevo líder antes de abandonar este grupo.',
     join_us_link: 'Únete a nosotros y desbloquea tu vida social.',
+    undo_check_in: '',
+
 }
