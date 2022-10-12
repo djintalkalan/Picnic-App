@@ -161,6 +161,11 @@ export const setEventMembersList = (payload: { eventId: string, data: { eventMem
     payload
 })
 
+export const undoCheckIn = (payload: any) => ({
+    type: ActionTypes.UNDO_CHECK_IN,
+    payload
+})
+
 
 
 

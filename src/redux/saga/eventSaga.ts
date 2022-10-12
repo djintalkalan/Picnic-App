@@ -579,6 +579,32 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
     }
 }
 
+function* _undoCheckIn({ type, payload, }: action): Generator<any, any, any> {
+    yield put(setLoadingAction(true));
+    const { onSuccess } = payload
+    try {
+        let res = yield call(ApiProvider._undoCheckIn, payload?.data);
+        if (res.status == 200) {
+            yield put(getEventMembers(payload?.data?.resource_id));
+            _showSuccessMessage(res.message);
+            onSuccess(true)
+        } else if (res.status == 400) {
+            _showErrorMessage(res.message);
+            onSuccess(false)
+
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+            onSuccess(false)
+        }
+        yield put(setLoadingAction(false));
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+        onSuccess(false)
+    }
+}
+
 
 
 // Watcher: watch auth request
@@ -601,4 +627,5 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.AUTHORIZE_PAYMENT, _authorizePayment);
     yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
     yield takeLatest(ActionTypes.GET_EVENTS_FOR_CHECK_IN, _fetchEventForCheckIn);
+    yield takeLatest(ActionTypes.UNDO_CHECK_IN, _undoCheckIn);
 };

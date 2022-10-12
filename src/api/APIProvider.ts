@@ -563,3 +563,7 @@ export const _updateDeviceLanguage = async (body: any) => {
     return fetchApiData('user/update-default-mobile-language', 'POST', body)
 }
 
+export const _undoCheckIn = async (body: any) => {
+    console.log("---------- _undoCheckIn Api Call ---------------")
+    return fetchApiData('event/undo-checkin', 'POST', body)
+}
