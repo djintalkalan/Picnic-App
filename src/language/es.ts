@@ -470,5 +470,7 @@ export const es = {
     delete_event: 'Borrar grupo',
     this_event_is_not_available: 'Este evento no disponible',
     you_need_to_assign_new_leader: 'Debe asignar un nuevo líder antes de abandonar este grupo.',
+    event_chat: 'Chat del evento',
+    no_local_groups: 'No hay grupos locales aquí todavía',
 
 }

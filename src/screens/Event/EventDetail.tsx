@@ -50,6 +50,7 @@ const EventDetail: FC<any> = (props) => {
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
 
     const eventDate = new Date(event?.event_start_date_time);
+    // const eventDate = new Date("2021-09-10");
 
     const endSales = event?.sales_ends_on ? new Date(event?.sales_ends_on) : eventDate;
 
@@ -806,13 +807,15 @@ const EventDetail: FC<any> = (props) => {
                                         }} title={Language.add_to_calender} />
                                     </View> : undefined}
                                 <View style={{ flex: 1 }}>
-                                    <Button title={Language.start_chat}
+                                    <Button title={Language.event_chat}
+                                        containerStyle={{ flex: eventDate >= new Date() ? 1 : undefined }}
                                         onPress={() => NavigationService.navigate("EventChats", { id: event?._id })}
                                         fontColor={eventDate >= new Date() ? 'black' : 'white'}
                                         backgroundColor={eventDate >= new Date() ? 'white' : colors.colorPrimary}
                                         buttonStyle={{
                                             borderColor: 'black',
-                                            borderWidth: eventDate >= new Date() ? scaler(1) : 0
+                                            borderWidth: eventDate >= new Date() ? scaler(1) : 0,
+                                            flex: eventDate >= new Date() ? 1 : undefined
                                         }}
                                         textStyle={{ fontWeight: '400' }} />
                                 </View>
