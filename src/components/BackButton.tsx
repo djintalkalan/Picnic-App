@@ -1,8 +1,7 @@
-import { colors } from 'assets'
+import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
-import { ColorValue, GestureResponderEvent, StyleSheet, TouchableOpacity } from 'react-native'
-import Entypo from 'react-native-vector-icons/Entypo'
+import { ColorValue, GestureResponderEvent, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import { NavigationService, scaler } from 'utils'
 interface BackButtonProps {
     onPress?: (e?: GestureResponderEvent) => void
@@ -34,7 +33,7 @@ export const BackButton: FC<BackButtonProps> = (props) => {
             paddingVertical: marginVertical ?? scaler(10),
             backgroundColor: backgroundColor
         }]} >
-            <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
+            <Image source={Images.ic_left} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(30), resizeMode: 'contain' }} />
             {/* <Text style={styles.textStyle} >{Language.back}</Text> */}
         </TouchableOpacity>
     )

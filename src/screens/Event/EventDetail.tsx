@@ -332,7 +332,7 @@ const EventDetail: FC<any> = (props) => {
                 }
             })
         })
-    }, [event,shareEvent])
+    }, [event, shareEvent])
 
     const showAllTicketVisible = useCallback((e?: GestureResponderEvent) => {
         priceButtonRef.current?.measureInWindow((x, y, w, h) => {
@@ -745,7 +745,7 @@ const EventDetail: FC<any> = (props) => {
                             onPress={() => NavigationService.navigate('EventMembers', { id: event?._id })}>
                             <Text style={{ flex: 1 }}>{Language.check_in}</Text>
                             <Text style={styles.address} >{event?.total_event_members_count}</Text>
-                            <Image style={{ height: scaler(14), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
+                            <Image style={{ height: scaler(15), resizeMode: 'contain', marginLeft: scaler(15) }} source={Images.ic_right} />
                         </TouchableOpacity>
                         : undefined}
                     {event?.is_admin ?
