@@ -472,5 +472,6 @@ export const en = {
   you_need_to_assign_new_leader: 'You need to assign a new leader before leaving this group.',
   join_us_link: 'Join us here and unlock the out & about.',
   undo_check_in: 'Undo check in',
-
+  event_chat: 'Event chat',
+  no_local_groups: 'No local groups are here yet',
 }

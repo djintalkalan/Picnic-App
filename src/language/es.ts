@@ -472,5 +472,6 @@ export const es = {
     you_need_to_assign_new_leader: 'Debe asignar un nuevo líder antes de abandonar este grupo.',
     join_us_link: 'Únete a nosotros y desbloquea tu vida social.',
     undo_check_in: 'Deshacer registrarse',
-
+    event_chat: 'Chat del evento',
+    no_local_groups: 'No hay grupos locales aquí todavía',
 }
