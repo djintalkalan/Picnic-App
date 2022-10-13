@@ -1,8 +1,7 @@
-import { colors } from 'assets'
+import { colors, Images } from 'assets'
 import { Text, useKeyboardService } from 'custom-components'
 import React, { FC, useCallback } from 'react'
 import { GestureResponderEvent, Image, ImageURISource, StyleSheet, TouchableOpacity, View } from 'react-native'
-import Entypo from 'react-native-vector-icons/Entypo'
 import Language from 'src/language/Language'
 import { NavigationService, scaler } from 'utils'
 interface MyHeaderProps {
@@ -33,11 +32,11 @@ export const MyHeader: FC<MyHeaderProps> = (props) => {
 
 
     return (
-        <View style={[styles.container, scanText ? { justifyContent: 'flex-start', paddingHorizontal: scaler(42) } : {}]} >
+        <View style={[styles.container, scanText ? { justifyContent: 'flex-start', paddingHorizontal: scaler(55) } : {}]} >
             {backEnabled &&
                 <TouchableOpacity onPress={onPressDefault} style={[styles.button, {
                 }]} >
-                    <Entypo size={scaler(18)} name={'chevron-thin-left'} color={colors.colorBlack} />
+                    <Image source={Images.ic_left} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(30), resizeMode: 'contain' }} />
                 </TouchableOpacity>}
             <Text style={styles.title} >{title}</Text>
             {rightIcon &&
