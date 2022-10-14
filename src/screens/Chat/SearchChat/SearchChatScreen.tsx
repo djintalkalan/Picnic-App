@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
         height: scaler(19),
         // top: scaler(30),
         // left: scaler(25),
+        tintColor: colors.colorGreyInactive,
         resizeMode: 'contain',
     },
     imagePlaceholderContainer: {

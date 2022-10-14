@@ -36,7 +36,7 @@ export const ChatHeader: FC<IChatHeader> = (props) => {
                 } else
                     NavigationService.goBack()
             }} style={styles.backButton} >
-                <Image source={Images.ic_left} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
+                <Image source={Images.ic_left} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(35), resizeMode: 'contain' }} />
             </TouchableOpacity>
 
             <TouchableHighlight style={{ alignSelf: 'center', paddingHorizontal: scaler(3) }} onPress={onPress} underlayColor={colors.colorWhite} >
@@ -65,7 +65,9 @@ const defaultStyles = StyleSheet.create({
         paddingVertical: scaler(10),
     },
     backButton: {
-
+        height: scaler(35), width: scaler(35),
+        // backgroundColor: 'red',
+        alignItems: 'flex-start', justifyContent: 'center'
     },
     iconStyle: {
         height: scaler(35),

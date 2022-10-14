@@ -12,7 +12,7 @@ import {
     // ActivityIndicator,
     FlatList,
     // Image,
-    StyleSheet, TextInput, View
+    StyleSheet, Text, TextInput, View
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
@@ -128,6 +128,7 @@ const SelectGroup: FC<any> = (props) => {
             <View style={{ flex: 1, borderTopColor: 'rgba(0, 0, 0, 0.06)', borderTopWidth: scaler(1.5), marginTop: scaler(10) }} >
                 <FlatList
                     style={{ flex: 1 }}
+                    contentContainerStyle={{ flex: groups?.length ? undefined : 1 }}
                     keyboardShouldPersistTaps={'handled'}
                     data={groups}
                     // extraData={chats?.length}
@@ -135,6 +136,11 @@ const SelectGroup: FC<any> = (props) => {
                     bounces={false}
                     ItemSeparatorComponent={ListItemSeparator}
                     renderItem={_renderItem}
+                    ListEmptyComponent={() => {
+                        return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} >
+                            <Text style={{ textAlign: 'center' }} >{Language.no_local_groups}</Text>
+                        </View>
+                    }}
                     onEndReached={() => {
                         setTimeout(() => {
                             getPublicGroups()

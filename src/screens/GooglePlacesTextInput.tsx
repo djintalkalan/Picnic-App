@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
     imagePlaceholder: {
         height: scaler(16),
         width: scaler(16),
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        tintColor: colors.colorGreyInactive,
     },
     closeButton: {
         position: 'absolute',
