@@ -60,6 +60,15 @@ const emptyTicketType: TicketType = {
   plan_id: ""
 }
 const DropDownData = ['USD', 'EUR', 'GBP', 'MXP', 'COP', 'AED'];
+const RemovedCurrencies: string[] = [];
+
+// const DropDownData = ['USD', 'EUR', 'GBP'];
+// const RemovedCurrencies = ['MXP', 'COP', 'AED'];
+const getSelectedCurrency = (currency: string) => {
+  if (RemovedCurrencies.includes(currency))
+    return ''
+  return currency
+}
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
@@ -147,7 +156,7 @@ const CreateEvent3: FC<any> = props => {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
-      setValue('currency', event?.event_currency?.toUpperCase() || "USD")
+      setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
       setDate()
       setValue('cutoffDate', getCutoffDateTime(event))
       setValue('cutoffTime', getCutoffDateTime(event))
@@ -159,7 +168,7 @@ const CreateEvent3: FC<any> = props => {
           plan_id: _?._id,
           ticketTitle: _.name,
           ticketPrice: _?.amount?.toString(),
-          currency: _.currency?.toUpperCase(),
+          currency: getSelectedCurrency(_.currency?.toUpperCase()),
           ticketDescription: _.description,
           status: (_?.status || 1),
           capacity: _.capacity?.toString(),
@@ -171,7 +180,7 @@ const CreateEvent3: FC<any> = props => {
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
-        setValue('currency', event?.event_currency?.toUpperCase() || "USD")
+        setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
         setValue('cutoffDate', getCutoffDateTime(event))
         setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
