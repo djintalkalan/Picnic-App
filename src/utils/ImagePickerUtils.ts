@@ -8,6 +8,10 @@ import ImagePicker, { Options } from 'react-native-image-crop-picker';
 import Language from 'src/language/Language';
 import { WaitTill } from './utilities';
 
+ImagePicker.clean().then(() => {
+    console.log('removed all tmp images from tmp directory');
+}).catch(console.log);
+
 const PickerOptions = {
     PROFILE_IMAGE_PICKER_OPTIONS: {
         width: 800,
