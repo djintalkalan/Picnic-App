@@ -12,11 +12,12 @@ import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
 import Carousel from 'react-native-looped-carousel'
+import { openSettings } from 'react-native-permissions'
 import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -392,6 +393,43 @@ const EventDetail: FC<any> = (props) => {
             />
         )
     }, [])
+
+    const onPressAddToCalendar = useCallback(() => {
+        try {
+            const startDate = eventDate?.toISOString()
+            const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
+            presentEventCreatingDialog({
+                startDate,
+                endDate,
+                allDay: false,
+                location: event?.address,
+                title: '"' + event?.name + '" event from Picnic Groups',
+                notes: event?.name
+            }).then(res => {
+                console.log("Res", res);
+
+            }).catch(e => {
+                console.log("E", e);
+                if (e?.toString()?.includes('permissionNotGranted')) {
+                    Alert.alert(Language.permission_required, Language.app_needs_calendar_permission, [
+                        {
+                            text: Language.give_permission, onPress: async () => {
+                                await openSettings().then(() => {
+                                }).catch(e => console.log("Open Setting Error", e)).finally(() => {
+
+                                })
+                            },
+                        },
+                        { text: Language.cancel, }
+                    ], { cancelable: true })
+                }
+            })
+        }
+        catch (e) {
+            console.log("Error", e);
+
+        }
+    }, [event])
 
     if (!event) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} backgroundColor={colors.colorWhite} style={styles.container}>
@@ -782,29 +820,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                                 {eventDate >= new Date() ?
                                     <View style={{ flex: 1 }}>
-                                        <Button onPress={() => {
-                                            try {
-                                                const startDate = eventDate?.toISOString()
-                                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
-                                                presentEventCreatingDialog({
-                                                    startDate,
-                                                    endDate,
-                                                    allDay: false,
-                                                    location: event?.address,
-                                                    title: '"' + event?.name + '" event from Picnic Groups',
-                                                    notes: event?.name
-                                                }).then(res => {
-                                                    console.log("Res", res);
-
-                                                }).catch(e => {
-                                                    console.log("E", e);
-                                                })
-                                            }
-                                            catch (e) {
-                                                console.log("Error", e);
-
-                                            }
-                                        }} title={Language.add_to_calender} />
+                                        <Button onPress={onPressAddToCalendar} title={Language.add_to_calender} />
                                     </View> : undefined}
                                 <View style={{ flex: 1 }}>
                                     <Button title={Language.event_chat}
@@ -839,29 +855,7 @@ const EventDetail: FC<any> = (props) => {
                             disabled
                             containerStyle={{ marginHorizontal: scaler(10) }}
                         />
-                        <Button onPress={() => {
-                            try {
-                                const startDate = eventDate?.toISOString()
-                                const endDate = event?.event_end_time ? new Date(event?.event_end_date_time).toISOString() : add(eventDate, { minutes: 1 }).toISOString()
-                                presentEventCreatingDialog({
-                                    startDate,
-                                    endDate,
-                                    allDay: false,
-                                    location: event?.address,
-                                    title: '"' + event?.name + '" event from Picnic Groups',
-                                    notes: event?.name
-                                }).then(res => {
-                                    console.log("Res", res);
-
-                                }).catch(e => {
-                                    console.log("E", e);
-                                })
-                            }
-                            catch (e) {
-                                console.log("Error", e);
-
-                            }
-                        }} title={Language.add_to_calender}
+                        <Button onPress={onPressAddToCalendar} title={Language.add_to_calender}
                             containerStyle={{ marginHorizontal: scaler(10) }}
                         />
                     </>

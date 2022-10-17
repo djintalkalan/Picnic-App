@@ -265,6 +265,7 @@ export const es = {
     app_needs_location_permission: 'Se requiere permiso para encontrar grupos y eventos cercanos para usted',
     app_needs_contact_permission: 'Se requiere permiso para permitir compartir contactos en los chats',
     app_needs_photo_permission: 'Picnic Groups requiere acceso a su galería de fotos para permitirle elegir compartir imágenes.',
+    app_needs_calendar_permission: 'Picnic groups requiere acceso a tu calendario para añadir eventos.',
     unsupported_txt: '',
     unsupported_json: '',
     contacts_not_available: '',
