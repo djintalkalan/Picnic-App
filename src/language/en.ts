@@ -264,6 +264,7 @@ export const en = {
   drag_pin_to_select_location: 'Drag pin to select location',
   app_needs_location_permission: 'Permission is required to find nearby groups and events for you',
   app_needs_contact_permission: 'Permission is required to let you share contacts in chats',
+  app_needs_photo_permission: 'Picnic Groups requires access to your photo gallery to let you choose share pictures.',
   unsupported_txt: 'Unsupported file, only TXT files are acceptable',
   unsupported_json: 'Unsupported file, only JSON files are acceptable',
   contacts_not_available: 'Contacts not available',
