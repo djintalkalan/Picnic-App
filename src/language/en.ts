@@ -476,4 +476,6 @@ export const en = {
   undo_check_in: 'Undo check in',
   event_chat: 'Event chat',
   no_local_groups: 'No local groups are here yet',
+  paypal_connect: 'Connect your PayPal',
+  paypal_authorized: 'You have connected your PayPal',
 }

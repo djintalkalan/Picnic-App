@@ -71,6 +71,7 @@ import Database, { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
+import PaypalConnect from 'screens/Profile/PaypalConnect';
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
 
@@ -131,6 +132,7 @@ const dashboardScreens: IScreens = {
   SelectGroup,
   CheckInList,
   SelectAdmin,
+  PaypalConnect,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

@@ -30,7 +30,7 @@ type FormType = {
 };
 const { height, width } = Dimensions.get('screen')
 
-const CreateEvent3: FC<any> = props => {
+const CreateEvent4: FC<any> = props => {
     const [isBookingDisabled, setBookingDisabled] = useState(true);
     const [isPayByCash, setIsPayByCash] = useState(false)
     const [isSecure, setSecure] = useState(true)
@@ -404,7 +404,7 @@ const CreateEvent3: FC<any> = props => {
     );
 };
 
-export default CreateEvent3;
+export default CreateEvent4;
 
 const styles = StyleSheet.create({
     container: {
