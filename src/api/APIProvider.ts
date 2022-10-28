@@ -578,9 +578,9 @@ export const _partnerReferrals = async () => {
   return fetchApiData('onboarding/partner-referrals');
 };
 
-export const _paypalTrackSeller = async (body: any) => {
+export const _paypalTrackSeller = async () => {
   console.log('---------- _paypalTrackSeller Api Call ---------------');
-  return fetchApiData('onboarding/paypal-track-seller', 'POST', body);
+  return fetchApiData('onboarding/paypal-track-seller');
 };
 
 export const _updatePaypalMerchantId = async (body: any) => {
