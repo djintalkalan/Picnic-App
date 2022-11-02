@@ -1,5 +1,4 @@
 import { useIsFocused } from '@react-navigation/native'
-import { RootState } from 'app-store'
 import { getUserUpcomingPastEvents, IPaginationState, setActiveEvent } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
@@ -41,7 +40,7 @@ const ProfileEvents: FC<any> = (props) => {
 const ProfileEventsList: FC<any> = (props) => {
     const isFocused = useIsFocused()
     const type: 'upcoming' | 'past' = props?.route?.params?.type
-    const { isLoading, userEvents } = useSelector((state: RootState) => ({
+    const { isLoading, userEvents } = useSelector(state => ({
         isLoading: state.isLoading,
         userEvents: state?.userGroupsEvents?.[type],
     }))

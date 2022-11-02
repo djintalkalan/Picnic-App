@@ -1,5 +1,4 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
-import { RootState } from 'app-store'
 import { getEventChat, getEventDetail, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
@@ -168,12 +167,12 @@ const EventChats: FC<any> = (props) => {
             setLink("")
     }, [])
 
-    const { eventDetail, activeEvent } = useSelector((state: RootState) => ({
+    const { eventDetail, activeEvent } = useSelector(state => ({
         eventDetail: state?.eventDetails?.[state?.activeEvent?._id]?.event ?? state?.activeEvent,
         activeEvent: state?.activeEvent,
     }), shallowEqual)
 
-    const { chats } = useSelector((state: RootState) => ({
+    const { chats } = useSelector(state => ({
         chats: state?.eventChat?.events?.[state?.activeEvent?._id]?.chats ?? [],
     }))
 

@@ -1,5 +1,4 @@
 import { _totalSoldTickets } from 'api/APIProvider'
-import { RootState } from 'app-store/store'
 import { colors, Images } from 'assets'
 import { Button, Card, MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -20,7 +19,7 @@ const SelectTicket: FC = (props: any) => {
     }, [])
     const [allPlans, setAllPlans] = useState<any[]>([])
 
-    const { event } = useSelector((state: RootState) => ({
+    const { event } = useSelector(state => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 

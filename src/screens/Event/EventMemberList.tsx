@@ -1,6 +1,5 @@
 
 import { reportResource, undoCheckIn, verifyQrCode } from 'app-store/actions';
-import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Text } from 'custom-components';
@@ -18,7 +17,7 @@ import { formatAmount, getDisplayName, getImageUrl, NavigationService, scaler, _
 
 export const EventMemberList: FC<any> = (props) => {
     const dispatch = useDispatch();
-    const { members } = useSelector((state: RootState) => ({
+    const { members } = useSelector(state => ({
         members: state?.eventDetails?.[props?.route?.params?.id]?.[props?.route?.params?.isCheckedIn ? 'eventMembersCheckedIn' : 'eventMembersNotCheckedIn'],
     }))
 

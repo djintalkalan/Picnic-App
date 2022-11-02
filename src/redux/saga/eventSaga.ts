@@ -1,11 +1,11 @@
 import * as ApiProvider from 'api/APIProvider';
 import { deleteEventSuccess, getAllEvents, getEventDetail, getEventMembers, joinEventSuccess, leaveEventSuccess, onFetchEventsForCheckIn, pinEventSuccess, removeEventMemberSuccess, setAllEvents, setEventDetail, setEventMembers, setEventMembersList, setLoadingAction, setMyGroups, updateEventDetail } from "app-store/actions";
 import { setCreateEvent } from 'app-store/actions/createEventActions';
-import { store } from 'app-store/store';
+import { ICreateEventReducer, IEventForCheckInReducer } from 'app-store/reducers';
 import { defaultLocation } from 'custom-components';
 import Database from 'database';
 import { isEmpty } from 'lodash';
-import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_EVENT_DELETE, EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
@@ -96,7 +96,8 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
     yield put(setLoadingAction(true));
     try {
-        const data = store.getState().createEventState
+        const data: ICreateEventReducer = yield select(state => state?.createEventState)
+
         if (data?.is_free_event == 1 && data?.is_donation_enabled == 0) {
             data.is_booking_disabled = '0' as unknown as number
         }
@@ -130,7 +131,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let eventList = store.getState()?.event?.allEvents
+    let eventList: any[] = yield select(state => state?.event?.allEvents)
 
     if (!eventList?.length && payload?.setLoader) payload?.setLoader(true)
     // payload?.setLoader && payload?.setLoader(true)
@@ -184,8 +185,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> {
-    // const state:RootState = 
-    let event = store.getState()?.eventDetails?.[payload]?.event
+    let event = yield select(state => state?.eventDetails?.[payload]?.event)
     if (!event || type == ActionTypes.GET_EDIT_EVENT_DETAIL)
         yield put(setLoadingAction(true));
     try {
@@ -520,7 +520,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
 }
 
 function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any, any> {
-    let { pagination: { totalPages, ...pagination }, events } = store.getState()?.eventForCheckIn
+    let { pagination: { totalPages, ...pagination }, events }: IEventForCheckInReducer = yield select(state => state?.eventForCheckIn)
 
     if (totalPages !== -1 && payload?.page != 1) {
         if (totalPages <= pagination?.page) {

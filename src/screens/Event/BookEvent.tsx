@@ -1,7 +1,6 @@
 
 import { _totalSoldTickets } from 'api/APIProvider';
 import { authorizePayment, joinEvent } from 'app-store/actions';
-import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, CheckBox, KeyboardHideView, MyHeader, TextInput } from 'custom-components';
@@ -32,7 +31,7 @@ const BookEvent: FC = (props: any) => {
     const [selectedTicket, setSelectedTicket] = useState<any>({})
     const [toggle, setToggle] = useState(false)
     const [isUserDonating, setIsUserDonation] = useState(true)
-    const { event } = useSelector((state: RootState) => ({
+    const { event } = useSelector(state => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
 

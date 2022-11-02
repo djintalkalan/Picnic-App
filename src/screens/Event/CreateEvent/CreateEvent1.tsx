@@ -1,5 +1,4 @@
 import { config } from 'api';
-import { RootState } from 'app-store';
 import { getEditEventDetail, getMyGroups } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
@@ -52,18 +51,18 @@ const CreateEvent1: FC<any> = props => {
   const eventId = props?.route?.params?.id || null
   const [isPublicEvent, setPublicEvent] = useState(false)
 
-  const event = useSelector((state: RootState) => {
+  const event = useSelector(state => {
     return state?.createEventState
   })
 
-  const isEditable = useSelector((state: RootState) => {
+  const isEditable = useSelector(state => {
     return true//!(state?.eventDetails?.[eventId]?.event?.total_sold_tickets)
   }, isEqual)
 
   const loaded = useRef(false);
 
 
-  const { myGroups } = useSelector((state: RootState) => ({
+  const { myGroups } = useSelector(state => ({
     myGroups: [...state?.group?.myGroups, {
       _id: -1,
       name: Language.post_in_local_groups,

@@ -1,4 +1,3 @@
-import { RootState } from 'app-store'
 import { leaveGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, MyHeader, Text } from 'custom-components'
@@ -17,7 +16,7 @@ const SelectAdmin: FC<any> = (props) => {
 
     const [userData] = useDatabase("userData")
 
-    const { isLoading, groupMembers, } = useSelector((state: RootState) => ({
+    const { isLoading, groupMembers, } = useSelector(state => ({
         isLoading: state.isLoading,
         groupMembers: (state?.groupDetails?.[props?.route?.params?.id]?.groupMembers ?? [])?.filter(_ => (!_?.is_admin)),
     }), isEqual)

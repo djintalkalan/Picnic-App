@@ -1,6 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { _getAdminChatCount, _whatsappImport } from 'api'
-import { RootState } from 'app-store'
 import { blockUnblockResource, deleteGroup, getGroupChat, getGroupDetail, getGroupMembers, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, Text } from 'custom-components'
@@ -94,7 +93,7 @@ const GroupDetail: FC<any> = (props) => {
     const [isOpened, setOpened] = useState(false)
     const dispatch = useDispatch()
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
-    const { group, groupMembers, } = useSelector((state: RootState) => ({
+    const { group, groupMembers, } = useSelector(state => ({
         group: state?.groupDetails?.[props?.route?.params?.id]?.group,
         groupMembers: sortBy((state?.groupDetails?.[props?.route?.params?.id]?.groupMembers || []), _ => (!_?.is_admin)),
     }), isEqual)

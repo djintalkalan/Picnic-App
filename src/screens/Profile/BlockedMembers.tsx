@@ -1,4 +1,3 @@
-import { RootState } from 'app-store'
 import { blockUnblockResource, getBlockedMembers, IPaginationState } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
@@ -19,7 +18,7 @@ const BlockedMembers: FC<any> = (props) => {
 
     const [userData] = useDatabase("userData")
 
-    const { isLoading, blockedUsers } = useSelector((state: RootState) => ({
+    const { isLoading, blockedUsers } = useSelector(state => ({
         isLoading: state.isLoading,
         blockedUsers: state?.privacyData?.blockedUsers
     }), isEqual)
