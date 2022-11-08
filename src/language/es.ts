@@ -476,4 +476,15 @@ export const es = {
     undo_check_in: 'Deshacer registrarse',
     event_chat: 'Chat del evento',
     no_local_groups: 'No hay grupos locales aquí todavía',
+    paypal_connect: '',
+    paypal_authorized: '',
+    need_to_connect_paypal: '',
+    connect_paypal_and_automate: '',
+    paypal_connected_successfully: '',
+    yes_connect: '',
+    connect: '',
+    merchant_id: '',
+
+
+
 }

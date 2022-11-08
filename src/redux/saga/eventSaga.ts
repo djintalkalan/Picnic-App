@@ -464,9 +464,9 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
 
 function* _authorizePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
+    const { paypal_merchant_id, resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
     try {
-        let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
+        let res = yield call(paypal_merchant_id ? ApiProvider._authorizePaymentV2 : ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
         if (res.status == 200) {
             if (res?.data?.is_payment_by_passed) {
                 _showSuccessMessage(res?.message)
@@ -493,9 +493,9 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
 
 function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { res: { _id }, token, PayerID: payer_id, resource_id } = payload
+    const { res: { _id }, token, PayerID: payer_id, resource_id, paypal_merchant_id } = payload
     try {
-        let res = yield call(ApiProvider._capturePayment, { _id, token, payer_id });
+        let res = yield call(paypal_merchant_id ? ApiProvider._capturePaymentV2 : ApiProvider._capturePayment, { _id, ...(paypal_merchant_id ? { token, payer_id } : {}) });
         if (res.status == 200) {
             // NavigationService.goBack()
             // yield put(joinEvent(rest));
@@ -606,6 +606,25 @@ function* _undoCheckIn({ type, payload, }: action): Generator<any, any, any> {
 }
 
 
+function* _connectPaypal({ type, payload }: action): Generator<any> {
+    yield put(setLoadingAction(true));
+    const { merchantIdInPayPal } = payload;
+    console.log('merchantIdInPayPal ====>', merchantIdInPayPal);
+    try {
+        let res = yield call(ApiProvider._connectPaypal, { merchantIdInPayPal });
+        if (res?.status === 200) {
+            NavigationService.goBack();
+        } else if (res?.status === 400) {
+            _showErrorMessage(res?.message);
+        } else {
+            _showErrorMessage(Language.something_went_wrong);
+        }
+        yield put(setLoadingAction(false));
+    } catch (error) {
+        console.log('Catch Error', error);
+        yield put(setLoadingAction(false));
+    }
+}
 
 // Watcher: watch auth request
 export default function* watchEvents() {
@@ -628,4 +647,6 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.CAPTURE_PAYMENT, _capturePayment);
     yield takeLatest(ActionTypes.GET_EVENTS_FOR_CHECK_IN, _fetchEventForCheckIn);
     yield takeLatest(ActionTypes.UNDO_CHECK_IN, _undoCheckIn);
+    yield takeLatest(ActionTypes.CONNECT_PAYPAL, _connectPaypal);
+
 };

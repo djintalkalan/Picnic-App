@@ -166,6 +166,10 @@ export const undoCheckIn = (payload: any) => ({
     payload
 })
 
+export const connectPaypal = (payload: any) => ({
+    type: ActionTypes.CONNECT_PAYPAL,
+    payload,
+});
 
 
 

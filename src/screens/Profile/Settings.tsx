@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native'
+import { useIsFocused } from '@react-navigation/native'
 import { config, _setLanguage } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
@@ -13,7 +13,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
-import Database, { useDatabase } from 'src/database/Database'
+import { useDatabase } from 'src/database/Database'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
@@ -40,23 +40,23 @@ const Settings: FC<any> = (props) => {
     const [userData] = useDatabase("userData")
     // console.log('userData', userData);
 
-
     const dispatch = useDispatch()
 
     const passwordRef = useRef("")
 
+    // useFocusEffect(useCallback(() => {
+    //     setTimeout(() => {
+    //         false && Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+    //     }, 2000)
+    // }, []))
 
-    useFocusEffect(useCallback(() => {
-        setTimeout(() => {
-            false && Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
-        }, 2000)
-    }, []))
-
-
+    const isFocused = useIsFocused()
 
     useEffect(() => {
-        dispatch(getProfile())
-    }, [selectedLanguage]);
+        if (isFocused) {
+            dispatch(getProfile())
+        }
+    }, [selectedLanguage, isFocused]);
 
     const setLanguage = useCallback((language: any) => {
         dispatch(setLoadingAction(true))
