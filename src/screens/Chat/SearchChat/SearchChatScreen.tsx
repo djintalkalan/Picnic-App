@@ -1,5 +1,4 @@
 import { _getMyEvents, _searchChat, _searchPersonChat } from 'api'
-import { RootState } from 'app-store'
 import { setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -21,7 +20,7 @@ const SearchChatScreen: FC<any> = (props) => {
     const { setChats = () => (null), setEvents = () => (null), searchedText, setSearchedText = () => (null) } = useSearchState()
     const chatRoomId = props?.route?.params?.chatRoomId
     const person = props?.route?.params?.person
-    const { activeGroup } = useSelector((state: RootState) => {
+    const { activeGroup } = useSelector(state => {
         return !chatRoomId ? {
             activeGroup: props?.route?.params?.type == 'group' ? state?.activeGroup : state?.activeEvent,
         } : {}

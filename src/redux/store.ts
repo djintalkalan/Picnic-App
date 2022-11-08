@@ -2,30 +2,46 @@
 import * as Reducers from 'app-store/reducers';
 import { ICreateEventReducer, IEventChatReducer, IEventDetailReducer, IEventForCheckInReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPersonChatReducer, IPrivacyData, IPrivacyState, IUserEventsGroups } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
+import { DefaultRootState, EqualityFn } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
+import { SelectEffect, Tail } from 'redux-saga/effects';
 import { mergeStorageInPersistedReducer } from 'src/database/Database';
 
-export interface RootState {
-    isLoading: boolean
-    loadingMsg: string
-    privacyState: IPrivacyState
-    notificationSettings: INotificationSettings
-    privacyData: IPrivacyData
-    group: IGroupReducer
-    groupDetails: IGroupDetailReducer,
-    activeGroup: any,
-    eventDetails: IEventDetailReducer,
-    activeEvent: any,
-    homeData: IHomeReducer
-    event: IEventReducer
-    groupChat: IGroupChatReducer
-    eventChat: IEventChatReducer
-    personChat: IPersonChatReducer
-    userGroupsEvents: IUserEventsGroups
-    createEventState: ICreateEventReducer
-    eventForCheckIn: IEventForCheckInReducer
+declare module 'react-redux' {
+    export interface DefaultRootState {
+        isLoading: boolean
+        loadingMsg: string
+        privacyState: IPrivacyState
+        notificationSettings: INotificationSettings
+        privacyData: IPrivacyData
+        group: IGroupReducer
+        groupDetails: IGroupDetailReducer,
+        activeGroup: any,
+        eventDetails: IEventDetailReducer,
+        activeEvent: any,
+        homeData: IHomeReducer
+        event: IEventReducer
+        groupChat: IGroupChatReducer
+        eventChat: IEventChatReducer
+        personChat: IPersonChatReducer
+        userGroupsEvents: IUserEventsGroups
+        createEventState: ICreateEventReducer
+        eventForCheckIn: IEventForCheckInReducer
+    }
+
+    function useSelector<TState = DefaultRootState, Selected = unknown>(
+        selector: (state: TState) => Selected,
+        equalityFn?: EqualityFn<Selected> | undefined
+    ): Selected
+}
+
+declare module 'redux-saga/effects' {
+    function select<Fn extends (state: DefaultRootState, ...args: any[]) => any>(
+        selector: Fn,
+        ...args: Tail<Parameters<Fn>>
+    ): SelectEffect
 }
 
 const PERSIST_ENABLED = true// !__DEV__
@@ -75,7 +91,7 @@ const rootReducer = combineReducers({
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);
 
-const store: Store<RootState> = createStore<RootState, any, any, any>(
+const store: Store<DefaultRootState> = createStore<DefaultRootState, any, any, any>(
     persistedReducer,/* preloadedState, */
     applyMiddleware(sagaMiddleware)
 )

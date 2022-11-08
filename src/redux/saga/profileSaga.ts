@@ -1,8 +1,7 @@
 import * as ApiProvider from 'api/APIProvider';
 import { setLoadingAction } from "app-store/actions";
 import { setNotificationSettings, setUserGroups, setUserUpcomingPastEvents } from 'app-store/actions/profileActions';
-import { store } from 'app-store/store';
-import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import IntercomService from 'src/intercom/IntercomService';
 import Language, { updateLanguageDirect } from 'src/language/Language';
@@ -133,7 +132,7 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> {
-    let groups = store.getState()?.userGroupsEvents?.groups;
+    let groups: any[] = yield select(state => state?.userGroupsEvents?.groups);
     if (!groups?.length)
         yield put(setLoadingAction(true));
     try {
@@ -165,7 +164,7 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
 
 function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any, any> {
     const event_filter_type: 'upcoming' | 'past' = payload?.event_filter_type
-    let events = store.getState()?.userGroupsEvents?.[event_filter_type];
+    let events: any[] = yield select(state => state?.userGroupsEvents?.[event_filter_type]);
     if (!events?.length)
         yield put(setLoadingAction(true));
     try {

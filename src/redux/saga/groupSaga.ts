@@ -1,8 +1,7 @@
 import * as ApiProvider from 'api/APIProvider';
 import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
-import { store } from 'app-store/store';
 import { defaultLocation } from 'custom-components';
-import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_GROUP_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
 import Database from 'src/database/Database';
 import Language from 'src/language/Language';
@@ -36,7 +35,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
 }
 
 function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, any> {
-    let blockedUsers = store.getState()?.privacyData?.blockedUsers || []
+    let blockedUsers: any[] = yield select(state => state?.privacyData?.blockedUsers || [])
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getBlockedMembers, payload?.page,);
@@ -210,7 +209,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let groupList = store.getState()?.group?.allGroups
+    let groupList: any[] = yield select(state => state?.group?.allGroups || [])
     if (!groupList?.length && payload?.setLoader) payload?.setLoader(true)
 
     // if (!groupList?.length)
@@ -246,7 +245,7 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
 
 function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> {
     // const state:RootState = 
-    let group = store.getState()?.groupDetails?.[payload]?.group
+    let group = yield select(state => state?.groupDetails?.[payload]?.group)
     if (!group)
         yield put(setLoadingAction(true));
     try {

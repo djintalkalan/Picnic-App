@@ -1,5 +1,4 @@
 import { useFocusEffect } from '@react-navigation/core'
-import { RootState } from 'app-store'
 import { getMutedReportedCount } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
@@ -21,7 +20,7 @@ const PrivacyScreen: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    const { privacyState } = useSelector((state: RootState) => ({
+    const { privacyState } = useSelector(state => ({
         privacyState: state.privacyState
     }), isEqual)
 

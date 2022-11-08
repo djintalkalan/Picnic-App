@@ -1,4 +1,3 @@
-import { RootState } from 'app-store';
 import { cancelUpload } from 'app-store/actions';
 import { colors } from 'assets';
 import { isEqual, round, toNumber } from 'lodash';
@@ -26,7 +25,7 @@ export interface IProgress extends S3Progress {
 }
 
 export const Loader: FC<LoaderProps> = (props) => {
-    const { isLoading, loadingMsg, type } = useSelector((state: RootState) => ({
+    const { isLoading, loadingMsg, type } = useSelector(state => ({
         isLoading: state.isLoading,
         loadingMsg: state?.loadingMsg.replace("%", ""),
         type: state?.loadingMsg?.includes("%") ? 'progress' : "normal",
@@ -39,7 +38,6 @@ export const Loader: FC<LoaderProps> = (props) => {
     if (props?.loading || isLoading)
         return (
             <Spinner
-
                 visible={props?.loading || isLoading}
                 // visible
                 size={size}

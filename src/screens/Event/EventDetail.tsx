@@ -1,7 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
 import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
-import { RootState } from 'app-store'
 import { deleteEvent, deleteEventAsPublicAdmin, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
@@ -43,7 +42,7 @@ const EventDetail: FC<any> = (props) => {
     const { loadVideo } = useVideoPlayer()
     const [imageArray, setImageArray] = useState<Array<any>>([])
     const [selectedBullet, setSelectedBullet] = useState<number>(0)
-    const { event, eventMembers } = useSelector((state: RootState) => ({
+    const { event, eventMembers } = useSelector(state => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
         eventMembers: state?.eventDetails?.[props?.route?.params?.id]?.eventMembers ?? [],
     }), isEqual)

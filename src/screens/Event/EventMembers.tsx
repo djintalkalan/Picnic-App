@@ -1,4 +1,3 @@
-import { RootState } from 'app-store';
 import { getEventMembers } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -17,7 +16,7 @@ const EventMembers: FC<any> = (props) => {
 
     const dispatch = useDispatch()
 
-    const { count1, count2 } = useSelector((state: RootState) => {
+    const { count1, count2 } = useSelector(state => {
         const { eventMembersNotCheckedIn = [], eventMembersCheckedIn = [] } = state?.eventDetails?.[props?.route?.params?.id] || {}
         let count1 = 0, count2 = 0;
         eventMembersNotCheckedIn?.forEach(e => count1 += (e?.tickets?.no_of_tickets || 0))

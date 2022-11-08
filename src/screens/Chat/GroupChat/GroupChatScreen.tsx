@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootState } from 'app-store'
 import { getGroupDetail, joinGroup } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import ColorPicker from 'custom-components/ColorPicker'
@@ -22,7 +21,7 @@ const { height, width } = Dimensions.get('screen')
 const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (props) => {
 
     const currentIndexRef = useRef(0);
-    const { groupDetail, activeGroup } = useSelector((state: RootState) => {
+    const { groupDetail, activeGroup } = useSelector(state => {
         return {
             groupDetail: state?.groupDetails?.[props?.route?.params?.id]?.group,
             activeGroup: state?.activeGroup

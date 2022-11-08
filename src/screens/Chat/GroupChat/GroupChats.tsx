@@ -1,5 +1,4 @@
 import { useIsFocused } from '@react-navigation/native'
-import { RootState } from 'app-store'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
@@ -163,12 +162,12 @@ export const GroupChats: FC<any> = (props) => {
             setLink("")
     }, [])
 
-    const { groupDetail, activeGroup } = useSelector((state: RootState) => ({
+    const { groupDetail, activeGroup } = useSelector(state => ({
         groupDetail: state?.groupDetails?.[state?.activeGroup?._id]?.group,
         activeGroup: state?.activeGroup,
     }), shallowEqual)
 
-    const { chats } = useSelector((state: RootState) => ({
+    const { chats } = useSelector(state => ({
         chats: state?.groupChat?.groups?.[state?.activeGroup?._id]?.chats ?? [],
     }))
 

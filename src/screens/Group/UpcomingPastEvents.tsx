@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootState } from 'app-store'
 import { getMyEvents, setActiveEvent } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
@@ -20,7 +19,7 @@ const UpcomingPastEvents: FC<NativeStackScreenProps<RootParams, 'UpcomingPastEve
         })
     }, [])
 
-    const { events } = useSelector((state: RootState) => {
+    const { events } = useSelector(state => {
         return {
             events: state?.groupDetails?.[route?.params?.id]?.[route?.params?.type == "upcoming" ? 'upcomingEvents' : 'pastEvents']
         }

@@ -1,5 +1,4 @@
 import { useIsFocused } from '@react-navigation/native'
-import { RootState } from 'app-store'
 import { getPersonChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
@@ -170,7 +169,7 @@ const PersonChat: FC<any> = (props) => {
             setLink("")
     }, [])
 
-    const { chats } = useSelector((state: RootState) => ({
+    const { chats } = useSelector(state => ({
         chats: state?.personChat?.chatRooms?.[person?._id]?.chats || [],
     }))
 

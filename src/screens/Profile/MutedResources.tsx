@@ -1,4 +1,3 @@
-import { RootState } from 'app-store'
 import { getMutedResources, IPaginationState, IResourceType, muteUnmuteResource } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Text } from 'custom-components'
@@ -18,7 +17,7 @@ const MutedResources: FC<any> = (props) => {
     const [userData] = useDatabase("userData")
     const type: IResourceType = props?.route?.params?.type
 
-    const { isLoading, mutedGroups, mutedEvents } = useSelector((state: RootState) => {
+    const { isLoading, mutedGroups, mutedEvents } = useSelector(state => {
         return ({
             isLoading: state.isLoading,
             mutedGroups: state?.privacyData?.mutedGroups,
