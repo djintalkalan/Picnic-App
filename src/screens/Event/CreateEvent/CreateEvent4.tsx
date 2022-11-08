@@ -16,10 +16,10 @@ import Language from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
 
 type FormType = {
-    paypalEmail: string;
-    apiUserName: string;
-    apiPassword: string;
-    apiSignature: string;
+    // paypalEmail: string;
+    // apiUserName: string;
+    // apiPassword: string;
+    // apiSignature: string;
     policy: string;
     taxRate: string;
     taxPrice: string;
@@ -56,12 +56,15 @@ const CreateEvent4: FC<any> = props => {
     }, [])
 
     const setEventValues = useCallback(() => {
+        console.log("event", event);
+        // console.log("userData?.paypal_merchant_id", userData?.paypal_merchant_id);
+
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
-        event?.payment_method && event?.payment_method?.includes('paypal') && setIsPayByPaypal(true)
-        setValue('paypalEmail', event?.payment_email ?? '')
-        setValue('apiUserName', event?.payment_api_username ?? '')
-        setValue('apiPassword', event?.payment_api_password ?? '')
-        setValue('apiSignature', event?.payment_api_signature ?? '')
+        event?.payment_method && event?.payment_method?.includes('paypal') && userData?.paypal_merchant_id && setIsPayByPaypal(true)
+        // setValue('paypalEmail', event?.payment_email ?? '')
+        // setValue('apiUserName', event?.payment_api_username ?? '')
+        // setValue('apiPassword', event?.payment_api_password ?? '')
+        // setValue('apiSignature', event?.payment_api_signature ?? '')
         uploadedImage.current = event?.image?.path ? '' : event.image
         if (event.is_donation_enabled != 1) {
             setValue('taxRate', event?.event_tax_rate?.toString() || '')
@@ -73,8 +76,7 @@ const CreateEvent4: FC<any> = props => {
         // }
         setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
 
-    }, [])
-    console.log("event", event);
+    }, [userData?.paypal_merchant_id])
 
     const onSubmit = useCallback(
         async (data) => {
@@ -116,6 +118,10 @@ const CreateEvent4: FC<any> = props => {
             // payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
             // payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
             // payment_api_signature: usePaypalBusinessAccount && data?.apiSignature?.trim() || '',
+            payment_email: null,
+            payment_api_username: null,
+            payment_api_password: null,
+            payment_api_signature: null,
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
@@ -136,6 +142,7 @@ const CreateEvent4: FC<any> = props => {
                 payload.event_currency = payload.ticket_plans[0].currency
             }
         }
+        // return console.log(payload);
         dispatch(updateCreateEvent(payload))
         setTimeout(() => {
             // return console.log('store.getState().createEventState', store.getState().createEventState);

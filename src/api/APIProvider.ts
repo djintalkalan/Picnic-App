@@ -432,11 +432,20 @@ export const _authorizePayment = async (body: any) => {
   return fetchApiData('payment/authorise-paypal', "POST", body)
 }
 
+export const _authorizePaymentV2 = async (body: any) => {
+  console.log("---------- _authorizePayment Api Call ---------------")
+  return fetchApiData('payment/authorise-paypal-v2', "POST", body)
+}
+
 export const _capturePayment = async (body: any) => {
   console.log("---------- _capturePayment Api Call ---------------")
   return fetchApiData('payment/capture-paypal', "POST", body)
 }
 
+export const _capturePaymentV2 = async (body: any) => {
+  console.log("---------- _capturePayment Api Call ---------------")
+  return fetchApiData('payment/capture-paypal-v2', "POST", body)
+}
 export const _whatsappImport = async (body: FormData, type: string) => {
   console.log("---------- whatsappImport Api Call ---------------")
   return fetchApiData(type + '/import', "POST", body)

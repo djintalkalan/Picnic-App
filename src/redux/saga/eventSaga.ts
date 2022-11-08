@@ -464,9 +464,9 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
 
 function* _authorizePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
+    const { paypal_merchant_id, resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
     try {
-        let res = yield call(ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
+        let res = yield call(paypal_merchant_id ? ApiProvider._authorizePaymentV2 : ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
         if (res.status == 200) {
             if (res?.data?.is_payment_by_passed) {
                 _showSuccessMessage(res?.message)
@@ -493,9 +493,9 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
 
 function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { res: { _id }, token, PayerID: payer_id, resource_id } = payload
+    const { res: { _id }, token, PayerID: payer_id, resource_id, paypal_merchant_id } = payload
     try {
-        let res = yield call(ApiProvider._capturePayment, { _id, token, payer_id });
+        let res = yield call(paypal_merchant_id ? ApiProvider._capturePaymentV2 : ApiProvider._capturePayment, { _id, ...(paypal_merchant_id ? { token, payer_id } : {}) });
         if (res.status == 200) {
             // NavigationService.goBack()
             // yield put(joinEvent(rest));
