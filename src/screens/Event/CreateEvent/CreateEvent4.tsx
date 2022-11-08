@@ -1,23 +1,19 @@
-import { _getMerchantInfo } from 'api';
-import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
+import { createEvent, getProfile, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { Switch } from 'custom-components/Switch';
-import Database from 'database/Database';
+import { useDatabase } from 'database/Database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import CryptoJS from "react-native-crypto-js";
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
-import { scaler } from 'utils';
+import { NavigationService, scaler } from 'utils';
 
 type FormType = {
     paypalEmail: string;
@@ -38,8 +34,9 @@ const CreateEvent4: FC<any> = props => {
     const uploadedImage = useRef('');
     const uploadedImageArray = useRef<Array<any>>([]);
     const [isPayByPaypal, setIsPayByPaypal] = useState(false)
-    const [usePaypalBusinessAccount, setPaypalBusinessAccount] = useState(false)
     const { current: event } = useRef(store.getState().createEventState)
+    const [userData] = useDatabase('userData');
+
     const dispatch = useDispatch()
     const {
         control,
@@ -53,42 +50,9 @@ const CreateEvent4: FC<any> = props => {
     });
     const keyboardValues = useKeyboardService()
 
-
-    useEffect(() => {
-        if (isPayByPaypal) {
-            try {
-                _getMerchantInfo().then(
-                    res => {
-                        if (res?.status == 200) {
-                            const token = res?.data?.token
-                            const userData = Database.getStoredValue("userData");
-                            const bytes = CryptoJS.AES.decrypt(token, userData?._id);
-                            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-                            if (!event?.payment_api_password) {
-                                setValue('apiPassword', decryptedData?.payment_api_password)
-                            }
-                            if (!event?.payment_api_signature) {
-                                setValue('apiSignature', decryptedData?.payment_api_signature)
-                            }
-                            if (!event?.payment_api_username) {
-                                setValue('apiUserName', decryptedData?.payment_api_username)
-                            }
-                            if (!event?.payment_email) {
-                                setValue('paypalEmail', decryptedData?.payment_email)
-                            }
-                            console.log("data", decryptedData);
-                        }
-                    }
-                ).catch(e => console.log(e))
-            }
-            catch {
-                (e: any) => console.log(e);
-            }
-        }
-    }, [isPayByPaypal, event])
-
     useEffect(() => {
         setEventValues()
+        dispatch(getProfile())
     }, [])
 
     const setEventValues = useCallback(() => {
@@ -104,9 +68,9 @@ const CreateEvent4: FC<any> = props => {
             setValue('taxPrice', event?.event_tax_rate ? (round(((parseFloat(event?.event_tax_rate?.toString()) / 100) * parseFloat(event?.event_fees.toString())), 2)).toString() : '')
             setValue('policy', event?.event_refund_policy ?? '')
         }
-        if (event?.payment_api_signature || event?.is_creators_paypal_configured == 1) {
-            setPaypalBusinessAccount(true)
-        }
+        // if (event?.payment_api_signature || event?.is_creators_paypal_configured == 1) {
+        //     setPaypalBusinessAccount(true)
+        // }
         setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
 
     }, [])
@@ -139,19 +103,19 @@ const CreateEvent4: FC<any> = props => {
             }
         },
 
-        [isPayByPaypal, isPayByCash, event, usePaypalBusinessAccount, isBookingDisabled],
+        [isPayByPaypal, isPayByCash, event, isBookingDisabled],
     );
 
     const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
 
         const payload: any = {
-            is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
+            // is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             is_booking_disabled: isBookingDisabled ? '1' : '0',
             payment_method: (() => { const methods = []; isPayByCash && methods.push('cash'); isPayByPaypal && methods.push('paypal'); return methods; })(),
-            payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
-            payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
-            payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
-            payment_api_signature: usePaypalBusinessAccount && data?.apiSignature?.trim() || '',
+            // payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
+            // payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
+            // payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
+            // payment_api_signature: usePaypalBusinessAccount && data?.apiSignature?.trim() || '',
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
@@ -189,7 +153,7 @@ const CreateEvent4: FC<any> = props => {
             );
 
         }, 0);
-    }, [usePaypalBusinessAccount, isBookingDisabled]);
+    }, [isBookingDisabled]);
 
     const calculateButtonDisability = useCallback(() => {
         if ((!isPayByPaypal && !isPayByCash) && !isBookingDisabled
@@ -229,7 +193,17 @@ const CreateEvent4: FC<any> = props => {
                             <MaterialIcons name={isPayByCash ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                         </TouchableOpacity>
                         <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
-                        <TouchableOpacity style={styles.payView} onPress={() => setIsPayByPaypal(!isPayByPaypal)}>
+                        <TouchableOpacity style={styles.payView} onPress={() => {
+                            if (!isPayByPaypal && !userData?.paypal_merchant_id) {
+                                NavigationService.navigate('PaypalDetails', {
+                                    onSuccess: () => {
+                                        setIsPayByPaypal(true)
+                                    }
+                                })
+                            } else {
+                                setIsPayByPaypal(!isPayByPaypal)
+                            }
+                        }}>
                             <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
                             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_paypal : Language.pay_by_paypal}</Text>
                             <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
@@ -303,77 +277,6 @@ const CreateEvent4: FC<any> = props => {
                                             errors={errors} /></>
                                     : undefined}</>
                             : undefined}
-
-                        {isPayByPaypal ?
-                            <View style={{}}>
-                                {!usePaypalBusinessAccount && <TextInput
-                                    containerStyle={{ paddingTop: 0, marginTop: 0, flex: 1, marginEnd: scaler(4), marginBottom: scaler(10) }}
-                                    placeholder={Language.paypal_id}
-                                    borderColor={colors.colorTextInputBackground}
-                                    backgroundColor={colors.colorTextInputBackground}
-                                    name={'paypalEmail'}
-                                    required={Language.paypal_id_required}
-                                    control={control}
-                                    errors={errors} />}
-                                <View style={{ marginTop: scaler(5), flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
-                                    <Switch value={usePaypalBusinessAccount} onChange={() => setPaypalBusinessAccount(!usePaypalBusinessAccount)} />
-
-                                    <Text style={{ fontSize: scaler(14), fontWeight: '500', flex: 1, marginHorizontal: scaler(10) }}>
-                                        {Language.use_paypal_business_account}
-                                    </Text>
-                                </View>
-
-
-                                {usePaypalBusinessAccount ? <>
-                                    <View style={{ flexDirection: 'row', marginTop: scaler(15), flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Text style={{ fontSize: scaler(14), fontWeight: '500' }}>
-                                            {Language.paypal_details}
-                                        </Text>
-                                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setInfoVisible(true)}>
-                                            <Text style={{ fontSize: scaler(12), color: colors.colorPrimary, marginEnd: scaler(4) }} >{Language.click_to_see_tutorial}</Text>
-                                            <MaterialCommunityIcons
-                                                name='information'
-                                                color={colors.colorPrimary}
-                                                size={scaler(25)}
-                                            />
-                                        </TouchableOpacity>
-
-                                    </View>
-
-                                    <TextInput
-                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                        placeholder={Language.api_username}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'apiUserName'}
-                                        required={Language.api_username_required}
-                                        control={control}
-                                        errors={errors} />
-                                    <TextInput
-                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                        placeholder={Language.api_password}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'apiPassword'}
-                                        onPressIcon={() => setSecure(!isSecure)}
-                                        autoCapitalize={'none'}
-                                        required={Language.api_password_required}
-                                        control={control}
-                                        errors={errors} />
-                                    <TextInput
-                                        containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                                        placeholder={Language.api_signature}
-                                        borderColor={colors.colorTextInputBackground}
-                                        backgroundColor={colors.colorTextInputBackground}
-                                        name={'apiSignature'}
-                                        required={Language.api_signature_required}
-                                        control={control}
-                                        errors={errors} />
-                                </> : undefined}
-                            </View>
-                            : undefined
-                        }
 
                         {event.is_donation_enabled != 1 && isPayByPaypal ?
                             <View style={{ flex: 1, width: '100%' }}>

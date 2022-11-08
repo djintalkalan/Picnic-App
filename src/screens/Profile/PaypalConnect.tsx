@@ -13,9 +13,7 @@ import Language from '../../language/Language';
 
 const PaypalConnect: FC<any> = ({ route }) => {
   const closed = useRef(false);
-
   const dispatch = useDispatch();
-
   const onNavigationStateChange = useCallback(
     (e: WebViewNavigation) => {
       dispatch(setLoadingAction(e?.loading));
@@ -30,6 +28,7 @@ const PaypalConnect: FC<any> = ({ route }) => {
                 _showSuccessMessage(res?.message);
                 Database.setUserData({ ...Database.getStoredValue('userData'), paypal_merchant_id })
                 NavigationService.goBack();
+                if (route?.params?.onSuccess) route?.params?.onSuccess()
               }
               dispatch(setLoadingAction(false));
             })

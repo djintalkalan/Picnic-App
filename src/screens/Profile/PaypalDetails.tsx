@@ -28,7 +28,7 @@ const authorizedImageHeight = (authorizedImageWidth * 334) / 456
 const connectImageWidth = width - scaler(30)
 const connectImageHeight = (connectImageWidth * 509) / 1149
 
-const PaypalDetails: FC = () => {
+const PaypalDetails: FC<any> = (props) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
   const [userData] = useDatabase('userData');
@@ -37,7 +37,14 @@ const PaypalDetails: FC = () => {
   const [authorized, setAuthorized] = useState<string>("");
 
   const payPalConnect = useCallback(() => {
-    NavigationService.navigate('PaypalConnect', { actionUrl, userData });
+    NavigationService.navigate('PaypalConnect', {
+      actionUrl, userData, onSuccess: () => {
+        if (props?.route?.params?.onSuccess) {
+          props?.route?.params?.onSuccess()
+          props?.navigation.goBack();
+        }
+      }
+    });
   }, [actionUrl, userData]);
 
   useEffect(() => {
