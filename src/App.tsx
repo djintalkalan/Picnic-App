@@ -128,7 +128,7 @@ const App: FC = () => {
             // recentSearches: null
         })
 
-        getCodePushUpdate()
+        !__DEV__ && getCodePushUpdate()
 
     }, [])
 

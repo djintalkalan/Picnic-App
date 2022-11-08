@@ -3,10 +3,15 @@ import { setLoadingAction } from 'app-store/actions';
 import { store } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { isArray } from 'lodash';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import ImagePicker, { Options } from 'react-native-image-crop-picker';
+import { openSettings } from 'react-native-permissions';
 import Language from 'src/language/Language';
 import { WaitTill } from './utilities';
+
+ImagePicker.clean().then(() => {
+    console.log('removed all tmp images from tmp directory');
+}).catch(console.log);
 
 const PickerOptions = {
     PROFILE_IMAGE_PICKER_OPTIONS: {
@@ -136,6 +141,19 @@ const openPickImageOrVideo = async (type: 'MULTIPLE_IMAGE_PICKER_OPTIONS' | 'PRO
     }
     catch (e) {
         console.log("Picker Error", e)
+        if (Platform.OS == 'ios' && e?.toString().includes('User did not grant library permission')) {
+            Alert.alert(Language.permission_required, Language.app_needs_photo_permission, [
+                {
+                    text: Language.give_permission, onPress: async () => {
+                        await openSettings().then(() => {
+                        }).catch(e => console.log("Open Setting Error", e)).finally(() => {
+
+                        })
+                    },
+                },
+                { text: Language.cancel, }
+            ], { cancelable: true })
+        }
         store.dispatch(setLoadingAction(false))
     }
 }

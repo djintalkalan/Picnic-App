@@ -10,16 +10,13 @@ import Database from 'database/Database';
 import { add, differenceInMinutes } from 'date-fns';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import {
-  StyleSheet, TextInput as RNInput, TouchableOpacity,
-  View
-} from 'react-native';
+import { Keyboard, Platform, StatusBar, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert } from 'utils';
+import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 type FormType = {
@@ -60,6 +57,15 @@ const emptyTicketType: TicketType = {
   plan_id: ""
 }
 const DropDownData = ['USD', 'EUR', 'GBP', 'MXP', 'COP', 'AED'];
+const RemovedCurrencies: string[] = [];
+
+// const DropDownData = ['USD', 'EUR', 'GBP'];
+// const RemovedCurrencies = ['MXP', 'COP', 'AED'];
+const getSelectedCurrency = (currency: string) => {
+  if (RemovedCurrencies.includes(currency))
+    return ''
+  return currency
+}
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
@@ -91,8 +97,8 @@ const CreateEvent3: FC<any> = props => {
   const [isDropdown, setDropdown] = useState(false);
   const [multiTicketCurrencyIndex, setMultiTicketCurrencyIndex] = useState(-1);
   const [isTicketTypeDropdown, setIsTicketTypeDropdown] = useState(false);
-  const capacityInputRef = useRef<RNInput>(null)
-  const numberOfFreeInputRef = useRef<RNInput>(null)
+  const capacityInputRef = useRef<RNTextInput>(null)
+  const numberOfFreeInputRef = useRef<RNTextInput>(null)
   const [isUnlimitedCapacity, setIsUnlimitedCapacity] = useState(false);
   const [isDonationAccepted, setIsDonationAccepted] = useState(false)
   const dispatch = useDispatch();
@@ -147,7 +153,7 @@ const CreateEvent3: FC<any> = props => {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
-      setValue('currency', event?.event_currency?.toUpperCase() || "USD")
+      setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
       setDate()
       setValue('cutoffDate', getCutoffDateTime(event))
       setValue('cutoffTime', getCutoffDateTime(event))
@@ -159,7 +165,7 @@ const CreateEvent3: FC<any> = props => {
           plan_id: _?._id,
           ticketTitle: _.name,
           ticketPrice: _?.amount?.toString(),
-          currency: _.currency?.toUpperCase(),
+          currency: getSelectedCurrency(_.currency?.toUpperCase()),
           ticketDescription: _.description,
           status: (_?.status || 1),
           capacity: _.capacity?.toString(),
@@ -171,7 +177,7 @@ const CreateEvent3: FC<any> = props => {
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
-        setValue('currency', event?.event_currency?.toUpperCase() || "USD")
+        setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
         setValue('cutoffDate', getCutoffDateTime(event))
         setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
@@ -379,6 +385,35 @@ const CreateEvent3: FC<any> = props => {
     return (datePickerVisibility == 'date') ? (getValues(dateString) || undefined) : getValues(timeString) || stringToDate(dateFormat(getValues(dateString), "YYYY-MM-DD"), "YYYY-MM-DD", "-")
   }
 
+  const showCurrencyDropDown = useCallback((e) => {
+    Keyboard.dismiss()
+    setTimeout(() => {
+      currencyRef.current?.measureInWindow((x, y, w, h) => {
+        _showTouchAlert({
+          placementStyle: {
+            top: y + h + scaler(15) + (StatusBar.currentHeight || 0),
+            left: x
+          },
+          transparent: true,
+          alertComponent: () => {
+            return <FixedDropdown
+              visible={true}
+              relative
+              containerStyle={{ width: w }}
+              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+              onSelect={data => {
+                setValue('currency', data?.title, { shouldValidate: true });
+                _hideTouchAlert()
+              }}
+            />
+          }
+        })
+      })
+    }, Platform.OS == 'android' ? 50 : 0);
+
+  }, [DropDownData])
+  const currencyRef = useRef<RNTextInput>()
+
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
       <MyHeader title={event?._id ? event?.is_copied_event != '0' ? Language.copy_event : Language.edit_event : Language.host_an_event} />
@@ -488,29 +523,19 @@ const CreateEvent3: FC<any> = props => {
                     <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                       <View style={{ marginEnd: scaler(4), width: '30%' }} >
                         <TextInput
+                          ref={currencyRef}
                           containerStyle={{ width: '100%' }}
                           borderColor={colors.colorTextInputBackground}
                           backgroundColor={colors.colorTextInputBackground}
                           name={'currency'}
                           disabled={isFreeEvent ? true : false}
                           icon={Images.ic_arrow_dropdown}
-                          onChangeText={(text) => {
-
-                          }}
                           control={control}
                           iconContainerStyle={{ end: scaler(4) }}
-                          onPress={() => { setDropdown(_ => !_) }}
+                          onPress={showCurrencyDropDown}
                           errors={errors}
                         />
-                        <FixedDropdown
-                          containerStyle={{ width: '98%', position: 'relative', top: 0 }}
-                          visible={isDropdown}
-                          data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
-                          onSelect={data => {
-                            setDropdown(false);
-                            setValue('currency', data?.title, { shouldValidate: true });
-                          }}
-                        />
+
                       </View>
                       <TextInput
                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
