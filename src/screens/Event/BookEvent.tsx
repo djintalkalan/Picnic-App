@@ -159,8 +159,6 @@ const BookEvent: FC = (props: any) => {
             totalTax: round(totalTax, 2),
             paidTicketsPrice: round(paidTicketsPrice + totalTax, 2),
         }
-        console.log("payment", payment);
-
         return payment
     }, [noOfTickets, free_tickets, selectedTicket])
 
