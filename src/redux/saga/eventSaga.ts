@@ -495,7 +495,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     yield put(setLoadingAction(true));
     const { res: { _id }, token, PayerID: payer_id, resource_id, paypal_merchant_id } = payload
     try {
-        let res = yield call(paypal_merchant_id ? ApiProvider._capturePaymentV2 : ApiProvider._capturePayment, { _id, ...(paypal_merchant_id ? { token, payer_id } : {}) });
+        let res = yield call(paypal_merchant_id ? ApiProvider._capturePaymentV2 : ApiProvider._capturePayment, { _id, ...(!paypal_merchant_id ? { token, payer_id } : {}) });
         if (res.status == 200) {
             // NavigationService.goBack()
             // yield put(joinEvent(rest));
