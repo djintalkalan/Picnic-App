@@ -118,10 +118,11 @@ const CreateEvent4: FC<any> = props => {
             // payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
             // payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
             // payment_api_signature: usePaypalBusinessAccount && data?.apiSignature?.trim() || '',
-            payment_email: null,
-            payment_api_username: null,
-            payment_api_password: null,
-            payment_api_signature: null,
+            payment_email: event?.payment_email?.length ? null : undefined,
+            payment_api_username: event?.payment_api_username?.length ? null : undefined,
+            payment_api_password: event?.payment_api_password?.length ? null : undefined,
+            payment_api_signature: event?.payment_api_signature?.length ? null : undefined,
+            is_creators_paypal_configured: 1,
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };

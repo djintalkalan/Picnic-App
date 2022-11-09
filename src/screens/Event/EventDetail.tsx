@@ -92,9 +92,11 @@ const EventDetail: FC<any> = (props) => {
         }, 200);
     }, [])
 
-    useFocusEffect(useCallback(() => {
+    useEffect(() => {
         console.log("event", event);
+    }, [event])
 
+    useFocusEffect(useCallback(() => {
         InteractionManager.runAfterInteractions(() => {
             if (event?.is_admin == 1) {
                 dispatch(getEventMembersList(props?.route?.params?.id))
@@ -109,13 +111,13 @@ const EventDetail: FC<any> = (props) => {
                     })
             }
         })
-    }, [event]))
+    }, [event?.is_admin, (event?.is_event_member && event?.creator_of_event?._id)]))
 
     useEffect(() => {
         if (event?.image || event?.event_images) {
             setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
         }
-    }, [event])
+    }, [(event?.image || event?.event_images)])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
@@ -231,14 +233,14 @@ const EventDetail: FC<any> = (props) => {
                 },
                 transparent: true,
                 alertComponent: () => {
-                    if (event?.is_admin && eventDate < new Date()) {
-                        return <Card cardElevation={2} style={styles.fabActionContainer} >
-                            <InnerButton hideBorder visible={true} onPress={() => {
-                                _hideTouchAlert()
-                                onCopyEvent()
-                            }} title={Language.copy} />
-                        </Card>
-                    }
+                    // if (event?.is_admin && eventDate < new Date()) {
+                    //     return <Card cardElevation={2} style={styles.fabActionContainer} >
+                    //         <InnerButton hideBorder visible={true} onPress={() => {
+                    //             _hideTouchAlert()
+                    //             onCopyEvent()
+                    //         }} title={Language.copy} />
+                    //     </Card>
+                    // }
 
                     return (
                         <Card cardElevation={2} style={styles.fabActionContainer} >

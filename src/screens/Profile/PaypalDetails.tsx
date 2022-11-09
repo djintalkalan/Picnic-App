@@ -1,11 +1,12 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { _getMerchantInfo, _paypalTrackSeller } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, MyHeader, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { useDatabase } from 'database/Database';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import Database from 'database/Database';
+import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import CryptoJS from "react-native-crypto-js";
@@ -31,27 +32,26 @@ const connectImageHeight = (connectImageWidth * 509) / 1149
 const PaypalDetails: FC<any> = (props) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
-  const [userData] = useDatabase('userData');
   const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
   const [authorized, setAuthorized] = useState<string>("");
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
-      actionUrl, userData, onSuccess: () => {
+      actionUrl, userData: Database.getStoredValue('userData'), onSuccess: () => {
         if (props?.route?.params?.onSuccess) {
           props?.route?.params?.onSuccess()
           props?.navigation.goBack();
         }
       }
     });
-  }, [actionUrl, userData]);
+  }, [actionUrl]);
 
-  useEffect(() => {
-    // userData.paypal_merchant_id = 'SYWHRH7ZN9RVA';
+  const getSellerData = useCallback(() => {
     (async () => {
       let authorized = ''
       let action_url: any = {}
+      const userData = Database.getStoredValue('userData')
       try {
         dispatch(setLoadingAction(true))
         await _paypalTrackSeller().then(res => {
@@ -61,9 +61,11 @@ const PaypalDetails: FC<any> = (props) => {
               setActionUrl(action_url?.href);
             } else {
               authorized = res?.data?.merchant_id
+              if (authorized && !userData?.paypal_merchant_id) {
+                Database.setUserData({ ...userData, paypal_merchant_id: authorized })
+              }
               setAuthorized(authorized);
             }
-
           }
         });
         await _getMerchantInfo().then(res => {
@@ -102,8 +104,9 @@ const PaypalDetails: FC<any> = (props) => {
       }
       dispatch(setLoadingAction(false))
     })()
+  }, [])
 
-  }, [userData?._id, userData?.paypal_merchant_id]);
+  useFocusEffect(getSellerData);
 
 
   const payPalDisconnect = useCallback(() => { }, []);

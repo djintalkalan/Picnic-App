@@ -4,8 +4,8 @@ import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Database from 'database/Database';
-import React, { FC, useCallback, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { BackHandler, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
 import { NavigationService, _showSuccessMessage } from 'utils';
@@ -13,10 +13,19 @@ import Language from '../../language/Language';
 
 const PaypalConnect: FC<any> = ({ route }) => {
   const closed = useRef(false);
+  const [isBackButtonDisabled, setBackButtonDisabled] = useState(false)
   const dispatch = useDispatch();
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      return isBackButtonDisabled
+    })
+    return sub?.remove
+  }, [isBackButtonDisabled])
+
   const onNavigationStateChange = useCallback(
     (e: WebViewNavigation) => {
       dispatch(setLoadingAction(e?.loading));
+      if (e?.url?.includes('/partnerDone')) setBackButtonDisabled(true)
       if (e?.url?.includes('merchantIdInPayPal')) {
         const myUrl = new URL(e.url);
         const paypal_merchant_id = myUrl.searchParams.get('merchantIdInPayPal');
@@ -47,7 +56,7 @@ const PaypalConnect: FC<any> = ({ route }) => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.paypal_details} backEnabled />
+      <MyHeader title={Language.paypal_details} backEnabled={!isBackButtonDisabled} />
       <WebView
         javaScriptEnabled={true}
         setDisplayZoomControls

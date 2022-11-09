@@ -100,7 +100,6 @@ const BookEvent: FC = (props: any) => {
         }
 
         let payload = {
-            paypal_merchant_id: event?.creator_of_event?.paypal_merchant_id,
             resource_id: event?._id,
             no_of_tickets: noOfTickets?.toString(),
             plan_id: selectedTicket?._id ?? '',
@@ -115,7 +114,8 @@ const BookEvent: FC = (props: any) => {
         }
         let action = joinEvent
         if (payMethodSelected && payMethodSelected != 'cash' && (payload?.is_donation == '1' || event?.is_free_event != 1)) {
-            action = authorizePayment
+            payload.paypal_merchant_id = event?.creator_of_event?.paypal_merchant_id,
+                action = authorizePayment
         }
         dispatch(action(payload))
     }, [event, noOfTickets, payMethodSelected, selectedTicket, isUserDonating])
