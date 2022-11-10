@@ -17,7 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
 import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getSelectedCurrencyFromText, getSelectedCurrencyFromValue, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
-import { ALL_CURRENCIES } from 'utils/Constants';
+import { ALL_CURRENCIES, REMOVED_CURRENCIES } from 'utils/Constants';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 type FormType = {
@@ -57,7 +57,7 @@ const emptyTicketType: TicketType = {
   status: 1,
   plan_id: ""
 }
-const DropDownData = ALL_CURRENCIES;
+const DropDownData = ALL_CURRENCIES?.filter(_ => (!REMOVED_CURRENCIES?.includes(_?.value)));
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
