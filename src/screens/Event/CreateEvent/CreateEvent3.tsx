@@ -145,7 +145,7 @@ const CreateEvent3: FC<any> = props => {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
-      setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text)
+      setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text || 'USD')
       setDate()
       setValue('cutoffDate', getCutoffDateTime(event))
       setValue('cutoffTime', getCutoffDateTime(event))
@@ -169,7 +169,7 @@ const CreateEvent3: FC<any> = props => {
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
-        setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text)
+        setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text || 'USD')
         setValue('cutoffDate', getCutoffDateTime(event))
         setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
