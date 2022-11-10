@@ -1,4 +1,5 @@
 import ActionTypes, { action } from "app-store/action-types";
+import { ICurrencyValues } from "utils/Constants";
 
 //@ts-ignore
 const initialCreateEventState: ICreateEventReducer = {}
@@ -14,7 +15,7 @@ export interface TicketPlan {
     amount: number;
     event_tax_rate: number;
     event_tax_amount: number;
-    currency: string;
+    currency: ICurrencyValues;
     description: string;
     status: number;
     sales_ends_on?: string;
@@ -43,7 +44,7 @@ export interface ICreateEventReducer {
     event_end_date: string
     event_start_time: string;
     event_end_time: string;
-    event_currency: string;
+    event_currency: ICurrencyValues;
     event_refund_policy: string;
     payment_method: string[];
     payment_email: string;
