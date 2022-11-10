@@ -1,4 +1,3 @@
-import { config } from "api";
 import { IPaginationState } from "app-store/actions";
 import Language from "src/language/Language";
 
@@ -67,7 +66,7 @@ export const ALL_CURRENCIES: ICurrency[] = [
 
 export const DEFAULT_CURRENCY: ICurrency = { text: 'USD', value: 'usd' }
 
-export const REMOVED_CURRENCIES = config.APP_TYPE == 'production' ? ['mxn', 'cop', 'aed'] : []
+export const REMOVED_CURRENCIES = ['cop', 'aed']// config.APP_TYPE == 'production' ? ['mxn', 'cop', 'aed'] : []
 
 export const DEFAULT_CHAT_BACKGROUND = '#DFDFDF'
 
