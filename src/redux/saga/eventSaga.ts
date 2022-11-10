@@ -606,7 +606,7 @@ function* _undoCheckIn({ type, payload, }: action): Generator<any, any, any> {
 }
 
 
-function* _connectPaypal({ type, payload }: action): Generator<any> {
+function* _connectPaypal({ type, payload }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     const { merchantIdInPayPal } = payload;
     console.log('merchantIdInPayPal ====>', merchantIdInPayPal);
