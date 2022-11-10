@@ -391,7 +391,7 @@ const CreateEvent3: FC<any> = props => {
               visible={true}
               relative
               containerStyle={{ width: w }}
-              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _?.text }))}
+              data={DropDownData.map((_, i) => ({ id: i, data: _?.value, title: _?.text }))}
               onSelect={data => {
                 setValue('currency', data?.title, { shouldValidate: true });
                 _hideTouchAlert()
@@ -402,7 +402,7 @@ const CreateEvent3: FC<any> = props => {
       })
     }, Platform.OS == 'android' ? 50 : 0);
 
-  }, [DropDownData])
+  }, [])
   const currencyRef = useRef<RNTextInput>()
 
   return (
@@ -672,7 +672,7 @@ const CreateEvent3: FC<any> = props => {
                       <FixedDropdown
                         containerStyle={{ width: '100%' }}
                         visible={isDropdown}
-                        data={DropDownData.map((_, i) => ({ id: i, data: _ as any, title: _ as unknown as string }))}
+                        data={DropDownData.map((_, i) => ({ id: i, data: _?.value as any, title: _?.text as unknown as string }))}
                         onSelect={data => {
                           setDropdown(false);
                           setValue('currency', data?.title, { shouldValidate: true });
@@ -776,7 +776,7 @@ const CreateEvent3: FC<any> = props => {
                                 <FixedDropdown
                                   containerStyle={{ width: '28%' }}
                                   visible={multiTicketCurrencyIndex == i}
-                                  data={DropDownData.map((_, i) => ({ id: i, data: _ as any, title: _ as unknown as string }))}
+                                  data={DropDownData.map((_, i) => ({ id: i, data: _?.value as any, title: _?.text as unknown as string }))}
                                   onSelect={data => {
                                     setMultiTicketCurrencyIndex(-1);
                                     // const a = getValues('ticketPlans')[i]
