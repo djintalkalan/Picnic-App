@@ -101,7 +101,7 @@ const BookEvent: FC = (props: any) => {
         }
 
         let payload = {
-            paypal_merchant_id: '',
+            paypal_merchant_id: undefined,
             resource_id: event?._id,
             no_of_tickets: noOfTickets?.toString(),
             plan_id: selectedTicket?._id ?? '',
