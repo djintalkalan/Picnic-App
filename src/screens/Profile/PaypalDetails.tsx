@@ -59,6 +59,7 @@ const PaypalDetails: FC<any> = (props) => {
             if (res?.data?.links) {
               action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
               setActionUrl(action_url?.href);
+              setAuthorized('');
             } else {
               authorized = res?.data?.merchant_id
               if (authorized && !userData?.paypal_merchant_id) {
@@ -109,7 +110,9 @@ const PaypalDetails: FC<any> = (props) => {
   useFocusEffect(getSellerData);
 
 
-  const payPalDisconnect = useCallback(() => { }, []);
+  const payPalDisconnect = useCallback(() => {
+    NavigationService.navigate('PaypalDisconnect')
+  }, []);
 
   if (isCredentialsConfigured && !authorized)
     return (
@@ -173,14 +176,16 @@ const PaypalDetails: FC<any> = (props) => {
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
             {authorized ?
-              <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
-                <View style={styles.connectedBorder} >
-                  <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
-                  <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+              <>
+                <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
+                  <View style={styles.connectedBorder} >
+                    <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
+                    <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+                  </View>
+                  <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
                 </View>
-                <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
-
-              </View>
+                <Button containerStyle={{ marginTop: scaler(30) }} title='Disconnect' onPress={payPalDisconnect} />
+              </>
               :
               <View style={{ flex: 1 }} >
                 <Image style={styles.connectImage} source={Images.ic_paypal_connect} />
