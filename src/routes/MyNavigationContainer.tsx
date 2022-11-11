@@ -72,6 +72,7 @@ import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
 import PaypalConnect from 'screens/Profile/PaypalConnect';
+import PaypalDisconnect from 'screens/Profile/PaypalDisconnect';
 import { NavigationService, scaler } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
 
@@ -133,6 +134,7 @@ const dashboardScreens: IScreens = {
   CheckInList,
   SelectAdmin,
   PaypalConnect,
+  PaypalDisconnect,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

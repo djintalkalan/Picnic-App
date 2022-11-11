@@ -1,11 +1,12 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { _getMerchantInfo, _paypalTrackSeller } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, MyHeader, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { useDatabase } from 'database/Database';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import Database from 'database/Database';
+import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import CryptoJS from "react-native-crypto-js";
@@ -31,27 +32,26 @@ const connectImageHeight = (connectImageWidth * 509) / 1149
 const PaypalDetails: FC<any> = (props) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
-  const [userData] = useDatabase('userData');
   const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
   const [authorized, setAuthorized] = useState<string>("");
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
-      actionUrl, userData, onSuccess: () => {
+      actionUrl, userData: Database.getStoredValue('userData'), onSuccess: () => {
         if (props?.route?.params?.onSuccess) {
           props?.route?.params?.onSuccess()
           props?.navigation.goBack();
         }
       }
     });
-  }, [actionUrl, userData]);
+  }, [actionUrl]);
 
-  useEffect(() => {
-    // userData.paypal_merchant_id = 'SYWHRH7ZN9RVA';
+  const getSellerData = useCallback(() => {
     (async () => {
       let authorized = ''
       let action_url: any = {}
+      const userData = Database.getStoredValue('userData')
       try {
         dispatch(setLoadingAction(true))
         await _paypalTrackSeller().then(res => {
@@ -59,11 +59,14 @@ const PaypalDetails: FC<any> = (props) => {
             if (res?.data?.links) {
               action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
               setActionUrl(action_url?.href);
+              setAuthorized('');
             } else {
               authorized = res?.data?.merchant_id
+              if (authorized && !userData?.paypal_merchant_id) {
+                Database.setUserData({ ...userData, paypal_merchant_id: authorized })
+              }
               setAuthorized(authorized);
             }
-
           }
         });
         await _getMerchantInfo().then(res => {
@@ -102,11 +105,14 @@ const PaypalDetails: FC<any> = (props) => {
       }
       dispatch(setLoadingAction(false))
     })()
+  }, [])
 
-  }, [userData?._id, userData?.paypal_merchant_id]);
+  useFocusEffect(getSellerData);
 
 
-  const payPalDisconnect = useCallback(() => { }, []);
+  const payPalDisconnect = useCallback(() => {
+    NavigationService.navigate('PaypalDisconnect')
+  }, []);
 
   if (isCredentialsConfigured && !authorized)
     return (
@@ -170,14 +176,16 @@ const PaypalDetails: FC<any> = (props) => {
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
             {authorized ?
-              <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
-                <View style={styles.connectedBorder} >
-                  <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
-                  <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+              <>
+                <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
+                  <View style={styles.connectedBorder} >
+                    <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
+                    <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+                  </View>
+                  <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
                 </View>
-                <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
-
-              </View>
+                <Button containerStyle={{ marginTop: scaler(30) }} title='Disconnect' onPress={payPalDisconnect} />
+              </>
               :
               <View style={{ flex: 1 }} >
                 <Image style={styles.connectImage} source={Images.ic_paypal_connect} />
