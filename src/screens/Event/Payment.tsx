@@ -1,4 +1,4 @@
-import { capturePayment, setLoadingAction } from 'app-store/actions';
+import { capturePayment, getEventDetail, joinEventSuccess, setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
@@ -6,10 +6,12 @@ import React, { FC, useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
+import { EMIT_JOIN_ROOM, SocketService } from 'socket';
 import { getQueryVariables, NavigationService, _showErrorMessage } from 'utils';
 
 const Payment: FC<any> = (props) => {
-    console.log("props", props);
+
+
 
     const closed = useRef(false)
     const [paymentClosed, setPaymentClosed] = useState(false)
@@ -25,6 +27,16 @@ const Payment: FC<any> = (props) => {
             closed.current = true
             setPaymentClosed(true)
             if (e?.url?.includes("payment-success")) {
+                if (props?.route?.params?.data?.payment_method == 'card') {
+                    // _showSuccessMessage("res?.message)
+                    SocketService.emit(EMIT_JOIN_ROOM, {
+                        resource_id: props?.route?.params?.data?.resource_id
+                    })
+                    dispatch(joinEventSuccess(props?.route?.params?.data?.resource_id))
+                    dispatch(getEventDetail(props?.route?.params?.data?.resource_id))
+                    NavigationService.navigate('EventDetail')
+                    return
+                }
                 dispatch(capturePayment({ ...props?.route?.params?.data, ...getQueryVariables(e?.url) }))
             } else {
                 NavigationService.goBack()

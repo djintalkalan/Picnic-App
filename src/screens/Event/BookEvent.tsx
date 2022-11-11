@@ -28,7 +28,7 @@ type FormType = {
 
 const BookEvent: FC = (props: any) => {
     const [noOfTickets, setNoOfTickets] = useState("")
-    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'credit' | undefined>();
+    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'card' | undefined>();
     const [selectedTicket, setSelectedTicket] = useState<any>({})
     const [toggle, setToggle] = useState(false)
     const [isUserDonating, setIsUserDonation] = useState(true)
@@ -93,11 +93,11 @@ const BookEvent: FC = (props: any) => {
         const getPaymentMethod = () => {
             if (event?.is_free_event) {
                 if (event?.is_donation_enabled && isUserDonating) {
-                    return payMethodSelected == 'credit' ? 'paypal' : payMethodSelected
+                    return payMethodSelected
                 }
                 return 'free'
             }
-            return getTotalPayment()?.paidTicketsPrice > 0 ? (payMethodSelected == 'credit' ? 'paypal' : payMethodSelected) : 'free'
+            return getTotalPayment()?.paidTicketsPrice > 0 ? payMethodSelected : 'free'
         }
 
         let payload = {
@@ -106,7 +106,7 @@ const BookEvent: FC = (props: any) => {
             no_of_tickets: noOfTickets?.toString(),
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
-            donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'credit') ? data.donationAmount : '0',
+            donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'card') ? data.donationAmount : '0',
             is_donation: event?.is_free_event && event?.is_donation_enabled && isUserDonating ? '1' : '0',
             amount: selectedTicket?.amount ?? '',
             currency: selectedTicket?.currency ?? "",
@@ -289,7 +289,7 @@ const BookEvent: FC = (props: any) => {
                                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
 
                                         <PaymentMethod
-                                            type={"credit"}
+                                            type={"card"}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
                                             disabled={!event?.payment_api_username && !event?.payment_email && !event?.creator_of_event?.paypal_merchant_id}
@@ -336,7 +336,7 @@ const BookEvent: FC = (props: any) => {
                                         <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} />
 
                                         <PaymentMethod
-                                            type={"credit"}
+                                            type={"card"}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
                                             disabled={!event?.payment_api_username && !event?.payment_email}
@@ -452,7 +452,7 @@ const PaymentMethod = (props: { type: string, payMethodSelected: any, setPayMeth
                 val.image = Images.ic_paypal
                 val.text = (props?.isDonation ? Language.donate_by_paypal : Language?.pay_by_paypal)
                 break;
-            case "credit":
+            case "card":
                 val.image = Images.ic_credit_card
                 val.text = (props?.isDonation ? Language.donate_by_credit : Language?.pay_by_credit)
                 break;
