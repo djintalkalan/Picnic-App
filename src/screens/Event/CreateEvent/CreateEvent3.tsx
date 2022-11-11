@@ -16,7 +16,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
+import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getSelectedCurrencyFromText, getSelectedCurrencyFromValue, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
+import { ALL_CURRENCIES, REMOVED_CURRENCIES } from 'utils/Constants';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 type FormType = {
@@ -56,16 +57,7 @@ const emptyTicketType: TicketType = {
   status: 1,
   plan_id: ""
 }
-const DropDownData = ['USD', 'EUR', 'GBP', 'MXP', 'COP', 'AED'];
-const RemovedCurrencies: string[] = [];
-
-// const DropDownData = ['USD', 'EUR', 'GBP'];
-// const RemovedCurrencies = ['MXP', 'COP', 'AED'];
-const getSelectedCurrency = (currency: string) => {
-  if (RemovedCurrencies.includes(currency))
-    return ''
-  return currency
-}
+const DropDownData = ALL_CURRENCIES?.filter(_ => (!REMOVED_CURRENCIES?.includes(_?.value)));
 
 const getCutoffDateTime = (event: ICreateEventReducer) => {
   try {
@@ -153,7 +145,7 @@ const CreateEvent3: FC<any> = props => {
 
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
-      setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
+      setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text || 'USD')
       setDate()
       setValue('cutoffDate', getCutoffDateTime(event))
       setValue('cutoffTime', getCutoffDateTime(event))
@@ -165,7 +157,7 @@ const CreateEvent3: FC<any> = props => {
           plan_id: _?._id,
           ticketTitle: _.name,
           ticketPrice: _?.amount?.toString(),
-          currency: getSelectedCurrency(_.currency?.toUpperCase()),
+          currency: getSelectedCurrencyFromValue(_?.currency)?.text,
           ticketDescription: _.description,
           status: (_?.status || 1),
           capacity: _.capacity?.toString(),
@@ -177,7 +169,7 @@ const CreateEvent3: FC<any> = props => {
       } else {
         setValue('ticketType', TicketTypeData[0]?.text);
         setValue('ticketPrice', (event?.event_fees || "")?.toString())
-        setValue('currency', getSelectedCurrency(event?.event_currency?.toUpperCase()) || "USD")
+        setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text || 'USD')
         setValue('cutoffDate', getCutoffDateTime(event))
         setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
@@ -273,19 +265,18 @@ const CreateEvent3: FC<any> = props => {
       payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
       payload.capacity = data.capacity
 
-
       payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.event_timezone, data?.cutoffTime)?.toISOString() : ''
       console.log(payload.sales_ends_on);
 
       if (isDonationAccepted) {
         payload.is_donation_enabled = '1'
         payload.donation_description = data.donationDescription
-        payload.event_currency = data.currency?.toLowerCase()
+        payload.event_currency = getSelectedCurrencyFromText(data.currency)?.value
       }
     } else {
       payload.ticket_type = ticketTypeRef.current
       payload.event_fees = 0
-      payload.event_currency = data.currency?.toLowerCase()
+      payload.event_currency = getSelectedCurrencyFromText(data.currency)?.value
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => {
           const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.event_timezone, _?.cutoffTime)?.toISOString() : ''
@@ -296,7 +287,7 @@ const CreateEvent3: FC<any> = props => {
             amount: _.ticketPrice,
             event_tax_rate: "0",
             event_tax_amount: "0",
-            currency: _.currency?.toLowerCase(),
+            currency: getSelectedCurrencyFromText(_.currency)?.value,
             description: _.ticketDescription,
             status: _.status == 2 ? 2 : undefined,
             sales_ends_on,
@@ -400,7 +391,7 @@ const CreateEvent3: FC<any> = props => {
               visible={true}
               relative
               containerStyle={{ width: w }}
-              data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+              data={DropDownData.map((_, i) => ({ id: i, data: _?.value, title: _?.text }))}
               onSelect={data => {
                 setValue('currency', data?.title, { shouldValidate: true });
                 _hideTouchAlert()
@@ -411,7 +402,7 @@ const CreateEvent3: FC<any> = props => {
       })
     }, Platform.OS == 'android' ? 50 : 0);
 
-  }, [DropDownData])
+  }, [])
   const currencyRef = useRef<RNTextInput>()
 
   return (
@@ -681,7 +672,7 @@ const CreateEvent3: FC<any> = props => {
                       <FixedDropdown
                         containerStyle={{ width: '100%' }}
                         visible={isDropdown}
-                        data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                        data={DropDownData.map((_, i) => ({ id: i, data: _?.value as any, title: _?.text as unknown as string }))}
                         onSelect={data => {
                           setDropdown(false);
                           setValue('currency', data?.title, { shouldValidate: true });
@@ -785,7 +776,7 @@ const CreateEvent3: FC<any> = props => {
                                 <FixedDropdown
                                   containerStyle={{ width: '28%' }}
                                   visible={multiTicketCurrencyIndex == i}
-                                  data={DropDownData.map((_, i) => ({ id: i, data: _, title: _ }))}
+                                  data={DropDownData.map((_, i) => ({ id: i, data: _?.value as any, title: _?.text as unknown as string }))}
                                   onSelect={data => {
                                     setMultiTicketCurrencyIndex(-1);
                                     // const a = getValues('ticketPlans')[i]

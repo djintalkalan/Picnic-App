@@ -21,6 +21,7 @@ import { ShareOpenResult } from 'react-native-share/lib/typescript/types';
 import Toast from 'react-native-simple-toast';
 import Database, { ILocation } from 'src/database/Database';
 import Language, { LanguageType } from 'src/language/Language';
+import { ALL_CURRENCIES, DEFAULT_CURRENCY, ICurrency, ICurrencyKeys, ICurrencyValues, REMOVED_CURRENCIES } from './Constants';
 import { StaticHolder } from './StaticHolder';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
@@ -553,7 +554,9 @@ export const formatAmountWithSymbol = (currency: string, amount: string) => {
 
 export const formatAmount = (currency: string, amount: string | number) => {
     try {
-        if (!currency) currency = 'usd';
+        if (!currency) currency = 'usd'
+        else if (currency == 'mxn') currency = 'mxp'
+
         const activeLanguage = Language.getLanguage()
         // const currencyString = parseFloat("0").toLocaleString(activeLanguage, {
         //     currency: currency?.toUpperCase(),
@@ -927,6 +930,19 @@ export const calculateImageUrl = (image: string, images: any[] = []) => {
         return images?.find(_ => _?.type == 'image')?.name
     }
     return image
+}
+
+export const getSelectedCurrencyFromValue = (currency: ICurrencyValues | string): ICurrency => {
+    if (REMOVED_CURRENCIES.includes(currency?.toLowerCase())) {
+        return DEFAULT_CURRENCY
+    }
+    //@ts-ignore
+    return ALL_CURRENCIES.find(_ => _?.value == currency?.toLowerCase()) || {}
+}
+
+export const getSelectedCurrencyFromText = (currency: ICurrencyKeys | string): ICurrency => {
+    //@ts-ignore
+    return ALL_CURRENCIES.find(_ => _?.text?.toLowerCase() == currency?.toLowerCase()) || {}
 }
 
 
