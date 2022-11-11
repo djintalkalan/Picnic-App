@@ -226,7 +226,7 @@ export const en = {
   pay: 'Pay',
   are_you_sure_you_want_to_pay_using: 'Are you sure you want to pay using',
   cash: 'CASH',
-  credit: 'CREDIT CARD',
+  card: 'CREDIT CARD',
   paypal: 'PayPal',
   free: 'Free',
   confirm_payment_method: 'Confirm payment method',

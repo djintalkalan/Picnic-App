@@ -464,9 +464,12 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
 
 function* _authorizePayment({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
-    const { paypal_merchant_id, resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation } = payload
+    const { paypal_merchant_id, resource_id, no_of_tickets, payment_method, currency, plan_id, donation_amount, is_donation } = payload
     try {
-        let res = yield call(paypal_merchant_id ? ApiProvider._authorizePaymentV2 : ApiProvider._authorizePayment, { resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation });
+        let res = yield call(paypal_merchant_id ? ApiProvider._authorizePaymentV2 : ApiProvider._authorizePayment, {
+            resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation,
+            payment_method: paypal_merchant_id ? payment_method : undefined
+        });
         if (res.status == 200) {
             if (res?.data?.is_payment_by_passed) {
                 _showSuccessMessage(res?.message)
