@@ -4,12 +4,12 @@ import { Images } from 'assets/Images'
 import { MyHeader } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import { ListItem, ListItemSeparator, TicketView } from 'custom-components/ListItem/ListItem'
+import TZ from "dj-tz-lookup"
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, Image, StyleSheet, TextInput, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import TZ from "tz-lookup"
 import { calculateImageUrl, dateFormatInSpecificZone, getImageUrl, NavigationService, scaler } from 'utils'
 
 const CheckInList: FC<any> = (props) => {

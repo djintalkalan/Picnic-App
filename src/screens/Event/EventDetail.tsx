@@ -9,6 +9,7 @@ import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
+import TZ from "dj-tz-lookup"
 import { isEqual } from 'lodash'
 import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -22,7 +23,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import TZ from "tz-lookup"
 import { dateFormatInSpecificZone, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 
