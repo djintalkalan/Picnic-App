@@ -1,4 +1,3 @@
-import { RootState } from 'app-store';
 import { deleteEvent, getAllEvents, IPaginationState, leaveEvent, muteUnmuteResource, pinEvent, reportResource, setActiveEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -143,7 +142,7 @@ const EventList: FC<any> = (props) => {
         return buttons
     }, [useLanguage()])
 
-    const { allEvents, searchedEvents } = useSelector<RootState, any>((state) => ({
+    const { allEvents, searchedEvents } = useSelector(state => ({
         allEvents: state?.event?.allEvents,
         searchedEvents: state?.homeData?.searchedEvents
     }), isEqual)

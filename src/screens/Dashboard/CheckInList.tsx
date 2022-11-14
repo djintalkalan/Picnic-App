@@ -1,5 +1,4 @@
 import { getEventsForCheckIn } from 'app-store/actions'
-import { RootState } from 'app-store/store'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
 import { MyHeader } from 'custom-components'
@@ -35,7 +34,7 @@ const CheckInList: FC<any> = (props) => {
         }))
     }, 500), [])
 
-    const { events } = useSelector<RootState, any>((state) => ({
+    const { events } = useSelector(state => ({
         events: state?.eventForCheckIn?.events,
     }))
 

@@ -1,5 +1,4 @@
 import { getUserGroups, IPaginationState, setActiveGroup } from 'app-store/actions'
-import { RootState } from 'app-store/store'
 import { colors, Images } from 'assets'
 import { MyHeader, Text } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -13,7 +12,7 @@ import { INITIAL_PAGINATION_STATE } from 'utils/Constants'
 
 const ProfileGroups: FC<any> = (props) => {
 
-    const { isLoading, userGroups } = useSelector<RootState, any>((state) => ({
+    const { isLoading, userGroups } = useSelector(state => ({
         isLoading: state.isLoading,
         userGroups: state?.userGroupsEvents?.groups,
     }))
