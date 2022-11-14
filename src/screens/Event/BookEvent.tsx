@@ -325,7 +325,7 @@ const BookEvent: FC = (props: any) => {
                                             type={_}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash'}
+                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash' && !event?.creator_of_event?.paypal_merchant_id}
                                             isDonation={event.is_donation_enabled}
                                         />
                                         {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
@@ -339,7 +339,7 @@ const BookEvent: FC = (props: any) => {
                                             type={"card"}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username && !event?.payment_email}
+                                            disabled={!event?.payment_api_username && !event?.payment_email && !event?.creator_of_event?.paypal_merchant_id}
                                             isDonation={event.is_donation_enabled} />
                                     </Fragment>
                                     : undefined}
