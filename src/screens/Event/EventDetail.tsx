@@ -110,13 +110,14 @@ const EventDetail: FC<any> = (props) => {
                     })
             }
         })
-    }, [event]))
+}, [event?.is_admin, (event?.is_event_member && event?.creator_of_event?._id)]))
+
 
     useEffect(() => {
         if (event?.image || event?.event_images) {
             setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
         }
-    }, [event])
+    }, [(event?.image || event?.event_images)])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
