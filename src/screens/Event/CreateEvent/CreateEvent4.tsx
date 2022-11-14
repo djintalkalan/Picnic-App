@@ -75,41 +75,9 @@ const CreateEvent4: FC<any> = props => {
         //     setPaypalBusinessAccount(true)
         // }
         setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
-
     }, [userData?.paypal_merchant_id])
 
-    const onSubmit = useCallback(
-        async (data) => {
-
-            if (!data?.policy?.trim() && event.is_donation_enabled != 1 && isPayByPaypal) {
-                setError("policy", { message: Language.write_refund_policy })
-                return
-            }
-            let tempArray = event.event_images.filter(_ => !_?._id)
-            if (event.image?.path || tempArray.length > 0) {
-                dispatch(
-                    uploadFileArray({
-                        image: [...tempArray, ...(event.image?.path ? [{ ...event.image, isProfile: true }] : [])],
-                        onSuccess: (imageArray, profileImage) => {
-                            dispatch(setLoadingAction(false))
-                            if (profileImage)
-                                uploadedImage.current = profileImage
-                            uploadedImageArray.current = [...imageArray];
-                            callCreateEventApi(data, isPayByPaypal, isPayByCash);
-                        },
-                        prefixType: 'events',
-                    }),
-                )
-            } else {
-                callCreateEventApi(data, isPayByPaypal, isPayByCash);
-            }
-        },
-
-        [isPayByPaypal, isPayByCash, event, isBookingDisabled],
-    );
-
-    const callCreateEventApi = useCallback((data, isPayByPaypal, isPayByCash) => {
-
+    const callCreateEventApi = useCallback(data => {
         const payload: any = {
             // is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             is_booking_disabled: isBookingDisabled ? '1' : '0',
@@ -122,7 +90,7 @@ const CreateEvent4: FC<any> = props => {
             payment_api_username: event?.payment_api_username?.length ? null : undefined,
             payment_api_password: event?.payment_api_password?.length ? null : undefined,
             payment_api_signature: event?.payment_api_signature?.length ? null : undefined,
-            is_creators_paypal_configured: 1,
+            is_creators_paypal_configured: userData?.paypal_merchant_id ? 1 : 0,
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
@@ -161,7 +129,32 @@ const CreateEvent4: FC<any> = props => {
             );
 
         }, 0);
-    }, [isBookingDisabled]);
+    }, [isPayByPaypal, isPayByCash, isBookingDisabled, userData?.paypal_merchant_id]);
+
+    const onSubmit = useCallback(() => handleSubmit((data) => {
+        if (!data?.policy?.trim() && event.is_donation_enabled != 1 && isPayByPaypal) {
+            setError("policy", { message: Language.write_refund_policy })
+            return
+        }
+        let tempArray = event.event_images.filter(_ => !_?._id)
+        if (event.image?.path || tempArray.length > 0) {
+            dispatch(uploadFileArray(
+                {
+                    image: [...tempArray, ...(event.image?.path ? [{ ...event.image, isProfile: true }] : [])],
+                    onSuccess: (imageArray, profileImage) => {
+                        dispatch(setLoadingAction(false))
+                        if (profileImage)
+                            uploadedImage.current = profileImage
+                        uploadedImageArray.current = [...imageArray];
+                        callCreateEventApi(data);
+                    },
+                    prefixType: 'events',
+                }),
+            )
+        } else {
+            callCreateEventApi(data);
+        }
+    })(), [callCreateEventApi, event, isPayByPaypal],);
 
     const calculateButtonDisability = useCallback(() => {
         if ((!isPayByPaypal && !isPayByCash) && !isBookingDisabled
@@ -308,7 +301,7 @@ const CreateEvent4: FC<any> = props => {
                             disabled={calculateButtonDisability()}
                             containerStyle={{ marginTop: scaler(20) }}
                             title={Language.finish}
-                            onPress={handleSubmit((data) => onSubmit(data))} />
+                            onPress={onSubmit} />
                     </View>
                 </ScrollView></>}
         </SafeAreaViewWithStatusBar>
