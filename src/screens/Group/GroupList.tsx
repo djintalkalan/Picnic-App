@@ -1,4 +1,3 @@
-import { RootState } from 'app-store';
 import { getAllGroups, IPaginationState, joinGroup, leaveGroup, muteUnmuteResource, reportResource, setActiveGroup } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -81,7 +80,7 @@ const GroupList: FC<any> = (props) => {
         return buttons
     }, [useLanguage()])
 
-    const { allGroups, searchedGroups } = useSelector<RootState, any>((state) => ({
+    const { allGroups, searchedGroups } = useSelector(state => ({
         allGroups: state?.group?.allGroups,
         searchedGroups: state?.homeData?.searchedGroups
     }), isEqual)

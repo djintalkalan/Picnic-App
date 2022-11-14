@@ -1,6 +1,5 @@
 import { _getAllPublicGroupNearMe } from 'api';
 import { setLoadingAction } from 'app-store/actions';
-import { RootState } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
@@ -30,7 +29,7 @@ const SelectGroup: FC<any> = (props) => {
     const inputRef = useRef<TextInput>(null)
     const [searchLoader, setSearchLoader] = useState(false)
 
-    const isLoading = useSelector<RootState, boolean>(_ => _?.isLoading)
+    const isLoading = useSelector(_ => _?.isLoading)
     const [groups, setGroups] = useState([])
 
 

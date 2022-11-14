@@ -1,6 +1,5 @@
 
 import { getMutedResources, IPaginationState } from 'app-store/actions';
-import { RootState } from 'app-store/store';
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
@@ -13,8 +12,8 @@ import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 
 const HiddenPosts: FC = () => {
     const flatListRef = useRef<FlatList>(null);
-    const isLoading = useSelector<RootState, boolean>(_ => _?.isLoading, shallowEqual)
-    const mutedPosts = useSelector<RootState, Array<any>>(_ => _?.privacyData?.mutedPosts)
+    const isLoading = useSelector(_ => _?.isLoading, shallowEqual)
+    const mutedPosts = useSelector(_ => _?.privacyData?.mutedPosts)
 
     const paginationState = useRef<IPaginationState>(INITIAL_PAGINATION_STATE)
     const dispatch = useDispatch();

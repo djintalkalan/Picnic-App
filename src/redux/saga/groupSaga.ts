@@ -208,7 +208,6 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
-    // const state:RootState = 
     let groupList: any[] = yield select(state => state?.group?.allGroups || [])
     if (!groupList?.length && payload?.setLoader) payload?.setLoader(true)
 
@@ -244,7 +243,6 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
 }
 
 function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> {
-    // const state:RootState = 
     let group = yield select(state => state?.groupDetails?.[payload]?.group)
     if (!group)
         yield put(setLoadingAction(true));

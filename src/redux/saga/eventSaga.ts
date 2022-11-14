@@ -130,7 +130,6 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
 
 
 function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
-    // const state:RootState = 
     let eventList: any[] = yield select(state => state?.event?.allEvents)
 
     if (!eventList?.length && payload?.setLoader) payload?.setLoader(true)

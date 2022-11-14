@@ -1,4 +1,4 @@
-import { RootState, store } from 'app-store'
+import { store } from 'app-store'
 import { getAllCurrencies, getProfile, searchAtHome, setSearchedData } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { Card, defaultLocation, Text } from 'custom-components'
@@ -26,7 +26,7 @@ const Home: FC = () => {
   const [isFABOpen, setFABOpen] = useState(false)
   const dispatch = useDispatch()
 
-  const { groupLength, eventLength } = useSelector<RootState, any>((state) => ({
+  const { groupLength, eventLength } = useSelector(state => ({
     eventLength: state?.event?.allEvents?.length,
     groupLength: state?.group?.allGroups?.length,
     // a: console.log(state)
