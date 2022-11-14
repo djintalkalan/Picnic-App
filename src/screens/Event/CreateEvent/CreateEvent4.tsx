@@ -78,7 +78,6 @@ const CreateEvent4: FC<any> = props => {
     }, [userData?.paypal_merchant_id])
 
     const callCreateEventApi = useCallback(data => {
-
         const payload: any = {
             // is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             is_booking_disabled: isBookingDisabled ? '1' : '0',
@@ -139,8 +138,8 @@ const CreateEvent4: FC<any> = props => {
         }
         let tempArray = event.event_images.filter(_ => !_?._id)
         if (event.image?.path || tempArray.length > 0) {
-            dispatch(
-                uploadFileArray({
+            dispatch(uploadFileArray(
+                {
                     image: [...tempArray, ...(event.image?.path ? [{ ...event.image, isProfile: true }] : [])],
                     onSuccess: (imageArray, profileImage) => {
                         dispatch(setLoadingAction(false))
