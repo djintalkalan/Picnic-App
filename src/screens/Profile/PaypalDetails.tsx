@@ -34,7 +34,10 @@ const PaypalDetails: FC<any> = (props) => {
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
   const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
-  const [authorized, setAuthorized] = useState<string>("");
+  const [authorized, setAuthorized] = useState({
+    merchant_id: '',
+    primary_email: ''
+  });
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
@@ -49,7 +52,10 @@ const PaypalDetails: FC<any> = (props) => {
 
   const getSellerData = useCallback(() => {
     (async () => {
-      let authorized = ''
+      let authorized = {
+        merchant_id: '',
+        primary_email: ''
+      }
       let action_url: any = {}
       const userData = Database.getStoredValue('userData')
       try {
@@ -59,11 +65,14 @@ const PaypalDetails: FC<any> = (props) => {
             if (res?.data?.links) {
               action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
               setActionUrl(action_url?.href);
-              setAuthorized('');
+              setAuthorized(authorized);
             } else {
-              authorized = res?.data?.merchant_id
-              if (authorized && !userData?.paypal_merchant_id) {
-                Database.setUserData({ ...userData, paypal_merchant_id: authorized })
+              authorized = {
+                merchant_id: res?.data?.merchant_id,
+                primary_email: res?.data?.primary_email,
+              }
+              if ((authorized?.merchant_id) && !userData?.paypal_merchant_id) {
+                Database.setUserData({ ...userData, paypal_merchant_id: authorized?.merchant_id })
               }
               setAuthorized(authorized);
             }
@@ -83,7 +92,7 @@ const PaypalDetails: FC<any> = (props) => {
             }
             if (!userData?.paypal_merchant_logs?.length && (decryptedData?.payment_api_username || decryptedData?.payment_api_signature || decryptedData?.payment_api_password)) {
               setCredentialsConfigured(true)
-              if (!authorized) {
+              if (!authorized?.merchant_id) {
                 _showPopUpAlert({
                   message: Language.need_to_connect_paypal,
                   buttonText: Language.yes_connect,
@@ -110,11 +119,12 @@ const PaypalDetails: FC<any> = (props) => {
   useFocusEffect(getSellerData);
 
 
+
   const payPalDisconnect = useCallback(() => {
     NavigationService.navigate('PaypalDisconnect')
   }, []);
 
-  if (isCredentialsConfigured && !authorized)
+  if (isCredentialsConfigured && !authorized?.merchant_id)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
         <MyHeader title={Language.paypal_details} backEnabled />
@@ -175,12 +185,15 @@ const PaypalDetails: FC<any> = (props) => {
         <MyHeader title={Language.paypal_details} backEnabled />
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
-            {authorized ?
+            {authorized?.merchant_id ?
               <>
                 <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
-                  <View style={styles.connectedBorder} >
+                  <View style={[styles.connectedBorder, { paddingBottom: authorized?.primary_email ? (authorizedImageHeight / 3.8) : 0 }]} >
                     <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
-                    <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+                    <View style={styles.merchantTextView} >
+                      {authorized?.primary_email ? <Text style={[styles.merchantText, { marginBottom: scaler(5) }]}>{authorized?.primary_email}</Text> : null}
+                      <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized?.merchant_id}</Text></Text>
+                    </View>
                   </View>
                   <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
                 </View>
@@ -220,13 +233,16 @@ const styles = StyleSheet.create({
     maxWidth: width / 1.5,
     textAlign: 'center'
   },
-  merchantText: {
+  merchantTextView: {
     position: 'absolute',
+    bottom: (authorizedImageHeight / 3.8)
+
+  },
+  merchantText: {
     fontSize: scaler(15.5),
     textAlign: 'center',
     alignSelf: 'center',
     color: colors.colorPrimary,
-    bottom: (authorizedImageHeight / 3.8)
   },
   connectedImage: {
     width: authorizedImageWidth,

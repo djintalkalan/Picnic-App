@@ -480,7 +480,7 @@ export const en = {
   paypal_authorized: 'You have connected your PayPal',
   need_to_connect_paypal: 'You need to connect your PayPal business account with Picnic Groups.',
   connect_paypal_and_automate: 'Connect your PayPal business account with Picnic Groups and automate your payments.',
-  paypal_connected_successfully: 'Your PayPal account successfully connected with Picnic Groups.',
+  paypal_connected_successfully: 'Your PayPal account is successfully connected with Picnic Groups.',
   yes_connect: 'Yes, Connect',
   connect: 'Connect',
   merchant_id: 'Merchant ID',
