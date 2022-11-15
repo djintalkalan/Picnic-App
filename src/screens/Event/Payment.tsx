@@ -58,7 +58,7 @@ const Payment: FC<any> = (props) => {
 
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
-            <MyHeader title={props?.route?.params?.data?.payment_method != 'card' ? Language?.credit_card_details : Language?.paypal} backEnabled={props?.route?.params?.data?.payment_method != 'card'} />
+            <MyHeader title={props?.route?.params?.data?.payment_method == 'card' ? Language?.credit_card_details : Language?.paypal} backEnabled={props?.route?.params?.data?.payment_method != 'card'} />
             {!paymentClosed ? <WebView
                 javaScriptEnabled
                 ref={webViewRef}
