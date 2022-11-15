@@ -372,7 +372,7 @@ export const en = {
   standard: 'Standard',
   plan_name: 'Plan name',
   we_recommend_you_to_update: 'You can update application to try new features',
-  paypal_details: 'PayPal details',
+  paypal_details: 'Connect with PayPal',
   api_username: 'Live API Username',
   api_password: 'Live API Password',
   api_signature: 'Live API Signature',
@@ -485,5 +485,7 @@ export const en = {
   connect: 'Connect',
   merchant_id: 'Merchant ID',
   event_reserved: 'Event registration successful',
-  payment_unsuccessful: "Payment Unsuccessful. Please try again",
+  payment_unsuccessful: 'Payment Unsuccessful. Please try again',
+  disconnect_from_paypal: 'Disconnect from PayPal',
+  credit_card_details: 'credit_card_details',
 }
