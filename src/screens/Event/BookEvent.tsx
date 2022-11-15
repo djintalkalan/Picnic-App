@@ -15,7 +15,7 @@ import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { formatAmount, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { formatAmount, getSelectedCurrencyFromValue, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 
 type FormType = {
@@ -79,7 +79,7 @@ const BookEvent: FC = (props: any) => {
 
     useEffect(() => {
         if (event?.is_donation_enabled && payMethodSelected != 'cash') {
-            setValue('currency', event.event_currency.toUpperCase())
+            setValue('currency', getSelectedCurrencyFromValue(event.event_currency)?.text || 'USD')
         }
     }, [event, payMethodSelected])
 

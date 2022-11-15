@@ -489,5 +489,5 @@ export const en = {
   disconnect_from_paypal: 'Disconnect from PayPal',
   connect_with_paypal: 'Connect with PayPal',
   connected_with_paypal: 'Connected with PayPal',
-  credit_card_details: 'credit_card_details',
+  credit_card_details: 'Credit card details',
 }
