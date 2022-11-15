@@ -25,11 +25,11 @@ const Payment: FC<any> = (props) => {
         // console.log("EVENT is ", e);
         dispatch(setLoadingAction(e?.loading))
         if (!closed?.current && (e?.url?.includes("payment-success") || e?.url?.includes("payment-error"))) {
+            webViewRef?.current?.stopLoading();
             dispatch(setLoadingAction(false))
             closed.current = true
             setPaymentClosed(true)
             if (e?.url?.includes("payment-success")) {
-                webViewRef?.current?.stopLoading();
                 if (props?.route?.params?.data?.payment_method == 'card') {
                     _showSuccessMessage(Language.event_reserved)
                     SocketService.emit(EMIT_JOIN_ROOM, {
@@ -43,7 +43,7 @@ const Payment: FC<any> = (props) => {
                 dispatch(capturePayment({ ...props?.route?.params?.data, ...getQueryVariables(e?.url) }))
             } else {
                 NavigationService.goBack()
-                _showErrorMessage("Payment Unsuccessful. Please try again")
+                _showErrorMessage(Language.payment_unsuccessful)
             }
         }
         else if (!closed?.current) {
