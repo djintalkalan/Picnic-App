@@ -199,7 +199,7 @@ const PaypalDetails: FC<any> = (props) => {
   if (isCredentialsConfigured != undefined)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
-        <MyHeader title={Language.paypal_details} backEnabled />
+        <MyHeader title={Language.connected_with_paypal} backEnabled />
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
             {authorized?.merchant_id ?

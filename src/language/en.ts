@@ -487,5 +487,7 @@ export const en = {
   event_reserved: 'Event registration successful',
   payment_unsuccessful: 'Payment Unsuccessful. Please try again',
   disconnect_from_paypal: 'Disconnect from PayPal',
+  connect_with_paypal: 'Connect with PayPal',
+  connected_with_paypal: 'Connected with PayPal',
   credit_card_details: 'credit_card_details',
 }
