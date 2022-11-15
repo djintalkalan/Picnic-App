@@ -484,7 +484,6 @@ export const es = {
     yes_connect: '',
     connect: '',
     merchant_id: '',
-
-
+    event_reserved: 'Registro de evento exitoso',
 
 }

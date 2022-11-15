@@ -7,7 +7,8 @@ import { Platform, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
 import { EMIT_JOIN_ROOM, SocketService } from 'socket';
-import { getQueryVariables, NavigationService, _showErrorMessage } from 'utils';
+import Language from 'src/language/Language';
+import { getQueryVariables, NavigationService, _showErrorMessage, _showSuccessMessage } from 'utils';
 
 const Payment: FC<any> = (props) => {
 
@@ -15,6 +16,7 @@ const Payment: FC<any> = (props) => {
 
     const closed = useRef(false)
     const [paymentClosed, setPaymentClosed] = useState(false)
+    const webViewRef = useRef<WebView>(null);
 
     const [url, setUrl] = useState(props?.route?.params?.data?.res?.url)
     const dispatch = useDispatch()
@@ -27,8 +29,9 @@ const Payment: FC<any> = (props) => {
             closed.current = true
             setPaymentClosed(true)
             if (e?.url?.includes("payment-success")) {
+                webViewRef?.current?.stopLoading();
                 if (props?.route?.params?.data?.payment_method == 'card') {
-                    // _showSuccessMessage("res?.message)
+                    _showSuccessMessage(Language.event_reserved)
                     SocketService.emit(EMIT_JOIN_ROOM, {
                         resource_id: props?.route?.params?.data?.resource_id
                     })
@@ -54,6 +57,7 @@ const Payment: FC<any> = (props) => {
             <MyHeader title='Payment' />
             {!paymentClosed ? <WebView
                 javaScriptEnabled
+                ref={webViewRef}
                 setDisplayZoomControls
                 onNavigationStateChange={onNavigationStateChange}
                 source={{ uri: url }}
