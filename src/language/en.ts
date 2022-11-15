@@ -372,7 +372,7 @@ export const en = {
   standard: 'Standard',
   plan_name: 'Plan name',
   we_recommend_you_to_update: 'You can update application to try new features',
-  paypal_details: 'Connect with PayPal',
+  paypal_details: 'Paypal Details',
   api_username: 'Live API Username',
   api_password: 'Live API Password',
   api_signature: 'Live API Signature',

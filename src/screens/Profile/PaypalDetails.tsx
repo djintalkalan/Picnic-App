@@ -144,7 +144,7 @@ const PaypalDetails: FC<any> = (props) => {
   if (isCredentialsConfigured && !authorized?.merchant_id)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
-        <MyHeader title={Language.paypal_details} backEnabled />
+        <MyHeader title={Language.connect_with_paypal} backEnabled />
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
             <TextInput
@@ -230,7 +230,7 @@ const PaypalDetails: FC<any> = (props) => {
       </SafeAreaViewWithStatusBar>
     );
   return <SafeAreaViewWithStatusBar style={styles.container}>
-    <MyHeader title={Language.paypal_details} backEnabled />
+    <MyHeader title={Language.connect_with_paypal} backEnabled />
   </SafeAreaViewWithStatusBar>
 };
 
