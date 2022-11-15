@@ -80,7 +80,7 @@ const PaypalDisconnect: FC<any> = ({ route }) => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.paypal_details} />
+      <MyHeader title={Language.disconnect_from_paypal} />
       <WebView
         javaScriptEnabled={true}
         setDisplayZoomControls
