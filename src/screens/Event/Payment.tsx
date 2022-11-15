@@ -2,8 +2,8 @@ import { capturePayment, getEventDetail, joinEventSuccess, setLoadingAction } fr
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import React, { FC, useCallback, useRef, useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { BackHandler, Platform, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
 import { EMIT_JOIN_ROOM, SocketService } from 'socket';
@@ -12,7 +12,12 @@ import { getQueryVariables, NavigationService, _showErrorMessage, _showSuccessMe
 
 const Payment: FC<any> = (props) => {
 
-
+    useEffect(() => {
+        const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+            return props?.route?.params?.data?.payment_method == 'card'
+        })
+        return sub?.remove
+    }, [])
 
     const closed = useRef(false)
     const [paymentClosed, setPaymentClosed] = useState(false)
@@ -54,7 +59,7 @@ const Payment: FC<any> = (props) => {
 
     return (
         <SafeAreaViewWithStatusBar style={{ flex: 1, backgroundColor: colors.colorWhite }} >
-            <MyHeader title='Payment' />
+            <MyHeader title='Payment' backEnabled={props?.route?.params?.data?.payment_method != 'card'} />
             {!paymentClosed ? <WebView
                 javaScriptEnabled
                 ref={webViewRef}

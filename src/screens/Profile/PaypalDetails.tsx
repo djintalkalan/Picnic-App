@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import { _getMerchantInfo, _paypalTrackSeller } from 'api';
+import { _getMerchantInfo, _paypalTrackSeller, _updatePaypalMerchantId } from 'api';
 import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
@@ -67,6 +67,23 @@ const PaypalDetails: FC<any> = (props) => {
               setActionUrl(action_url?.href);
               setAuthorized(authorized);
             } else {
+              if (!res?.data?.oauth_integrations?.[0]?.oauth_third_party?.[0]?.scopes?.length) {
+                _updatePaypalMerchantId({ paypal_merchant_id: null })
+                  .then(res => {
+                    if (res?.status === 200) {
+                      // _showSuccessMessage(res?.message);
+                      Database.setUserData({ ...Database.getStoredValue('userData'), paypal_merchant_id: undefined })
+                      getSellerData();
+                    }
+                    dispatch(setLoadingAction(false));
+                  })
+                  .catch(() => {
+                    dispatch(setLoadingAction(false));
+                  });
+                setActionUrl(false);
+                setAuthorized(authorized);
+                return;
+              }
               authorized = {
                 merchant_id: res?.data?.merchant_id,
                 primary_email: res?.data?.primary_email,

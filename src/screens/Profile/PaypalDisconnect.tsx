@@ -29,6 +29,8 @@ const PaypalDisconnect: FC<any> = ({ route }) => {
         if (formSubmittedRef.current && e?.url?.endsWith('businessprofile/partner/consents') && e?.navigationType == 'formsubmit' && e?.title == 'Manage permissions') {
           if (!closed?.current) {
             closed.current = true;
+            NavigationService.goBack();
+            return
             _updatePaypalMerchantId({ paypal_merchant_id: null })
               .then(res => {
                 if (res?.status === 200) {
@@ -54,6 +56,8 @@ const PaypalDisconnect: FC<any> = ({ route }) => {
         console.log("totalChecked.current", totalChecked.current);
 
         if (totalChecked.current > 3) {
+          NavigationService.goBack();
+          return
           _updatePaypalMerchantId({ paypal_merchant_id: null })
             .then(res => {
               if (res?.status === 200) {
