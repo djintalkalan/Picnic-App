@@ -484,4 +484,5 @@ export const en = {
   yes_connect: 'Yes, Connect',
   connect: 'Connect',
   merchant_id: 'Merchant ID',
+  event_reserved: 'Event registration successful',
 }
