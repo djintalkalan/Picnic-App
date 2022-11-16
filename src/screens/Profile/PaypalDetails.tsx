@@ -34,10 +34,7 @@ const PaypalDetails: FC<any> = (props) => {
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
   const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
-  const [authorized, setAuthorized] = useState({
-    merchant_id: '',
-    primary_email: ''
-  });
+  const [authorized, setAuthorized] = useState('');
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
@@ -52,10 +49,7 @@ const PaypalDetails: FC<any> = (props) => {
 
   const getSellerData = useCallback(() => {
     (async () => {
-      let authorized = {
-        merchant_id: '',
-        primary_email: ''
-      }
+      let authorized = ''
       let action_url: any = {}
       const userData = Database.getStoredValue('userData')
       try {
@@ -65,67 +59,49 @@ const PaypalDetails: FC<any> = (props) => {
             if (res?.data?.links) {
               action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
               setActionUrl(action_url?.href);
-              setAuthorized(authorized);
             } else {
-              if (!res?.data?.oauth_integrations?.[0]?.oauth_third_party?.[0]?.scopes?.length) {
-                _updatePaypalMerchantId({ paypal_merchant_id: null })
-                  .then(res => {
-                    if (res?.status === 200) {
-                      // _showSuccessMessage(res?.message);
-                      Database.setUserData({ ...Database.getStoredValue('userData'), paypal_merchant_id: undefined })
-                      getSellerData();
-                    }
-                    dispatch(setLoadingAction(false));
-                  })
-                  .catch(() => {
-                    dispatch(setLoadingAction(false));
-                  });
-                setActionUrl(false);
-                setAuthorized(authorized);
-                return;
+              authorized = res?.data?.paypal_merchant_id
+              if ((authorized) && !userData?.paypal_merchant_id) {
+                Database.setUserData({ ...userData, paypal_merchant_id: authorized })
               }
-              authorized = {
-                merchant_id: res?.data?.merchant_id,
-                primary_email: res?.data?.primary_email,
-              }
-              if ((authorized?.merchant_id) && !userData?.paypal_merchant_id) {
-                Database.setUserData({ ...userData, paypal_merchant_id: authorized?.merchant_id })
-              }
-              setAuthorized(authorized);
             }
+            setAuthorized(authorized);
           }
         });
-        await _getMerchantInfo().then(res => {
-          if (res?.status == 200) {
-            const token = res?.data?.token
-            const bytes = CryptoJS.AES.decrypt(token, userData?._id);
-            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-            setValue('payment_api_password', decryptedData?.payment_api_password)
-            setValue('payment_api_signature', decryptedData?.payment_api_signature)
-            setValue('payment_api_username', decryptedData?.payment_api_username)
-            setValue('payment_email', decryptedData?.payment_email)
-            if (Object.values(decryptedData).reduce((p: any, c: any) => ((c || "")?.trim() ? ((p || 0) + 1) : p), 0) == 4) {
-              setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
-            }
-            if (!userData?.paypal_merchant_logs?.length && (decryptedData?.payment_api_username || decryptedData?.payment_api_signature || decryptedData?.payment_api_password)) {
-              setCredentialsConfigured(true)
-              if (!authorized?.merchant_id) {
-                _showPopUpAlert({
-                  message: Language.need_to_connect_paypal,
-                  buttonText: Language.yes_connect,
-                  onPressCancel: NavigationService.goBack,
-                  onPressButton: () => {
-                    NavigationService.replace('PaypalConnect', { actionUrl: action_url?.href, userData });
-                    _hidePopUpAlert()
-                  }
-                })
+        if (authorized) {
+          setCredentialsConfigured(false)
+        } else
+          await _getMerchantInfo().then(res => {
+            if (res?.status == 200) {
+              const token = res?.data?.token
+              const bytes = CryptoJS.AES.decrypt(token, userData?._id);
+              const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              setValue('payment_api_password', decryptedData?.payment_api_password)
+              setValue('payment_api_signature', decryptedData?.payment_api_signature)
+              setValue('payment_api_username', decryptedData?.payment_api_username)
+              setValue('payment_email', decryptedData?.payment_email)
+              if (Object.values(decryptedData).reduce((p: any, c: any) => ((c || "")?.trim() ? ((p || 0) + 1) : p), 0) == 4) {
+                setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
               }
-            } else {
-              setCredentialsConfigured(false)
+              if (!userData?.paypal_merchant_logs?.length && (decryptedData?.payment_api_username || decryptedData?.payment_api_signature || decryptedData?.payment_api_password)) {
+                setCredentialsConfigured(true)
+                if (!authorized) {
+                  _showPopUpAlert({
+                    message: Language.need_to_connect_paypal,
+                    buttonText: Language.yes_connect,
+                    onPressCancel: NavigationService.goBack,
+                    onPressButton: () => {
+                      NavigationService.replace('PaypalConnect', { actionUrl: action_url?.href, userData });
+                      _hidePopUpAlert()
+                    }
+                  })
+                }
+              } else {
+                setCredentialsConfigured(false)
+              }
             }
           }
-        }
-        ).catch(e => console.log(e))
+          ).catch(e => console.log(e))
       } catch {
         (e: any) => console.log(e);
       }
@@ -138,10 +114,29 @@ const PaypalDetails: FC<any> = (props) => {
 
 
   const payPalDisconnect = useCallback(() => {
-    NavigationService.navigate('PaypalDisconnect')
+    _showPopUpAlert({
+      title: Language.disconnect_from_paypal,
+      message: Language?.are_you_sure_disconnect_paypal,
+      buttonText: Language?.yes_disconnect,
+      buttonStyle: { backgroundColor: colors.colorErrorRed },
+      onPressButton: () => {
+        dispatch(setLoadingAction(true))
+        _updatePaypalMerchantId({ paypal_merchant_id: null })
+          .then(res => {
+            dispatch(setLoadingAction(false))
+            if (res?.status === 200) {
+              _hidePopUpAlert()
+              Database.setUserData({ ...Database.getStoredValue('userData'), paypal_merchant_id: null })
+              getSellerData()
+            }
+          }).catch((e) => {
+            dispatch(setLoadingAction(false))
+          })
+      }
+    })
   }, []);
 
-  if (isCredentialsConfigured && !authorized?.merchant_id)
+  if (isCredentialsConfigured && !authorized)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
         <MyHeader title={Language.connect_with_paypal} backEnabled />
@@ -202,14 +197,13 @@ const PaypalDetails: FC<any> = (props) => {
         <MyHeader title={Language.connected_with_paypal} backEnabled />
         <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
           <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
-            {authorized?.merchant_id ?
+            {authorized ?
               <>
                 <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
-                  <View style={[styles.connectedBorder, { paddingBottom: authorized?.primary_email ? (authorizedImageHeight / 3.8) : 0 }]} >
+                  <View style={styles.connectedBorder} >
                     <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
                     <View style={styles.merchantTextView} >
-                      {authorized?.primary_email ? <Text style={[styles.merchantText, { marginBottom: scaler(5) }]}>{authorized?.primary_email}</Text> : null}
-                      <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized?.merchant_id}</Text></Text>
+                      <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
                     </View>
                   </View>
                   <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
