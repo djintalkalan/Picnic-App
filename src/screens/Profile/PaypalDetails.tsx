@@ -208,7 +208,7 @@ const PaypalDetails: FC<any> = (props) => {
                   </View>
                   <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
                 </View>
-                <Button containerStyle={{ marginTop: scaler(30) }} title='Disconnect' onPress={payPalDisconnect} />
+                <Button containerStyle={{ marginTop: scaler(30) }} title={Language?.disconnect} onPress={payPalDisconnect} />
               </>
               :
               <View style={{ flex: 1 }} >
