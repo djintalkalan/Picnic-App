@@ -6,6 +6,7 @@ import { Text } from 'custom-components';
 import { IBottomMenuButton } from 'custom-components/BottomMenu';
 import { EventItem } from 'custom-components/ListItem/EventItem';
 import { TicketView } from 'custom-components/ListItem/ListItem';
+import TZ from "dj-tz-lookup";
 import { isEqual } from 'lodash';
 import React, { FC, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Image, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -16,7 +17,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from 'react-redux';
 import { useDatabase } from 'src/database/Database';
 import Language, { useLanguage } from 'src/language/Language';
-import TZ from "tz-lookup";
 import { calculateImageUrl, dateFormatInSpecificZone, formatAmount, getCityOnly, getFreeTicketsInMultiple, getImageUrl, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert } from 'utils';
 import { INITIAL_PAGINATION_STATE } from 'utils/Constants';
 

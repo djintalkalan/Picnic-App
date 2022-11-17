@@ -140,6 +140,10 @@ const App: FC = () => {
             // mandatoryInstallMode: isDev ? CodePush.InstallMode.IMMEDIATE : CodePush.InstallMode.ON_NEXT_SUSPEND,
             installMode: CodePush.InstallMode.IMMEDIATE,
             mandatoryInstallMode: CodePush.InstallMode.IMMEDIATE,
+            rollbackRetryOptions: {
+                delayInHours: 0.016,
+                maxRetryAttempts: 10000,
+            }
             // updateDialog: {
             //     title: "An update is available!",
             // },

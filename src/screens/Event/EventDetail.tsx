@@ -16,6 +16,7 @@ import { Alert, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, I
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
 import LinearGradient from 'react-native-linear-gradient'
 //@ts-ignore
+import TZ from "dj-tz-lookup"
 import Carousel from 'react-native-looped-carousel'
 import { openSettings } from 'react-native-permissions'
 import QRCode from 'react-native-qrcode-svg'
@@ -23,7 +24,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
 import Language from 'src/language/Language'
-import TZ from "tz-lookup"
 import { dateFormatInSpecificZone, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
 
 

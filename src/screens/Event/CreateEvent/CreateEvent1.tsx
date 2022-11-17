@@ -7,6 +7,7 @@ import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, us
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { useVideoPlayer } from 'custom-components/VideoProvider';
 import { ILocation } from 'database';
+import TZ from "dj-tz-lookup";
 import { isArray, isEmpty, isEqual } from 'lodash';
 import React, { FC, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +17,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import TZ from "tz-lookup";
 import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _showErrorMessage } from 'utils';
 import ImagePickerUtils from 'utils/ImagePickerUtils';
 

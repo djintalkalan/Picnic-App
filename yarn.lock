@@ -4045,6 +4045,11 @@ dj-react-native-dropdown-alert@^0.1.3:
     lodash "^4.17.19"
     prop-types "15.5.10"
 
+dj-tz-lookup@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/dj-tz-lookup/-/dj-tz-lookup-1.0.0.tgz#525a6f07981c3e2ca383c9365225fcc70a499a3f"
+  integrity sha512-sQ1K775vl+9/GN4HASPKGCyCAX0dQXQ4xqFoDZMGbioRepfevn5Wk9L6i8l4Uy4GUlr6cD818r0q1Bzt3Uq4OA==
+
 doctrine@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
@@ -8165,7 +8170,7 @@ react-native-video@^5.2.1:
     prop-types "^15.7.2"
     shaka-player "^2.5.9"
 
-react-native-webview@11.23.1:
+react-native-webview@^11.23.1:
   version "11.23.1"
   resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.23.1.tgz#6a4bf2620e491dd4fecf4e6dc079005117fae12c"
   integrity sha512-bmqsdg4RYOUYD37R9XTrQALm7eD62KbLNPRfgvpLGd1SjaurvAjjsLrLN4mt6yOtKOMKeZvlcAl3x6De6cCQsA==
@@ -9521,11 +9526,6 @@ typescript@^4.4.4:
   version "4.8.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.3.tgz#d59344522c4bc464a65a730ac695007fdb66dd88"
   integrity sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==
-
-tz-lookup@^6.1.25:
-  version "6.1.25"
-  resolved "https://registry.yarnpkg.com/tz-lookup/-/tz-lookup-6.1.25.tgz#34d68a7e1ccfcb51f29a9893d2d48e4118d873cd"
-  integrity sha512-fFewT9o1uDzsW1QnUU1ValqaihFnwiUiiHr1S79/fxOzKXYYvX+EHeRnpvQJ9B3Qg67wPXT6QF2Esc4pFOrvLg==
 
 ua-parser-js@^0.7.30:
   version "0.7.31"
