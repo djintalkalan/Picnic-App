@@ -492,5 +492,6 @@ export const en = {
   credit_card_details: 'Credit card details',
   are_you_sure_disconnect_paypal: 'Are you sure you want to disconnect from paypal?',
   yes_disconnect: 'Yes, Disconnect',
+  disconnect: 'Disconnect',
 
 }

@@ -492,4 +492,6 @@ export const es = {
     credit_card_details: 'Detalles de la tarjeta de crédito',
     are_you_sure_disconnect_paypal: '¿Seguro que que desea desconectarse de PayPal?',
     yes_disconnect: 'Sí, Desconectar',
+    disconnect: 'Desconectar',
+
 }
