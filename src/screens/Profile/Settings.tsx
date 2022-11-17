@@ -156,7 +156,7 @@ const Settings: FC<any> = (props) => {
                     <SettingButton
                         onPress={() => { NavigationService.navigate('PaypalDetails') }}
                         image={Images.ic_paypal_icon}
-                        title={userData?.paypal_merchant_id ? Language.connected_with_paypal : Language.connect_with_paypal}
+                        title={Language?.paypal_details}
                         arrowRight={true}
 
                     />

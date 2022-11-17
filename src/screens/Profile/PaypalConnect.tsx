@@ -56,7 +56,7 @@ const PaypalConnect: FC<any> = ({ route }) => {
 
   return (
     <SafeAreaViewWithStatusBar style={styles.container}>
-      <MyHeader title={Language.connect_with_paypal} backEnabled={!isBackButtonDisabled} />
+      <MyHeader title={Language.paypal} backEnabled={!isBackButtonDisabled} />
       <WebView
         javaScriptEnabled={true}
         setDisplayZoomControls
