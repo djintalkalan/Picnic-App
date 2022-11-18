@@ -63,7 +63,7 @@ const PaypalConnect: FC<any> = ({ route }) => {
         source={{
           uri: `${actionUrl}`,
         }}
-        incognito={true}
+        incognito={!__DEV__}
         domStorageEnabled={true}
         startInLoadingState={true}
         allowUniversalAccessFromFileURLs={true}
