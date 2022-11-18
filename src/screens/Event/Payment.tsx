@@ -61,6 +61,7 @@ const Payment: FC<any> = (props) => {
             <MyHeader title={props?.route?.params?.data?.payment_method == 'card' ? Language?.credit_card_details : Language?.paypal} backEnabled={props?.route?.params?.data?.payment_method != 'card'} />
             {!paymentClosed ? <WebView
                 javaScriptEnabled
+                incognito={!__DEV__}
                 ref={webViewRef}
                 setDisplayZoomControls
                 onNavigationStateChange={onNavigationStateChange}
