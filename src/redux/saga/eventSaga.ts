@@ -510,9 +510,11 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
             yield put(getEventDetail(resource_id))
             NavigationService.navigate('EventDetail')
         } else if (res.status == 400) {
-            _showErrorMessage(res.message);
+            _showErrorMessage(res.message, 4000);
+            NavigationService.goBack()
         } else {
             _showErrorMessage(Language.something_went_wrong);
+            NavigationService.goBack()
         }
         yield put(setLoadingAction(false));
     }

@@ -71,7 +71,7 @@ const Home: FC = () => {
       dispatch(getProfile())
     })
     // setTimeout(() => {
-    //   setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' })
+    //   dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
     //   NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
     // }, 2000);
   }, [])
