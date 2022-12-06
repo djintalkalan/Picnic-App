@@ -490,7 +490,7 @@ export const es = {
     connect_with_paypal: 'Conectar con Paypal',
     connected_with_paypal: 'Conectado con PayPal',
     credit_card_details: 'Detalles de la tarjeta de crédito',
-    are_you_sure_disconnect_paypal: '¿Seguro que que desea desconectarse de PayPal?',
+    are_you_sure_disconnect_paypal: 'Desconectar su cuenta de PayPal le impedirá ofrecer servicios y productos de PayPal en su sitio web. ¿Desea continuar?',
     yes_disconnect: 'Sí, Desconectar',
     disconnect: 'Desconectar',
 

@@ -10,6 +10,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import CryptoJS from "react-native-crypto-js";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
 import { NavigationService, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
@@ -35,6 +36,7 @@ const PaypalDetails: FC<any> = (props) => {
   const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
   const [authorized, setAuthorized] = useState('');
+  const [errorMessages, setErrorMessages] = useState([]);
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
@@ -66,6 +68,7 @@ const PaypalDetails: FC<any> = (props) => {
               }
             }
             setAuthorized(authorized);
+            setErrorMessages(res?.data?.messages || [])
           }
         });
         if (authorized) {
@@ -194,33 +197,40 @@ const PaypalDetails: FC<any> = (props) => {
   if (isCredentialsConfigured != undefined)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
-        <MyHeader title={Language.paypal_details} backEnabled />
-        <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
-          <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
-            {authorized ?
-              <>
-                <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
-                  <View style={styles.connectedBorder} >
-                    <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
-                    <View style={styles.merchantTextView} >
-                      <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+        <KeyboardAwareScrollView overScrollMode='never' >
+          <MyHeader title={Language.paypal_details} backEnabled />
+          <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
+            <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
+              {authorized ?
+                <>
+                  <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
+                    <View style={[styles.connectedBorder, { borderColor: errorMessages?.length ? '#FF8C1A' : colors.colorPrimary }]} >
+                      <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
+                      <View style={styles.merchantTextView} >
+                        <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+                      </View>
                     </View>
+                    <Image style={styles.connectedImage} source={errorMessages?.length ? Images.ic_paypal_error : Images.ic_paypal_connected} />
                   </View>
-                  <Image style={styles.connectedImage} source={Images.ic_paypal_connected} />
+                  {errorMessages?.map((message, i) => {
+                    return <View style={{ paddingVertical: scaler(5), }} >
+                      <Text autoLink style={{ fontSize: scaler(12), color: colors?.colorErrorRed, fontStyle: 'italic' }}>{message}</Text>
+                    </View>
+                  })}
+                  <Button containerStyle={{ marginTop: scaler(30) }} title={Language?.disconnect} onPress={payPalDisconnect} />
+                </>
+                :
+                <View style={{ flex: 1 }} >
+                  <Image style={styles.connectImage} source={Images.ic_paypal_connect} />
+                  <Text style={[styles.text, { alignSelf: 'center', paddingVertical: scaler(20), maxWidth: width / 1.2 }]}>{Language.connect_paypal_and_automate}</Text>
+
+                  <Button onPress={payPalConnect} containerStyle={{ flex: 1, justifyContent: 'flex-end' }} title={Language.connect} />
+
                 </View>
-                <Button containerStyle={{ marginTop: scaler(30) }} title={Language?.disconnect} onPress={payPalDisconnect} />
-              </>
-              :
-              <View style={{ flex: 1 }} >
-                <Image style={styles.connectImage} source={Images.ic_paypal_connect} />
-                <Text style={[styles.text, { alignSelf: 'center', paddingVertical: scaler(20), maxWidth: width / 1.2 }]}>{Language.connect_paypal_and_automate}</Text>
-
-                <Button onPress={payPalConnect} containerStyle={{ flex: 1, justifyContent: 'flex-end' }} title={Language.connect} />
-
-              </View>
-            }
+              }
+            </View>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
       </SafeAreaViewWithStatusBar>
     );
   return <SafeAreaViewWithStatusBar style={styles.container}>
