@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { _paypalTrackSeller } from 'api';
 import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
@@ -51,9 +52,10 @@ const CreateEvent4: FC<any> = props => {
     });
     const keyboardValues = useKeyboardService()
 
-    useEffect(() => {
-        setEventValues()
-        dispatch(setLoadingAction(true))
+
+
+
+    const fetchPaypalDetails = useCallback(() => {
         _paypalTrackSeller().then(res => {
             dispatch(setLoadingAction(false))
             if (res.status === 200) {
@@ -73,6 +75,12 @@ const CreateEvent4: FC<any> = props => {
         }).catch(e => {
             dispatch(setLoadingAction(false))
         });
+    }, [])
+
+    useFocusEffect(fetchPaypalDetails)
+
+    useEffect(() => {
+        setEventValues()
     }, [])
 
     const setEventValues = useCallback(() => {
