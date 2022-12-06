@@ -3,12 +3,12 @@ import { _totalSoldTickets } from 'api/APIProvider';
 import { authorizePayment, joinEvent } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
-import { Button, CheckBox, KeyboardHideView, MyHeader, TextInput } from 'custom-components';
+import { Button, CheckBox, KeyboardHideView, MyHeader, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { isEqual, round } from 'lodash';
 import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 //@ts-ignore
 import ReadMore from 'react-native-read-more-text';
@@ -265,7 +265,7 @@ const BookEvent: FC = (props: any) => {
                                 {Language.applicable_tax}
                             </Text>
                             <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, getTotalPayment()?.totalTax, 2) : formatAmount(selectedTicket.currency, 0)}
+                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, getTotalPayment()?.totalTax) : formatAmount(selectedTicket.currency, 0)}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
                             {getTotalPayment().paidTicketsSelected != 0 ? <>
