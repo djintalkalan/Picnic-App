@@ -59,15 +59,13 @@ const CreateEvent4: FC<any> = props => {
         _paypalTrackSeller().then(res => {
             dispatch(setLoadingAction(false))
             if (res.status === 200) {
-                if (!res?.data?.links) {
-
-                } else {
-                    let authorized = res?.data?.paypal_merchant_id
+                const authorized = res?.data?.paypal_merchant_id
+                if (authorized) {
                     const userData = Database.getStoredValue("userData");
-                    if ((authorized) && !userData?.paypal_merchant_id) {
+                    if (!userData?.paypal_merchant_id) {
                         Database.setUserData({ ...userData, paypal_merchant_id: authorized })
                     }
-                    if (authorized && !res?.data?.messages?.length) {
+                    if (!res?.data?.messages?.length) {
                         setPaypalConnected(true)
                     }
                 }
