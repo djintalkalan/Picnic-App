@@ -83,5 +83,6 @@ export const Images = {
   ic_chat_message: require("./images/ic_chat_message.png"),
   ic_paypal_connect: require("./images/ic_paypal_connect.png"),
   ic_paypal_connected: require("./images/ic_paypal_connected.png"),
-  // ic_paypal_connected: require("./images/ic_paypal_connected.png"),
+  ic_paypal_error: require("./images/ic_paypal_error.png"),
+  // ic_paypal_error: require("./images/ic_paypal_error.png"),
 };

@@ -1,10 +1,11 @@
-import { createEvent, getProfile, setLoadingAction, uploadFileArray } from 'app-store/actions';
+import { _paypalTrackSeller } from 'api';
+import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { useDatabase } from 'database/Database';
+import Database from 'database/Database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -35,7 +36,7 @@ const CreateEvent4: FC<any> = props => {
     const uploadedImageArray = useRef<Array<any>>([]);
     const [isPayByPaypal, setIsPayByPaypal] = useState(false)
     const { current: event } = useRef(store.getState().createEventState)
-    const [userData] = useDatabase('userData');
+    const [isPaypalConnected, setPaypalConnected] = useState(false)
 
     const dispatch = useDispatch()
     const {
@@ -52,7 +53,26 @@ const CreateEvent4: FC<any> = props => {
 
     useEffect(() => {
         setEventValues()
-        dispatch(getProfile())
+        dispatch(setLoadingAction(true))
+        _paypalTrackSeller().then(res => {
+            dispatch(setLoadingAction(false))
+            if (res.status === 200) {
+                if (!res?.data?.links) {
+
+                } else {
+                    let authorized = res?.data?.paypal_merchant_id
+                    const userData = Database.getStoredValue("userData");
+                    if ((authorized) && !userData?.paypal_merchant_id) {
+                        Database.setUserData({ ...userData, paypal_merchant_id: authorized })
+                    }
+                    if (authorized && !res?.data?.messages?.length) {
+                        setPaypalConnected(true)
+                    }
+                }
+            }
+        }).catch(e => {
+            dispatch(setLoadingAction(false))
+        });
     }, [])
 
     const setEventValues = useCallback(() => {
@@ -60,7 +80,7 @@ const CreateEvent4: FC<any> = props => {
         // console.log("userData?.paypal_merchant_id", userData?.paypal_merchant_id);
 
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
-        event?.payment_method && event?.payment_method?.includes('paypal') && userData?.paypal_merchant_id && setIsPayByPaypal(true)
+        event?.payment_method && event?.payment_method?.includes('paypal') && isPaypalConnected && setIsPayByPaypal(true)
         // setValue('paypalEmail', event?.payment_email ?? '')
         // setValue('apiUserName', event?.payment_api_username ?? '')
         // setValue('apiPassword', event?.payment_api_password ?? '')
@@ -75,7 +95,7 @@ const CreateEvent4: FC<any> = props => {
         //     setPaypalBusinessAccount(true)
         // }
         setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
-    }, [userData?.paypal_merchant_id])
+    }, [isPaypalConnected])
 
     const callCreateEventApi = useCallback(data => {
         const payload: any = {
@@ -90,7 +110,7 @@ const CreateEvent4: FC<any> = props => {
             payment_api_username: event?.payment_api_username?.length ? null : undefined,
             payment_api_password: event?.payment_api_password?.length ? null : undefined,
             payment_api_signature: event?.payment_api_signature?.length ? null : undefined,
-            is_creators_paypal_configured: userData?.paypal_merchant_id ? 1 : 0,
+            is_creators_paypal_configured: isPaypalConnected ? 1 : 0,
             image: uploadedImage.current,
             event_images: [...event.event_images.filter(_ => _?._id), ...uploadedImageArray.current]
         };
@@ -129,7 +149,7 @@ const CreateEvent4: FC<any> = props => {
             );
 
         }, 0);
-    }, [isPayByPaypal, isPayByCash, isBookingDisabled, userData?.paypal_merchant_id]);
+    }, [isPayByPaypal, isPayByCash, isBookingDisabled, isPaypalConnected]);
 
     const onSubmit = useCallback(() => handleSubmit((data) => {
         if (!data?.policy?.trim() && event.is_donation_enabled != 1 && isPayByPaypal) {
@@ -195,7 +215,7 @@ const CreateEvent4: FC<any> = props => {
                         </TouchableOpacity>
                         <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
                         <TouchableOpacity style={styles.payView} onPress={() => {
-                            if (!isPayByPaypal && !userData?.paypal_merchant_id) {
+                            if (!isPayByPaypal && !isPaypalConnected) {
                                 NavigationService.navigate('PaypalDetails', {
                                     onSuccess: () => {
                                         setIsPayByPaypal(true)
