@@ -52,9 +52,6 @@ const CreateEvent4: FC<any> = props => {
     });
     const keyboardValues = useKeyboardService()
 
-
-
-
     const fetchPaypalDetails = useCallback(() => {
         _paypalTrackSeller().then(res => {
             dispatch(setLoadingAction(false))
@@ -81,12 +78,14 @@ const CreateEvent4: FC<any> = props => {
         setEventValues()
     }, [])
 
+    useEffect(() => {
+        event?.payment_method && event?.payment_method?.includes('paypal') && isPaypalConnected && setIsPayByPaypal(true)
+    }, [isPaypalConnected])
+
     const setEventValues = useCallback(() => {
         console.log("event", event);
         // console.log("userData?.paypal_merchant_id", userData?.paypal_merchant_id);
-
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
-        event?.payment_method && event?.payment_method?.includes('paypal') && isPaypalConnected && setIsPayByPaypal(true)
         // setValue('paypalEmail', event?.payment_email ?? '')
         // setValue('apiUserName', event?.payment_api_username ?? '')
         // setValue('apiPassword', event?.payment_api_password ?? '')
@@ -101,7 +100,7 @@ const CreateEvent4: FC<any> = props => {
         //     setPaypalBusinessAccount(true)
         // }
         setBookingDisabled(parseInt(event?.is_booking_disabled?.toString() || '0') == 1)
-    }, [isPaypalConnected])
+    }, [])
 
     const callCreateEventApi = useCallback(data => {
         const payload: any = {
