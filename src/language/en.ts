@@ -372,7 +372,7 @@ export const en = {
   standard: 'Standard',
   plan_name: 'Plan name',
   we_recommend_you_to_update: 'You can update application to try new features',
-  paypal_details: 'Paypal Details',
+  paypal_details: 'PayPal Details',
   api_username: 'Live API Username',
   api_password: 'Live API Password',
   api_signature: 'Live API Signature',
@@ -490,7 +490,7 @@ export const en = {
   connect_with_paypal: 'Connect with PayPal',
   connected_with_paypal: 'Connected with PayPal',
   credit_card_details: 'Credit card details',
-  are_you_sure_disconnect_paypal: 'Disconnecting your PayPal account will prevent you from offering PayPal services and products on your website. Do you wish to continue?',
+  are_you_sure_disconnect_paypal: 'Disconnecting your PayPal account will prevent you from offering PayPal services and products on our platform. Do you wish to continue?',
   yes_disconnect: 'Yes, Disconnect',
   disconnect: 'Disconnect',
 
