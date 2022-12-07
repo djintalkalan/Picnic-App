@@ -56,10 +56,18 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText" | "allLanguages"
+    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText" | "allLanguages" | "paypalConnection"
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches", "currencies", 'socketConnected', "searchHomeText", "allLanguages"]
+    "recentSearches", "currencies", 'socketConnected', "searchHomeText", "allLanguages", "paypalConnection"]
+
+export interface IPaypalConnection {
+    paypal_merchant_id?: string
+    errorMessages?: any[],
+    isPaypalConnected?: boolean
+    actionUrl?: string
+}
+
 type DataBaseType = {
     userData?: any
     isLogin?: boolean
@@ -70,6 +78,7 @@ type DataBaseType = {
     currentLocation?: ILocation
     selectedLocation?: ILocation
     recentSearches?: Array<IRecentSearches>
+    paypalConnection?: IPaypalConnection
     allLanguages?: ILanguages
 }
 
@@ -152,6 +161,10 @@ class Database {
         this.otherDataStorage.setArray('recentSearches', [data, ...oldData])
     }
 
+    public updatePaypalDetails = (data: IPaypalConnection) => {
+        this.otherDataStorage?.setMap("paypalConnection", data)
+    }
+
     getStorageForKey = (key?: StorageType): MMKVInstance => {
         switch (key) {
             case 'allLanguages':
@@ -171,6 +184,7 @@ class Database {
 
             case 'currencies':
             case 'recentSearches':
+            case 'paypalConnection':
             case 'searchHomeText':
                 return this.otherDataStorage
 
@@ -199,6 +213,7 @@ class Database {
                 case 'currentLocation':
                 case 'selectedLocation':
                 case 'allLanguages':
+                case 'paypalConnection':
                     return this.getStorageForKey(key).setMap(key, data[key] ?? null)
 
                 case 'recentSearches':
@@ -240,6 +255,7 @@ class Database {
             case 'currentLocation':
             case 'selectedLocation':
             case 'allLanguages':
+            case 'paypalConnection':
                 return this.getStorageForKey(key).getMap(key) || defaultValue
 
             case 'recentSearches':
@@ -256,6 +272,7 @@ class Database {
 
             case 'isLogin':
             case 'socketConnected':
+            case 'paypalConnection':
                 return this.getStorageForKey(key).setBool(key, value ?? false)
 
             case 'userData':
@@ -273,10 +290,11 @@ class Database {
 }
 
 export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):
-    [T | null, (value: T | ((prevValue: T) => T)) => void] => {
+    [T, (value: T | ((prevValue: T) => T)) => void] => {
     if (!StorageVariables.includes(key)) {
         _showErrorMessage("Wrong Key Used in UseDatabase")
-        return [null, () => null]
+        //@ts-ignore
+        return [undefined, () => null]
     }
     const [value, setValue] = useMMKVStorage<T>(key, Database.getInstance().getStorageForKey(key), defaultValue, isEqual);
     return [value, key == 'selectedLanguage' ? () => null : setValue];

@@ -1,12 +1,10 @@
-import { useFocusEffect } from '@react-navigation/native';
-import { _paypalTrackSeller } from 'api';
 import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database from 'database/Database';
+import { IPaypalConnection, useDatabase } from 'database/Database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -37,7 +35,7 @@ const CreateEvent4: FC<any> = props => {
     const uploadedImageArray = useRef<Array<any>>([]);
     const [isPayByPaypal, setIsPayByPaypal] = useState(false)
     const { current: event } = useRef(store.getState().createEventState)
-    const [isPaypalConnected, setPaypalConnected] = useState(false)
+    const [{ isPaypalConnected }] = useDatabase<IPaypalConnection>("paypalConnection", {})
 
     const dispatch = useDispatch()
     const {
@@ -52,27 +50,6 @@ const CreateEvent4: FC<any> = props => {
     });
     const keyboardValues = useKeyboardService()
 
-    const fetchPaypalDetails = useCallback(() => {
-        _paypalTrackSeller().then(res => {
-            dispatch(setLoadingAction(false))
-            if (res.status === 200) {
-                const authorized = res?.data?.paypal_merchant_id
-                if (authorized) {
-                    const userData = Database.getStoredValue("userData");
-                    if (!userData?.paypal_merchant_id) {
-                        Database.setUserData({ ...userData, paypal_merchant_id: authorized })
-                    }
-                    if (!res?.data?.messages?.length) {
-                        setPaypalConnected(true)
-                    }
-                }
-            }
-        }).catch(e => {
-            dispatch(setLoadingAction(false))
-        });
-    }, [])
-
-    useFocusEffect(fetchPaypalDetails)
 
     useEffect(() => {
         setEventValues()

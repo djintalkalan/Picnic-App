@@ -1,11 +1,11 @@
 import { useFocusEffect } from '@react-navigation/native';
-import { _getMerchantInfo, _paypalTrackSeller, _updatePaypalMerchantId } from 'api';
-import { setLoadingAction } from 'app-store/actions';
+import { _getMerchantInfo, _updatePaypalMerchantId } from 'api';
+import { paypalTrackSeller, setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, MyHeader, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database from 'database/Database';
+import Database, { IPaypalConnection, useDatabase } from 'database/Database';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
@@ -33,10 +33,8 @@ const connectImageHeight = (connectImageWidth * 509) / 1149
 const PaypalDetails: FC<any> = (props) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
-  const [actionUrl, setActionUrl] = useState(false);
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
-  const [authorized, setAuthorized] = useState('');
-  const [errorMessages, setErrorMessages] = useState([]);
+  const [{ errorMessages, paypal_merchant_id, actionUrl }] = useDatabase<IPaypalConnection>('paypalConnection', {})
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
@@ -49,67 +47,53 @@ const PaypalDetails: FC<any> = (props) => {
     });
   }, [actionUrl]);
 
-  const getSellerData = useCallback(() => {
-    (async () => {
-      let authorized = ''
-      let action_url: any = {}
-      const userData = Database.getStoredValue('userData')
-      try {
-        dispatch(setLoadingAction(true))
-        await _paypalTrackSeller().then(res => {
-          if (res.status === 200) {
-            if (res?.data?.links) {
-              action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
-              setActionUrl(action_url?.href);
-            } else {
-              authorized = res?.data?.paypal_merchant_id
-              if ((authorized) && !userData?.paypal_merchant_id) {
-                Database.setUserData({ ...userData, paypal_merchant_id: authorized })
-              }
-            }
-            setAuthorized(authorized);
-            setErrorMessages(res?.data?.messages || [])
-          }
-        });
-        if (authorized) {
-          setCredentialsConfigured(false)
-        } else
-          await _getMerchantInfo().then(res => {
-            if (res?.status == 200) {
-              const token = res?.data?.token
-              const bytes = CryptoJS.AES.decrypt(token, userData?._id);
-              const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-              setValue('payment_api_password', decryptedData?.payment_api_password)
-              setValue('payment_api_signature', decryptedData?.payment_api_signature)
-              setValue('payment_api_username', decryptedData?.payment_api_username)
-              setValue('payment_email', decryptedData?.payment_email)
-              if (Object.values(decryptedData).reduce((p: any, c: any) => ((c || "")?.trim() ? ((p || 0) + 1) : p), 0) == 4) {
-                setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
-              }
-              if (!userData?.paypal_merchant_logs?.length && (decryptedData?.payment_api_username || decryptedData?.payment_api_signature || decryptedData?.payment_api_password)) {
-                setCredentialsConfigured(true)
-                if (!authorized) {
-                  _showPopUpAlert({
-                    message: Language.need_to_connect_paypal,
-                    buttonText: Language.yes_connect,
-                    onPressCancel: NavigationService.goBack,
-                    onPressButton: () => {
-                      NavigationService.replace('PaypalConnect', { actionUrl: action_url?.href, userData });
-                      _hidePopUpAlert()
-                    }
-                  })
-                }
-              } else {
-                setCredentialsConfigured(false)
-              }
-            }
-          }
-          ).catch(e => console.log(e))
-      } catch {
-        (e: any) => console.log(e);
-      }
+  const onTrackSellerSuccess = useCallback(() => {
+    if (paypal_merchant_id) {
+      setCredentialsConfigured(false)
       dispatch(setLoadingAction(false))
-    })()
+    } else {
+      const userData = Database?.getStoredValue('userData')
+
+      _getMerchantInfo().then(res => {
+        dispatch(setLoadingAction(false))
+        if (res?.status == 200) {
+          const token = res?.data?.token
+          const bytes = CryptoJS.AES.decrypt(token, userData?._id);
+          const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+          setValue('payment_api_password', decryptedData?.payment_api_password)
+          setValue('payment_api_signature', decryptedData?.payment_api_signature)
+          setValue('payment_api_username', decryptedData?.payment_api_username)
+          setValue('payment_email', decryptedData?.payment_email)
+          if (Object.values(decryptedData).reduce((p: any, c: any) => ((c || "")?.trim() ? ((p || 0) + 1) : p), 0) == 4) {
+            setValue('payment_email', decryptedData?.payment_email, { shouldValidate: true })
+          }
+          if (!userData?.paypal_merchant_logs?.length && (decryptedData?.payment_api_username || decryptedData?.payment_api_signature || decryptedData?.payment_api_password)) {
+            setCredentialsConfigured(true)
+            if (!paypal_merchant_id) {
+              _showPopUpAlert({
+                message: Language.need_to_connect_paypal,
+                buttonText: Language.yes_connect,
+                onPressCancel: NavigationService.goBack,
+                onPressButton: () => {
+                  NavigationService.replace('PaypalConnect', { actionUrl, userData });
+                  _hidePopUpAlert()
+                }
+              })
+            }
+          } else {
+            setCredentialsConfigured(false)
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+        dispatch(setLoadingAction(false))
+      })
+    }
+  }, [paypal_merchant_id, actionUrl])
+
+  const getSellerData = useCallback(() => {
+    dispatch(setLoadingAction(true))
+    dispatch(paypalTrackSeller({ onSuccess: onTrackSellerSuccess }));
   }, [])
 
   useFocusEffect(getSellerData);
@@ -139,7 +123,7 @@ const PaypalDetails: FC<any> = (props) => {
     })
   }, []);
 
-  if (isCredentialsConfigured && !authorized)
+  if (isCredentialsConfigured && !paypal_merchant_id)
     return (
       <SafeAreaViewWithStatusBar style={styles.container}>
         <MyHeader title={Language.paypal_details} backEnabled />
@@ -201,13 +185,13 @@ const PaypalDetails: FC<any> = (props) => {
           <MyHeader title={Language.paypal_details} backEnabled />
           <View style={{ marginHorizontal: scaler(15), flex: 1 }}>
             <View style={{ width: '100%', paddingTop: scaler(15), flex: 1 }}>
-              {authorized ?
+              {paypal_merchant_id ?
                 <>
                   <View style={{ marginTop: authorizedImageHeight / 1.8 }} >
                     <View style={[styles.connectedBorder, { borderColor: errorMessages?.length ? '#FF8C1A' : colors.colorPrimary }]} >
                       <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
                       <View style={styles.merchantTextView} >
-                        <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{authorized}</Text></Text>
+                        <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{paypal_merchant_id}</Text></Text>
                       </View>
                     </View>
                     <Image style={styles.connectedImage} source={errorMessages?.length ? Images.ic_paypal_error : Images.ic_paypal_connected} />
