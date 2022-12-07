@@ -1,6 +1,6 @@
 import { config } from 'api';
 import { RootState } from 'app-store';
-import { getEditEventDetail, getMyGroups } from 'app-store/actions';
+import { getEditEventDetail, getMyGroups, paypalTrackSeller } from 'app-store/actions';
 import { resetCreateEvent, updateCreateEvent } from 'app-store/actions/createEventActions';
 import { colors, Images } from 'assets';
 import { Button, CheckBox, FixedDropdown, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
@@ -111,6 +111,7 @@ const CreateEvent1: FC<any> = props => {
 
   useEffect(() => {
     dispatch(getMyGroups())
+    dispatch(paypalTrackSeller())
     // dispatch(restorePurchase())
     if (eventId) {
       dispatch(getEditEventDetail(eventId))

@@ -6,7 +6,7 @@ import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import Database from 'src/database/Database';
 import IntercomService from 'src/intercom/IntercomService';
 import Language, { updateLanguageDirect } from 'src/language/Language';
-import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
+import { NavigationService, WaitTill, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
 
 function* getProfile({ type, payload, }: action): Generator<any, any, any> {
@@ -194,6 +194,44 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
         yield put(setLoadingAction(false));
     }
 }
+
+function* _paypalTrackSeller({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let res = yield call(ApiProvider._paypalTrackSeller);
+        if (res.status === 200) {
+            let authorized = ''
+            let action_url: any = {}
+            const userData = Database.getStoredValue('userData')
+            if (res?.data?.links) {
+                action_url = res?.data?.links.find((link: any) => link.rel === 'action_url');
+            } else {
+                authorized = res?.data?.paypal_merchant_id
+                if ((authorized) && !userData?.paypal_merchant_id) {
+                    Database.setUserData({ ...userData, paypal_merchant_id: authorized })
+                }
+            }
+            Database.updatePaypalDetails({
+                errorMessages: res?.data?.messages || [],
+                isPaypalConnected: authorized && !res?.data?.messages?.length ? true : false,
+                paypal_merchant_id: authorized,
+                actionUrl: action_url?.href
+            })
+            yield WaitTill(200);
+            payload?.onSuccess && payload?.onSuccess(true)
+        } else if (res.status == 400) {
+            yield put(setLoadingAction(false));
+            // _showErrorMessage(res.message);
+        } else {
+            yield put(setLoadingAction(false));
+            _showErrorMessage(Language.something_went_wrong);
+        }
+    }
+    catch (error) {
+        console.log("Catch Error", error);
+        yield put(setLoadingAction(false));
+    }
+}
+
 // Watcher: watch auth request
 export default function* watchProfile() {
     yield takeLatest(ActionTypes.GET_PROFILE, getProfile);
@@ -202,6 +240,7 @@ export default function* watchProfile() {
     yield takeLatest(ActionTypes.UPDATE_PASSWORD, updatePassword);
     yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
     yield takeEvery(ActionTypes.GET_USER_UPCOMING_PAST_EVENTS, _getUpcomingPastEvents);
+    yield takeEvery(ActionTypes.PAYPAL_TRACK_SELLER, _paypalTrackSeller);
     // yield takeLatest(ActionTypes.GET_USER_GROUPS, _getMyAllGroups);
 
 };

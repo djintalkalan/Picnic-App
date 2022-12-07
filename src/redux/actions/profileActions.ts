@@ -53,6 +53,11 @@ export const removeFromBlockedMember = (payload: string) => ({
     payload
 })
 
+export const paypalTrackSeller = (payload?: { onSuccess: () => void }) => ({
+    type: ActionTypes.PAYPAL_TRACK_SELLER,
+    payload
+})
+
 // export const getUserEvents = (payload: { event_filter_type: string, body: any }) => ({
 //     type: ActionTypes.GET_USER_EVENTS,
 //     payload
