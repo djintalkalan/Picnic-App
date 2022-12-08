@@ -63,7 +63,8 @@ const StorageVariables = ["userData", "isLogin", "firebaseToken",
 
 export interface IPaypalConnection {
     paypal_merchant_id?: string
-    errorMessages?: any[],
+    paypal_primary_email?: string
+    errorMessages?: any[]
     isPaypalConnected?: boolean
     actionUrl?: string
 }

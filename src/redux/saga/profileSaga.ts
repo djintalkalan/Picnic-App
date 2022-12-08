@@ -214,6 +214,7 @@ function* _paypalTrackSeller({ type, payload, }: action): Generator<any, any, an
                 errorMessages: res?.data?.messages || [],
                 isPaypalConnected: authorized && !res?.data?.messages?.length ? true : false,
                 paypal_merchant_id: authorized,
+                paypal_primary_email: res?.data?.paypal_primary_email,
                 actionUrl: action_url?.href
             })
             yield WaitTill(200);

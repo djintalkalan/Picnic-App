@@ -34,7 +34,7 @@ const PaypalDetails: FC<any> = (props) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors, isValid }, setValue, } = useForm<FormType>({});
   const [isCredentialsConfigured, setCredentialsConfigured] = useState<boolean | undefined>();
-  const [{ errorMessages, paypal_merchant_id, actionUrl }] = useDatabase<IPaypalConnection>('paypalConnection', {})
+  const [{ errorMessages, paypal_merchant_id, actionUrl, paypal_primary_email }] = useDatabase<IPaypalConnection>('paypalConnection', {})
 
   const payPalConnect = useCallback(() => {
     NavigationService.navigate('PaypalConnect', {
@@ -191,7 +191,11 @@ const PaypalDetails: FC<any> = (props) => {
                     <View style={[styles.connectedBorder, { borderColor: errorMessages?.length ? '#FF8C1A' : colors.colorPrimary }]} >
                       <Text style={styles.text}>{Language.paypal_connected_successfully}</Text>
                       <View style={styles.merchantTextView} >
-                        <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{paypal_merchant_id}</Text></Text>
+                        {paypal_primary_email?.trim() ?
+                          <Text style={styles.merchantText}>{paypal_primary_email?.trim()}</Text>
+                          :
+                          <Text style={[styles.merchantText, { color: colors.colorBlackText }]}>{Language.merchant_id + " : "}<Text style={styles.merchantText}>{paypal_merchant_id}</Text></Text>
+                        }
                       </View>
                     </View>
                     <Image style={styles.connectedImage} source={errorMessages?.length ? Images.ic_paypal_error : Images.ic_paypal_connected} />
