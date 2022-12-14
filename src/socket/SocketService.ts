@@ -60,6 +60,7 @@ class Service {
         if (this.socket) {
             this.socket.disconnect();
             Database.setSocketConnected(false);
+            this.socket.removeAllListeners();
             this.socket = undefined
         }
     }
