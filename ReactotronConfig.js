@@ -1,3 +1,4 @@
+import { NativeModules } from 'react-native';
 import Reactotron from 'reactotron-react-native';
 import { config } from 'src/api/config';
 
@@ -13,9 +14,11 @@ if (__DEV__) {
     }
 
     if (config.REACTOTRON_CONSOLES) {
+        const scriptHostname = NativeModules?.SourceCode?.scriptURL?.split('://')[1].split(':')[0];
+        console.log("Reactotron configured at ", scriptHostname);
         Reactotron
             //   .setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
-            .configure() // controls connection & communication settings
+            .configure({ host: scriptHostname }) // controls connection & communication settings
             .useReactNative() // add all built-in react native plugins
             .connect() // let's connect!
         if (config.TERMINAL_CONSOLES) {
