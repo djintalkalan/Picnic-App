@@ -15,7 +15,9 @@ if (__DEV__) {
 
     if (config.REACTOTRON_CONSOLES) {
         const scriptHostname = NativeModules?.SourceCode?.scriptURL?.split('://')[1].split(':')[0];
-        console.log("Reactotron configured at ", scriptHostname);
+        setTimeout(() => {
+            console.log("Reactotron configured at IP: " + scriptHostname);
+        }, 0);
         Reactotron
             //   .setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
             .configure({ host: scriptHostname }) // controls connection & communication settings
