@@ -2,7 +2,7 @@ import { config } from 'api';
 import { colors } from 'assets';
 import { Text } from 'custom-components';
 import { round, toNumber } from 'lodash';
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { Fragment, useCallback, useEffect, useReducer } from 'react';
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import CodePush from 'react-native-code-push';
 import { Bar as ProgressBar } from 'react-native-progress';
@@ -148,20 +148,27 @@ export const useCodePushDialog = (time: number = 2000) => {
     </TouchableOpacity>) : undefined
 }
 
-const withUpdateDialog = (App: any, time?: number) => {
-    return (props: any) => {
-        const dialog = useCodePushDialog(time)
-        return (<>
-            <App {...props} />
-            {dialog}
-        </>)
-    }
+export const CodePushDialog = ({ time }: { time?: number }) => {
+    const dialog = useCodePushDialog();
+    return <Fragment>
+        {dialog}
+    </Fragment>
 }
 
-export const CodePushWithUpdateDialog = (App: React.Component<any, any, any> | React.FC<any>, time?: number) => {
-    return CodePush({ checkFrequency: CodePush.CheckFrequency.MANUAL })(withUpdateDialog(App))
-}
-export default CodePush({ checkFrequency: CodePush.CheckFrequency.MANUAL })
+// const withUpdateDialog = (App: any, time?: number) => {
+//     return (props: any) => {
+//         const dialog = useCodePushDialog(time)
+//         return (<>
+//             <App {...props} />
+//             {dialog}
+//         </>)
+//     }
+// }
+
+// export const CodePushWithUpdateDialog = (App: React.Component<any, any, any> | React.FC<any>, time?: number) => {
+//     return CodePush({ checkFrequency: CodePush.CheckFrequency.MANUAL })(withUpdateDialog(App))
+// }
+// export default CodePush({ checkFrequency: CodePush.CheckFrequency.MANUAL })
 
 const styles = StyleSheet.create({
     container: {

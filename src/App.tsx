@@ -14,7 +14,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import Semver from 'semver';
 import { scaler } from 'utils';
-import CodePush, { useCodePushDialog } from './codepush/CodePush';
+import { CodePushDialog } from './codepush/CodePush';
 import Database, { useOtherValues } from './database/Database';
 import Language from './language/Language';
 import MyNavigationContainer from './routes/MyNavigationContainer';
@@ -123,8 +123,6 @@ const App: FC = () => {
 
     }, [])
 
-    const dialog = useCodePushDialog(0)
-
     return (
         <GestureHandlerRootView style={styles.container} >
             {config.APP_TYPE != 'production' &&
@@ -148,12 +146,12 @@ const App: FC = () => {
                 <StatusBar backgroundColor={"#fbfbfb"} />
                 <Image style={{ height, width: width * 1.5, alignSelf: 'center', resizeMode: 'center' }} source={Images.ic_logo_gif} />
             </View> : null}
-            {dialog}
+            <CodePushDialog time={0} />
         </GestureHandlerRootView>
     )
 }
 
-export default CodePush(App)
+export default App
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.colorWhite },
