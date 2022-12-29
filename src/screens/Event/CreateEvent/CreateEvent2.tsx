@@ -303,6 +303,7 @@ const CreateEvent2: FC<any> = props => {
         <DateTimePickerModal
           style={{ zIndex: 20 }}
           isVisible={isDatePickerVisible}
+          locale={Language.getLanguage()}
           minimumDate={getMinDate()}
           mode={(eventDateTime.current?.selectedType?.includes('Date')) ? 'date' : "time"}
           customConfirmButtonIOS={props => (

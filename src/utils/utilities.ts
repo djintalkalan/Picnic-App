@@ -137,7 +137,16 @@ export const dateFormat = (date: Date, toFormat: string) => {
     if (!date) return ""
     try {
         toFormat = getFormat(toFormat);
-        return FNSFormat(date, toFormat)
+        let locale;
+        if (Language.getLanguage() == 'es') {
+            locale = require('date-fns/locale/es')
+        }
+        console.log("locale", locale);
+
+        const formatted = FNSFormat(date, toFormat, { locale });
+        console.log("formatted", formatted);
+
+        return formatted
     }
     catch (e) {
         console.log("dateFormat Error", e, date)
@@ -148,84 +157,6 @@ export const dateFormat = (date: Date, toFormat: string) => {
 export const isNumeric = (value: any) => {
     return /^-?\d+$/.test(value);
 }
-
-
-
-
-
-export const _calculateAge = (birthday: string | Date, format: string = "YYYY-MM-DD", delimiter: "-" | "/" | "." = "-") => { // birthday is a date
-    if (typeof birthday == "string") {
-        birthday = stringToDate(birthday, format, delimiter)
-    }
-    return getAge(birthday)
-}
-
-function getAge(dob: Date) {
-    let now = new Date();
-    let yearNow = now.getFullYear();
-    let monthNow = now.getMonth();
-    let dateNow = now.getDate();
-
-    let yearDob = dob.getFullYear();
-    let monthDob = dob.getMonth();
-    let dateDob = dob.getDate();
-    let age = {
-        years: -1,
-        months: -1,
-        days: -1
-    };
-    let ageString = "";
-    let yearString = "Y";
-    let monthString = "M";
-    let dayString = "D";
-
-
-    let yearAge = yearNow - yearDob;
-    let monthAge
-    if (monthNow >= monthDob)
-        monthAge = monthNow - monthDob;
-    else {
-        yearAge--;
-        monthAge = 12 + monthNow - monthDob;
-    }
-    let dateAge
-    if (dateNow >= dateDob)
-        dateAge = dateNow - dateDob;
-    else {
-        monthAge--;
-        dateAge = 31 + dateNow - dateDob;
-
-        if (monthAge < 0) {
-            monthAge = 11;
-            yearAge--;
-        }
-    }
-
-    age = {
-        years: yearAge,
-        months: monthAge,
-        days: dateAge
-    };
-
-    if ((age?.years > 0) && (age.months > 0) && (age.days > 0))
-        ageString = age?.years + yearString + ", " + age.months + monthString + ", " + age.days + dayString;
-    else if ((age?.years == 0) && (age.months == 0) && (age.days > 0))
-        ageString = age.days + dayString;
-    else if ((age?.years > 0) && (age.months == 0) && (age.days == 0))
-        ageString = age?.years + yearString;
-    else if ((age?.years > 0) && (age.months > 0) && (age.days == 0))
-        ageString = age?.years + yearString + ", " + age.months + monthString;
-    else if ((age?.years == 0) && (age.months > 0) && (age.days > 0))
-        ageString = age.months + monthString + ", " + age.days + dayString;
-    else if ((age?.years > 0) && (age.months == 0) && (age.days > 0))
-        ageString = age?.years + yearString + ", " + age.days + dayString;
-    else if ((age?.years == 0) && (age.months > 0) && (age.days == 0))
-        ageString = age.months + monthString;
-    else ageString = "Oops! Could not calculate age!";
-
-    return ageString;
-}
-
 
 
 export const _showErrorMessage = async (msg?: string, time?: number) => {
@@ -283,23 +214,6 @@ export const _zoomImage = (imageUrl: string) => {
 
 export const _cancelZoom = () => {
     StaticHolder.hideImage()
-}
-
-
-export const splitDate = (dateTimestr: string, onlyDay: any) => {
-    let dateStr = '';
-    const month_names_short = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    if (dateTimestr) {
-        dateStr = dateTimestr.split(' ')[0]
-    }
-
-    var dateObj = new Date(dateStr);
-    var month = month_names_short[dateObj.getUTCMonth()]; //months from 0-11
-    var day = dateObj.getUTCDate();
-    var year = dateObj.getUTCFullYear();
-
-    return onlyDay ? day : month + ', ' + year
 }
 
 export const getImageUrl = (url: string, options: { width?: number, height?: number, type: 'users' | 'events' | 'groups' | 'messages' }) => {
@@ -897,7 +811,11 @@ export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
     if (!(ISODate instanceof Date)) {
         ISODate = new Date(ISODate)
     }
-    return utcToZonedTime(ISODate?.toISOString(), timezone);
+    let locale;
+    if (Language.getLanguage() == 'es') {
+        locale = require('date-fns/locale/es')
+    }
+    return utcToZonedTime(ISODate?.toISOString(), timezone, { locale });
 }
 
 export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) => {
@@ -907,15 +825,23 @@ export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) =>
     if (!(zonedDate instanceof Date)) {
         zonedDate = new Date(zonedDate)
     }
-    return zonedTimeToUtc(zonedDate, timezone)
+    let locale;
+    if (Language.getLanguage() == 'es') {
+        locale = require('date-fns/locale/es')
+    }
+    return zonedTimeToUtc(zonedDate, timezone, { locale })
 }
 
 
 export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, format: string) => {
 
-    return moment(iso)
-        .tz(timezone)
-        .format(format)
+    // const esLocale = require('moment/dist/locale/es').default;
+    // moment.updateLocale('es', esLocale);
+    const es = moment(iso).locale(Language.getLanguage());
+
+    // console.log("Locale is", es, moment.locale(), Language.getLanguage());
+
+    return es.tz(timezone).format(format)
 
     return formatInTimeZone(iso, timezone, getFormat(format))
     const zoned = getZonedDate(timezone, iso)
