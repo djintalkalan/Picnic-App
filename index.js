@@ -20,6 +20,8 @@ import '@formatjs/intl-datetimeformat/locale-data/en' // locale-data for en
 import '@formatjs/intl-datetimeformat/locale-data/es' // locale-data for en
 import '@formatjs/intl-datetimeformat/add-all-tz' // Add ALL tz data
 
+import 'moment/locale/es';
+
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';
