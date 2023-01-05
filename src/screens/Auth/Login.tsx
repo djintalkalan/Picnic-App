@@ -7,10 +7,11 @@ import { EmailValidations } from 'custom-components/TextInput/rules'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import React, { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Image, Platform, StyleSheet, View } from 'react-native'
+import { Image, Platform, Pressable, StyleSheet, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useDispatch } from 'react-redux'
 import Language from 'src/language/Language'
+import UUIDService from 'src/uuid/UUIDService'
 import { NavigationService, openLink, scaler } from 'utils'
 
 type LoginFormType = {
@@ -69,8 +70,7 @@ const Login: FC = () => {
 
                         <Text style={styles.welcomeStyle} >{Language.welcome_back}</Text>
 
-
-                        <Image source={Images.ic_logo_name} style={styles.icon} />
+                        <Pressable onPress={UUIDService.showUUIDToast} ><Image source={Images.ic_logo_name} style={styles.icon} /></Pressable>
 
                     </View>
 

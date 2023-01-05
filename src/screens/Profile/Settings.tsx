@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
+import UUIDService from 'src/uuid/UUIDService'
 import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
@@ -32,7 +33,12 @@ DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     // Samsung App Store: "com.sec.android.app.samsungapps"
     // iOS: "AppStore", "TestFlight", "Other"
 });
+
+
+
 const Settings: FC<any> = (props) => {
+
+
 
     const updateLanguage = useUpdateLanguage()
     const selectedLanguage = useLanguage()
@@ -221,7 +227,8 @@ const Settings: FC<any> = (props) => {
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity disabled
+                        <TouchableOpacity activeOpacity={0.9}
+                            onPress={UUIDService.showUUIDToast}
                             style={[styles.buttonContainer, { paddingTop: 0 }]} >
                             <MaterialIcons color={colors.colorBlackText} size={scaler(25)} name={'info-outline'} />
                             <View>

@@ -4,7 +4,9 @@ import React, { MutableRefObject } from 'react';
 import { DeviceEventEmitter, Platform } from 'react-native';
 import { Progress, Request, RNS3 } from 'react-native-aws3';
 import Database from 'src/database/Database';
+import FirestoreService from 'src/firestore/FirestoreService';
 import { DefaultLanguage, LanguageType } from 'src/language/Language';
+import UUIDService from 'src/uuid/UUIDService';
 import { _showErrorMessage } from 'utils';
 
 interface header {
@@ -28,6 +30,9 @@ export const TOKEN_EXPIRED: MutableRefObject<boolean | null> = React.createRef()
 
 function interceptResponse(this: AxiosResponse<any>): any {
   try {
+    // Saving logs to firestore
+    FirestoreService.saveApiLogs(this);
+
     if (config.TERMINAL_CONSOLES) {
       console.log("-----------AXIOS  Api Response is----------- ");
       console.log("url string ", this.config?.url);
@@ -109,7 +114,8 @@ async function fetchApiData(url: string, method?: Method, body?: any) {
     const header = {
       "Content-Type": (isMultipart) ? "multipart/form-data" : "application/json",
       'Authorization': authToken ? ("Bearer " + authToken) : undefined,
-      'Accept-Language': selectedLanguage
+      'Accept-Language': selectedLanguage,
+      'uuid': UUIDService.getUUID(),
     }
     return callApi(url, header, body, method)
   } catch (error: any) {
