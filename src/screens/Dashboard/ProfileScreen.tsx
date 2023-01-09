@@ -329,6 +329,7 @@ const ProfileScreen: FC<any> = (props) => {
 
             </ScrollView>
             <DateTimePickerModal
+                locale={Language.getLanguage()}
                 style={{ zIndex: 20 }}
                 isVisible={isDatePickerVisible}
                 mode="date"
