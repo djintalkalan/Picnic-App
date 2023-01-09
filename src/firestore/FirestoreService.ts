@@ -38,7 +38,14 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
         if (logs_availability) {
             let requestData = response.config.data;
             try {
-                requestData = JSON.parse(requestData);
+                if (requestData) {
+                    requestData = JSON.parse(requestData);
+                    ['password', 'old_password', 'password_confirmation'].forEach(_ => {
+                        if (requestData[_]) {
+                            requestData[_] = RNCryptoJS.AES.encrypt(requestData[_], config.BUNDLE_ID_PACKAGE_NAME).toString();
+                        }
+                    })
+                }
             } catch (e) {
 
             }
