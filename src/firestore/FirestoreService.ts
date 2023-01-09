@@ -36,6 +36,12 @@ listenLogsAvailability();
 const saveApiLogs = (response: AxiosResponse<any>) => {
     try {
         if (logs_availability) {
+            let requestData = response.config.data;
+            try {
+                requestData = JSON.parse(requestData);
+            } catch (e) {
+
+            }
             const data: any = {
                 uuid: UUIDService.getUUID(),
                 date: new Date(),
@@ -43,7 +49,7 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
                 full_url: (response.config?.baseURL || '') + response.config.url,
                 url: response.config.url,
                 request: JSON.stringify({
-                    data: response.config.data,
+                    data: requestData,
                     method: response.config?.method,
                     headers: response.config.headers,
                 }),
