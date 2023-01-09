@@ -68,6 +68,9 @@ const api = axios.create({
   headers: {
     'Accept': "application/json",
     'X-Platform-Type': 'app',
+    'APP-VERSION': config.APP_VERSION,
+    'APP-BUILD-NUMBER': config.BUILD_NUMBER_CODE,
+    'APP-PACKAGE-NAME': config.BUNDLE_ID_PACKAGE_NAME,
   }
 });
 
