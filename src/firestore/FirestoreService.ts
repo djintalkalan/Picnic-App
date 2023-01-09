@@ -2,6 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import { config } from "api";
 import { AxiosResponse } from "axios";
 import Database from "database/Database";
+import CryptoJS from "react-native-crypto-js";
 import UUIDService from 'src/uuid/UUIDService';
 
 let logs_availability = false
@@ -42,12 +43,12 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
                     requestData = JSON.parse(requestData);
                     ['password', 'old_password', 'password_confirmation'].forEach(_ => {
                         if (requestData[_]) {
-                            requestData[_] = RNCryptoJS.AES.encrypt(requestData[_], config.BUNDLE_ID_PACKAGE_NAME).toString();
+                            requestData[_] = CryptoJS.AES.encrypt(requestData[_], UUIDService.getUUID()).toString();
                         }
                     })
                 }
             } catch (e) {
-
+                console.log("Error in data parsing", e);
             }
             const data: any = {
                 uuid: UUIDService.getUUID(),
