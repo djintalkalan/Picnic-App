@@ -43,7 +43,7 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
                     requestData = JSON.parse(requestData);
                     ['password', 'old_password', 'password_confirmation'].forEach(_ => {
                         if (requestData[_]) {
-                            requestData[_] = CryptoJS.AES.encrypt(requestData[_], UUIDService.getUUID()).toString();
+                            requestData[_] = CryptoJS.AES.encrypt(requestData[_], UUIDService.getUUID()?.replace(/-/g, '')).toString();
                         }
                     })
                 }
