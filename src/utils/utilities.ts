@@ -141,10 +141,10 @@ export const dateFormat = (date: Date, toFormat: string) => {
         if (Language.getLanguage() == 'es') {
             locale = require('date-fns/locale/es')
         }
-        console.log("locale", locale);
+        // console.log("locale", locale);
 
         const formatted = FNSFormat(date, toFormat, { locale });
-        console.log("formatted", formatted);
+        // console.log("formatted", formatted);
 
         return formatted
     }

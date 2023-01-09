@@ -163,8 +163,10 @@ const MyNavigationContainer = () => {
   }, []);
 
   useEffect(() => {
+    if (isLogin) {
+      dispatch(updateDeviceLanguage())
+    }
     dispatch(refreshLanguage())
-    dispatch(updateDeviceLanguage())
     Rollbar?.init();
     return () => {
       Rollbar?.exit();
