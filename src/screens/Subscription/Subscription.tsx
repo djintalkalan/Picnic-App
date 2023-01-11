@@ -7,7 +7,7 @@ import Database from 'database/Database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { clearTransactionIOS, endConnection, finishTransaction, getSubscriptions, IAPErrorCode, initConnection, PurchaseError, purchaseErrorListener, purchaseUpdatedListener, requestSubscription, Subscription as TSubscription, SubscriptionPurchase } from 'react-native-iap';
+import { clearTransactionIOS, endConnection, ErrorCode as IAPErrorCode, finishTransaction, getSubscriptions, initConnection, PurchaseError, purchaseErrorListener, purchaseUpdatedListener, requestSubscription, Subscription as TSubscription, SubscriptionPurchase } from 'react-native-iap';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
 import Language from 'src/language/Language';
