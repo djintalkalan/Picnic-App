@@ -493,5 +493,5 @@ export const en = {
   are_you_sure_disconnect_paypal: 'Disconnecting your PayPal account will prevent you from offering PayPal services and products on our platform. Do you wish to continue?',
   yes_disconnect: 'Yes, Disconnect',
   disconnect: 'Disconnect',
-
+  must_be_six: 'Must be at least 6 characters',
 }

@@ -18,18 +18,27 @@ export const EmailValidations: Exclude<RegisterOptions, 'valueAsNumber' | 'value
 
 export const PasswordValidations: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'> = {
     required: Language.password_required,
-    pattern: {
-        value: REGX_PASSWORD,
-        message: Language.must_be_eight
-    },
+    // pattern: {
+    //     value: REGX_PASSWORD,
+    //     message: Language.must_be_eight
+    // },
+    minLength: {
+        value: 6,
+        message: Language.must_be_six
+    }
+
 }
 
 export const ConfirmPasswordValidations: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'> = {
     required: Language.confirm_password_required,
-    pattern: {
-        value: REGX_PASSWORD,
-        message: Language.must_be_eight
-    },
+    // pattern: {
+    //     value: REGX_PASSWORD,
+    //     message: Language.must_be_eight
+    // },
+    minLength: {
+        value: 6,
+        message: Language.must_be_six
+    }
 }
 
 export const validateEmail = (email: string) => {
