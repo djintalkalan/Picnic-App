@@ -67,6 +67,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     placeholder={Language.new_password}
                     rules={{ ...PasswordValidations, required: Language.new_password_required }}
                     name={'password'}
+                    maxLength={16}
                     onPressIcon={() => setSecure3(!isSecure3)}
                     secureTextEntry={isSecure3}
                     icon={isSecure3 ? Images.ic_eye_open : Images.ic_eye_closed}
@@ -82,6 +83,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     ref={confirmPasswordRef}
                     placeholder={Language.confirm_password}
                     name={'confirmPassword'}
+                    maxLength={16}
                     rules={{
                         ...ConfirmPasswordValidations,
                         validate: (confirmPassword: string) => {

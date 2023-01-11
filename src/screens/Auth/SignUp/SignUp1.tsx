@@ -99,6 +99,7 @@ const SignUp1: FC<any> = (props) => {
             placeholder={Language.password}
             name={'password'}
             rules={PasswordValidations}
+            maxLength={16}
             required={true}
             control={control}
             errors={errors}
@@ -113,6 +114,7 @@ const SignUp1: FC<any> = (props) => {
           <TextInput
             placeholder={Language.confirm_password}
             name={'confirmPassword'}
+            maxLength={16}
             rules={{
               ...ConfirmPasswordValidations,
               validate: (confirmPassword: string) => {
