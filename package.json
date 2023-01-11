@@ -115,7 +115,7 @@
     "react-native-gesture-handler": "^2.6.0",
     "react-native-get-random-values": "^1.8.0",
     "react-native-google-places-autocomplete": "^2.4.1",
-    "react-native-iap": "^10.1.0",
+    "react-native-iap": "^12.4.12",
     "react-native-image-crop-picker": "^0.38.0",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-inappbrowser-reborn": "^3.7.0",
