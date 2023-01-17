@@ -493,5 +493,6 @@ export const es = {
     are_you_sure_disconnect_paypal: 'Desconectar su cuenta de PayPal le impedirá ofrecer servicios y productos de PayPal en nuestra plataforma. ¿Desea continuar?',
     yes_disconnect: 'Sí, Desconectar',
     disconnect: 'Desconectar',
-
+    monthly_plan: 'Plan mensual',
+    yearly_plan: 'Plan Anual',
 }
