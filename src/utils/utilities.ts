@@ -9,7 +9,10 @@ import { IBottomMenu } from 'custom-components/BottomMenu';
 import { IAlertType } from 'custom-components/PopupAlert';
 import { TouchAlertType } from 'custom-components/TouchAlert';
 import { format as FNSFormat } from 'date-fns';
-import { format as TZFormat, formatInTimeZone, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import {
+    // format as TZFormat, formatInTimeZone,
+    utcToZonedTime, zonedTimeToUtc
+} from 'date-fns-tz';
 import { decode } from 'html-entities';
 import moment from 'moment-timezone';
 import { Keyboard, Linking, Platform } from 'react-native';
@@ -841,13 +844,18 @@ export const dateFormatInSpecificZone = (iso: string | Date, timezone: string, f
 
     // console.log("Locale is", es, moment.locale(), Language.getLanguage());
 
-    return es.tz(timezone).format(format)
+    return es.tz(timezone).format(format)?.replace('.', '')
 
-    return formatInTimeZone(iso, timezone, getFormat(format))
-    const zoned = getZonedDate(timezone, iso)
-    return TZFormat(zoned, getFormat(format), {
-        timeZone: timezone,
-    })
+    // return formatInTimeZone(iso, timezone, getFormat(format))
+    // const zoned = getZonedDate(timezone, iso)
+    // let locale;
+    // if (Language.getLanguage() == 'es') {
+    //     locale = require('date-fns/locale/es')
+    // }
+    // return TZFormat(zoned, getFormat(format), {
+    //     timeZone: timezone,
+    //     locale
+    // })
 }
 
 
