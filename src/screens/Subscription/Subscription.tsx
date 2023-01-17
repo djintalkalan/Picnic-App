@@ -3,7 +3,7 @@ import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database from 'database/Database';
+import Database, { useDatabase } from 'database/Database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -77,12 +77,16 @@ const Subscription: FC = (props: any) => {
         let purchaseUpdateSubscription: EmitterSubscription
         let purchaseErrorSubscription: EmitterSubscription
         setTimeout(async () => {
-            await clearTransactionIOS();
+            try {
+                await clearTransactionIOS();
+            } catch (e) {
+                console.log("Clearing transaction error ", e);
+            }
             purchaseUpdateSubscription = purchaseUpdatedListener(handlePurchase);
             purchaseErrorSubscription = purchaseErrorListener(handleError);
         }, 1000);
         initializeIAPConnection();
-        Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
+        // Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: false })
         return () => {
             closeConnection();
             purchaseUpdateSubscription?.remove && purchaseUpdateSubscription?.remove();
@@ -187,6 +191,9 @@ const Subscription: FC = (props: any) => {
                     thisDate = new Date()
                 }
                 // if (expireAt >= new Date()) {
+                if (expireAt >= thisDate && res?.data?.type == 'trial') {
+                    return
+                }
                 if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                     _showErrorMessage(Language.you_are_not_a_member)
                 } else continueToMemberShip(Language.purchase_successfully_restored)
@@ -229,10 +236,18 @@ const Subscription: FC = (props: any) => {
                 // if (expireAt >= new Date()) {
                 console.log("Calculating purchase");
                 // res.data = null
+                if (expireAt >= thisDate && res?.data?.type == 'trial') {
+                    requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
+                        console.log("E", e);
+                    })
+                    return
+                }
                 if ((expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium))) {
                     console.log("Requesting purchase");
                     if (true) {
-                        requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false })
+                        requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
+                            console.log("E", e);
+                        })
                         // .then(handlePurchase, handleError).catch((r) => {
                         //     console.log("catch", r);
                         //     dispatch(setLoadingAction(false))
@@ -262,6 +277,8 @@ const Subscription: FC = (props: any) => {
             (props?.route?.params?.onSubscription && props?.route?.params?.onSubscription())
         }
     }, [])
+
+    const [userData] = useDatabase('userData');
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
@@ -309,9 +326,10 @@ const Subscription: FC = (props: any) => {
                         <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
                     </View>
                 } */}
-                <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
-                    restorePurchase()
-                }} />
+                {!userData?.is_premium ?
+                    <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
+                        restorePurchase()
+                    }} /> : null}
 
             </KeyboardAwareScrollView>
 
@@ -364,4 +382,3 @@ const styles = StyleSheet.create({
 })
 
 export default Subscription;
-
