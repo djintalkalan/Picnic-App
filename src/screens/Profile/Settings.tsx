@@ -176,7 +176,7 @@ const Settings: FC<any> = (props) => {
                         title={Language.share_picnic}
                     />
 
-                    {!userData?.is_premium ?
+                    {!userData?.is_premium || userData?.type == 'trial' ?
                         <SettingButton
                             onPress={() => {
                                 NavigationService.navigate("Subscription", { from: 'settings' })

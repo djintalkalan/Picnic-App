@@ -42,9 +42,13 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 yield call(AnalyticService.setUserData, userData, 1)
                 // }
 
+                if (userData?.is_premium == 1 && userData?.type != 'trial') {
+                    userData.is_premium = false
+                }
+
                 Database.setMultipleValues({
                     authToken: access_token,
-                    userData: { ...userData, is_premium: false },
+                    userData: userData,
                     isLogin: true
                 })
                 const isRestored = Database.getOtherBool(userData?._id)
@@ -137,10 +141,12 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
                 // if (!__DEV__) {
                 yield call(AnalyticService.setUserData, userData, 1)
                 // }
-
+                if (userData?.is_premium == 1 && userData?.type != 'trial') {
+                    userData.is_premium = false
+                }
                 Database.setMultipleValues({
                     authToken: access_token,
-                    userData: { ...userData, is_premium: false },
+                    userData: userData,
                     isLogin: true
                 })
                 return
