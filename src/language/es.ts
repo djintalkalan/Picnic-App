@@ -494,5 +494,6 @@ export const es = {
     yes_disconnect: 'Sí, Desconectar',
     disconnect: 'Desconectar',
     must_be_six: 'Debe tener al menos 6 caracteres',
-
+    monthly_plan: 'Plan mensual',
+    yearly_plan: 'Plan Anual',
 }
