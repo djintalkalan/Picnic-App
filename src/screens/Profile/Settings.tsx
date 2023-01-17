@@ -170,15 +170,16 @@ const Settings: FC<any> = (props) => {
                         title={Language.share_picnic}
                     />
 
-                    {!userData?.is_premium || userData?.type == 'trial' ?
-                        <SettingButton
-                            onPress={() => {
-                                NavigationService.navigate("Subscription", { from: 'settings' })
-                            }}
-                            image={Images.ic_smiley}
-                            title={Language.join_now}
-                        /> : undefined
-                    }
+                    {/* {!userData?.is_premium || userData?.type == 'trial' ? */}
+                    <SettingButton
+                        onPress={!userData?.is_premium || userData?.type == 'trial' ? () => {
+                            NavigationService.navigate("Subscription", { from: 'settings' })
+                        } : undefined}
+                        image={Images.ic_smiley}
+                        title={userData?.type == 'monthly' ? Language.monthly_plan : userData?.type == 'yearly' ? Language.yearly_plan : Language.join_now}
+                    />
+                    {/* : undefined
+                    } */}
 
                     <SettingButton
                         onPress={() => {
@@ -300,7 +301,7 @@ const Settings: FC<any> = (props) => {
     )
 }
 
-const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, arrowRight?: boolean, onPress: () => void, title: string, image: ImageSourcePropType }) => {
+const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeight?: any, containerStyle?: StyleProp<ViewStyle>, divider?: boolean, titleColor?: string, arrowRight?: boolean, onPress?: () => void, title: string, image: ImageSourcePropType }) => {
     const cStyle = useMemo(() => ({ ...StyleSheet.flatten(containerStyle) }), [])
     return (
         <>
