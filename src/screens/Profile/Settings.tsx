@@ -176,7 +176,7 @@ const Settings: FC<any> = (props) => {
                             NavigationService.navigate("Subscription", { from: 'settings' })
                         } : undefined}
                         image={Images.ic_smiley}
-                        title={userData?.type == 'monthly' ? Language.monthly_plan : userData?.type == 'yearly' ? Language.yearly_plan : Language.join_now}
+                        title={!userData?.is_premium ? Language.join_now : userData?.type == 'monthly' ? Language.monthly_plan : userData?.type == 'yearly' ? Language.yearly_plan : Language.join_now}
                     />
                     {/* : undefined
                     } */}
