@@ -53,7 +53,7 @@ const ForgotPassword: FC = () => {
                     style={{ fontSize: scaler(13) }}
                     required={true}
                     rules={{
-                        ...EmailValidations,
+                        ...EmailValidations(),
                         validate: (v) => {
                             if (v?.toLowerCase() != v)
                                 setValue("email", v?.toLowerCase())

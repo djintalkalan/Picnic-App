@@ -65,7 +65,7 @@ const CreateNewPassword: FC<any> = (props) => {
                 <TextInput
                     ref={passwordRef}
                     placeholder={Language.new_password}
-                    rules={{ ...PasswordValidations, required: Language.new_password_required }}
+                    rules={{ ...PasswordValidations(), required: Language.new_password_required }}
                     name={'password'}
                     onPressIcon={() => setSecure3(!isSecure3)}
                     secureTextEntry={isSecure3}
@@ -83,7 +83,7 @@ const CreateNewPassword: FC<any> = (props) => {
                     placeholder={Language.confirm_password}
                     name={'confirmPassword'}
                     rules={{
-                        ...ConfirmPasswordValidations,
+                        ...ConfirmPasswordValidations(),
                         validate: (confirmPassword: string) => {
                             if (confirmPassword != getValues('password')) return Language.both_pass_same
                             return true

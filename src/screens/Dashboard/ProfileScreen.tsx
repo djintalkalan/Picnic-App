@@ -247,7 +247,7 @@ const ProfileScreen: FC<any> = (props) => {
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
                         keyboardType={'email-address'}
-                        rules={EmailValidations}
+                        rules={EmailValidations()}
                         control={control}
                         errors={errors}
                     />
