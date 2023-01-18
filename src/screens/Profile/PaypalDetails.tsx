@@ -139,7 +139,7 @@ const PaypalDetails: FC<any> = (props) => {
               autoCorrect={false}
               disabled
               // required={Language.paypal_id_required}
-              // rules={EmailValidations}
+              // rules={EmailValidations()}
               control={control}
               errors={errors} />
             <TextInput
