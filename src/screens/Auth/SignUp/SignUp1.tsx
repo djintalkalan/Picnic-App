@@ -98,7 +98,7 @@ const SignUp1: FC<any> = (props) => {
           <TextInput
             placeholder={Language.password}
             name={'password'}
-            rules={PasswordValidations}
+            rules={PasswordValidations()}
             maxLength={16}
             required={true}
             control={control}
@@ -116,7 +116,7 @@ const SignUp1: FC<any> = (props) => {
             name={'confirmPassword'}
             maxLength={16}
             rules={{
-              ...ConfirmPasswordValidations,
+              ...ConfirmPasswordValidations(),
               validate: (confirmPassword: string) => {
                 if (confirmPassword != getValues('password'))
                   return Language.both_pass_same;

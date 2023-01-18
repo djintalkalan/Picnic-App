@@ -83,7 +83,7 @@ const Login: FC = () => {
                         // onChangeText={onVerify}
                         keyboardType={'email-address'}
                         rules={{
-                            ...EmailValidations,
+                            ...EmailValidations(),
                             validate: (v) => {
                                 if (v?.toLowerCase() != v)
                                     setValue("email", v?.toLowerCase())

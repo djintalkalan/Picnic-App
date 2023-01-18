@@ -97,7 +97,7 @@ const SendOtp: FC = () => {
                         onChangeText={(text: string) => { }}
                         // onBlur={onBlurEmail}
                         rules={{
-                            ...EmailValidations,
+                            ...EmailValidations(),
                             validate: (v) => {
                                 if (v?.toLowerCase() != v)
                                     setValue("email", v?.toLowerCase())

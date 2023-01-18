@@ -88,7 +88,7 @@
 //                         autoCapitalize={'none'}
 //                         autoCorrect={false}
 //                         required={Language.paypal_id_required}
-//                         // rules={EmailValidations}
+//                         // rules={EmailValidations()}
 //                         control={control}
 //                         errors={errors} />
 //                     <TextInput
