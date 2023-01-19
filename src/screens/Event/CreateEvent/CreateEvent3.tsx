@@ -317,7 +317,7 @@ const CreateEvent3: FC<any> = props => {
 
     const userData = Database.getStoredValue("userData")
 
-    if (false && !userData?.is_premium) {
+    if (!userData?.is_premium) {
       _showPopUpAlert({
         message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
         buttonText: Language.join_now,
@@ -328,11 +328,12 @@ const CreateEvent3: FC<any> = props => {
               next(payload);
             },
           });
-          _hidePopUpAlert()
+          _hidePopUpAlert();
         },
-        cancelButtonText: Language.no_thanks_create_my_event,
-        // onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage('You need subscription for a paid event.') }
-        onPressCancel: () => { next(payload) }
+        cancelButtonText: isFreeEvent ? Language.no_thanks_create_my_event : Language.close,
+        onPressCancel: () => { isFreeEvent ? next(payload) : _hidePopUpAlert() }
+        // onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage(Language.you_need_subscription) }
+        // onPressCancel: () => { next(payload) }
       })
     } else next(payload)
 

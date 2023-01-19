@@ -437,7 +437,7 @@ export const en = {
   finalizing_upload: 'Finalizing upload',
   cancel_upload: 'Cancel upload',
   invalid_minimum_ticket_price: 'Invalid ticket price',
-  you_need_subscription: 'You need subscription for a paid event.',
+  you_need_subscription: 'You need subscription for a paid events.',
   downloading_update: 'Downloading update',
   installing_update: 'Installing update',
   please_wait_to_update: 'Please wait until we finish installing the available update. It won\'t take much time.',
