@@ -437,7 +437,7 @@ export const es = {
     finalizing_upload: 'Finalizando subir el archivo',
     cancel_upload: 'Cancelar carga',
     invalid_minimum_ticket_price: '',
-    you_need_subscription: '',
+    you_need_subscription: 'Necesita suscripción para eventos pagos.',
     downloading_update: 'Downloading update',
     installing_update: 'Installing update',
     please_wait_to_update: '',
