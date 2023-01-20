@@ -17,7 +17,7 @@ import { useDatabase } from 'src/database/Database'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import UUIDService from 'src/uuid/UUIDService'
-import { getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { dateFormat, dateStringFormat, getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 const helpImageSource = MaterialIcons.getImageSourceSync("live-help", 50, colors.colorBlackText)
@@ -177,19 +177,7 @@ const Settings: FC<any> = (props) => {
                     />
 
                     {/* {!userData?.is_premium || userData?.type == 'trial' ? */}
-                    <SettingButton
-                        onPress={!userData?.is_premium || userData?.type == 'trial' ? () => {
-                            NavigationService.navigate("Subscription", { from: 'settings' })
-                        } : undefined}
-                        image={Images.ic_smiley}
-                        title={!userData?.is_premium ?
-                            Language.join_now :
-                            userData?.type == 'monthly' ?
-                                Language.monthly_member :
-                                userData?.type == 'yearly' ?
-                                    Language.member_since :
-                                    Language.join_now_free_trial}
-                    />
+                    <SubscriptionButton userData={userData} />
                     {/* : undefined
                     } */}
 
@@ -331,6 +319,49 @@ const SettingButton = ({ divider = true, containerStyle, ...props }: { fontWeigh
 }
 
 export default Settings
+
+
+
+const SubscriptionButton = ({ userData }: { userData: any }) => {
+    // console.log("userData", userData);
+
+    // userData.is_premium = true
+    // userData.type = 'yearly'
+
+    let heading = '';
+
+    if (userData?.is_premium) {
+        if (userData?.type == 'monthly') {
+            heading = Language.monthly_member
+        } else if (userData?.type == 'yearly') {
+            let memberSince = '';
+            if (userData?.payment_date_unix) {
+                memberSince = dateFormat(new Date(parseInt(userData?.payment_date_unix)), 'DD/MM/YYYY')
+            }
+            heading = Language.member_since + memberSince
+        } else {
+            let expireAt;
+            if (userData?.expire_at_unix) {
+                expireAt = dateFormat(new Date(parseInt(userData?.expire_at_unix)), 'DD/MM/YYYY')
+            } else if (userData?.expire_at) {
+                expireAt = dateStringFormat(userData?.expire_at, 'DD/MM/YYYY', "YYYY-MM-DD", '-');
+            }
+            heading = Language.join_now_free_trial + expireAt
+        }
+    } else {
+        heading = Language.join_now
+    }
+
+    return (
+        <SettingButton
+            onPress={!userData?.is_premium || userData?.type == 'trial' ?
+                () => { NavigationService.navigate("Subscription", { from: 'settings' }) }
+                : undefined}
+            image={Images.ic_smiley}
+            title={heading}
+        />
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
