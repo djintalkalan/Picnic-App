@@ -495,4 +495,8 @@ export const es = {
     disconnect: 'Desconectar',
     monthly_plan: 'Plan mensual',
     yearly_plan: 'Plan Anual',
+    join_now_free_trial: 'Únete ahora, la prueba gratuita termina ',
+    monthly_member: 'Socio mensual, actualizar hoy',
+    member_since: 'Miembro desde ',
+
 }
