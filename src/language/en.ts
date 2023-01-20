@@ -496,4 +496,7 @@ export const en = {
   must_be_six: 'Must be at least 6 characters',
   monthly_plan: 'Monthly plan',
   yearly_plan: 'Annual plan',
+  join_now_free_trial: 'Join now, free trial ends ',
+  monthly_member: 'Monthly member, upgrade today',
+  member_since: 'Member since ',
 }
