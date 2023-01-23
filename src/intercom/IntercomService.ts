@@ -25,15 +25,9 @@ const IntercomService = {
         await updateUser(userData)
         console.log("Intercom Initialized")
     },
-
     updateUser,
-    logout: () => {
-        return Intercom.logout()
-    },
-    openMessenger: () => {
-        return Intercom.displayMessenger();
-    },
-
+    logout: Intercom.logout,
+    openMessenger: Intercom.displayMessenger,
 }
 
 export default IntercomService
