@@ -336,9 +336,9 @@ const SubscriptionButton = ({ userData }: { userData: any }) => {
         } else if (userData?.type == 'yearly') {
             let memberSince = '';
             if (userData?.payment_date_unix) {
-                memberSince = dateFormat(new Date(parseInt(userData?.payment_date_unix)), 'DD/MM/YYYY')
+                memberSince = dateFormat(new Date(parseInt(userData?.payment_date_unix)), 'YYYY')
             }
-            heading = Language.member_since + memberSince
+            heading = Language.member_since?.trim() + " " + memberSince
         } else {
             let expireAt;
             if (userData?.expire_at_unix) {
@@ -346,7 +346,7 @@ const SubscriptionButton = ({ userData }: { userData: any }) => {
             } else if (userData?.expire_at) {
                 expireAt = dateStringFormat(userData?.expire_at, 'DD/MM/YYYY', "YYYY-MM-DD", '-');
             }
-            heading = Language.join_now_free_trial + expireAt
+            heading = Language.join_now_free_trial?.trim() + " " + expireAt
         }
     } else {
         heading = Language.join_now
