@@ -335,9 +335,9 @@ const SubscriptionButton = ({ userData }: { userData: any }) => {
         } else {
             let expireAt;
             if (userData?.expire_at_unix) {
-                expireAt = dateFormat(new Date(parseInt(userData?.expire_at_unix)), 'DD/MM/YYYY')
+                expireAt = dateFormat(new Date(parseInt(userData?.expire_at_unix)), 'MMM DD, YYYY')
             } else if (userData?.expire_at) {
-                expireAt = dateStringFormat(userData?.expire_at, 'DD/MM/YYYY', "YYYY-MM-DD", '-');
+                expireAt = dateStringFormat(userData?.expire_at, 'MMM DD, YYYY', "YYYY-MM-DD", '-');
             }
             heading = Language.join_now_free_trial?.trim() + " " + expireAt
         }
