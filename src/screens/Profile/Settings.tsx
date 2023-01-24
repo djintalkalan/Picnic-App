@@ -354,7 +354,7 @@ const SubscriptionButton = ({ userData }: { userData: any }) => {
 
     return (
         <SettingButton
-            onPress={!userData?.is_premium || userData?.type == 'trial' ?
+            onPress={!userData?.is_premium || userData?.type == 'trial' || userData?.type == 'monthly' ?
                 () => { NavigationService.navigate("Subscription", { from: 'settings' }) }
                 : undefined}
             image={Images.ic_smiley}
