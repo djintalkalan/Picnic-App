@@ -257,7 +257,13 @@ const Subscription: FC = (props: any) => {
 
                         // })
                     }
-                } else continueToMemberShip(Language.you_are_already_a_member)
+                } else if (res?.data?.type == 'monthly' && i == 0) {
+                    requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
+                        console.log("E", e);
+                    })
+                } else {
+                    continueToMemberShip(Language.you_are_already_a_member)
+                }
             }
         }).catch(e => {
             console.log(e);
