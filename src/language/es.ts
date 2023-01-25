@@ -306,7 +306,7 @@ export const es = {
     loading: '',
     please_create_a_group: '',
     go_to_home: '',
-    username_required: '',
+    username_required: 'Se requiere nombre de usuario',
     file_to_large: '',
     radio_freq: 'Frecuencia FM (opcional)',
     invalid_radio_freq: '',
