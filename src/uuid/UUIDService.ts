@@ -1,25 +1,18 @@
 
-import { ACCESSIBLE, getGenericPassword as GetGenericPasswordFromKeyChain, setGenericPassword as SetGenericPasswordFromKeyChain } from 'react-native-keychain';
-import uuid from 'react-native-uuid';
-import { config } from 'src/api/config';
-
 import Clipboard from '@react-native-community/clipboard';
 import { differenceInSeconds } from 'date-fns';
+import { MMKVLoader } from 'react-native-mmkv-storage';
+import uuid from 'react-native-uuid';
 
+const uuidStorage = new MMKVLoader().withEncryption().withInstanceID("uuidStorage").initialize();
 
 let totalClicked = 0;
 let lastClickedAt = new Date();
 
 const retrieveToken = async () => {
     console.log("Retrieving Token");
-    const genericCredentials = await GetGenericPasswordFromKeyChain({ service: config.BUNDLE_ID_PACKAGE_NAME, accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK }).catch((e) => {
-        console.log("Error in getting password from KeyChain")
-    })
-
-    if (genericCredentials && genericCredentials?.service == config.BUNDLE_ID_PACKAGE_NAME && genericCredentials?.username == config.BUNDLE_ID_PACKAGE_NAME && genericCredentials?.password) {
-        console.log("uuid is ", genericCredentials?.password);
-        return genericCredentials?.password
-    }
+    const token = await uuidStorage.getStringAsync('uuid');
+    if (token) return token
     console.log("Generating new Token");
     let newToken = 'tokenNotGenerated'
     try {
@@ -30,10 +23,7 @@ const retrieveToken = async () => {
         console.log(e)
     }
     console.log("New Token is ", newToken);
-    await SetGenericPasswordFromKeyChain(config.BUNDLE_ID_PACKAGE_NAME, newToken, { service: config.BUNDLE_ID_PACKAGE_NAME, accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK }).catch(e => {
-        console.log("Error setting uuid in the KeyChain")
-        console.log(e)
-    })
+    uuidStorage.setStringAsync('uuid', newToken);
     return newToken
 }
 
