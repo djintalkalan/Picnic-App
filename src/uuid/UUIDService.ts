@@ -7,19 +7,19 @@ var uuidStorage: MMKVInstance | null = new MMKVLoader().withEncryption().withIns
 let totalClicked = 0;
 let lastClickedAt = new Date();
 const retrieveToken = async () => {
-    console.log("Retrieving Token");
+    console.log("Retrieving UUID Token");
     const token = uuidStorage?.getString('uuid');
     if (token) return token
-    console.log("Generating new Token");
+    console.log("Generating new UUID Token");
     let newToken = 'tokenNotGenerated'
     try {
         newToken = uuid?.v4()?.toString();
     }
     catch (e) {
-        console.log("Error generating new Token")
+        console.log("Error generating new UUID Token")
         console.log(e)
     }
-    console.log("New Token is ", newToken);
+    console.log("New UUID Token is ", newToken);
     uuidStorage?.setStringAsync('uuid', newToken).then(() => {
         uuidStorage = null;
     });
