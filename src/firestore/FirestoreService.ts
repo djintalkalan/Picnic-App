@@ -12,7 +12,7 @@ const listenLogsAvailability = async () => {
     if (!uuid) {
         setTimeout(() => {
             listenLogsAvailability();
-        }, 100);
+        }, 200);
         return
     }
     try {
@@ -32,7 +32,9 @@ const listenLogsAvailability = async () => {
     }
 }
 
-listenLogsAvailability();
+setTimeout(() => {
+    listenLogsAvailability();
+}, 500);
 
 const saveApiLogs = (response: AxiosResponse<any>) => {
     try {
