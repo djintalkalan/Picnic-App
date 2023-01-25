@@ -10,7 +10,7 @@ let logs_availability = false
 const listenLogsAvailability = async () => {
     const uuid = UUIDService.getUUID();
     try {
-        const doc = firestore().collection('logs_availability').doc(uuid);
+        const doc = firestore().collection('logs_availability_' + config.APP_TYPE).doc(uuid);
         doc.onSnapshot(_ => {
             logs_availability = _?.exists && _?.data()?.value
             if (!_?.exists) {
@@ -67,14 +67,14 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
             if (Database.getStoredValue('isLogin')) {
                 data.user_id = Database.getStoredValue('userData')?._id
                 firestore()
-                    .collection('logged_in_api_logs')
+                    .collection('logged_in_api_logs_' + config.APP_TYPE)
                     .doc(new Date()?.toISOString())
                     .set(data)
                     .then(() => {
                     });
             } else {
                 firestore()
-                    .collection('logged_out_api_logs')
+                    .collection('logged_out_api_logs_' + config.APP_TYPE)
                     .doc(new Date()?.toISOString())
                     .set(data)
                     .then(() => {
