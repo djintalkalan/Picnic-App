@@ -1,17 +1,14 @@
 
 import Clipboard from '@react-native-community/clipboard';
 import { differenceInSeconds } from 'date-fns';
-import { MMKVLoader } from 'react-native-mmkv-storage';
+import { MMKVInstance, MMKVLoader } from 'react-native-mmkv-storage';
 import uuid from 'react-native-uuid';
-
-const uuidStorage = new MMKVLoader().withEncryption().withInstanceID("uuidStorage").initialize();
-
+var uuidStorage: MMKVInstance | null = new MMKVLoader().withEncryption().withInstanceID("uuidStorage").initialize();
 let totalClicked = 0;
 let lastClickedAt = new Date();
-
 const retrieveToken = async () => {
     console.log("Retrieving Token");
-    const token = await uuidStorage.getStringAsync('uuid');
+    const token = uuidStorage?.getString('uuid');
     if (token) return token
     console.log("Generating new Token");
     let newToken = 'tokenNotGenerated'
@@ -23,18 +20,14 @@ const retrieveToken = async () => {
         console.log(e)
     }
     console.log("New Token is ", newToken);
-    uuidStorage.setStringAsync('uuid', newToken);
+    uuidStorage?.setStringAsync('uuid', newToken).then(() => {
+        uuidStorage = null;
+    });
     return newToken
 }
 
 let UUID = ''
-
-setTimeout(() => {
-    retrieveToken().then(_ => {
-        UUID = _
-    });
-}, 500);
-
+retrieveToken().then(_ => (UUID = _));
 const showUUIDToast = () => {
     if (differenceInSeconds(new Date(), lastClickedAt)) {
         totalClicked = 1;

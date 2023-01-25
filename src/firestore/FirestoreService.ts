@@ -9,12 +9,6 @@ let logs_availability = false
 
 const listenLogsAvailability = async () => {
     const uuid = UUIDService.getUUID();
-    if (!uuid) {
-        setTimeout(() => {
-            listenLogsAvailability();
-        }, 200);
-        return
-    }
     try {
         const doc = firestore().collection('logs_availability').doc(uuid);
         doc.onSnapshot(_ => {
@@ -26,15 +20,16 @@ const listenLogsAvailability = async () => {
                 })
             }
         })
+        console.log("logs_availability", logs_availability);
+
     }
     catch (e) {
         console.log("Error in getting logs_availability", e);
     }
 }
-
 setTimeout(() => {
     listenLogsAvailability();
-}, 500);
+}, 0);
 
 const saveApiLogs = (response: AxiosResponse<any>) => {
     try {
