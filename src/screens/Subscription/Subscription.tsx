@@ -117,8 +117,11 @@ const Subscription: FC = (props: any) => {
             _authorizeMembership(payload).then(async (res) => {
                 if (res?.status == 200 && res?.data) {
                     await finishTransaction({ purchase }) // ,consumeItem);
+                    const userData = Database.getStoredValue('userData');
+                    const isYearlyUpgrade = userData.is_premium && userData?.type == 'monthly' && purchase?.productId == 'yearly_subscription'
                     _captureMembership({
-                        _id: res?.data?._id
+                        _id: res?.data?._id,
+                        is_yearly_upgrade: isYearlyUpgrade ? 1 : undefined
                     }).then((res) => {
                         if (res?.status == 200) {
                             continueToMemberShip(res?.message)
@@ -204,7 +207,7 @@ const Subscription: FC = (props: any) => {
         })
     }, [])
 
-    const callPurchase = useCallback(async (i) => {
+    const callPurchase = useCallback(async (i: number) => {
         dispatch(setLoadingAction(true))
         // let restorable = false
         // await getAvailablePurchases().then(async (products) => {
