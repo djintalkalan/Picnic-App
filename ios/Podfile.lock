@@ -625,7 +625,7 @@ PODS:
     - Firebase/Messaging (= 8.15.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.6.1):
+  - RNGestureHandler (2.9.0):
     - React-Core
   - RNIap (10.1.3):
     - React-Core
@@ -651,7 +651,7 @@ PODS:
     - React-Core
   - RNPermissions (3.6.1):
     - React-Core
-  - RNReanimated (2.12.0):
+  - RNReanimated (2.14.4):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -1144,7 +1144,7 @@ SPEC CHECKSUMS:
   RNFBCrashlytics: 94e1f78e2a9aa9e02edbfb0d3f1f0921ce00094b
   RNFBDynamicLinks: 538840f6e3f58511f857d15df1bc25ed655dc283
   RNFBMessaging: 40dac204b4197a2661dec5be964780c6ec39bf65
-  RNGestureHandler: 28ad20bf02257791f7f137b31beef34b9549f54b
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNIap: 45c674b3f57d8c2a80bd926436015cefbf1d2dfd
   RNImageCropPicker: ffbba608264885c241cbf3a8f78eb7aeeb978241
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
@@ -1152,7 +1152,7 @@ SPEC CHECKSUMS:
   RNLocalize: a64514b46a01375fdfae9349036b4dc7130333b5
   RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
-  RNReanimated: 3dd02d6e115cb20bb999a07cd1ce19369c59afb8
+  RNReanimated: e0d473a3ffdcf1273f83cbc3e34cc47e2fff72ed
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNShare: be91a5c149585affb02c25b351bd07ba927c7006
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
