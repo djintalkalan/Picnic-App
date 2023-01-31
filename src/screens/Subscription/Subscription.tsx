@@ -109,12 +109,17 @@ const Subscription: FC = (props: any) => {
                 }
             }
             console.log("payload", payload);
-
+            const userData = Database.getStoredValue('userData');
+            const is_yearly_upgrade = (userData.is_premium && userData?.type == 'monthly' && purchase?.productId == 'yearly_subscription') ? 1 : undefined
+            if (is_yearly_upgrade) {
+                payload.is_yearly_upgrade = is_yearly_upgrade
+            }
             _authorizeMembership(payload).then(async (res) => {
                 if (res?.status == 200 && res?.data) {
                     await finishTransaction({ purchase }) // ,consumeItem);
                     _captureMembership({
-                        _id: res?.data?._id
+                        _id: res?.data?._id,
+                        is_yearly_upgrade
                     }).then((res) => {
                         if (res?.status == 200) {
                             continueToMemberShip(res?.message)
