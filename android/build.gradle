@@ -10,6 +10,9 @@ buildscript {
         IntercomReactNative_compileSdkVersion = 33
         IntercomReactNative_minSdkVersion = 23
         IntercomReactNative_targetSdkVersion = 33
+        androidXBrowser = "1.4.0"
+        androidXAnnotation = "1.5.0"
+        kotlinVersion = "1.8.0"
     }
     repositories {
         google()
