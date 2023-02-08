@@ -178,11 +178,17 @@ const CreateEvent2: FC<any> = props => {
     if (event?.event_end_date_time && !(event.event_end_date_time instanceof Date)) {
       event.event_end_date_time = getFromZonedDate(event?.event_timezone, getZonedDate(event?.event_timezone, event?.event_end_date_time))
     }
-    if (event?.sales_ends_on && (event?.event_start_date_time || event?.event_end_date_time)) {
+    if ((event?.event_start_date_time || event?.event_end_date_time) && (event?.sales_ends_on || event.ticket_plans?.length)) {
       if (event?.event_start_date_time?.toString() != payload.event_start_date_time?.toString() ||
         event?.event_end_date_time?.toString() != payload.event_end_date_time?.toString()
       ) {
-        payload.sales_ends_on = null
+        if (event?.sales_ends_on) { payload.sales_ends_on = null }
+        if (event.ticket_plans?.length) {
+          payload.ticket_plans = event.ticket_plans?.map((_: any) => ({
+            ..._,
+            sales_ends_on: _?.sales_ends_on ? null : _?.sales_ends_on
+          }))
+        }
       }
     }
     dispatch(updateCreateEvent(payload))
