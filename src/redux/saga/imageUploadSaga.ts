@@ -195,7 +195,7 @@ export const transcodeVideo = async (key: string) => {
         OutputKeyPrefix: 'transcoded/',
         Outputs: [{
             "Key": key,
-            "Rotate": "0",
+            "Rotate": "auto",
             "PresetId": "1351620000001-000001",
             "ThumbnailPattern": `${key.substring(0, key.lastIndexOf("."))}-{count}`
         }]
