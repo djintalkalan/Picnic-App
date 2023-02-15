@@ -45,23 +45,22 @@ const Home: FC = () => {
       Screen: EventList,
     },
   ], [useLanguage()])
-
-  const [currentTabIndex, setCurrentTabIndex] = useState(0)
+  const [selectedTabType, setSelectedTabType] = useState<'events' | 'groups'>(tabs[0]?.name?.toLowerCase()?.includes('event') ? 'events' : 'groups')
   const [searchLoader, setSearchLoader] = useState(false)
   const inputRef = useRef<TextInput>(null);
   const [userData] = useDatabase("userData");
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
   const [selectedLocation] = useDatabase<ILocation | null>("selectedLocation", currentLocation)
 
-  const isFabTransparent = (currentTabIndex && !eventLength) || (!currentTabIndex && !groupLength)
+  const isFabTransparent = (selectedTabType == 'events' && !eventLength) || (selectedTabType == 'groups' && !groupLength)
 
   const debounceSearch = useCallback(_.debounce((text) => {
-    dispatch(searchAtHome({ text, type: currentTabIndex ? 'events' : 'groups', setSearchLoader: setSearchLoader }))
-  }, 500), [currentTabIndex])
+    dispatch(searchAtHome({ text, type: selectedTabType, setSearchLoader: setSearchLoader }))
+  }, 500), [selectedTabType])
 
   const debounceClear = useCallback(_.debounce(() => {
     Database.setOtherString("searchHomeText", "")
-    dispatch(setSearchedData({ data: null, type: currentTabIndex ? 'events' : 'groups' }))
+    dispatch(setSearchedData({ data: null, type: selectedTabType }))
   }, 0), [])
 
   useEffect(() => {
@@ -164,7 +163,7 @@ const Home: FC = () => {
       <TopTab onChangeIndex={(i) => {
         inputRef?.current?.clear();
         debounceClear();
-        setCurrentTabIndex(i);
+        setSelectedTabType(tabs[i]?.name?.toLowerCase()?.includes('event') ? 'events' : 'groups');
       }} swipeEnabled={false} tabs={tabs} />
 
       <View
