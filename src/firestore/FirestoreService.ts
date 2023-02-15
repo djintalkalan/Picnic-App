@@ -10,7 +10,7 @@ let logs_availability = false
 const listenLogsAvailability = async () => {
     const uuid = UUIDService.getUUID();
     try {
-        const doc = firestore().collection('logs_availability_' + config.APP_TYPE).doc(uuid);
+        const doc = firestore().collection(config.APP_TYPE?.toUpperCase() + "_LOG_AVAILABILITY").doc(uuid);
         doc.onSnapshot(_ => {
             logs_availability = _?.exists && _?.data()?.value
             if (!_?.exists) {
@@ -28,7 +28,8 @@ const listenLogsAvailability = async () => {
     }
 }
 setTimeout(() => {
-    listenLogsAvailability();
+    if (!__DEV__)
+        listenLogsAvailability();
 }, 0);
 
 const saveApiLogs = (response: AxiosResponse<any>) => {
@@ -52,7 +53,7 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
                 date: new Date(),
                 environment: config.APP_TYPE,
                 full_url: (response.config?.baseURL || '') + response.config.url,
-                url: response.config.url,
+                url: response.config.url && response.config.url?.includes('?') ? response.config.url?.substring(0, response.config.url?.indexOf('?')) : response.config.url,
                 request: JSON.stringify({
                     data: requestData,
                     method: response.config?.method,
@@ -67,14 +68,14 @@ const saveApiLogs = (response: AxiosResponse<any>) => {
             if (Database.getStoredValue('isLogin')) {
                 data.user_id = Database.getStoredValue('userData')?._id
                 firestore()
-                    .collection('logged_in_api_logs_' + config.APP_TYPE)
+                    .collection(config.APP_TYPE?.toUpperCase() + '_LOGGED_IN_CALLS')
                     .doc(new Date()?.toISOString())
                     .set(data)
                     .then(() => {
                     });
             } else {
                 firestore()
-                    .collection('logged_out_api_logs_' + config.APP_TYPE)
+                    .collection(config.APP_TYPE?.toUpperCase() + '_BEFORE_LOGGED_IN_CALLS')
                     .doc(new Date()?.toISOString())
                     .set(data)
                     .then(() => {
