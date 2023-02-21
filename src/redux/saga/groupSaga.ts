@@ -1,5 +1,5 @@
 import * as ApiProvider from 'api/APIProvider';
-import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getGroupDetail, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
+import { addMutedResource, deleteChatInEventSuccess, deleteChatInGroupSuccess, deleteEventSuccess, deleteGroupSuccess, getAllGroups, getGroupDetail, IResourceType, joinGroupSuccess, leaveGroupSuccess, removeFromBlockedMember, removeGroupMemberSuccess, removeMutedResource, setAllGroups, setBlockedMembers, setGroupDetail, setGroupMembers, setLoadingAction, setMutedResource, setPastEvents, setPrivacyState, setUpcomingEvents, updateGroupDetail } from "app-store/actions";
 import { defaultLocation } from 'custom-components';
 import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
 import { EMIT_GROUP_DELETE, EMIT_JOIN_ROOM, EMIT_LEAVE_ROOM, SocketService } from 'socket';
@@ -193,7 +193,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
             }
             NavigationService.goBack()
             if (payload.onSuccess) payload.onSuccess(res?.data)
-
+            yield put(getAllGroups({ page: 1 }))
         } else if (res.status == 400) {
             _showErrorMessage(res.message);
         } else {

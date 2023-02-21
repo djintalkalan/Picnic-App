@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { Dimensions, Image, Keyboard, Platform, StatusBar, StyleSheet, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useDispatch } from 'react-redux'
-import Database, { ILocation } from 'src/database/Database'
+import { ILocation } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, _hidePopUpAlert, _hideTouchAlert, _showPopUpAlert, _showTouchAlert } from 'utils'
 import ImagePickerUtils from 'utils/ImagePickerUtils'
@@ -131,9 +131,7 @@ const CreateGroup: FC<any> = (props) => {
       }
     }
     dispatch(createGroup({
-      data: payload, onSuccess: () => {
-        Database.setSelectedLocation(Database.getStoredValue('selectedLocation'))
-      }
+      data: payload
     }))
   }, [pinLocation, isPublicGroup])
 
