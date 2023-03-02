@@ -499,4 +499,6 @@ export const en = {
   join_now_free_trial: 'Join now, free trial ends ',
   monthly_member: 'Monthly member, upgrade today',
   member_since: 'Member since ',
+  bio: 'Bio',
+  click_for_bio: 'Click for bio',
 }

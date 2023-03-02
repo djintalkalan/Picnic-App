@@ -499,5 +499,7 @@ export const es = {
     join_now_free_trial: 'Únete ahora, la prueba gratuita termina ',
     monthly_member: 'Socio mensual, actualizar hoy',
     member_since: 'Miembro desde ',
+    bio: 'Bio',
+    click_for_bio: 'Haga clic para bio',
 
 }

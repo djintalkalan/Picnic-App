@@ -396,6 +396,14 @@ const EventDetail: FC<any> = (props) => {
         )
     }, [])
 
+    const _showBio = useCallback(() => {
+        _showPopUpAlert({
+            title: Language.bio,
+            message: event?.creator_of_event?.bio
+        });
+    }, [event?.creator_of_event?._id],)
+
+
     const onPressAddToCalendar = useCallback(() => {
         try {
             const startDate = eventDate?.toISOString()
@@ -730,9 +738,12 @@ const EventDetail: FC<any> = (props) => {
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
-                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
-                            </Text>
+                            <View style={{ marginLeft: scaler(10), flex: 1 }}>
+                                <Text>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                                </Text>
+                                {event?.creator_of_event?.bio ? <Text onPress={_showBio}
+                                    style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
+                            </View>
                             {event?.is_event_member ?
                                 <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
                                     console.log("person", event?.creator_of_event);

@@ -382,6 +382,13 @@ const GroupDetail: FC<any> = (props) => {
 
     const dotMenuButtonRef = useRef<TouchableOpacity>(null)
 
+    const _showBio = useCallback(() => {
+        _showPopUpAlert({
+            title: Language.bio,
+            message: group?.creator_of_group?.bio
+        });
+    }, [group?.creator_of_group?._id],)
+
     // if (group)
     if (!group) {
         return <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent edges={['left']} style={styles.container}>
@@ -487,9 +494,14 @@ const GroupDetail: FC<any> = (props) => {
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(group?.creator_of_group?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(25) }} />
-                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
-                                {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
-                            </Text>
+                            <View style={{ marginLeft: scaler(10), flex: 1 }}>
+                                <Text>
+                                    {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
+                                </Text>
+                                {group?.creator_of_group?.bio ? <Text onPress={_showBio}
+                                    style={{ alignSelf: 'baseline', color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
+                            </View>
+
                             {group?.is_group_member ?
                                 <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
                                     console.log("person", group?.creator_of_group);
