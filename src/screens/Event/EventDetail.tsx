@@ -742,7 +742,7 @@ const EventDetail: FC<any> = (props) => {
                                 <Text>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                                 </Text>
                                 {event?.creator_of_event?.bio ? <Text onPress={_showBio}
-                                    style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
+                                    style={{ alignSelf: 'baseline', color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
                             </View>
                             {event?.is_event_member ?
                                 <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
