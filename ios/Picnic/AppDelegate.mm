@@ -29,15 +29,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  //  BOOL *isDevType = [APP_TYPE isEqualToString:@"dev"];
-  // #if !DEBUG && !isDevType
-  //   RollbarConfiguration *config = [RollbarConfiguration configuration];
-  //   config.environment = [APP_TYPE isEqualToString:@"dev"]? @"development" : APP_TYPE;
-  //     //Do something on debug
-  //   [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN configuration:config];
-  // #endif
- [FIRApp configure];
- [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY];
+    BOOL isDevType = [APP_TYPE isEqualToString:@"dev"];
+    if(!isDevType && !DEBUG){
+         RollbarConfiguration *config = [RollbarConfiguration configuration];
+      config.environment = [APP_TYPE isEqualToString:@"dev"]? @"development" : APP_TYPE;
+         [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN configuration:config];
+    }
+   [FIRApp configure];
+   [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY];
 
   self.moduleName = @"Picnic";
   // You can add your custom initial props in the dictionary below.
@@ -47,10 +46,10 @@
 
   self.initialProps = appProperties;
 
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view];
   [IntercomModule initialize:INTERCOM_API_KEY withAppId:INTERCOM_APP_ID];
-
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  return YES;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

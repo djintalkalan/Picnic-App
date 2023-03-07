@@ -15,7 +15,6 @@
 		148E7115278EB637007A4D32 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 148E7114278EB637007A4D32 /* GoogleService-Info.plist */; };
 		14A09BCF26E72CDA00C5D92E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */; };
 		14D9C2E528C624EB0057DF91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 14D9C2E728C624EB0057DF91 /* InfoPlist.strings */; };
-		14E10D282762219A007E955F /* Linker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E10D272762219A007E955F /* Linker.swift */; };
 		2CA27FA9A3D44FDDA45EC86B /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C0ED68CED334130B3939752 /* Poppins-MediumItalic.ttf */; };
 		2DEDCD618CBA48B386CBEC3F /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 620386D599B1490AB3F087A8 /* Poppins-ExtraLightItalic.ttf */; };
 		3004DC0EFDC84CD588F1A7F5 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C9B02876A8B04D079AED1CDB /* Poppins-BoldItalic.ttf */; };
@@ -66,8 +65,6 @@
 		14A09BCE26E72CDA00C5D92E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Picnic/BootSplash.storyboard; sourceTree = "<group>"; };
 		14D9C2E628C624EB0057DF91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		14D9C2E828C626170057DF91 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		14E10D242760CB71007E955F /* Picnic-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Picnic-Bridging-Header.h"; sourceTree = "<group>"; };
-		14E10D272762219A007E955F /* Linker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Linker.swift; sourceTree = "<group>"; };
 		174F669C9845DC5F4AE3F97E /* libPods-Picnic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Picnic.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A7F08398E4E2C950C55CC16 /* libPods-Picnic-PicnicTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Picnic-PicnicTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		24BCAAAD13ECCA95DECA9D6A /* Pods-Picnic-PicnicTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Picnic-PicnicTests.debug.xcconfig"; path = "Target Support Files/Pods-Picnic-PicnicTests/Pods-Picnic-PicnicTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -168,7 +165,6 @@
 			isa = PBXGroup;
 			children = (
 				148E7114278EB637007A4D32 /* GoogleService-Info.plist */,
-				14E10D272762219A007E955F /* Linker.swift */,
 				1412104426E5F5D000F96F90 /* rnuc.xcconfig */,
 				13B07FAE1A68108700A75B9A /* Picnic */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -177,7 +173,6 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				E4F2FA427A23B3DEBE10AC07 /* Pods */,
 				E9D2D172C83A4B7B99502F9D /* Resources */,
-				14E10D242760CB71007E955F /* Picnic-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -545,7 +540,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				14E10D282762219A007E955F /* Linker.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -655,7 +649,6 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Picnic-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -690,7 +683,6 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Picnic-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -759,13 +751,13 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				// REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -824,13 +816,13 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				// REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
