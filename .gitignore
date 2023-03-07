@@ -78,3 +78,7 @@ rnuc.xcconfig
 *.env
 *.yaml
 keystore.gradle
+
+ios-old/
+ios-new/
+
