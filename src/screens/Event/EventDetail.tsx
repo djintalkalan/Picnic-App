@@ -741,10 +741,11 @@ const EventDetail: FC<any> = (props) => {
                                 source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
                             <View style={{ marginLeft: scaler(10), flex: 1 }}>
-                                <Text>{event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                                <Text>
+                                    {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
                                 </Text>
-                                {event?.creator_of_event?.bio ? <Text onPress={_showBio}
-                                    style={{ alignSelf: 'baseline', color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
+                                {event?.creator_of_event?.bio ? <TouchableOpacity style={{ alignSelf: 'baseline', }} onPress={_showBio}>
+                                    <Text style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text></TouchableOpacity> : null}
                             </View>
                             {event?.is_event_member ?
                                 <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {

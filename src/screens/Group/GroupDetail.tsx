@@ -500,8 +500,8 @@ const GroupDetail: FC<any> = (props) => {
                                 <Text>
                                     {group?.creator_of_group?.first_name + ' ' + group?.creator_of_group?.last_name}
                                 </Text>
-                                {group?.creator_of_group?.bio ? <Text onPress={_showBio}
-                                    style={{ alignSelf: 'baseline', color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text> : null}
+                                {group?.creator_of_group?.bio ? <TouchableOpacity style={{ alignSelf: 'baseline', }} onPress={_showBio}>
+                                    <Text style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text></TouchableOpacity> : null}
                             </View>
 
                             {group?.is_group_member ?
