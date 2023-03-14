@@ -385,6 +385,8 @@ const GroupDetail: FC<any> = (props) => {
     const _showBio = useCallback(() => {
         _showPopUpAlert({
             title: Language.bio,
+            leftTitle: true,
+            isClose: true,
             message: group?.creator_of_group?.bio
         });
     }, [group?.creator_of_group?._id],)
