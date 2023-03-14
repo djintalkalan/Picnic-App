@@ -399,6 +399,8 @@ const EventDetail: FC<any> = (props) => {
     const _showBio = useCallback(() => {
         _showPopUpAlert({
             title: Language.bio,
+            leftTitle: true,
+            isClose: true,
             message: event?.creator_of_event?.bio
         });
     }, [event?.creator_of_event?._id],)
