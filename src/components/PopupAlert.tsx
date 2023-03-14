@@ -126,7 +126,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
                         {this.title ? <Text style={[styles.title]} >{this.title}</Text> : null}
                         {this.message ?
                             <ScrollView bounces={false} overScrollMode={'never'} contentContainerStyle={[styles.scrollViewContainerStyle, this?.fullWidthMessage ? { marginHorizontal: scaler(30) } : {}, this.leftTitle ? { alignItems: 'flex-start' } : {}]} style={styles.scrollViewStyle} >
-                                <Text style={[styles.message, this.leftTitle ? { alignItems: 'flex-start' } : {}]} >{this.message}</Text>
+                                <Text style={[styles.message, this.leftTitle ? { textAlign: 'left' } : {}]} >{this.message}</Text>
                             </ScrollView>
                             : null}
 
