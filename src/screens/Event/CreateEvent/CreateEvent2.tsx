@@ -308,6 +308,7 @@ const CreateEvent2: FC<any> = props => {
         </View>
         <DateTimePickerModal
           style={{ zIndex: 20 }}
+          minuteInterval={15}
           isVisible={isDatePickerVisible}
           locale={Language.getLanguage()}
           minimumDate={getMinDate()}

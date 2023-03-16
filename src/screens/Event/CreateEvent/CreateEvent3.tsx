@@ -930,6 +930,7 @@ const CreateEvent3: FC<any> = props => {
         ref={datePickerRef}
         locale={Language.getLanguage()}
         style={{ zIndex: 20 }}
+        minuteInterval={15}
         isVisible={datePickerVisibility ? true : false}
         minimumDate={getMinDate()}
         // maximumDate={stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")}

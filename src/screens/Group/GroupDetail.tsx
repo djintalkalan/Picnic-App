@@ -387,17 +387,17 @@ const GroupDetail: FC<any> = (props) => {
             title: Language.bio,
             leftTitle: true,
             isClose: true,
-            // customView: () => {
-            //     return <TouchableOpacity onPress={() => {
-            //         NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
-            //         _hidePopUpAlert();
-            //     }}>
-            //         <Text style={{
-            //             color: colors.colorPrimary,
-            //             fontSize: scaler(14), fontWeight: '500',
-            //         }} >{Language.start_chat}</Text>
-            //     </TouchableOpacity>
-            // },
+            customView: () => {
+                return <TouchableOpacity onPress={() => {
+                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                    _hidePopUpAlert();
+                }}>
+                    <Text style={{
+                        color: colors.colorPrimary,
+                        fontSize: scaler(14), fontWeight: '500',
+                    }} >{Language.start_chat}</Text>
+                </TouchableOpacity>
+            },
             message: group?.creator_of_group?.bio
         });
     }, [group?.creator_of_group?._id],)
@@ -515,20 +515,20 @@ const GroupDetail: FC<any> = (props) => {
                                     <Text style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text></TouchableOpacity> : null}
                             </View>
 
-                            {group?.is_group_member ?
-                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
-                                    console.log("person", group?.creator_of_group);
-                                    NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
-                                }}>
-                                    <Image
-                                        source={Images.ic_chat_message}
-                                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
-                                    />
-                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
-                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
-                                    </View>}
-                                </TouchableOpacity>
-                                : undefined}
+                            {/* {group?.is_group_member ? */}
+                            <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
+                                console.log("person", group?.creator_of_group);
+                                NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+                            }}>
+                                <Image
+                                    source={Images.ic_chat_message}
+                                    style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                                />
+                                {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                    <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
+                                </View>}
+                            </TouchableOpacity>
+                            {/* : undefined} */}
                         </View>
                     </>
                 }
