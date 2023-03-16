@@ -178,7 +178,7 @@ export const es = {
     currency_required: 'Moneda es un campo obligatorio',
     select_payment_options: 'Seleccionar opciones de pago',
     pay_by_cash: 'Pagar en Efectivo',
-    pay_by_paypal: 'Pagar con PayPal',
+    pay_by_paypal: 'Pagar usando PayPal',
     write_refund_policy: 'Escribir la política de reembolsos',
     paypal_id: 'Correo electrónico de PayPal',
     paypal_id_required: 'Correo electrónico de PayPal es un campo obligatorio',

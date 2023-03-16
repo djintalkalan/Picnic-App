@@ -178,7 +178,7 @@ export const en = {
   currency_required: 'Currency is required',
   select_payment_options: 'Select payment options',
   pay_by_cash: 'Pay by cash',
-  pay_by_paypal: 'Pay by PayPal',
+  pay_by_paypal: 'Pay using PayPal',
   write_refund_policy: 'Write refund policy',
   paypal_id: 'PayPal email',
   paypal_id_required: 'PayPal email is required',
