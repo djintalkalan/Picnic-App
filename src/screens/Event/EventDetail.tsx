@@ -401,6 +401,17 @@ const EventDetail: FC<any> = (props) => {
             title: Language.bio,
             leftTitle: true,
             isClose: true,
+            // customView: () => {
+            //     return <TouchableOpacity style={{ alignSelf: 'flex-start' }} onPress={() => {
+            //         NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+            //         _hidePopUpAlert();
+            //     }}>
+            //         <Text style={{
+            //             color: colors.colorPrimary,
+            //             fontSize: scaler(14), fontWeight: '500',
+            //         }} >{Language.start_chat}</Text>
+            //     </TouchableOpacity>
+            // },
             message: event?.creator_of_event?.bio
         });
     }, [event?.creator_of_event?._id],)
@@ -563,6 +574,7 @@ const EventDetail: FC<any> = (props) => {
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_group_events} />
                                         <Text style={styles.events}>
+                                            {/* {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))} */}
                                             {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
                                         </Text>
                                     </View>
@@ -585,6 +597,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.start_date}
                                             </Text>
                                             <Text style={styles.events}>
+                                                {/* {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))} */}
                                                 {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>
@@ -600,6 +613,7 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.end_date}
                                             </Text>
                                             <Text style={styles.events}>
+                                                {/* {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))} */}
                                                 {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>

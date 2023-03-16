@@ -387,6 +387,17 @@ const GroupDetail: FC<any> = (props) => {
             title: Language.bio,
             leftTitle: true,
             isClose: true,
+            // customView: () => {
+            //     return <TouchableOpacity onPress={() => {
+            //         NavigationService.navigate("PersonChat", { person: group?.creator_of_group })
+            //         _hidePopUpAlert();
+            //     }}>
+            //         <Text style={{
+            //             color: colors.colorPrimary,
+            //             fontSize: scaler(14), fontWeight: '500',
+            //         }} >{Language.start_chat}</Text>
+            //     </TouchableOpacity>
+            // },
             message: group?.creator_of_group?.bio
         });
     }, [group?.creator_of_group?._id],)

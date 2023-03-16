@@ -70,6 +70,9 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
         if (this.isClose) {
             this.cancelButtonText = ""
+        }
+
+        if (this.leftTitle) {
             this.fullWidthMessage = true
         }
 
@@ -136,14 +139,14 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
                         {this.buttonText ?
                             <Button
-                                containerStyle={styles.button}
+                                containerStyle={[styles.button, { alignSelf: 'center', }]}
                                 title={this.buttonText}
                                 paddingVertical={scaler(12)}
                                 buttonStyle={[styles.buttonMain, this.buttonStyle]}
                                 radius={scaler(10)}
                                 onPress={this.onPressButton} /> : null}
                         {this.cancelButtonText ?
-                            <Text onPress={this.onPressCancel} style={styles.cancelText} >{this.cancelButtonText}</Text> : null}
+                            <Text onPress={this.onPressCancel} style={[styles.cancelText, this.leftTitle ? { alignSelf: 'center', } : {}]} >{this.cancelButtonText}</Text> : null}
                     </View>
                 </SafeAreaViewWithStatusBar>
             )
