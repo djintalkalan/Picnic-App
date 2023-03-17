@@ -319,7 +319,8 @@ const CreateEvent3: FC<any> = props => {
 
     if (!userData?.is_premium) {
       _showPopUpAlert({
-        message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        // message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        message: Language.join_now_to_access_payment_processing,
         buttonText: Language.join_now,
         onPressButton: () => {
           NavigationService.navigate("Subscription", {
@@ -330,7 +331,7 @@ const CreateEvent3: FC<any> = props => {
           });
           _hidePopUpAlert();
         },
-        cancelButtonText: isFreeEvent ? Language.no_thanks_create_my_event : Language.close,
+        cancelButtonText: isFreeEvent ? Language.no_thanks_create_my_event : Language.no_thanks_close,
         onPressCancel: () => { isFreeEvent ? next(payload) : _hidePopUpAlert() }
         // onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage(Language.you_need_subscription) }
         // onPressCancel: () => { next(payload) }

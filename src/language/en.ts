@@ -182,8 +182,8 @@ export const en = {
   write_refund_policy: 'Write refund policy',
   paypal_id: 'PayPal email',
   paypal_id_required: 'PayPal email is required',
-  join_now_to_access_payment_processing: 'Join now to access payment processing',
-  no_thanks_create_my_event: 'No, Thanks Create my event',
+  join_now_to_access_payment_processing: 'Subscribers benefit from payment in advance',
+  no_thanks_create_my_event: 'Not now, Close',
   no_events_close: 'No events are close to you,',
   mute_event: 'Mute event',
   event_details: 'Event details',
@@ -501,4 +501,5 @@ export const en = {
   member_since: 'Member since ',
   bio: 'Bio',
   click_for_bio: 'Click for bio',
+  no_thanks_close: 'No, thanks. Close',
 }

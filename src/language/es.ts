@@ -182,8 +182,8 @@ export const es = {
     write_refund_policy: 'Escribir la política de reembolsos',
     paypal_id: 'Correo electrónico de PayPal',
     paypal_id_required: 'Correo electrónico de PayPal es un campo obligatorio',
-    join_now_to_access_payment_processing: 'Únete ahora para acceder al procesamiento de pagos',
-    no_thanks_create_my_event: 'No, gracias. Crear mi evento',
+    join_now_to_access_payment_processing: 'Los abonados se benefician del pago por adelantado',
+    no_thanks_create_my_event: 'Ahora no, Cerrar',
     no_events_close: 'No hay eventos cerca,',
     mute_event: 'Silenciar evento',
     event_details: 'Detalles del evento',
@@ -501,5 +501,5 @@ export const es = {
     member_since: 'Miembro desde ',
     bio: 'Bio',
     click_for_bio: 'Haga clic para bio',
-
+    no_thanks_close: 'No, gracias. Cerrar',
 }
