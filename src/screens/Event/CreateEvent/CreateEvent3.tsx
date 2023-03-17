@@ -532,9 +532,7 @@ const CreateEvent3: FC<any> = props => {
                       </View>
                       <TextInput
                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={
-                          Language.event_ticket_price + ' (' + Language.per_person + ')'
-                        }
+                        placeholder={Language.ticket_price}
                         style={{ paddingLeft: scaler(20) }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
