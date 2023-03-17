@@ -331,7 +331,7 @@ export const es = {
     only_can_send_messages: '',
     group_is_no_longer_available: '',
     event_is_no_longer_available: '',
-    do_you_want_to_restore_your_purchases: '¿Quieres restablecer tus compras?',
+    do_you_want_to_restore_your_purchases: 'Como miembro de Picnic, tiene oportunidades ilimitadas de participar con grupos locales. Haz clic a continuación',
     we_have_sent_you_email_verification: '',
     required_information: 'Información requerida',
     copy: 'Copiar',
@@ -501,5 +501,6 @@ export const es = {
     member_since: 'Miembro desde ',
     bio: 'Bio',
     click_for_bio: 'Haga clic para bio',
-
+    enjoy_premium_benefits: 'Disfruta de ventajas Premium',
+    restore_free: 'Restablecer Gratis Suscripción',
 }

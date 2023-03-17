@@ -141,6 +141,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
                             <Button
                                 containerStyle={[styles.button, { alignSelf: 'center', }]}
                                 title={this.buttonText}
+                                fontSize={scaler(13)}
                                 paddingVertical={scaler(12)}
                                 buttonStyle={[styles.buttonMain, this.buttonStyle]}
                                 radius={scaler(10)}

@@ -279,7 +279,9 @@ const Subscription: FC = (props: any) => {
 
     const continueToMemberShip = useCallback((message?: string) => {
         _showSuccessMessage(message)
-        Database.setUserData({ ...Database.getStoredValue("userData"), is_premium: true })
+        const userData = Database.getStoredValue("userData");
+        Database.setUserData({ ...userData, is_premium: true })
+        Database.setOtherBool("restored_" + userData?._id, true)
         if (props?.route?.params?.from == 'settings') {
             NavigationService.goBack();
             props?.route?.params?.onSuccess && props?.route?.params?.onSuccess();
