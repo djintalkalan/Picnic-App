@@ -331,7 +331,7 @@ export const en = {
   only_can_send_messages: 'Only {0} can send messages',
   group_is_no_longer_available: 'Group is no longer available',
   event_is_no_longer_available: 'Event is no longer available',
-  do_you_want_to_restore_your_purchases: 'Do you want to restore your purchases?',
+  do_you_want_to_restore_your_purchases: 'As a member of Picnic, you have unlimited opportunities to participate with local groups. Click below to unlock the out & about.',
   we_have_sent_you_email_verification: 'We have sent the email verification code to your email.',
   required_information: 'Required information',
   copy: 'Copy',
@@ -502,4 +502,6 @@ export const en = {
   bio: 'Bio',
   click_for_bio: 'Click for bio',
   no_thanks_close: 'No, thanks. Close',
+  enjoy_premium_benefits: 'Enjoy Premium Benefits',
+  restore_free: 'Restore Free Subscription',
 }
