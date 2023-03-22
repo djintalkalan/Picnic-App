@@ -95,7 +95,7 @@ export const es = {
     create_group: 'Crear grupo',
     host_event: 'Organizar evento',
     permission_required: 'Permiso requerido',
-    give_permission: 'Dar permiso',
+    give_permission: 'Continuar',
     deny: 'Denegar',
     group_name: 'Nombre del grupo',
     group_purpose: 'Propósito del grupo',
