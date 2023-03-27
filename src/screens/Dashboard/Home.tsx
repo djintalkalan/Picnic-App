@@ -39,7 +39,7 @@ const Home: FC = () => {
       Screen: GroupList,
     },
     {
-      title: Language.events,
+      title: Language.upcoming,
       icon: Images.ic_calender,
       name: 'HomeEventTab',
       Screen: EventList,

@@ -268,7 +268,7 @@ const CreateEvent2: FC<any> = props => {
                 errors={errors} /> : undefined}
               <TextInput
                 containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={isMultidayEvent ? Language.end_time : Language.select_end_time + ' (' + Language.optional + ")"}
+                placeholder={isMultidayEvent ? Language.end_time : Language.select_end_time}
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'endTime'}

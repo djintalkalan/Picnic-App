@@ -10,7 +10,6 @@ import Language from 'src/language/Language';
 import { dateFormat, NavigationService, stringToDate, WaitTill, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _showSuccessMessage } from "utils";
 import { store } from '..';
 import ActionTypes, { action } from "../action-types";
-
 let installer = "Other"
 DeviceInfo.getInstallerPackageName().then((installerPackageName) => {
     console.log("installerPackageName", installerPackageName);
@@ -38,21 +37,18 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                 ApiProvider.TOKEN_EXPIRED.current = false
                 // _showSuccessMessage(res.message);
                 const { access_token, notification_settings, ...userData } = res?.data
-                // if (!__DEV__) {
                 yield call(AnalyticService.setUserData, userData, 1)
-                // }
-
                 if (userData?.is_premium == 1 && userData?.type != 'trial') {
                     userData.is_premium = false
                 }
-
                 Database.setMultipleValues({
                     authToken: access_token,
                     userData: userData,
                     isLogin: true
                 })
-                const isRestored = Database.getOtherBool(userData?._id)
-                if (isRestored && false) {
+                const isRestored = Database.getOtherBool("restored_" + userData?._id);
+                if (isRestored) {
+                    yield call(WaitTill, 100);
                     yield put(restorePurchaseAction({ noAlert: true }))
                 }
             }
@@ -323,25 +319,27 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
                 expireAt = new Date(parseInt(res?.data?.expire_at_unix))
                 thisDate = new Date()
             }
+            const oldUserData = Database.getStoredValue("userData")
             // if (expireAt >= new Date()) {
             if (expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium)) {
                 // _showErrorMessage(Language.you_are_not_a_member)
+                Database.setOtherBool("restored_" + oldUserData?._id, false)
             } else {
-                const oldUserData = Database.getStoredValue("userData")
-
                 if (!oldUserData?.is_premium) {
                     if (payload?.noAlert) {
                         Database.setUserData({ ...oldUserData, is_premium: true })
+                        Database.setOtherBool("restored_" + oldUserData?._id, true)
                     } else {
                         _showPopUpAlert({
-                            title: Language.restore_purchase,
+                            title: Language.enjoy_premium_benefits,
                             message: Language.do_you_want_to_restore_your_purchases,
-                            buttonText: Language.restore,
+                            buttonText: Language.restore_free,
+                            isClose: true,
                             onPressButton: () => {
                                 _hidePopUpAlert()
                                 _showSuccessMessage(Language.purchase_successfully_restored)
                                 Database.setUserData({ ...oldUserData, is_premium: true })
-                                Database.setOtherBool(oldUserData?._id, true)
+                                Database.setOtherBool("restored_" + oldUserData?._id, true)
                             }
                         })
                     }
