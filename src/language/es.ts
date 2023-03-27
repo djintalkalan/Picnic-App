@@ -504,4 +504,6 @@ export const es = {
     no_thanks_close: 'No, gracias. Cerrar',
     enjoy_premium_benefits: 'Disfruta de ventajas Premium',
     restore_free: 'Restablecer Gratis Suscripción',
+    search: 'Buscar',
+    create: "Crear"
 }
