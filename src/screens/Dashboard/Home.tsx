@@ -16,7 +16,7 @@ import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink, _showTouchAlert } from 'utils'
 
 
 const addIcon = Ionicons.getImageSourceSync("add-circle-sharp", 50, colors.colorPrimary)
@@ -52,7 +52,6 @@ const Home: FC = () => {
   const [currentLocation] = useDatabase<ILocation>("currentLocation", defaultLocation)
   const [selectedLocation] = useDatabase<ILocation | null>("selectedLocation", currentLocation)
 
-  const isFabTransparent = (selectedTabType == 'events' && !eventLength) || (selectedTabType == 'groups' && !groupLength)
 
   const debounceSearch = useCallback(_.debounce((text) => {
     dispatch(searchAtHome({ text, type: selectedTabType, setSearchLoader: setSearchLoader }))
@@ -68,10 +67,11 @@ const Home: FC = () => {
       dispatch(getAllCurrencies())
       dispatch(getProfile())
     })
-    // setTimeout(() => {
-    //   dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
-    //   NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
-    // }, 2000);
+    setTimeout(() => {
+      // dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
+      // NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
+      _openMenu()
+    }, 2000);
   }, [])
 
   // useEffect(() => {
@@ -95,92 +95,27 @@ const Home: FC = () => {
   // const a = "id1id1id1";
   // const b = "id2id2id2";
 
-  return (
-    <SafeAreaViewWithStatusBar translucent backgroundColor={'white'} edges={['top']} >
-      <View style={styles.headerContainer} >
-        <TouchableOpacity
-          onPress={() => {
-            NavigationService.navigate("SelectLocation")
-          }}
-          style={styles.settingButtonContainer} >
-          <Text numberOfLines={1} style={styles.locationText} >
-            {getCityOnly(selectedLocation?.otherData?.city, selectedLocation?.otherData?.state, selectedLocation?.otherData?.country)}
-          </Text>
-          <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
-        </TouchableOpacity>
-        <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
-          NavigationService.navigate("ProfileScreen")
-          // NavigationService.navigate("Scanner")
-        }} >
-          {/*@ts-ignore*/}
-          <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
-            placeholderSource={Images.ic_home_profile}
-            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(100) }) } : null}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onPressSetting} >
-          <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
-        </TouchableOpacity>
+  const _createButtonRef = useRef<TouchableOpacity>(null)
 
-      </View>
-      <View style={{ flex: 1 }} >
-        <View style={styles.searchHolderRow} >
-          <View style={{
-            flex: 1,
-          }} >
-            <TextInput
-              ref={inputRef}
-              autoCapitalize={'none'}
-              onChangeText={(text) => {
-                if (text?.trim()?.length > 2) {
-                  Database.setOtherString("searchHomeText", text)
-                  debounceSearch(text)
-                } else {
-                  debounceClear()
-                }
-              }}
-              style={styles.searchInput}
-              placeholder={Language.search}
-              placeholderTextColor={colors.colorGreyInactive}
-            />
-            <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
-            {searchLoader && <View style={[styles.imagePlaceholder, { top: scaler(10), left: undefined, right: scaler(10), alignSelf: 'center', justifyContent: 'center' }]} >
-              <ActivityIndicator color={colors.colorPrimary} size={scaler(20)} />
-            </View>}
-          </View>
+  const _openMenu = () => {
+    _createButtonRef?.current?.measureInWindow((x, y) => {
+      _showTouchAlert({
+        transparent: true,
+        placementStyle: {
+          right: scaler(10),
+          top: y + scaler(45)
+        },
+        alertComponent: () => {
+          return (<View
+            style={{
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              setFABOpen(!isFABOpen);
-            }} style={styles.plus_button} >
-            <Text style={styles.buttonText} >{Language.create} </Text>
-            <Entypo size={scaler(18)} style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} name='plus' color={colors.colorPrimary} />
-          </TouchableOpacity>
-        </View>
-
-        <TopTab onChangeIndex={(i) => {
-          inputRef?.current?.clear();
-          debounceClear();
-          setSelectedTabType(tabs[i]?.name?.toLowerCase()?.includes('event') ? 'events' : 'groups');
-        }} swipeEnabled={false} tabs={tabs} />
-
-        <View
-          style={{
-            alignSelf: 'baseline',
-            position: 'absolute',
-            top: scaler(45),
-            right: scaler(15),
-          }}>
-          {isFABOpen && (
+            }}>
             <Card
-              cardElevation={isFabTransparent ? 0 : 2}
+              cardElevation={2}
               style={[
                 styles.fabActionContainer,
                 {
-                  backgroundColor: isFabTransparent
-                    ? 'transparent'
-                    : colors.colorWhite,
+                  backgroundColor: colors.colorWhite,
                 },
               ]}>
               <InnerButton
@@ -237,8 +172,83 @@ const Home: FC = () => {
                   icon={addIcon}
                 /> : null}
             </Card>
-          )}
+          </View>)
+        },
+      })
+    })
+
+  }
+
+  return (
+    <SafeAreaViewWithStatusBar translucent backgroundColor={'white'} edges={['top']} >
+      <View style={styles.headerContainer} >
+        <TouchableOpacity
+          onPress={() => {
+            NavigationService.navigate("SelectLocation")
+          }}
+          style={styles.settingButtonContainer} >
+          <Text numberOfLines={1} style={styles.locationText} >
+            {getCityOnly(selectedLocation?.otherData?.city, selectedLocation?.otherData?.state, selectedLocation?.otherData?.country)}
+          </Text>
+          <Octicons style={{ marginLeft: scaler(6) }} name={"chevron-down"} size={scaler(18)} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ borderRadius: scaler(18), overflow: 'hidden' }} onPress={() => {
+          NavigationService.navigate("ProfileScreen")
+          // NavigationService.navigate("Scanner")
+        }} >
+          {/*@ts-ignore*/}
+          <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
+            placeholderSource={Images.ic_home_profile}
+            source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(100) }) } : null}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onPressSetting} >
+          <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
+        </TouchableOpacity>
+
+      </View>
+      <View style={{ flex: 1 }} >
+        <View style={styles.searchHolderRow} >
+          <View style={{
+            flex: 1,
+          }} >
+            <TextInput
+              ref={inputRef}
+              autoCapitalize={'none'}
+              onChangeText={(text) => {
+                if (text?.trim()?.length > 2) {
+                  Database.setOtherString("searchHomeText", text)
+                  debounceSearch(text)
+                } else {
+                  debounceClear()
+                }
+              }}
+              style={styles.searchInput}
+              placeholder={Language.search}
+              placeholderTextColor={colors.colorGreyInactive}
+            />
+            <Image style={styles.imagePlaceholder} source={Images.ic_lens} />
+            {searchLoader && <View style={[styles.imagePlaceholder, { top: scaler(10), left: undefined, right: scaler(10), alignSelf: 'center', justifyContent: 'center' }]} >
+              <ActivityIndicator color={colors.colorPrimary} size={scaler(20)} />
+            </View>}
+          </View>
+
+          <TouchableOpacity
+            ref={_createButtonRef}
+            activeOpacity={0.7}
+            onPress={_openMenu} style={styles.plus_button} >
+            <Text style={styles.buttonText} >{Language.create} </Text>
+            <Entypo size={scaler(18)} style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} name='plus' color={colors.colorPrimary} />
+          </TouchableOpacity>
         </View>
+
+        <TopTab onChangeIndex={(i) => {
+          inputRef?.current?.clear();
+          debounceClear();
+          setSelectedTabType(tabs[i]?.name?.toLowerCase()?.includes('event') ? 'events' : 'groups');
+        }} swipeEnabled={false} tabs={tabs} />
+
+
       </View>
     </SafeAreaViewWithStatusBar>
   );
