@@ -16,13 +16,12 @@ import EventList from 'screens/Event/EventList'
 import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
-import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink, _showTouchAlert } from 'utils'
+import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink, _hideTouchAlert, _showTouchAlert } from 'utils'
 
 
 const addIcon = Ionicons.getImageSourceSync("add-circle-sharp", 50, colors.colorPrimary)
 
 const Home: FC = () => {
-  const [isFABOpen, setFABOpen] = useState(false)
   const dispatch = useDispatch()
 
   const { groupLength, eventLength } = useSelector(state => ({
@@ -67,11 +66,11 @@ const Home: FC = () => {
       dispatch(getAllCurrencies())
       dispatch(getProfile())
     })
-    setTimeout(() => {
-      // dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
-      // NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
-      _openMenu()
-    }, 2000);
+    // setTimeout(() => {
+    // dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
+    // NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
+    // _openMenu()
+    // }, 2000);
   }, [])
 
   // useEffect(() => {
@@ -123,17 +122,13 @@ const Home: FC = () => {
                 icon={Images.ic_share_picnic}
                 onPress={() => {
                   shareAppLink("Picnic Groups")
-                  setTimeout(() => {
-                    setFABOpen(false);
-                  }, 1000);
+                  _hideTouchAlert()
                 }}
               />
               <InnerButton
                 onPress={() => {
                   NavigationService.navigate('CreateGroup');
-                  setTimeout(() => {
-                    setFABOpen(false);
-                  }, 1000);
+                  _hideTouchAlert()
                 }}
                 title={Language.create_group}
                 icon={Images.ic_create_group}
@@ -142,9 +137,7 @@ const Home: FC = () => {
                 title={Language.host_event}
                 onPress={() => {
                   NavigationService.navigate('CreateEvent1');
-                  setTimeout(() => {
-                    setFABOpen(false);
-                  }, 1000);
+                  _hideTouchAlert()
                 }}
                 icon={Images.ic_host_event}
               />
@@ -152,9 +145,7 @@ const Home: FC = () => {
                 title={Language.check_in}
                 onPress={() => {
                   NavigationService.navigate('CheckInList');
-                  setTimeout(() => {
-                    setFABOpen(false);
-                  }, 1000);
+                  _hideTouchAlert()
                 }}
                 // imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(4) }}
                 icon={Images.ic_fab_check_in}
@@ -164,9 +155,7 @@ const Home: FC = () => {
                   title={Language.join_now}
                   onPress={() => {
                     NavigationService.navigate('Subscription', { from: 'settings' });
-                    setTimeout(() => {
-                      setFABOpen(false);
-                    }, 1000);
+                    _hideTouchAlert()
                   }}
                   imageStyle={{ height: scaler(42), width: scaler(42), resizeMode: 'contain', marginHorizontal: scaler(3) }}
                   icon={addIcon}
