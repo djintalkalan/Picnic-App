@@ -126,7 +126,7 @@ const Home: FC = () => {
       <View style={{ flex: 1 }} >
         <View style={styles.searchHolderRow} >
           <View style={{
-            flex: 1.05,
+            flex: 1,
           }} >
             <TextInput
               ref={inputRef}
@@ -155,7 +155,7 @@ const Home: FC = () => {
               setFABOpen(!isFABOpen);
             }} style={styles.plus_button} >
             <Text style={styles.buttonText} >{Language.create} </Text>
-            <Entypo size={scaler(18)} style={{ marginBottom: scaler(2) }} name='plus' color={colors.colorPrimary} />
+            <Entypo size={scaler(18)} style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} name='plus' color={colors.colorPrimary} />
           </TouchableOpacity>
         </View>
 
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   plus_button: {
-    flex: 0.95,
+    flex: 1,
     flexDirection: 'row',
     marginLeft: scaler(10),
     height: scaler(40),
@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
     color: colors.colorGreyInactive,
     fontWeight: '400',
     fontSize: scaler(14),
+    height: scaler(20),
   },
   searchHolderRow: {
     flexDirection: 'row',
