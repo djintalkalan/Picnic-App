@@ -6,7 +6,7 @@ import ImageLoader from 'custom-components/ImageLoader'
 import TopTab, { TabProps } from 'custom-components/TopTab'
 import _, { isEqual } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, ImageStyle, InteractionManager, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, GestureResponderEvent, Image, ImageSourcePropType, ImageStyle, InteractionManager, Platform, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 // import RNShake from 'react-native-shake'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -102,7 +102,7 @@ const Home: FC = () => {
         transparent: true,
         placementStyle: {
           right: scaler(10),
-          top: y + scaler(45)
+          top: y + scaler(45) + (Platform.OS == 'android' ? StatusBar.currentHeight || 0 : 0)
         },
         alertComponent: () => {
           return (<View
@@ -165,7 +165,6 @@ const Home: FC = () => {
         },
       })
     })
-
   }
 
   return (
