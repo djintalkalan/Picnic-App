@@ -44,7 +44,7 @@ const CreateGroup: FC<any> = (props) => {
   const [isPublicGroup, setPublicGroup] = useState(false);
   const [pinLocation, setPinLocation] = useState(false);
   const { control, handleSubmit, getValues, setValue, formState: { errors, isValid }, setError } = useForm<FormType>({
-    defaultValues: !__DEV__ ? {
+    defaultValues: __DEV__ ? {
       name: "Test Group",
       purpose: "personal",
       location: "Sahibzada Ajit Singh Nagar, Punjab, India"
