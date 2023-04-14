@@ -505,5 +505,14 @@ export const en = {
   enjoy_premium_benefits: 'Enjoy Premium Benefits',
   restore_free: 'Restore Free Subscription',
   search: 'Search',
-  create: "Create"
+  create: "Create",
+  start_a_broadcast: 'Start a broadcast',
+  update_broadcast: 'Update broadcast',
+  yes: 'Yes',
+  no: 'No',
+  result: 'Result',
+  total_votes: 'Total votes',
+  create_poll: 'Create poll',
+  your_poll_question: 'Your Poll Question',
+  poll_end_date: 'Poll end date',
 }

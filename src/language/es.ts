@@ -505,5 +505,14 @@ export const es = {
     enjoy_premium_benefits: 'Disfruta de ventajas Premium',
     restore_free: 'Restablecer Gratis Suscripción',
     search: 'Buscar',
-    create: "Crear"
+    create: "Crear",
+    start_a_broadcast: 'Iniciar una transmisión',
+    update_broadcast: 'Actualizar transmisión',
+    yes: 'Sí',
+    no: 'No',
+    result: 'Resultado',
+    total_votes: 'Total de votos',
+    create_poll: 'Crear encuesta',
+    your_poll_question: 'Su pregunta de encuesta',
+    poll_end_date: 'Fecha de finalización de la encuesta',
 }

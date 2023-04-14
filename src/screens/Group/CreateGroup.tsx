@@ -34,6 +34,7 @@ const { height, width } = Dimensions.get('screen')
 
 const CreateGroup: FC<any> = (props) => {
   const { group } = props?.route?.params ?? {}
+  const isBroadcastGroup = props?.route?.params?.is_broadcast_group || group?.is_broadcast_group == 1
   const uploadedImage = useRef("")
   const dispatch = useDispatch()
   const [profileImage, setProfileImage] = useState<any>()
@@ -43,7 +44,7 @@ const CreateGroup: FC<any> = (props) => {
   const [isPublicGroup, setPublicGroup] = useState(false);
   const [pinLocation, setPinLocation] = useState(false);
   const { control, handleSubmit, getValues, setValue, formState: { errors, isValid }, setError } = useForm<FormType>({
-    defaultValues: __DEV__ ? {
+    defaultValues: !__DEV__ ? {
       name: "Test Group",
       purpose: "personal",
       location: "Sahibzada Ajit Singh Nagar, Punjab, India"
@@ -53,21 +54,7 @@ const CreateGroup: FC<any> = (props) => {
   const keyboardValues = useKeyboardService()
   const pickerRef = useRef<Picker<string>>(null)
 
-  const onSubmit = useCallback(() => handleSubmit(data => {
-    if (!uploadedImage.current && profileImage?.path) {
-      dispatch(uploadFile({
-        image: profileImage,
-        onSuccess: (url) => {
-          console.log("URL is ", url)
-          uploadedImage.current = url
-          callCreateGroupApi(data);
-        },
-        prefixType: 'groups'
-      }))
-    } else {
-      callCreateGroupApi(data);
-    }
-  })(), [profileImage, pinLocation, isPublicGroup]);
+
 
   useEffect(() => {
     if (group) {
@@ -122,6 +109,7 @@ const CreateGroup: FC<any> = (props) => {
       country: otherData?.country,
       is_direction: pinLocation ? '1' : '0',
       can_anyone_host_events: isPublicGroup ? '1' : '0',
+      is_broadcast_group: isBroadcastGroup ? '1' : '0',
       location: {
         type: 'Point',
         coordinates: [
@@ -133,7 +121,23 @@ const CreateGroup: FC<any> = (props) => {
     dispatch(createGroup({
       data: payload
     }))
-  }, [pinLocation, isPublicGroup])
+  }, [pinLocation, isPublicGroup, isBroadcastGroup])
+
+  const onSubmit = useCallback(() => handleSubmit(data => {
+    if (!uploadedImage.current && profileImage?.path) {
+      dispatch(uploadFile({
+        image: profileImage,
+        onSuccess: (url) => {
+          console.log("URL is ", url)
+          uploadedImage.current = url
+          callCreateGroupApi(data);
+        },
+        prefixType: 'groups'
+      }))
+    } else {
+      callCreateGroupApi(data);
+    }
+  })(), [profileImage, callCreateGroupApi]);
 
   const pickImage = useCallback(() => {
     setTimeout(() => {
@@ -202,7 +206,7 @@ const CreateGroup: FC<any> = (props) => {
   const purposeRef = useRef<RNTextInput>()
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
-      <MyHeader title={group ? Language.update_group : Language.create_group} />
+      <MyHeader title={group ? (isBroadcastGroup ? Language.update_broadcast : Language.update_group) : (isBroadcastGroup ? Language.start_a_broadcast : Language.create_group)} />
       <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
         <View>
           <View style={styles.imageContainer} >
@@ -361,7 +365,7 @@ const CreateGroup: FC<any> = (props) => {
           </TouchableOpacity>
 
           <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }}
-            title={group ? Language.update_group : Language.create_group}
+            title={group ? (isBroadcastGroup ? Language.update_broadcast : Language.update_group) : (isBroadcastGroup ? Language.start_a_broadcast : Language.create_group)}
             onPress={onSubmit} />
 
         </View>

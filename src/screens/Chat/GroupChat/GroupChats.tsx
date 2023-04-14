@@ -260,32 +260,34 @@ export const GroupChats: FC<any> = (props) => {
                     renderItem={_renderChatItem}
                 />
             </View>
-            {groupDetail?.is_group_member ? <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
-                {groupDetail?.status == 1 && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium)) ?
-                    <><ChatInput
-                        // value={textMessage}
-                        ref={inputRef}
-                        link={link}
-                        disableButton={!socketConnected}
-                        repliedMessage={repliedMessage}
-                        setRepliedMessage={setRepliedMessage}
-                        onChooseImage={_onChooseImage}
-                        onChooseContacts={_onChooseContacts}
-                        onChooseLocation={_onChooseLocation}
-                        onChangeText={_updateTextMessage}
-                        onPressSend={_onPressSend}
-                    />
-                        {!socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                            <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >{Language.chat_services_down}</Text>
-                        </View> : null}
-                    </> :
-                    <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
-                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
-                    </View>
-                }
-            </View> : !socketConnected ? <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
-                <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >{Language.chat_services_down}</Text>
-            </View> : null}
+            <View style={{ marginBottom: isKeyboard && Platform.OS == 'ios' ? (keyboardHeight - bottom) : undefined, flexGrow: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' }} >
+                {groupDetail?.is_group_member ?
+                    (groupDetail?.status == 1 && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium)) ?
+                        <ChatInput
+                            // value={textMessage}
+                            ref={inputRef}
+                            link={link}
+                            disableButton={!socketConnected}
+                            repliedMessage={repliedMessage}
+                            setRepliedMessage={setRepliedMessage}
+                            onChooseImage={_onChooseImage}
+                            onChooseContacts={_onChooseContacts}
+                            onChooseLocation={_onChooseLocation}
+                            onChangeText={_updateTextMessage}
+                            onPressSend={_onPressSend}
+                        /> :
+                        <>
+                            <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
+                                <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
+                            </View>
+                        </>)
+                    : null}
+                {!socketConnected ?
+                    <View style={{ paddingVertical: scaler(4), paddingHorizontal: scaler(10), backgroundColor: colors.colorRed }} >
+                        <Text style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(10) }} >{Language.chat_services_down}</Text>
+                    </View> : null}
+            </View>
+
         </ImageBackground >
     )
 }
