@@ -2,7 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply from: 'keystore.gradle'
 
 import com.android.build.OutputFile
 
@@ -53,7 +52,6 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 }
 
-apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
@@ -70,7 +68,7 @@ def outputPathName = "${project.rootDir.absolutePath}/output"
  * use App Bundles (https://developer.android.com/guide/app-bundle/)
  * and want to have separate APKs to upload to the Play Store.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
@@ -133,12 +131,7 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            storeFile file(KEYSTORE_NAME)
-            storePassword KEYSTORE_PASSWORD
-            keyAlias ALIAS_NAME
-            keyPassword KEYSTORE_PASSWORD
-        }
+        releaseConfig()
     }
     buildTypes {
         debug {
@@ -171,14 +164,13 @@ android {
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
+                output.versionCodeOverride = defaultConfig.versionCode * 1000 + versionCodes.get(abi)
                 if (variant.buildType.name.equals("release")) {
-                    variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
+                    // variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
                     output.outputFileName = outputFileName + "-" + abi + "-v" + ANDROID_VERSION_NAME + ".apk"
                 }
             } else if (variant.buildType.name.equals("release")) {
-                variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
+                // variant.packageApplicationProvider.get().outputDirectory = new File("${outputPathName}")
                 output.outputFileName = outputFileName + "-v" + ANDROID_VERSION_NAME + ".apk"
             }
 
@@ -200,7 +192,7 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
@@ -216,7 +208,6 @@ dependencies {
     }
 
     // Firebase
-
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-core'
@@ -243,19 +234,48 @@ task cleanExtra(type: Delete) {
     // delete "google-services.json"
 }
 
-// task loadGoogleService(type: Copy) {
-//     description = 'Switches to ${APP_TYPE} google-services.json'
-//     from "google-services/${APP_TYPE}"
-//     include "google-services.json"
-//     into "."
-// }
-
-// afterEvaluate {
-//     processDebugGoogleServices.dependsOn loadGoogleService
-//     processReleaseGoogleServices.dependsOn loadGoogleService
-// }
-
 clean.dependsOn(cleanExtra)
+
+task copyReleaseApk(type: Copy) {
+    from "build/outputs/apk/release"
+    include "**/*.*"
+    into outputPathName
+}
+
+task copyReleaseBundle(type: Copy) {
+    from "build/outputs/bundle/release"
+    include "**/*.*"
+    into outputPathName
+}
+
+afterEvaluate {
+    assembleRelease.finalizedBy copyReleaseApk
+    bundleRelease.finalizedBy copyReleaseBundle
+}
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+def releaseConfig() {
+    def keyStoreProperties = new Properties()
+    def keyStorePropertiesFile = file('keystore.properties')
+    def config = android.signingConfigs.create('release')
+    if (keyStorePropertiesFile.exists()) {
+        keyStorePropertiesFile.withReader('UTF-8') { reader ->
+            keyStoreProperties.load(reader)
+        }
+        def storeFile = keyStoreProperties.getProperty('storeFile')
+        def storePassword = keyStoreProperties.getProperty('storePassword')
+        def keyAlias = keyStoreProperties.getProperty('keyAlias')
+        def keyPassword = keyStoreProperties.getProperty('keyPassword')
+        Boolean isReleaseKeysAvailable = storeFile != null && storePassword != null && keyAlias != null && keyPassword != null
+        if (isReleaseKeysAvailable){
+            config.storeFile = file(storeFile)
+            config.storePassword = storePassword
+            config.keyAlias = keyAlias
+            config.keyPassword = keyPassword
+            return config
+        }
+    }
+    return config.initWith(android.signingConfigs.debug)
+}

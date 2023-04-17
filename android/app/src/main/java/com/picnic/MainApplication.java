@@ -59,11 +59,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
                 return BuildConfig.IS_HERMES_ENABLED;
                 }
 
-                @Override
-                protected JSIModulePackage getJSIModulePackage() {
-                    return new CustomMMKVJSIModulePackage();
-                }
-
             };
 
     @Override
