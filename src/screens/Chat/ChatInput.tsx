@@ -8,7 +8,7 @@ import { Button, Dimensions, Image, InputAccessoryView, Keyboard, Platform, Styl
 import { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
-import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu, _showErrorMessage } from 'utils'
+import { _showBottomMenu, _showErrorMessage, getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
 import ImagePickerUtils from 'utils/ImagePickerUtils'
 
 interface ChatInputProps {
@@ -59,7 +59,8 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
                             onSelectLocation: onChooseLocation
                         })
                     }
-                }
+                },
+                { title: Language.create_poll, onPress: () => pickImage("video") },
             ]
         })
     }, [onChooseLocation, onChooseContacts, onChooseImage])
