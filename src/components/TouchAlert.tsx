@@ -70,7 +70,7 @@ export class TouchAlert extends Component<TouchAlertProps, any> {
         const { AlertComponent } = this
         if (this.state.alertVisible)
             return (
-                <SafeAreaViewWithStatusBar barStyle={'light-content'} translucent style={[styles.absolute, this.transparent ? { backgroundColor: 'transparent' } : {}]}  >
+                <SafeAreaViewWithStatusBar barStyle={'dark-content'} translucent style={[styles.absolute, this.transparent ? { backgroundColor: 'transparent' } : {}]}  >
                     <TouchableOpacity activeOpacity={1} onPress={this.hideTouchAlert} style={[styles.absolute, this.transparent ? { backgroundColor: 'transparent' } : {}]} >
                         <TouchableOpacity activeOpacity={1} style={[styles.alertContainer, this.placementStyle]} >
                             {AlertComponent ?

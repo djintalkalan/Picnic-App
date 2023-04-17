@@ -65,10 +65,10 @@ const CreateEvent2: FC<any> = props => {
   const setEventValues = useCallback(() => {
     if (event?.is_copied_event != '1') {
       eventDateTime.current = {
-        eventDate: getZonedDate(event?.event_timezone, event?.event_start_date_time),
-        startTime: getZonedDate(event?.event_timezone, event?.event_date ? event?.event_start_date_time : defaultTime),
-        endDate: getZonedDate(event?.event_timezone, event?.event_end_date_time),
-        endTime: getZonedDate(event?.event_timezone, event?.event_end_time ? event?.event_end_date_time : defaultTime,),
+        eventDate: getZonedDate(event?.event_timezone, event?.event_start_date_time, true),
+        startTime: getZonedDate(event?.event_timezone, event?.event_date ? event?.event_start_date_time : defaultTime, true),
+        endDate: getZonedDate(event?.event_timezone, event?.event_end_date_time, true),
+        endTime: getZonedDate(event?.event_timezone, event?.event_end_time ? event?.event_end_date_time : defaultTime, true),
         selectedType: 'eventDate',
       }
       setValue('eventDate', event?.event_date ? dateFormat(eventDateTime.current.eventDate, 'MMM DD, YYYY') : '')
@@ -122,7 +122,7 @@ const CreateEvent2: FC<any> = props => {
 
   const getMinDate = useCallback(() => {
     const { startTime, endTime, eventDate, selectedType, endDate } = eventDateTime.current
-    const currentDate = getZonedDate(event?.event_timezone);
+    const currentDate = getZonedDate(event?.event_timezone, undefined, true);
     switch (selectedType) {
       case "eventDate":
       case "endDate":
@@ -268,7 +268,7 @@ const CreateEvent2: FC<any> = props => {
                 errors={errors} /> : undefined}
               <TextInput
                 containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                placeholder={isMultidayEvent ? Language.end_time : Language.select_end_time + ' (' + Language.optional + ")"}
+                placeholder={isMultidayEvent ? Language.end_time : Language.select_end_time}
                 borderColor={colors.colorTextInputBackground}
                 backgroundColor={colors.colorTextInputBackground}
                 name={'endTime'}
@@ -308,6 +308,7 @@ const CreateEvent2: FC<any> = props => {
         </View>
         <DateTimePickerModal
           style={{ zIndex: 20 }}
+          minuteInterval={15}
           isVisible={isDatePickerVisible}
           locale={Language.getLanguage()}
           minimumDate={getMinDate()}

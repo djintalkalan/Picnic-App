@@ -1,7 +1,8 @@
 import { colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component, FC } from "react";
-import { BackHandler, Dimensions, GestureResponderEvent, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { BackHandler, Dimensions, GestureResponderEvent, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Language from "src/language/Language";
 import { scaler } from "utils";
 import Button from "./Button";
@@ -21,6 +22,8 @@ export interface IAlertType {
     buttonStyle?: StyleProp<ViewStyle>
     cancelButtonText?: string | null
     onPressCancel?: () => void
+    leftTitle?: boolean
+    isClose?: boolean
 }
 
 export class PopupAlert extends Component<PopupAlertProps, any> {
@@ -41,14 +44,17 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     onPressCancel: any = null
     onPressButton: any = null
     fullWidthMessage: boolean = false
+    leftTitle = false;
+    isClose = false;
 
-    showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel }: IAlertType) => {
+    showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel, leftTitle, isClose }: IAlertType) => {
         this.title = title || ""
         this.message = message || ""
         this.buttonText = buttonText || ""
         this.buttonStyle = StyleSheet.flatten(buttonStyle) || {}
         this.cancelButtonText = cancelButtonText === null ? "" : (cancelButtonText || Language.close)
         this.customView = customView
+        this.leftTitle = leftTitle || false
         this.onPressCancel = () => {
             onPressCancel && onPressCancel()
             this.hideAlert()
@@ -56,7 +62,29 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         this.onPressButton = onPressButton
         if (this.message?.length > 70) {
             this.fullWidthMessage = true
+        } else {
+            this.fullWidthMessage = false
         }
+
+        this.isClose = isClose || false
+
+        if (this.isClose) {
+            this.cancelButtonText = ""
+        }
+
+        if (this.leftTitle) {
+            this.fullWidthMessage = true
+        }
+
+        // if (this.cancelButtonText == Language.close || this.cancelButtonText == Language.cancel) {
+        //     this.cancelButtonText = ""
+        //     this.isClose = true;
+        //     this.fullWidthMessage = true
+        // } else {
+        //     this.isClose = false;
+        // }
+
+
         //@ts-ignore
         // this.state.alertVisible = true
         if (!this.state.alertVisible) {
@@ -89,14 +117,19 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         if (this.state.alertVisible)
             return (
                 <SafeAreaViewWithStatusBar translucent style={styles.absolute}  >
-                    <View style={styles.alertContainer} >
-
-
+                    <View style={[styles.alertContainer, this.leftTitle ? { alignItems: 'flex-start' } : {}]} >
+                        {this.isClose ?
+                            <TouchableOpacity onPress={this.hideAlert} style={styles.crossIcon}>
+                                <MaterialIcons
+                                    color={colors.colorBlack}
+                                    size={scaler(25)}
+                                    name="close" />
+                            </TouchableOpacity>
+                            : null}
                         {this.title ? <Text style={[styles.title]} >{this.title}</Text> : null}
                         {this.message ?
-
-                            <ScrollView bounces={false} overScrollMode={'never'} contentContainerStyle={[styles.scrollViewContainerStyle, this?.fullWidthMessage ? { marginHorizontal: scaler(30) } : {}]} style={styles.scrollViewStyle} >
-                                <Text style={[styles.message]} >{this.message}</Text>
+                            <ScrollView bounces={false} overScrollMode={'never'} contentContainerStyle={[styles.scrollViewContainerStyle, this?.fullWidthMessage ? { marginHorizontal: scaler(30) } : {}, this.leftTitle ? { alignItems: 'flex-start' } : {}]} style={styles.scrollViewStyle} >
+                                <Text style={[styles.message, this.leftTitle ? { textAlign: 'left' } : {}]} >{this.message}</Text>
                             </ScrollView>
                             : null}
 
@@ -106,14 +139,15 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
 
                         {this.buttonText ?
                             <Button
-                                containerStyle={styles.button}
+                                containerStyle={[styles.button, { alignSelf: 'center', }]}
                                 title={this.buttonText}
+                                fontSize={scaler(13)}
                                 paddingVertical={scaler(12)}
                                 buttonStyle={[styles.buttonMain, this.buttonStyle]}
                                 radius={scaler(10)}
                                 onPress={this.onPressButton} /> : null}
                         {this.cancelButtonText ?
-                            <Text onPress={this.onPressCancel} style={styles.cancelText} >{this.cancelButtonText}</Text> : null}
+                            <Text onPress={this.onPressCancel} style={[styles.cancelText, this.leftTitle ? { alignSelf: 'center', } : {}]} >{this.cancelButtonText}</Text> : null}
                     </View>
                 </SafeAreaViewWithStatusBar>
             )
@@ -136,7 +170,7 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: colors.colorWhite,
-        padding: scaler(30),
+        padding: scaler(26),
         width: '100%',
         flexShrink: 1,
         elevation: 3,
@@ -188,5 +222,11 @@ const styles = StyleSheet.create({
         lineHeight: scaler(24),
         marginTop: scaler(10),
         color: colors.colorBlackText,
+    },
+    crossIcon: {
+        position: 'absolute',
+        padding: scaler(10),
+        top: scaler(10),
+        right: scaler(10)
     }
 })

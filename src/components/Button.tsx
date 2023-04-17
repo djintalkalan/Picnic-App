@@ -9,7 +9,7 @@ interface ButtonProps {
     disabled?: boolean
     onPress?: (event: GestureResponderEvent) => void;
     buttonStyle?: StyleProp<ViewStyle>;
-    containerStyle?: ViewStyle;
+    containerStyle?: StyleProp<ViewStyle>;
     center?: boolean;
     backgroundColor?: ColorValue
     width?: number | string;

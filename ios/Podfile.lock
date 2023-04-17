@@ -1368,12 +1368,12 @@ PODS:
     - React-Core
   - RNIap (12.4.12):
     - React-Core
-  - RNImageCropPicker (0.38.0):
+  - RNImageCropPicker (0.39.0):
     - React-Core
     - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.38.0)
+    - RNImageCropPicker/QBImagePickerController (= 0.39.0)
     - TOCropViewController
-  - RNImageCropPicker/QBImagePickerController (0.38.0):
+  - RNImageCropPicker/QBImagePickerController (0.39.0):
     - React-Core
     - React-RCTImage
     - TOCropViewController
@@ -1914,7 +1914,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: 40dac204b4197a2661dec5be964780c6ec39bf65
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNIap: 6ba4323f44fc730197726188deb0dc25f4b785cf
-  RNImageCropPicker: ffbba608264885c241cbf3a8f78eb7aeeb978241
+  RNImageCropPicker: 14fe1c29298fb4018f3186f455c475ab107da332
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNLaunchNavigator: 058ccdb86a80a9424d5e37f6ec54379e3018c52b
   RNLocalize: a64514b46a01375fdfae9349036b4dc7130333b5
@@ -1938,4 +1938,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c000be8c9f8a0335395918560fe5cb1d40b6b61e
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0

@@ -807,7 +807,7 @@ export const getFreeTicketsInMultiple = (ticket_plans: any[] = []): {
     }
 }
 
-export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
+export const getZonedDate = (timezone: string, ISODate?: Date | string, roundTo15: boolean = false) => {
     if (!ISODate) {
         ISODate = new Date()
     }
@@ -818,7 +818,11 @@ export const getZonedDate = (timezone: string, ISODate?: Date | string) => {
     if (Language.getLanguage() == 'es') {
         locale = require('date-fns/locale/es')
     }
-    return utcToZonedTime(ISODate?.toISOString(), timezone, { locale });
+    const zonedTime = utcToZonedTime(ISODate?.toISOString(), timezone, { locale });
+    if (roundTo15) {
+        return roundToNearest15(zonedTime)
+    }
+    return zonedTime
 }
 
 export const getFromZonedDate = (timezone: string, zonedDate?: Date | string) => {
@@ -877,6 +881,14 @@ export const getSelectedCurrencyFromValue = (currency: ICurrencyValues | string)
 export const getSelectedCurrencyFromText = (currency: ICurrencyKeys | string): ICurrency => {
     //@ts-ignore
     return ALL_CURRENCIES.find(_ => _?.text?.toLowerCase() == currency?.toLowerCase()) || {}
+}
+
+function roundToNearest15(date = new Date()) {
+    const minutes = 15;
+    const ms = 1000 * 60 * minutes;
+
+    // 👇️ replace Math.round with Math.ceil to always round UP
+    return new Date(Math.round(date.getTime() / ms) * ms);
 }
 
 

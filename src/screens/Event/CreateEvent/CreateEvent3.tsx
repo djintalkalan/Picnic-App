@@ -137,7 +137,6 @@ const CreateEvent3: FC<any> = props => {
   const setEventValues = useCallback(() => {
 
     const setDate = () => {
-      setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
       setValue('capacity', (event?.capacity || "")?.toString())
     }
 
@@ -146,6 +145,7 @@ const CreateEvent3: FC<any> = props => {
       setValue('donationDescription', event.donation_description);
       setIsDonationAccepted(event?.is_donation_enabled == 1);
       setValue('currency', getSelectedCurrencyFromValue(event?.event_currency)?.text || 'USD')
+      setIsUnlimitedCapacity(event?.capacity_type == 'unlimited' ? true : false)
       setDate()
       setValue('cutoffDate', getCutoffDateTime(event))
       setValue('cutoffTime', getCutoffDateTime(event))
@@ -163,7 +163,7 @@ const CreateEvent3: FC<any> = props => {
           capacity: _.capacity?.toString(),
           cutoffDate: getCutoffDateTime({ ...event, sales_ends_on: _?.sales_ends_on }),
           cutoffTime: getCutoffDateTime({ ...event, sales_ends_on: _?.sales_ends_on }),
-          isUnlimitedCapacity: _?.capacity_type == 'unlimited',
+          isUnlimitedCapacity: false,// _?.capacity_type == 'unlimited',
           noOfFreeTickets: _?.total_free_tickets?.toString() || "",
         })))
       } else {
@@ -173,6 +173,7 @@ const CreateEvent3: FC<any> = props => {
         setValue('cutoffDate', getCutoffDateTime(event))
         setValue('cutoffTime', getCutoffDateTime(event))
         setValue('noOfFreeTickets', event?.total_free_tickets?.toString() || "")
+        setIsUnlimitedCapacity(false)
         setDate()
       }
     }
@@ -264,7 +265,6 @@ const CreateEvent3: FC<any> = props => {
       payload.is_free_event = '1'
       payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
       payload.capacity = data.capacity
-
       payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.event_timezone, data?.cutoffTime)?.toISOString() : ''
       console.log(payload.sales_ends_on);
 
@@ -280,7 +280,6 @@ const CreateEvent3: FC<any> = props => {
       if (payload.ticket_type == 'multiple') {
         payload.ticket_plans = data.ticketPlans?.map(_ => {
           const sales_ends_on = _.cutoffTime ? getFromZonedDate(event?.event_timezone, _?.cutoffTime)?.toISOString() : ''
-
           return ({
             _id: _?.plan_id || undefined,
             name: _.ticketTitle,
@@ -293,7 +292,7 @@ const CreateEvent3: FC<any> = props => {
             sales_ends_on,
             total_free_tickets: _?.noOfFreeTickets || 0,
             capacity: _?.capacity,
-            capacity_type: _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
+            capacity_type: 'limited', // _?.isUnlimitedCapacity ? 'unlimited' : 'limited',
           })
         })
         payload.total_free_tickets = undefined
@@ -304,7 +303,7 @@ const CreateEvent3: FC<any> = props => {
         payload.event_fees = data.ticketPrice
         payload.ticket_plans = []
         payload.total_free_tickets = data.noOfFreeTickets || 0
-        payload.capacity_type = isUnlimitedCapacity ? 'unlimited' : 'limited'
+        payload.capacity_type = 'limited' // isUnlimitedCapacity ? 'unlimited' : 'limited'
         payload.capacity = data.capacity
         payload.sales_ends_on = data?.cutoffTime ? getFromZonedDate(event?.event_timezone, data?.cutoffTime)?.toISOString() : ''
 
@@ -319,7 +318,8 @@ const CreateEvent3: FC<any> = props => {
 
     if (!userData?.is_premium) {
       _showPopUpAlert({
-        message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        // message: isFreeEvent ? Language.join_now_the_picnic_premium : Language.join_now_to_access_payment_processing,
+        message: Language.join_now_to_access_payment_processing,
         buttonText: Language.join_now,
         onPressButton: () => {
           NavigationService.navigate("Subscription", {
@@ -330,7 +330,7 @@ const CreateEvent3: FC<any> = props => {
           });
           _hidePopUpAlert();
         },
-        cancelButtonText: isFreeEvent ? Language.no_thanks_create_my_event : Language.close,
+        cancelButtonText: isFreeEvent ? Language.no_thanks_create_my_event : Language.no_thanks_close,
         onPressCancel: () => { isFreeEvent ? next(payload) : _hidePopUpAlert() }
         // onPressCancel: () => { isFreeEvent ? next(payload) : _showErrorMessage(Language.you_need_subscription) }
         // onPressCancel: () => { next(payload) }
@@ -422,6 +422,8 @@ const CreateEvent3: FC<any> = props => {
                   setValue('ticketType', TicketTypeData[0].text);
                   // setValue('cutoffDate', undefined);
                   // setValue('cutoffTime', undefined);
+                } else {
+                  setIsUnlimitedCapacity(false)
                 }
                 return !b
               })
@@ -468,7 +470,7 @@ const CreateEvent3: FC<any> = props => {
 
               {ticketTypeRef.current == 'single' ?
                 <>
-                  <TouchableOpacity onPress={() => {
+                  {isFreeEvent ? <TouchableOpacity onPress={() => {
                     setIsUnlimitedCapacity((b) => {
                       if (!b) {
                         clearErrors('capacity')
@@ -481,7 +483,7 @@ const CreateEvent3: FC<any> = props => {
                     <Text style={{ marginLeft: scaler(8), marginRight: scaler(18), fontSize: scaler(14) }}>
                       {Language.unlimited_capacity}
                     </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> : null}
                   {!isUnlimitedCapacity && <TextInput
                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
                     placeholder={Language.capacity}
@@ -531,9 +533,7 @@ const CreateEvent3: FC<any> = props => {
                       </View>
                       <TextInput
                         containerStyle={{ flex: 1, marginEnd: scaler(4) }}
-                        placeholder={
-                          Language.event_ticket_price + ' (' + Language.per_person + ')'
-                        }
+                        placeholder={Language.ticket_price}
                         style={{ paddingLeft: scaler(20) }}
                         borderColor={colors.colorTextInputBackground}
                         backgroundColor={colors.colorTextInputBackground}
@@ -786,7 +786,7 @@ const CreateEvent3: FC<any> = props => {
                                   }}
                                 />
 
-                                <TouchableOpacity onPress={() => {
+                                {isFreeEvent ? <TouchableOpacity onPress={() => {
                                   update(i, {
                                     ...getValues(`ticketPlans.${i}`),
                                     isUnlimitedCapacity: !getValues(`ticketPlans.${i}.isUnlimitedCapacity`)
@@ -799,7 +799,7 @@ const CreateEvent3: FC<any> = props => {
                                   <Text style={{ marginLeft: scaler(8), fontSize: scaler(14) }}>
                                     {Language.unlimited_capacity}
                                   </Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> : null}
                                 {_?.isUnlimitedCapacity ? undefined :
                                   <TextInput
                                     containerStyle={{ flex: 1, marginEnd: scaler(4) }}
@@ -930,6 +930,7 @@ const CreateEvent3: FC<any> = props => {
         ref={datePickerRef}
         locale={Language.getLanguage()}
         style={{ zIndex: 20 }}
+        minuteInterval={15}
         isVisible={datePickerVisibility ? true : false}
         minimumDate={getMinDate()}
         // maximumDate={stringToDate(event?.event_end_date + " " + (event?.event_end_time || "23:59"), "YYYY-MM-DD", "-")}

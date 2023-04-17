@@ -10,7 +10,8 @@ import { ListItem, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
 import { add } from 'date-fns'
 import TZ from "dj-tz-lookup"
-import { isEqual } from 'lodash'
+import capitalize from 'lodash/capitalize'
+import isEqual from 'lodash/isEqual'
 import React, { FC, Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Dimensions, GestureResponderEvent, Image, ImageSourcePropType, InteractionManager, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { presentEventCreatingDialog } from 'react-native-add-calendar-event'
@@ -396,6 +397,27 @@ const EventDetail: FC<any> = (props) => {
         )
     }, [])
 
+    const _showBio = useCallback(() => {
+        _showPopUpAlert({
+            title: Language.bio,
+            leftTitle: true,
+            isClose: true,
+            customView: () => {
+                return <TouchableOpacity style={{ alignSelf: 'flex-start' }} onPress={() => {
+                    NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+                    _hidePopUpAlert();
+                }}>
+                    <Text style={{
+                        color: colors.colorPrimary,
+                        fontSize: scaler(14), fontWeight: '500',
+                    }} >{Language.start_chat}</Text>
+                </TouchableOpacity>
+            },
+            message: event?.creator_of_event?.bio
+        });
+    }, [event?.creator_of_event?._id],)
+
+
     const onPressAddToCalendar = useCallback(() => {
         try {
             const startDate = eventDate?.toISOString()
@@ -553,7 +575,8 @@ const EventDetail: FC<any> = (props) => {
                                         <Image style={{ width: scaler(30), height: scaler(30), marginEnd: scaler(10) }}
                                             source={Images.ic_group_events} />
                                         <Text style={styles.events}>
-                                            {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
+                                            {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))}
+                                            {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), ' MMMM DD, YYYY')}
                                         </Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -575,7 +598,8 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.start_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'MMMM DD, YYYY')}
+                                                {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))}
+                                                {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), ' MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>
                                                 {dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'hh:mm A z')}
@@ -590,7 +614,8 @@ const EventDetail: FC<any> = (props) => {
                                                 {Language.end_date}
                                             </Text>
                                             <Text style={styles.events}>
-                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'MMMM DD, YYYY')}
+                                                {capitalize(dateFormatInSpecificZone(event?.event_start_date_time, (event?.event_timezone || TZ(region?.latitude, region?.longitude)), 'dd' + (Language.getLanguage() == 'en' ? 'd' : '')))}
+                                                {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), ' MMMM DD, YYYY')}
                                             </Text>
                                             <Text style={styles.events}>
                                                 {dateFormatInSpecificZone(event?.event_end_date_time, TZ(region?.latitude, region?.longitude), 'hh:mm A z')}
@@ -730,23 +755,27 @@ const EventDetail: FC<any> = (props) => {
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(event?.creator_of_event?.image, { width: scaler(70), type: 'users' }) ?? Images.ic_image_placeholder }}
                                 style={{ height: scaler(50), width: scaler(50), borderRadius: scaler(23) }} />
-                            <Text style={{ marginLeft: scaler(10), flex: 1 }}>
-                                {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
-                            </Text>
-                            {event?.is_event_member ?
-                                <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
-                                    console.log("person", event?.creator_of_event);
-                                    NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
-                                }}>
-                                    <Image
-                                        source={Images.ic_chat_message}
-                                        style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
-                                    />
-                                    {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
-                                        <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
-                                    </View>}
-                                </TouchableOpacity>
-                                : undefined}
+                            <View style={{ marginLeft: scaler(10), flex: 1 }}>
+                                <Text>
+                                    {event?.creator_of_event?.first_name + ' ' + event?.creator_of_event?.last_name}
+                                </Text>
+                                {event?.creator_of_event?.bio ? <TouchableOpacity style={{ alignSelf: 'baseline', }} onPress={_showBio}>
+                                    <Text style={{ color: colors.colorPrimary, fontWeight: '500', fontSize: scaler(12), }} >{Language.click_for_bio}</Text></TouchableOpacity> : null}
+                            </View>
+                            {/* {event?.is_event_member ? */}
+                            <TouchableOpacity style={{ paddingHorizontal: scaler(10) }} onPress={() => {
+                                console.log("person", event?.creator_of_event);
+                                NavigationService.navigate("PersonChat", { person: event?.creator_of_event })
+                            }}>
+                                <Image
+                                    source={Images.ic_chat_message}
+                                    style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }}
+                                />
+                                {(unreadCountOfAdmin || 0) > 0 && <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -scaler(3), end: scaler(5), height: scaler(18), width: scaler(18), borderWidth: scaler(2), borderColor: colors.colorWhite, borderRadius: scaler(15), backgroundColor: colors.colorPrimary }}>
+                                    <Text style={{ color: colors.colorWhite, fontSize: scaler(10) }} >{unreadCountOfAdmin || 0}</Text>
+                                </View>}
+                            </TouchableOpacity>
+                            {/* : undefined} */}
                         </View>
                     </>}
 

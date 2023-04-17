@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/native'
-import { config, _setLanguage } from 'api'
+import { _setLanguage, config } from 'api'
 import { deleteAccount, doLogout, getProfile, refreshLanguage, setLoadingAction } from 'app-store/actions'
-import { colors, Images } from 'assets'
+import { Images, colors } from 'assets'
 import { Text, TextInput } from 'custom-components'
 import { BackButton } from 'custom-components/BackButton'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
@@ -17,7 +17,7 @@ import { useDatabase } from 'src/database/Database'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import UUIDService from 'src/uuid/UUIDService'
-import { dateFormat, dateStringFormat, getImageUrl, NavigationService, openLink, scaler, shareAppLink, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage } from 'utils'
+import { NavigationService, _hidePopUpAlert, _showErrorMessage, _showPopUpAlert, _zoomImage, dateFormat, dateStringFormat, getImageUrl, openLink, scaler, shareAppLink } from 'utils'
 
 const languageImageSource = Entypo.getImageSourceSync("language", 50, colors.colorBlackText)
 const helpImageSource = MaterialIcons.getImageSourceSync("live-help", 50, colors.colorBlackText)
