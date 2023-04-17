@@ -505,5 +505,11 @@ export const es = {
     enjoy_premium_benefits: 'Disfruta de ventajas Premium',
     restore_free: 'Restablecer Gratis Suscripción',
     search: 'Buscar',
-    create: "Crear"
+    create: "Crear",
+    result: "",
+    total_votes: "",
+    create_poll: "",
+    poll_question: "",
+    type_question_here: "",
+    poll_end_date: "",
 }
