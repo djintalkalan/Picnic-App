@@ -512,4 +512,5 @@ export const en = {
   poll_question: "Your Poll Question",
   type_question_here: "Type your question here",
   poll_end_date: "Poll end date",
+  poll_end_time: "Poll end time",
 }

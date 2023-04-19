@@ -6,7 +6,7 @@ import { DeviceEventEmitter } from "react-native";
 import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import Language, { DefaultLanguage, LanguageType } from "src/language/Language";
 import { getChatUsers, mergeMessageObjects, NavigationService, _showErrorMessage } from "utils";
-import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT, ON_SET_CHAT_BACKGROUND } from "./SocketEvents";
+import { EMIT_JOIN, EMIT_JOIN_PERSONAL_ROOM, EMIT_LEAVE_ROOM, ON_CONNECT, ON_CONNECTION, ON_DISCONNECT, ON_EVENT_DELETE, ON_EVENT_MEMBER_DELETE, ON_EVENT_MESSAGE, ON_EVENT_MESSAGES, ON_EVENT_MESSAGE_DELETE, ON_GROUP_DELETE, ON_GROUP_MEMBER_DELETE, ON_GROUP_MESSAGE, ON_GROUP_MESSAGES, ON_GROUP_MESSAGE_DELETE, ON_JOIN, ON_JOIN_ROOM, ON_LEAVE_ROOM, ON_LIKE_UNLIKE, ON_PERSONAL_JOIN_ROOM_REQUEST, ON_PERSONAL_LIKE_UNLIKE, ON_PERSONAL_MESSAGE, ON_PERSONAL_MESSAGE_DELETE, ON_RECONNECT, ON_SET_CHAT_BACKGROUND, ON_VOTE_CASTED } from "./SocketEvents";
 
 class Service {
     static instance?: Service;
@@ -85,6 +85,7 @@ class Service {
         this.socket?.on(ON_LEAVE_ROOM, this.onLeaveRoom)
 
         this.socket?.on(ON_LIKE_UNLIKE, this.onLikeUnlike)
+        this.socket?.on(ON_VOTE_CASTED, this.onVoteCasted)
 
         this.socket?.on(ON_GROUP_MESSAGE, this.onGroupMessage)
         this.socket?.on(ON_GROUP_MESSAGES, this.onGroupMessages)
@@ -165,6 +166,40 @@ class Service {
         }
     }
 
+    private onVoteCasted = (e: any) => {
+        console.log("on Vote Casted", e)
+        if (e?.status == 200) {
+            if (e?.data?.data?.length && Array.isArray(e?.data?.data)) {
+                const userId = Database.getStoredValue("userData")?._id
+                const data = e?.data?.data // mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, [])
+                console.log("data", data);
+                // e?.liked_by_users?.some((e: any, index: number) => {
+                //     if (e?.user_id == userId) {
+                //         data[0].is_message_liked_by_me = true
+                //         return true
+                //     }
+                // });
+                if (data?.[0]?.group)
+                    this.dispatch(updateChatInGroup({
+                        groupId: data?.[0]?.resource_id,
+                        chat: data?.[0]
+                    }))
+                else
+                    this.dispatch(updateChatInEvent({
+                        eventId: data?.[0]?.resource_id,
+                        chat: data?.[0]
+                    }))
+            }
+        }
+
+        else if (e?.status == 400) {
+            if (e?.data?.invalid_resource) {
+                console.log("Invalid Resource Id");
+                this.dispatch((e?.data?.resource_type == 'group' ? getGroupDetail : getEventDetail)(e?.data?.resource_id))
+            }
+        }
+    }
+
     private onSetChatBackground = (e: any) => {
         console.log("onSetChatBackground", e)
         if (e?.data) {
@@ -199,6 +234,12 @@ class Service {
         if (e?.status == 200) {
             if (e?.data?.data?.length) {
                 const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+
+                if (data[0]?.message_type == 'poll') {
+                    if (NavigationService.getCurrentScreen()?.name == 'CreatePoll') {
+                        DeviceEventEmitter.emit('CreatePoll', data[0])
+                    }
+                }
                 this.dispatch(setChatInGroup({
                     groupId: data[0]?.resource_id,
                     chats: data

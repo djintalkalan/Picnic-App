@@ -62,6 +62,7 @@ interface IChatItem {
     isMember: boolean
     systemMessageTemplate: any
     event_detail: any,
+    poll: any
 }
 
 const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
@@ -79,7 +80,7 @@ const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
     const [link, setLink] = useState("")
 
-    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+    const { message, poll, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         event_detail: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
@@ -90,6 +91,9 @@ const ChatItem = (props: IChatItem) => {
         // parent_id,
         message_liked_by_users,
         message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
+
+    console.log("poll", poll);
+
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
@@ -529,16 +533,12 @@ const ChatItem = (props: IChatItem) => {
         </View>
     }
 
-    if (message_type == 'event_of_group') {
-        if (!eventInMessage) return null
-        if (!myMessage) {
+    if (message_type == 'poll') {
+        if (myMessage) {
             return <View style={styles.myContainer} >
                 <PollMessage
-                    question='Will PM modi won the election again in 2024 for Parliament of India, Lok Sabha?'
-                    pollCompleted={false}
-                    totalVotes={600}
-                    // selectedChoice={1}
-                    options={[{ id: 1, title: 'Yes', vote_percent: '60%' }, { id: 2, title: 'No', vote_percent: '40%' }]} />
+                    {...props}
+                />
             </View>
         }
         return <View style={styles.container} >
@@ -554,11 +554,7 @@ const ChatItem = (props: IChatItem) => {
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                     </View>
                     <PollMessage
-                        question='Will PM modi won the election again in 2024 for Parliament of India, Lok Sabha?'
-                        pollCompleted={true}
-                        totalVotes={600}
-                        // selectedChoice={1}
-                        options={[{ id: 1, title: 'Yes', vote_percent: '60%' }, { id: 2, title: 'No', vote_percent: '40%' }]} />
+                        {...props} />
                 </View>
             </View>
         </View>

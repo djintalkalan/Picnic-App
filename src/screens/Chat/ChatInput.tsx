@@ -1,6 +1,7 @@
 import { config } from 'api'
 import { colors, Fonts, Images, MapStyle } from 'assets'
 import { Preview, Text } from 'custom-components'
+import { IBottomMenuButton } from 'custom-components/BottomMenu'
 import ImageLoader from 'custom-components/ImageLoader'
 import Database, { ILocation } from 'database/Database'
 import React, { Dispatch, ForwardedRef, forwardRef, memo, SetStateAction, useCallback, useMemo } from 'react'
@@ -8,7 +9,7 @@ import { Button, Dimensions, Image, InputAccessoryView, Keyboard, Platform, Styl
 import { ImageOrVideo } from 'react-native-image-crop-picker'
 import MapView, { Marker } from 'react-native-maps'
 import Language from 'src/language/Language'
-import { _showBottomMenu, _showErrorMessage, getDisplayName, getImageUrl, NavigationService, scaler } from 'utils'
+import { getDisplayName, getImageUrl, NavigationService, scaler, _showBottomMenu, _showErrorMessage } from 'utils'
 import ImagePickerUtils from 'utils/ImagePickerUtils'
 
 interface ChatInputProps {
@@ -24,6 +25,7 @@ interface ChatInputProps {
     onChooseContacts?: (contacts: Array<any>) => void,
     placeholder?: string
     inputAccessoryView?: boolean
+    resource?: any
 }
 const { height, width } = Dimensions.get('screen')
 
@@ -37,31 +39,32 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
     const { inputAccessoryView = false, repliedMessage, link, placeholder = Language.type_a_message, disableButton = false, setRepliedMessage, value, onChangeText, onChooseImage, onChooseLocation, onChooseContacts, onPressSend } = props
 
     const chooseMediaType = useCallback(() => {
+        const buttons = [
+            { title: Language.photo, onPress: () => pickImage("photo") },
+            { title: Language.video, onPress: () => pickImage("video") },
+            {
+                title: Language.contact, onPress: () => {
+                    NavigationService.navigate("SelectContacts", {
+                        onChooseContacts: (contacts: Array<any>) => {
+                            onChooseContacts && onChooseContacts(contacts)
+                            NavigationService.goBack()
+                        }
+                    })
+                }
+            },
+            {
+                title: Language.location, onPress: () => {
+                    NavigationService.navigate("SelectLocation", {
+                        type: 'currentLocation',
+                        prevSelectedLocation: Database.getStoredValue("currentLocation"),
+                        onSelectLocation: onChooseLocation
+                    })
+                }
+            },
+            props?.resource ? { title: Language.create_poll, onPress: () => NavigationService.navigate('CreatePoll', props?.resource) } : null,
+        ] as IBottomMenuButton[]
         _showBottomMenu({
-            buttons: [
-                { title: Language.photo, onPress: () => pickImage("photo") },
-                { title: Language.video, onPress: () => pickImage("video") },
-                {
-                    title: Language.contact, onPress: () => {
-                        NavigationService.navigate("SelectContacts", {
-                            onChooseContacts: (contacts: Array<any>) => {
-                                onChooseContacts && onChooseContacts(contacts)
-                                NavigationService.goBack()
-                            }
-                        })
-                    }
-                },
-                {
-                    title: Language.location, onPress: () => {
-                        NavigationService.navigate("SelectLocation", {
-                            type: 'currentLocation',
-                            prevSelectedLocation: Database.getStoredValue("currentLocation"),
-                            onSelectLocation: onChooseLocation
-                        })
-                    }
-                },
-                { title: Language.create_poll, onPress: () => pickImage("video") },
-            ]
+            buttons: buttons?.filter(_ => _)
         })
     }, [onChooseLocation, onChooseContacts, onChooseImage])
     const pickImage = useCallback((mediaType: 'photo' | 'video') => {
