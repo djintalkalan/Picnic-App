@@ -1,4 +1,5 @@
 import ActionTypes, { action } from "app-store/action-types";
+import Database from "database/Database";
 import { unionBy } from "lodash";
 
 export interface IGroupChatReducer {
@@ -56,6 +57,37 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
             }
             addChatState.groups[groupId].chats.push(action?.payload?.chat)
             return addChatState
+        case ActionTypes.UPDATE_LIKE_IN_LOCAL:
+            if (action.payload.resourceType != 'group') return state
+            const _state = { ...state }
+            if (!_state.groups[groupId]) {
+                _state.groups[groupId].chats = []
+            }
+            const like_type = action?.payload?.like_type
+            const userData = Database.getStoredValue('userData')
+            _state.groups[groupId].chats = (state.groups?.[groupId]?.chats ?? []).map((_) => {
+                if (action?.payload?.message_id == _._id) {
+                    const obj = {
+                        ..._,
+                        is_message_liked_by_me: !!like_type,
+                        message_liked_by_users: like_type ? (_?.message_liked_by_users?.filter((_: any) => _?.user_id != userData?._id) as Array<any>)?.concat([{
+                            user_id: userData?._id,
+                            created_at: new Date().toISOString(),
+                            name: (userData?.first_name + " " + (userData?.last_name || ''))?.trim(),
+                            username: userData?.username,
+                            image: userData?.image,
+                            like_type
+                        }
+                        ]) : _?.message_liked_by_users?.filter((_: any) => _?.user_id != userData?._id),
+                    }
+                    obj.message_total_likes_count = obj?.message_liked_by_users?.length
+                    return obj
+                }
+                else {
+                    return _
+                }
+            })
+            return _state
         case ActionTypes.LIKE_UNLIKE_MESSAGE_SUCCESS:
             let likeState = { ...state }
             if (!likeState.groups[groupId]) {
