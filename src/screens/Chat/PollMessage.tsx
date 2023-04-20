@@ -1,6 +1,7 @@
 import { colors } from "assets/Colors";
 import { Text } from "custom-components";
 import { useDatabase } from "database/Database";
+import { round } from "lodash";
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { EMIT_CAST_VOTE, SocketService } from "socket";
@@ -11,7 +12,7 @@ type PollType = {
     [key: string]: any
 }
 const PollMessage = (props: PollType) => {
-    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle } = props
+    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result } = props
     const { question, options, poll_type } = poll || {}
     const [userData] = useDatabase('userData')
 
@@ -31,39 +32,45 @@ const PollMessage = (props: PollType) => {
         })
     }
 
-    const pollCompleted = false
     return (
         <View style={[styles.container, containerStyle ? StyleSheet.flatten(containerStyle) : undefined]}>
             <Text style={styles.questionText} >{question}</Text>
-            {pollCompleted ? <View style={styles.row}>
+            {poll_result ? <View style={styles.row}>
                 <Text style={[styles.questionText, { color: colors.colorPrimary }]}>{Language.result}:</Text>
                 <Text style={[styles.questionText, { flex: 1, marginLeft: scaler(10) }]}>{Language.total_votes}</Text>
-                <Text style={styles.questionText}>{'100'}</Text>
+                <Text style={styles.questionText}>{poll_result?.total_votes}</Text>
             </View> : undefined}
 
             <View style={{ marginTop: scaler(10) }}>
                 {options?.map((_: string) => {
-                    if (pollCompleted)
+                    if (poll_result) {
+                        const percentage = round((poll_result?.options?.[_] * 100) / poll_result?.total_votes, 2)
                         return <View style={[styles.percentView, {
                             borderColor: selectedOption != _ && selectedOption ? colors.colorD : colors.colorPrimary,
                         }]} >
                             <View style={{
                                 paddingVertical: scaler(5),
                                 paddingHorizontal: scaler(10),
-                                width: '100%',
-                                backgroundColor: selectedOption == _ ? colors.colorFadedPrimary : 'rgba(0, 0, 0, 0.05)'
+                                width: `${percentage}%`,
+                                backgroundColor: colors.colorFadedPrimary,
                             }}>
-                                <Text style={[styles.optionText, { color: selectedOption == _ ? colors.colorPrimary : colors.colorBlackText }]}>{_}</Text>
+                                <Text style={[styles.optionText, { color: colors.colorPrimary }]}>{" "}</Text>
                             </View>
+                            <Text style={[styles.optionText, {
+                                color: colors.colorPrimary, position: 'absolute',
+                                left: 10
+                            }]}>{_}</Text>
                             <Text style={[styles.optionText,
                             {
-                                color: selectedOption == _ ? colors.colorPrimary : colors.colorGreyText,
+                                color: colors.colorPrimary,
                                 position: 'absolute',
                                 right: 10
-                            }]}>{"100%"}</Text>
+                            }]}>{`${percentage}%`}</Text>
                         </View>
+                    }
                     return <TouchableOpacity
                         key={_}
+                        disabled={poll?.result_declared == 1}
                         style={[styles.optionView,
                         {
                             backgroundColor: selectedOption == _ ? colors.colorFadedPrimary : !selectedOption ? colors.colorWhite : 'rgba(0, 0, 0, 0.05)',

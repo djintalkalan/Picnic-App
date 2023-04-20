@@ -513,4 +513,6 @@ export const es = {
     type_question_here: "",
     poll_end_date: "",
     poll_end_time: "",
+    end_date_greater_than_current: 'End date must be after current date',
+
 }

@@ -71,8 +71,15 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
 
     const onSubmit = useCallback(() => handleSubmit((data: FormType) => {
         const { question, endDate, endTime } = data
+
         if (!endDate || !endTime) {
             _showErrorMessage(!endDate ? Language.end_date_required : Language.end_time_required)
+            return
+        }
+
+        const currentDate = new Date()
+        if (endTime <= currentDate) {
+            _showErrorMessage(Language.end_date_greater_than_current)
             return
         }
 
@@ -237,6 +244,8 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
                     }
                 }
                 setValue(datePickerVisibility == 'date' ? 'endDate' : "endTime", date)
+                if (datePickerVisibility == 'date')
+                    setValue("endTime", null)
 
                 setDatePickerVisibility((_: any) => {
                     if (_ == 'date') {

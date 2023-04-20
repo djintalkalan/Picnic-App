@@ -226,7 +226,7 @@ const ChatItem = (props: IChatItem) => {
     const _openChatActionMenu = useCallback(() => {
         if (!isMember && !isMuted) return
         let buttons: IBottomMenuButton[] = [];
-        if (message_type != 'poll') {
+        if (message_type != 'poll' && message_type != 'poll_result') {
             buttons.push({
                 title: Language.reply,
                 onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
@@ -239,7 +239,7 @@ const ChatItem = (props: IChatItem) => {
                 onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
             });
 
-        if (myMessage || isAdmin) {
+        if ((myMessage || isAdmin) && message_type != 'poll_result') {
             buttons.push({
                 title: Language.delete,
                 onPress: () => {
@@ -537,7 +537,7 @@ const ChatItem = (props: IChatItem) => {
         </View>
     }
 
-    if (message_type == 'poll') {
+    if (message_type == 'poll' || message_type == 'poll_result') {
         if (myMessage) {
             // return <View style={styles.myContainer} >
             //     <PollMessage
@@ -545,16 +545,17 @@ const ChatItem = (props: IChatItem) => {
             //     />
             // </View>
 
-            return <View style={styles.myContainer} >
+            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
                 <PollMessage containerStyle={{ marginVertical: scaler(0), }} {...props} />
                 {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
                     <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> : null}
             </View>
         }
+
         return <View style={styles.container} >
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
-                <View style={{ flex: 1, overflow: 'hidden' }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
                         <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
