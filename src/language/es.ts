@@ -515,4 +515,9 @@ export const es = {
     create_poll: 'Crear encuesta',
     your_poll_question: 'Su pregunta de encuesta',
     poll_end_date: 'Fecha de finalización de la encuesta',
+    poll_question: "",
+    type_question_here: "",
+    poll_end_time: "",
+    end_date_greater_than_current: 'End date must be after current date',
+
 }

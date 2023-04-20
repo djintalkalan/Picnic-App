@@ -267,6 +267,7 @@ export const GroupChats: FC<any> = (props) => {
                             // value={textMessage}
                             ref={inputRef}
                             link={link}
+                            resource={groupDetail}
                             disableButton={!socketConnected}
                             repliedMessage={repliedMessage}
                             setRepliedMessage={setRepliedMessage}
