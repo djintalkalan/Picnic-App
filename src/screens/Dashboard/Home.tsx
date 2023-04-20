@@ -127,18 +127,18 @@ const Home: FC = () => {
               />
               <InnerButton
                 onPress={() => {
-                  NavigationService.navigate('CreateGroup');
-                  _hideTouchAlert()
-                }}
-                title={Language.create_group}
-                icon={Images.ic_create_group}
-              />
-              <InnerButton
-                onPress={() => {
                   NavigationService.navigate('CreateGroup', { is_broadcast_group: true });
                   _hideTouchAlert()
                 }}
                 title={Language.start_a_broadcast}
+                icon={Images.ic_create_group}
+              />
+              <InnerButton
+                onPress={() => {
+                  NavigationService.navigate('CreateGroup');
+                  _hideTouchAlert()
+                }}
+                title={Language.create_group}
                 icon={Images.ic_create_group}
               />
               <InnerButton

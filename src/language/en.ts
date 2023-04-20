@@ -506,7 +506,7 @@ export const en = {
   restore_free: 'Restore Free Subscription',
   search: 'Search',
   create: "Create",
-  start_a_broadcast: 'Start a broadcast',
+  start_a_broadcast: 'Post News',
   update_broadcast: 'Update broadcast',
   yes: 'Yes',
   no: 'No',
@@ -515,4 +515,5 @@ export const en = {
   create_poll: 'Create poll',
   your_poll_question: 'Your Poll Question',
   poll_end_date: 'Poll end date',
+  start_a_news_group: 'Start a News Group',
 }

@@ -506,7 +506,7 @@ export const es = {
     restore_free: 'Restablecer Gratis Suscripción',
     search: 'Buscar',
     create: "Crear",
-    start_a_broadcast: 'Iniciar una transmisión',
+    start_a_broadcast: 'Enviar Noticias',
     update_broadcast: 'Actualizar transmisión',
     yes: 'Sí',
     no: 'No',
@@ -515,4 +515,6 @@ export const es = {
     create_poll: 'Crear encuesta',
     your_poll_question: 'Su pregunta de encuesta',
     poll_end_date: 'Fecha de finalización de la encuesta',
+    start_a_news_group: 'Crear un grupo de noticias',
+
 }
