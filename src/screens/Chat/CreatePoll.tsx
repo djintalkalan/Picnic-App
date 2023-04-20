@@ -11,7 +11,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
 import { EMIT_SEND_EVENT_MESSAGE, EMIT_SEND_GROUP_MESSAGE, SocketService } from "socket";
 import Language from "src/language/Language";
-import { dateFormat, getReadableDate, getReadableTime, scaler, stringToDate, _showErrorMessage } from "utils";
+import { dateFormat, getReadableDate, getReadableTime, roundToNearest15, scaler, stringToDate, _showErrorMessage } from "utils";
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 interface FormType {
@@ -35,7 +35,7 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
     } = useForm<FormType>({
         mode: 'onChange',
         defaultValues: (() => {
-            const nextDate = add(new Date(), { days: 1 })
+            const nextDate = roundToNearest15(add(new Date(), { days: 1 }))
             return {
                 endDate: nextDate,
                 endTime: nextDate

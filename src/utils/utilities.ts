@@ -883,7 +883,7 @@ export const getSelectedCurrencyFromText = (currency: ICurrencyKeys | string): I
     return ALL_CURRENCIES.find(_ => _?.text?.toLowerCase() == currency?.toLowerCase()) || {}
 }
 
-function roundToNearest15(date = new Date()) {
+export const roundToNearest15 = (date = new Date()) => {
     const minutes = 15;
     const ms = 1000 * 60 * minutes;
 
