@@ -1,5 +1,6 @@
 import { IAlertType, PopupAlert } from "custom-components";
 import { BottomMenu, IBottomMenu } from "custom-components/BottomMenu";
+import { EmojiAlert, EmojiAlertType } from "custom-components/EmojiAlert";
 import { ImageZoom } from "custom-components/ImageZoom";
 import { TouchAlert, TouchAlertType } from "custom-components/TouchAlert";
 import DropdownAlert from "dj-react-native-dropdown-alert";
@@ -56,6 +57,13 @@ export class StaticHolder {
   static setTouchAlert(touchAlert: (TouchAlert) | null | undefined) { this.touchAlert = touchAlert; }
   static showTouchAlert(data: TouchAlertType) { this.touchAlert?.showTouchAlert(data) }
   static hideTouchAlert() { this.touchAlert?.hideTouchAlert() }
+
+  // TouchAlertHolder
+  static emojiAlert: (EmojiAlert) | null | undefined;
+  static setEmojiAlert(emojiAlert: (EmojiAlert) | null | undefined) { this.emojiAlert = emojiAlert; }
+  static showEmojiAlert(data: EmojiAlertType) { this.emojiAlert?.showEmojiAlert(data) }
+  static hideEmojiAlert() { this.emojiAlert?.hideEmojiAlert() }
+
 }
 
 export class KeyboardAccessoryView extends React.Component {

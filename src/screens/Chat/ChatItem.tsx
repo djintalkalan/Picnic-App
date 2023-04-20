@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { config } from 'api'
-import { blockUnblockResource, muteUnmuteResource, reportResource, setActiveEvent } from 'app-store/actions'
+import { blockUnblockResource, muteUnmuteResource, reportResource, setActiveEvent, updateLikeInLocal } from 'app-store/actions'
 import { colors, Images, MapStyle } from 'assets'
 import { MultiBoldText, Preview, Text } from 'custom-components'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { calculateImageUrl, getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+import { StaticHolder } from 'utils/StaticHolder'
 import PollMessage from './PollMessage'
 
 
@@ -102,6 +103,12 @@ const ChatItem = (props: IChatItem) => {
 
     let is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
+
+    const like_type = useMemo(() => {
+        if (is_message_liked_by_me)
+            return (message_liked_by_users?.find(_ => _?.user_id == userData?._id)?.like_type) || 'like'
+        return ''
+    }, [is_message_liked_by_me, message_liked_by_users])
 
     // if (is_message_liked_by_me == false && message_liked_by_users?.findIndex(_ => _?.user_id == userData?._id) != -1) {
     //     is_message_liked_by_me = true
@@ -401,6 +408,42 @@ const ChatItem = (props: IChatItem) => {
     }
     const total = message_total_likes_count - (is_message_liked_by_me ? 2 : 1)
 
+    const onLongPressLikeIcon = useCallback((e: GestureResponderEvent) => {
+        StaticHolder.showEmojiAlert({
+            placementStyle: {
+                top: e?.nativeEvent.pageY - scaler(30),
+                left: !myMessage ? scaler(20) : undefined,
+                right: myMessage ? scaler(30) : undefined,
+                alignItems: myMessage ? 'flex-end' : 'flex-start',
+            },
+            current_like_type: like_type,
+            transparent: false,
+            message: {
+                message_id: _id,
+                resource_id: group?._id,
+                resource_type: isGroupType ? 'group' : 'event'
+            }
+        })
+    }, [myMessage, like_type])
+
+    const onPressLikeIcon = useCallback(() => {
+        SocketService?.emit(EMIT_LIKE_UNLIKE, {
+            message_id: _id,
+            is_like: is_message_liked_by_me ? "0" : '1',
+            like_type: is_message_liked_by_me ? '' : 'like',
+            resource_id: group?._id,
+            resource_type: isGroupType ? 'group' : 'event',
+        })
+
+        dispatch(updateLikeInLocal({
+            groupId: group?._id,
+            resourceType: isGroupType ? 'group' : 'event',
+            message_id: _id,
+            like_type: is_message_liked_by_me ? '' : 'like',
+        }))
+
+    }, [is_message_liked_by_me, group?._id])
+
     if (message_type == 'image') {
 
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
@@ -432,18 +475,11 @@ const ChatItem = (props: IChatItem) => {
             {isMuted || !isMember ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity disabled={!isMember} onPress={() => {
-                        SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                            message_id: _id,
-                            is_like: is_message_liked_by_me ? "0" : '1',
-                            resource_id: group?._id,
-                            resource_type: isGroupType ? 'group' : 'event'
-                        })
-                    }} >
-                        <Image source={Images.ic_smiley} style={{
+                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                        <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                             resizeMode: 'contain',
                             height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
-                            tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                            // tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                         }} />
                     </TouchableOpacity>
                     <Text style={styles.likeBy} >
@@ -726,18 +762,11 @@ const ChatItem = (props: IChatItem) => {
             {isMuted || !isMember ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity disabled={!isMember} onPress={() => {
-                        SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                            message_id: _id,
-                            is_like: is_message_liked_by_me ? "0" : '1',
-                            resource_id: group?._id,
-                            resource_type: isGroupType ? 'group' : 'event'
-                        })
-                    }} >
-                        <Image source={Images.ic_smiley} style={{
+                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                        <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                             resizeMode: 'contain',
                             height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
-                            tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                            // tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                         }} />
                     </TouchableOpacity>
                     <Text style={styles.likeBy} >
@@ -797,18 +826,11 @@ const ChatItem = (props: IChatItem) => {
                         onLongPress={_onCopy}
                         style={[styles.myMessage, {}]} >{message?.trim()}</Text>
                     {isMuted || !isMember ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                        <TouchableOpacity disabled={!isMember} onPress={() => {
-                            SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                                message_id: _id,
-                                is_like: is_message_liked_by_me ? "0" : '1',
-                                resource_id: group?._id,
-                                resource_type: isGroupType ? 'group' : 'event'
-                            })
-                        }} >
-                            <Image source={Images.ic_smiley} style={{
+                        <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                            <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                                 resizeMode: 'contain',
                                 height: scaler(20), width: scaler(20), marginLeft: scaler(5),
-                                tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
+                                // tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                             }} />
                         </TouchableOpacity>
                         {(is_message_liked_by_me || message_total_likes_count) ?
@@ -893,18 +915,11 @@ const ChatItem = (props: IChatItem) => {
                             <Text autoLink onLongPress={_onCopy}
                                 style={styles.message} >{message?.trim()}</Text>
                             {isMuted || !isMember ? null : <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                                <TouchableOpacity disabled={!isMember} onPress={() => {
-                                    SocketService?.emit(EMIT_LIKE_UNLIKE, {
-                                        message_id: _id,
-                                        is_like: is_message_liked_by_me ? "0" : '1',
-                                        resource_id: group?._id,
-                                        resource_type: isGroupType ? 'group' : 'event'
-                                    })
-                                }} >
-                                    <Image source={Images.ic_smiley} style={{
+                                <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                                    <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                                         resizeMode: 'contain',
                                         height: scaler(20), width: scaler(20), marginRight: scaler(5),
-                                        tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
+                                        // tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
                                     }} />
                                 </TouchableOpacity>
                                 {(is_message_liked_by_me || message_total_likes_count) ?

@@ -2,6 +2,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
 import { useKeyboardService } from 'custom-components'
+import { EmojiAlert } from 'custom-components/EmojiAlert'
 import { ILocation, useDatabase } from 'database/Database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
@@ -59,6 +60,8 @@ export const GroupChats: FC<any> = (props) => {
     useEffect(() => {
         console.log("socketConnected", socketConnected);
     }, [socketConnected])
+
+    const emojiAlertRef = useRef<EmojiAlert>(null);
 
     const _onPressSend = useCallback(() => {
         if (textMessageRef?.current?.trim()) {
