@@ -206,7 +206,7 @@ const CreateGroup: FC<any> = (props) => {
   const purposeRef = useRef<RNTextInput>()
   return (
     <SafeAreaViewWithStatusBar style={styles.container} >
-      <MyHeader title={group ? (isBroadcastGroup ? Language.update_broadcast : Language.update_group) : (isBroadcastGroup ? Language.start_a_broadcast : Language.create_group)} />
+      <MyHeader title={group ? (isBroadcastGroup ? Language.start_a_news_group : Language.update_group) : (isBroadcastGroup ? Language.start_a_news_group : Language.create_group)} />
       <ScrollView enableResetScrollToCoords={false} nestedScrollEnabled keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ alignItems: 'center', }} >
         <View>
           <View style={styles.imageContainer} >
@@ -293,12 +293,12 @@ const CreateGroup: FC<any> = (props) => {
 
 
 
-            <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
+            {isBroadcastGroup ? undefined : <TouchableOpacity style={styles.eventView} onPress={() => setPinLocation(!pinLocation)}>
               <CheckBox checked={pinLocation} />
               <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
                 {Language.add_location_to_chat}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
 
 
             {Platform.OS == 'android' &&
@@ -357,15 +357,15 @@ const CreateGroup: FC<any> = (props) => {
             />
           </View>
 
-          <TouchableOpacity style={styles.eventView} onPress={() => setPublicGroup(!isPublicGroup)}>
+          {isBroadcastGroup ? undefined : <TouchableOpacity style={styles.eventView} onPress={() => setPublicGroup(!isPublicGroup)}>
             <CheckBox checked={isPublicGroup} />
             <Text style={{ marginLeft: scaler(5), fontSize: scaler(13), fontWeight: '400' }}>
               {Language.allow_everyone_to_host_event}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
           <Button disabled={!isValid} containerStyle={{ marginTop: scaler(20) }}
-            title={group ? (isBroadcastGroup ? Language.update_broadcast : Language.update_group) : (isBroadcastGroup ? Language.start_a_broadcast : Language.create_group)}
+            title={group ? (isBroadcastGroup ? Language.start_a_news_group : Language.update_group) : (isBroadcastGroup ? Language.start_a_news_group : Language.create_group)}
             onPress={onSubmit} />
 
         </View>
