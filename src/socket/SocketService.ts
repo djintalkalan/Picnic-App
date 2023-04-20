@@ -234,11 +234,15 @@ class Service {
         if (e?.status == 200) {
             if (e?.data?.data?.length) {
                 const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
-
-                if (data[0]?.message_type == 'poll') {
-                    if (NavigationService.getCurrentScreen()?.name == 'CreatePoll') {
-                        DeviceEventEmitter.emit('CreatePoll', data[0])
+                try {
+                    if (data[0]?.message_type == 'poll') {
+                        if (NavigationService.getCurrentScreen()?.name == 'CreatePoll') {
+                            DeviceEventEmitter.emit('CreatePoll', data[0])
+                        }
                     }
+                }
+                catch (e) {
+
                 }
                 this.dispatch(setChatInGroup({
                     groupId: data[0]?.resource_id,
@@ -270,7 +274,6 @@ class Service {
         console.log("onGroupDelete", e)
         if (e?.data) {
             console.log("SCREEN", NavigationService?.getCurrentScreen());
-
             const { name, params } = NavigationService?.getCurrentScreen() ?? {}
             if ((name == "GroupDetail" || name == "GroupChatScreen" || name == "Chats" || name == "UpcomingEventsChat") &&
                 params?.id == e?.data?.resource_id
@@ -340,6 +343,16 @@ class Service {
         if (e?.status == 200) {
             if (e?.data?.data?.length) {
                 const data = mergeMessageObjects(e?.data?.data, e?.data?.message_total_likes_count, e?.data?.is_message_liked_by_me)
+                try {
+                    if (data[0]?.message_type == 'poll') {
+                        if (NavigationService.getCurrentScreen()?.name == 'CreatePoll') {
+                            DeviceEventEmitter.emit('CreatePoll', data[0])
+                        }
+                    }
+                }
+                catch (e) {
+
+                }
                 this.dispatch(setChatInEvent({
                     eventId: data?.[0]?.resource_id,
                     chats: data

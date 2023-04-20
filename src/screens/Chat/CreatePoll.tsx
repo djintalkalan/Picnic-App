@@ -11,7 +11,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
 import { EMIT_SEND_EVENT_MESSAGE, EMIT_SEND_GROUP_MESSAGE, SocketService } from "socket";
 import Language from "src/language/Language";
-import { dateFormat, getReadableDate, getReadableTime, NavigationService, scaler, stringToDate, _showErrorMessage } from "utils";
+import { dateFormat, getReadableDate, getReadableTime, scaler, stringToDate, _showErrorMessage } from "utils";
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
 interface FormType {
@@ -23,8 +23,6 @@ interface FormType {
 let subscription: EmitterSubscription;
 
 const CreatePoll: FC<any> = ({ route, navigation }) => {
-    console.log("route", route);
-
     const { _id: resource_id, resource_type } = route?.params || {}
     const dispatch = useDispatch();
     const {
@@ -72,8 +70,6 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
     }, [])
 
     const onSubmit = useCallback(() => handleSubmit((data: FormType) => {
-        console.log("data", data);
-
         const { question, endDate, endTime } = data
         if (!endDate || !endTime) {
             _showErrorMessage(!endDate ? Language.end_date_required : Language.end_time_required)
@@ -87,18 +83,9 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
         }
 
         subscription = DeviceEventEmitter.addListener("CreatePoll", (message: any) => {
-            console.log("message", message);
-            console.log("poll", message?.poll);
-
-            console.log("My ", {
-                question,
-                poll_ends_on: endTime?.toISOString()
-            });
-
-
             if (message?.poll?.question == question && message?.poll?.poll_ends_on == endTime?.toISOString()) {
                 dispatch(setLoadingAction(false))
-                NavigationService.goBack()
+                navigation.goBack()
             }
         })
 
@@ -116,7 +103,6 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
         setTimeout(() => {
             dispatch(setLoadingAction(false))
         }, 5000);
-
 
     })(), [resource_id, resource_type])
 

@@ -92,8 +92,6 @@ const ChatItem = (props: IChatItem) => {
         message_liked_by_users,
         message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
 
-    console.log("poll", poll);
-
     const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
@@ -227,14 +225,20 @@ const ChatItem = (props: IChatItem) => {
 
     const _openChatActionMenu = useCallback(() => {
         if (!isMember && !isMuted) return
-        let buttons: IBottomMenuButton[] = [{
-            title: Language.reply,
-            onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
-        },
-        {
-            title: Language.mute,
-            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
-        }]
+        let buttons: IBottomMenuButton[] = [];
+        if (message_type != 'poll') {
+            buttons.push({
+                title: Language.reply,
+                onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
+            })
+        }
+
+        buttons.push(
+            {
+                title: Language.mute,
+                onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
+            });
+
         if (myMessage || isAdmin) {
             buttons.push({
                 title: Language.delete,
@@ -535,10 +539,17 @@ const ChatItem = (props: IChatItem) => {
 
     if (message_type == 'poll') {
         if (myMessage) {
+            // return <View style={styles.myContainer} >
+            //     <PollMessage
+            //         {...props}
+            //     />
+            // </View>
+
             return <View style={styles.myContainer} >
-                <PollMessage
-                    {...props}
-                />
+                <PollMessage containerStyle={{ marginVertical: scaler(0), }} {...props} />
+                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity> : null}
             </View>
         }
         return <View style={styles.container} >

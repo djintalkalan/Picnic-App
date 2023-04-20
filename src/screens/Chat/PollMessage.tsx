@@ -11,7 +11,7 @@ type PollType = {
     [key: string]: any
 }
 const PollMessage = (props: PollType) => {
-    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users } = props
+    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle } = props
     const { question, options, poll_type } = poll || {}
     const [userData] = useDatabase('userData')
 
@@ -33,7 +33,7 @@ const PollMessage = (props: PollType) => {
 
     const pollCompleted = false
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, containerStyle ? StyleSheet.flatten(containerStyle) : undefined]}>
             <Text style={styles.questionText} >{question}</Text>
             {pollCompleted ? <View style={styles.row}>
                 <Text style={[styles.questionText, { color: colors.colorPrimary }]}>{Language.result}:</Text>
