@@ -510,11 +510,6 @@ export const es = {
     update_broadcast: 'Actualizar transmisión',
     yes: 'Sí',
     no: 'No',
-    result: 'Resultado',
-    total_votes: 'Total de votos',
-    create_poll: 'Crear encuesta',
-    your_poll_question: 'Su pregunta de encuesta',
-    poll_end_date: 'Fecha de finalización de la encuesta',
     start_a_news_group: 'Crear un grupo de noticias',
 
 }
