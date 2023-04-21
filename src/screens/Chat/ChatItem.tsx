@@ -92,7 +92,7 @@ const ChatItem = (props: IChatItem) => {
         message_liked_by_users,
         message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
 
-    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
+    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType, props?.group, props?.event])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
         userImage: user?.image,// user?.account_deleted == 1 ? null : user?.image,
