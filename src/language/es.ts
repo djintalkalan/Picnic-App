@@ -505,14 +505,14 @@ export const es = {
     enjoy_premium_benefits: 'Disfruta de ventajas Premium',
     restore_free: 'Restablecer Gratis Suscripción',
     search: 'Buscar',
-    create: "Crear",
+    create: 'Crear',
     result: 'Resultado',
     total_votes: 'Total de votos',
     create_poll: 'Crear encuesta',
     poll_end_date: 'Fecha de finalización de la encuesta',
-    poll_question: "¿Cuál es su pregunta?",
-    type_question_here: "Añade aquí los detalles de la pregunta",
-    poll_end_time: "Hora de finalización del sondeo",
+    poll_question: '¿Cuál es su pregunta?',
+    type_question_here: 'Añade aquí los detalles de la pregunta',
+    poll_end_time: 'Hora de finalización del sondeo',
     end_date_greater_than_current: 'End date must be after current date',
 
 }
