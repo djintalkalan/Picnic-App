@@ -100,6 +100,7 @@ const ChatItem = (props: IChatItem) => {
 
     let is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
+    const isAdminOnly = (isGroupType && group?.restriction_mode == 'admin' && group?.status == 1 && group?.is_group_member) || false
 
     const like_type = useMemo(() => {
         if (is_message_liked_by_me)
@@ -463,10 +464,10 @@ const ChatItem = (props: IChatItem) => {
                     style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
             </View>
                 : null}
-            {isMuted || !isMember ?
+            {isMuted || (!isMember && !isAdminOnly) ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                         <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                             resizeMode: 'contain',
                             height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
@@ -715,10 +716,10 @@ const ChatItem = (props: IChatItem) => {
                     style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
             </View>
                 : null}
-            {isMuted || !isMember ?
+            {isMuted || (!isMember && !isAdminOnly) ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                         <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                             resizeMode: 'contain',
                             height: scaler(20), width: scaler(20), marginHorizontal: scaler(5),
@@ -781,8 +782,8 @@ const ChatItem = (props: IChatItem) => {
                     <Text autoLink
                         onLongPress={_onCopy}
                         style={[styles.myMessage, {}]} >{message?.trim()}</Text>
-                    {isMuted || !isMember ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                        <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                    {isMuted || (!isMember && !isAdminOnly) ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                        <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                             <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                                 resizeMode: 'contain',
                                 height: scaler(20), width: scaler(20), marginLeft: scaler(5),
@@ -870,8 +871,8 @@ const ChatItem = (props: IChatItem) => {
                                 : null}
                             <Text autoLink onLongPress={_onCopy}
                                 style={styles.message} >{message?.trim()}</Text>
-                            {isMuted || !isMember ? null : <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                                <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember} onPress={onPressLikeIcon} >
+                            {isMuted || (!isMember && !isAdminOnly) ? null : <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                                <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                                     <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                                         resizeMode: 'contain',
                                         height: scaler(20), width: scaler(20), marginRight: scaler(5),
