@@ -508,6 +508,7 @@ export const es = {
     create: 'Crear',
     start_a_broadcast: 'Enviar Noticias',
     update_broadcast: 'Actualizar transmisión',
+    start_a_news_group: 'Crear un grupo de noticias',
     yes: 'Sí',
     no: 'No',
     result: 'Resultado',
@@ -518,6 +519,6 @@ export const es = {
     poll_end_date: 'Fecha de finalización de la encuesta',
     poll_end_time: 'Hora de finalización del sondeo',
     end_date_greater_than_current: 'End date must be after current date',
-    start_a_news_group: 'Crear un grupo de noticias',
+
 
 }
