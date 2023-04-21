@@ -505,6 +505,7 @@ export const en = {
   enjoy_premium_benefits: 'Enjoy Premium Benefits',
   restore_free: 'Restore Free Subscription',
   search: 'Search',
+<<<<<<< HEAD
   create: "Create",
   start_a_broadcast: 'Post News',
   update_broadcast: 'Update broadcast',
@@ -517,6 +518,16 @@ export const en = {
   poll_question: "What's your question",
   type_question_here: "Add question details here",
   poll_end_time: "Poll end time",
+=======
+  create: 'Create',
+  result: 'Result',
+  total_votes: 'Total votes',
+  create_poll: 'Create Poll',
+  poll_question: 'What\'s your question',
+  type_question_here: 'Add question details here',
+  poll_end_date: 'Poll end date',
+  poll_end_time: 'Poll end time',
+>>>>>>> poll
   end_date_greater_than_current: 'End date must be after current date',
   start_a_news_group: 'Start a News Group',
 
