@@ -582,7 +582,7 @@ const ChatItem = (props: IChatItem) => {
             //     />
             // </View>
 
-            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
+            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member || isMuted) ? 'none' : undefined} >
                 <PollMessage containerStyle={{ marginVertical: scaler(0), }} {...props} />
                 {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
                     <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
