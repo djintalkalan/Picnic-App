@@ -4,7 +4,7 @@ import { colors, Images } from 'assets';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { ListItem, ListItemSeparator } from 'custom-components/ListItem/ListItem';
-import Database, { ILocation } from 'database/Database';
+import Database, { ILocation } from 'database';
 import _ from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import {

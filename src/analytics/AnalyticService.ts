@@ -1,7 +1,7 @@
 import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { config } from 'api';
-import Database from 'database/Database';
+import Database from 'database';
 import { Platform } from 'react-native';
 
 const getAnalyticScreenName = (routeName: string) => {

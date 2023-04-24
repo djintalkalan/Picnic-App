@@ -1,5 +1,5 @@
 import { config } from 'api';
-import Database from 'database/Database';
+import Database from 'database';
 import { Platform } from 'react-native';
 import { Client, Configuration } from 'rollbar-react-native';
 

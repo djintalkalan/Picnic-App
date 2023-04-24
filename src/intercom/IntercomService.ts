@@ -1,6 +1,6 @@
 
 import Intercom from '@intercom/intercom-react-native';
-import Database from 'database/Database';
+import Database from 'database';
 Intercom.setInAppMessageVisibility("GONE")
 
 const updateUser = (userData: any) => {

@@ -5,7 +5,7 @@ import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, MyHeader, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database, { IPaypalConnection, useDatabase } from 'database/Database';
+import Database, { IPaypalConnection, useDatabase } from 'database';
 import React, { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';
