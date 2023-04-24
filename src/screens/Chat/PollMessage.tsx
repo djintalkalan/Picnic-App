@@ -12,7 +12,9 @@ type PollType = {
     [key: string]: any
 }
 const PollMessage = (props: PollType) => {
-    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result } = props
+    console.log("props", props);
+
+    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result, isMuted } = props
     const { question, options, poll_type } = poll || {}
     const [userData] = useDatabase('userData')
 
@@ -45,7 +47,7 @@ const PollMessage = (props: PollType) => {
                 {options?.map((_: string) => {
                     if (poll_result) {
                         const percentage = round((poll_result?.options?.[_] * 100) / (poll_result?.total_votes || 1), 2)
-                        return <View style={[styles.percentView, {
+                        return <View key={_} style={[styles.percentView, {
                             borderColor: selectedOption != _ && selectedOption ? colors.colorD : colors.colorPrimary,
                         }]} >
                             <View style={{
@@ -70,7 +72,7 @@ const PollMessage = (props: PollType) => {
                     }
                     return <TouchableOpacity
                         key={_}
-                        disabled={poll?.result_declared == 1}
+                        disabled={poll?.result_declared == 1 || isMuted}
                         style={[styles.optionView,
                         {
                             backgroundColor: selectedOption == _ ? colors.colorFadedPrimary : !selectedOption ? colors.colorWhite : 'rgba(0, 0, 0, 0.05)',
