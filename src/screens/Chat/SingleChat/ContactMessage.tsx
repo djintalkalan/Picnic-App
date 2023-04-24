@@ -1,6 +1,6 @@
 import { colors } from 'assets'
 import { Text } from 'custom-components'
-import Database from 'database/Database'
+import Database from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
 import { GestureResponderEvent, TouchableOpacity, View } from 'react-native'
 import Contacts, { Contact } from 'react-native-contacts'

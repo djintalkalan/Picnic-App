@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { colors, Images } from 'assets'
 import { PreviewLink2, Text } from 'custom-components'
-import Database from 'database/Database'
+import Database from 'database'
 import { find as findUrl } from 'linkifyjs'
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, GestureResponderEvent, Image, TouchableOpacity, View } from 'react-native'

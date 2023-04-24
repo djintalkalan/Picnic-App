@@ -1,6 +1,6 @@
 import { colors } from "assets/Colors";
 import { Text } from "custom-components";
-import { useDatabase } from "database/Database";
+import { useDatabase } from 'database';
 import { round } from "lodash";
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";

@@ -1,5 +1,5 @@
 import ActionTypes, { action } from "app-store/action-types";
-import Database from "database/Database";
+import Database from 'database';
 import { unionBy } from "lodash";
 
 export interface IGroupChatReducer {
