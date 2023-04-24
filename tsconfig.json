@@ -50,10 +50,10 @@
         "src/socket/*"
       ],
       "analytics":[
-        "src/analytics"
+        "src/analytics/AnalyticService.ts"
       ],
       "intercom":[
-        "src/intercom"
+        "src/intercom/IntercomService.ts"
       ],
       "rollbar-service":[
         "src/rollbar"
