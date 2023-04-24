@@ -513,6 +513,6 @@ export const es = {
     type_question_here: 'Añade aquí los detalles de la pregunta',
     poll_end_date: 'Fecha de finalización de la encuesta',
     poll_end_time: 'Hora de finalización del sondeo',
-    end_date_greater_than_current: 'End date must be after current date',
+    end_date_greater_than_current: 'La fecha de finalización debe ser posterior a la fecha actual',
 
 }
