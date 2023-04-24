@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux'
 import { EMIT_EVENT_MEMBER_DELETE, EMIT_EVENT_MESSAGE_DELETE, EMIT_GROUP_MEMBER_DELETE, EMIT_GROUP_MESSAGE_DELETE, EMIT_LIKE_UNLIKE, SocketService } from 'socket'
 import Language from 'src/language/Language'
 import { calculateImageUrl, getDisplayName, getImageUrl, launchMap, NavigationService, scaler, _hidePopUpAlert, _showBottomMenu, _showPopUpAlert, _showToast, _zoomImage } from 'utils'
+import PollMessage from './PollMessage'
 
 
 const insertAtIndex = (text: string, i: number, add: number = 0) => {
@@ -61,6 +62,7 @@ interface IChatItem {
     isMember: boolean
     systemMessageTemplate: any
     event_detail: any,
+    poll: any
 }
 
 const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
@@ -78,7 +80,7 @@ const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
     const [link, setLink] = useState("")
 
-    const { message, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+    const { message, poll, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
         event_detail: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
@@ -89,7 +91,8 @@ const ChatItem = (props: IChatItem) => {
         // parent_id,
         message_liked_by_users,
         message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
-    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType])
+
+    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType, props?.group, props?.event])
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
         userImage: user?.image,// user?.account_deleted == 1 ? null : user?.image,
@@ -222,15 +225,21 @@ const ChatItem = (props: IChatItem) => {
 
     const _openChatActionMenu = useCallback(() => {
         if (!isMember && !isMuted) return
-        let buttons: IBottomMenuButton[] = [{
-            title: Language.reply,
-            onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
-        },
-        {
-            title: Language.mute,
-            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
-        }]
-        if (myMessage || isAdmin) {
+        let buttons: IBottomMenuButton[] = [];
+        if (message_type != 'poll' && message_type != 'poll_result') {
+            buttons.push({
+                title: Language.reply,
+                onPress: () => setRepliedMessage({ _id, user, message, message_type, contacts, coordinates }),
+            })
+        }
+
+        buttons.push(
+            {
+                title: Language.mute,
+                onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
+            });
+
+        if ((myMessage || isAdmin) && message_type != 'poll_result') {
             buttons.push({
                 title: Language.delete,
                 onPress: () => {
@@ -523,6 +532,41 @@ const ChatItem = (props: IChatItem) => {
                                 onPress={() => launchMap({ lat: parseFloat(group?.location?.coordinates[1]), long: parseFloat(group?.location?.coordinates[0]) })} >{group?.address}</Text>
                         </View>
                     </View>
+                </View>
+            </View>
+        </View>
+    }
+
+    if (message_type == 'poll' || message_type == 'poll_result') {
+        if (myMessage) {
+            // return <View style={styles.myContainer} >
+            //     <PollMessage
+            //         {...props}
+            //     />
+            // </View>
+
+            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
+                <PollMessage containerStyle={{ marginVertical: scaler(0), }} {...props} />
+                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                </TouchableOpacity> : null}
+            </View>
+        }
+
+        return <View style={styles.container} >
+            <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
+                <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
+                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <ImageLoader
+                                placeholderSource={Images.ic_home_profile}
+                                source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
+                                style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
+                        </View>
+                        <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                    </View>
+                    <PollMessage
+                        {...props} />
                 </View>
             </View>
         </View>

@@ -332,6 +332,7 @@ const EventChats: FC<any> = (props) => {
                             // value={textMessage}
                             ref={inputRef}
                             link={link}
+                            resource={eventDetail}
                             disableButton={!socketConnected}
                             repliedMessage={repliedMessage}
                             setRepliedMessage={setRepliedMessage}
