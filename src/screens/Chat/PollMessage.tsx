@@ -47,7 +47,7 @@ const PollMessage = (props: PollType) => {
                 {options?.map((_: string) => {
                     if (poll_result) {
                         const percentage = round((poll_result?.options?.[_] * 100) / (poll_result?.total_votes || 1), 2)
-                        return <View style={[styles.percentView, {
+                        return <View key={_} style={[styles.percentView, {
                             borderColor: selectedOption != _ && selectedOption ? colors.colorD : colors.colorPrimary,
                         }]} >
                             <View style={{
