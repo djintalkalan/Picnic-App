@@ -41,10 +41,7 @@
         "src/screens/*"
       ],
       "database": [
-        "src/database"
-      ],
-      "database/*": [
-        "src/database/*"
+        "src/database/Database.ts"
       ],
       "socket":[
         "src/socket"
