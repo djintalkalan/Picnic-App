@@ -12,7 +12,6 @@ type PollType = {
     [key: string]: any
 }
 const PollMessage = (props: PollType) => {
-    console.log("props", props);
 
     const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result, isMuted } = props
     const { question, options, poll_type } = poll || {}
