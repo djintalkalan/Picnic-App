@@ -205,11 +205,7 @@ const ChatItem = (props: IChatItem) => {
 
     const eventOfGroupMessage = () => {
         const eventImage = calculateImageUrl(eventInMessage?.image, eventInMessage?.event_images)
-        return <View style={{
-            borderRadius: scaler(15), overflow: 'hidden',
-            padding: scaler(7),
-            height: (width - scaler(20)) / 2.8, width: (width - scaler(20)) / 1.5, backgroundColor: 'white'
-        }} >
+        return <View style={styles.eventOfImageContainer} >
             <View style={{ flex: 1, overflow: 'hidden', borderRadius: scaler(10), }} pointerEvents='none' >
                 <ImageLoader
                     placeholderSource={Images.ic_event_placeholder}
@@ -217,8 +213,9 @@ const ChatItem = (props: IChatItem) => {
                     resizeMode={eventImage ? 'cover' : 'contain'}
                     onPress={() => _zoomImage(getImageUrl(eventImage, { type: 'events' }))}
                     source={{ uri: getImageUrl(eventImage, { type: 'events' }) }}
+                    placeholderStyle={[{ height: '100%', resizeMode: 'contain', }]}
                     //@ts-ignore
-                    style={{ resizeMode: eventImage ? 'cover' : 'contain', borderRadius: scaler(10), height: '100%', width: '100%' }} />
+                    style={[styles.eventImage, { resizeMode: eventImage ? 'cover' : 'contain', }]} />
 
             </View>
         </View>
@@ -1016,8 +1013,15 @@ const styles = StyleSheet.create({
         borderWidth: scaler(3),
         alignItems: 'center',
         justifyContent: 'center'
-    }
-
+    },
+    eventImage: { borderRadius: scaler(10), height: '100%', width: '100%' },
+    eventOfImageContainer: {
+        borderRadius: scaler(15), overflow: 'hidden',
+        padding: scaler(7),
+        height: (width - scaler(20)) / 2.8,
+        width: (width - scaler(20)) / 1.5,
+        backgroundColor: 'white'
+    },
 })
 
 
