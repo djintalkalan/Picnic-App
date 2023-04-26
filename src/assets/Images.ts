@@ -84,5 +84,12 @@ export const Images = {
   ic_paypal_connect: require("./images/ic_paypal_connect.png"),
   ic_paypal_connected: require("./images/ic_paypal_connected.png"),
   ic_paypal_error: require("./images/ic_paypal_error.png"),
+  ic_emoji_like: require("./images/ic_emoji_like.png"),
+  ic_emoji_love: require("./images/ic_emoji_love.png"),
+  ic_emoji_maybe: require("./images/ic_emoji_maybe.png"),
+  ic_emoji_not_sure: require("./images/ic_emoji_not_sure.png"),
+  ic_emoji_question: require("./images/ic_emoji_question.png"),
+  ic_emoji_surprised: require("./images/ic_emoji_surprised.png"),
   // ic_paypal_error: require("./images/ic_paypal_error.png"),
+
 };

@@ -71,6 +71,7 @@ import Database, { useDatabase } from 'src/database/Database';
 import { useLanguage } from 'src/language/Language';
 import { useFirebaseNotifications } from 'src/notification/FirebaseNotification';
 // import { useLanguage } from 'src/language/Language';
+import { EmojiAlert } from 'custom-components/EmojiAlert';
 import CreatePoll from 'screens/Chat/CreatePoll';
 import PaypalConnect from 'screens/Profile/PaypalConnect';
 import PaypalDisconnect from 'screens/Profile/PaypalDisconnect';
@@ -245,6 +246,7 @@ const MyNavigationContainer = () => {
         <BottomMenu ref={ref => StaticHolder.setBottomMenu(ref)} />
         <KeyboardAccessoryView ref={ref => StaticHolder.setKeyboardAccessoryView(ref)} />
         <TouchAlert ref={ref => StaticHolder.setTouchAlert(ref)} />
+        <EmojiAlert ref={ref => StaticHolder.setEmojiAlert(ref)} />
         <DropdownAlertWithStatusBar />
       </NavigationContainer>
     </SafeAreaProvider>
@@ -257,7 +259,6 @@ const DropdownAlertWithStatusBar = () => {
   const [padding, setPadding] = React.useState(0)
   const { top } = useSafeAreaInsets();
   React.useLayoutEffect(() => {
-    console.log("padding", top);
     if (!padding) {
       setPadding(top)
     }

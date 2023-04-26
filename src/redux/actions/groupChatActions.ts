@@ -53,4 +53,11 @@ export const likeUnlikeMessageSuccess = (payload: { groupId: string, message_id:
     payload
 })
 
+export const updateLikeInLocal = (payload: { groupId: string, message_id: string, resourceType: 'event' | 'group' | 'personal', like_type: any }) => ({
+    type: ActionTypes.UPDATE_LIKE_IN_LOCAL,
+    payload
+})
+
+
+
 
