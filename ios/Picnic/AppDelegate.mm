@@ -29,14 +29,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  
+  #if DEBUG
+      
+  #else
     BOOL isDevType = [APP_TYPE isEqualToString:@"dev"];
-    if(!isDevType && !DEBUG){
-         RollbarConfiguration *config = [RollbarConfiguration configuration];
+    if(!isDevType){
+      RollbarConfiguration *config = [RollbarConfiguration configuration];
       config.environment = [APP_TYPE isEqualToString:@"dev"]? @"development" : APP_TYPE;
-         [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN configuration:config];
+      [RollbarReactNative initWithAccessToken:ROLLBAR_CLIENT_ITEM_ACCESS_TOKEN configuration:config];
     }
-   [FIRApp configure];
-   [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY];
+  #endif
+  [FIRApp configure];
+  [GMSServices provideAPIKey:GOOGLE_MAP_API_KEY];
 
   self.moduleName = @"Picnic";
   // You can add your custom initial props in the dictionary below.
