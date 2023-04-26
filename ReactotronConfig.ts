@@ -1,8 +1,10 @@
 import { NativeModules } from 'react-native';
-import Reactotron from 'reactotron-react-native';
 import { config } from 'src/api/config';
 
+let Reactotron: any
+
 if (__DEV__) {
+    Reactotron = require('reactotron-react-native').default;
     if (config.TERMINAL_CONSOLES) {
         var originalLog = console.log
         var originalWarn = console.warn
@@ -18,11 +20,29 @@ if (__DEV__) {
         setTimeout(() => {
             console.log("Reactotron configured at IP: " + scriptHostname);
         }, 0);
-        Reactotron
+
+        const reactotronConfig = Reactotron
             //   .setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
             .configure({ host: scriptHostname }) // controls connection & communication settings
-            .useReactNative() // add all built-in react native plugins
-            .connect() // let's connect!
+        if (config.DEBUG_REDUX) {
+
+            const { reactotronRedux } = require('reactotron-redux');
+            const sagaPlugin = require('reactotron-redux-saga');
+            reactotronConfig.use(sagaPlugin())
+            reactotronConfig.use(reactotronRedux())
+        }
+        reactotronConfig.useReactNative({
+            asyncStorage: false, // there are more options to the async storage.
+            networking: {
+                // optionally, you can turn it off with false.
+                ignoreUrls: /symbolicate/,
+            },
+            editor: false, // there are more options to editor
+            overlay: false
+        }) // add all built-in react native plugins
+        reactotronConfig.connect()
+
+
         if (config.TERMINAL_CONSOLES) {
             console.log = (message, ...optionalParams) => {
                 originalLog(message, ...optionalParams);
@@ -42,5 +62,10 @@ if (__DEV__) {
             console.warn = Reactotron.warn
         }
     }
+} else {
+    console.log = () => { }
+    console.error = console.log
+    console.warn = console.log
 }
 
+export default Reactotron

@@ -3,7 +3,7 @@ import { colors } from 'assets/Colors';
 import { MyHeader, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import Switch from 'custom-components/Switch';
-import Database, { useDatabase } from 'database/Database';
+import Database, { useDatabase } from 'database';
 import { debounce } from 'lodash';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { InteractionManager, StyleSheet, View } from 'react-native';

@@ -1,6 +1,6 @@
 import { colors, Images, MapStyle } from 'assets'
 import { Text } from 'custom-components'
-import Database from 'database/Database'
+import Database from 'database'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Dimensions, GestureResponderEvent, Image, TouchableOpacity, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
