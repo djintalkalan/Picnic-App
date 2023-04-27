@@ -31,7 +31,6 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                 }
             }
             if (action?.payload?.message_id) {
-
                 // newState.groups[groupId].chats = unionBy(action?.payload?.chats, newState.groups[groupId]?.chats, "_id")
                 //     .sort((a, b) => { return (new Date(b?.created_at)).getTime() - new Date(a?.created_at).getTime() });
                 newState.groups[groupId].chats = unionBy(newState.groups[groupId]?.chats, action?.payload?.chats, "_id")
@@ -70,6 +69,7 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                     const obj = {
                         ..._,
                         is_message_liked_by_me: !!like_type,
+                        message_total_likes_count: _?.is_message_liked_by_me == !!like_type ? _?.message_total_likes_count : !!like_type ? _?.message_total_likes_count + 1 : _?.message_total_likes_count - 1,
                         message_liked_by_users: like_type ? (_?.message_liked_by_users?.filter((_: any) => _?.user_id != userData?._id) as Array<any>)?.concat([{
                             user_id: userData?._id,
                             created_at: new Date().toISOString(),
@@ -80,7 +80,6 @@ export const groupChatReducer = (state: IGroupChatReducer = initialGroupChatStat
                         }
                         ]) : _?.message_liked_by_users?.filter((_: any) => _?.user_id != userData?._id),
                     }
-                    obj.message_total_likes_count = obj?.message_liked_by_users?.length
                     return obj
                 }
                 else {

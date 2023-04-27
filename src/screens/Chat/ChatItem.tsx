@@ -436,6 +436,14 @@ const ChatItem = (props: IChatItem) => {
 
     }, [is_message_liked_by_me, group?._id])
 
+    const likeText = useMemo(() => {
+        return <><Text style={[styles.likeBy, { fontWeight: '500', color: !myMessage && message_type == 'text' ? colors.colorWhite : undefined }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}</>
+    }, [remainingNames])
+
+    const _openLikeMenu = useCallback(() => {
+        NavigationService.navigate('LikeDetails', { message_id: _id })
+    }, [])
+
     if (message_type == 'image') {
 
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
@@ -474,9 +482,11 @@ const ChatItem = (props: IChatItem) => {
                             // tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                         }} />
                     </TouchableOpacity>
-                    <Text style={styles.likeBy} >
-                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                    </Text>
+                    <TouchableOpacity onPress={_openLikeMenu} >
+                        <Text style={styles.likeBy} >
+                            {likeText}
+                        </Text>
+                    </TouchableOpacity>
                 </View>}
         </View>
     }
@@ -726,9 +736,11 @@ const ChatItem = (props: IChatItem) => {
                             // tintColor: is_message_liked_by_me ? colors.colorPrimary : undefined
                         }} />
                     </TouchableOpacity>
-                    <Text style={styles.likeBy} >
-                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : Language.like}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                    </Text>
+                    <TouchableOpacity onPress={_openLikeMenu} >
+                        <Text style={styles.likeBy} >
+                            {likeText}
+                        </Text>
+                    </TouchableOpacity>
                 </View>}
         </View>
     }
@@ -791,9 +803,12 @@ const ChatItem = (props: IChatItem) => {
                             }} />
                         </TouchableOpacity>
                         {(is_message_liked_by_me || message_total_likes_count) ?
-                            <Text style={[styles.likeBy, { flex: 0, marginLeft: scaler(5) }]} >
-                                {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500' }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                            </Text> : null}
+                            <TouchableOpacity style={{ marginLeft: scaler(5) }} onPress={_openLikeMenu} >
+                                <Text style={[styles.likeBy, { flex: 0 }]} >
+                                    {likeText}
+                                </Text>
+                            </TouchableOpacity>
+                            : null}
                     </View>}
                 </View>
 
@@ -880,9 +895,12 @@ const ChatItem = (props: IChatItem) => {
                                     }} />
                                 </TouchableOpacity>
                                 {(is_message_liked_by_me || message_total_likes_count) ?
-                                    <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
-                                        {(is_message_liked_by_me || message_total_likes_count) ? Language.liked_by : ""}<Text style={[styles.likeBy, { fontWeight: '500', color: colors.colorWhite }]} >{is_message_liked_by_me ? " " + Language.you + (remainingNames?.[0] ? "," : "") : ""}</Text> {remainingNames?.[0] ? remainingNames?.[0] : ""}{(total > 0 ? (" and " + total + " other") : "") + (total > 1 ? "s" : "")}
-                                    </Text> : null}
+                                    <TouchableOpacity onPress={_openLikeMenu} >
+                                        <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
+                                            {likeText}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    : null}
                             </View>}
                         </View>
                     </View>
@@ -959,7 +977,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     likeBy: {
-        color: colors.colorBlack,
+        // color: colors.colorBlack,
         fontSize: scaler(12),
         fontWeight: '400',
         flex: 1

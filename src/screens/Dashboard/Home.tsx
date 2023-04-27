@@ -68,9 +68,9 @@ const Home: FC = () => {
     })
     // setTimeout(() => {
     // dispatch(setActiveEvent({ _id: '636e3bb06c752686a98a9822', id: '636e3bb06c752686a98a9822' }))
-    // NavigationService.navigate("EventDetail", { id: '636e3bb06c752686a98a9822' })
+    // NavigationService.navigate("LikeDetails", { message_id: '644a5866a40c5a4a07d26e92' })
     // _openMenu()
-    // }, 2000);
+    // }, 0);
   }, [])
 
   // useEffect(() => {

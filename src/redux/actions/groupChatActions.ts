@@ -58,6 +58,10 @@ export const updateLikeInLocal = (payload: { groupId: string, message_id: string
     payload
 })
 
+export const getLikeDetails = (payload: { message_id: string, onSuccess: (data: any) => void }) => ({
+    type: ActionTypes.GET_LIKE_DETAILS,
+    payload
+})
 
 
 
