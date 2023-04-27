@@ -142,7 +142,7 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
             />
 
             <Text style={[styles.inputTitle, { marginTop: scaler(20) }]}>
-                {Language.poll_end_date}
+                {Language.poll_ends_by_default}
             </Text>
 
             <View style={{ flexDirection: 'row' }}>

@@ -509,10 +509,11 @@ export const en = {
   result: 'Result',
   total_votes: 'Total votes',
   create_poll: 'Create Poll',
-  poll_question: 'What\'s your question',
+  poll_question: 'Enter your Yes or No question below',
   type_question_here: 'Add question details here',
   poll_end_date: 'Poll end date',
   poll_end_time: 'Poll end time',
   end_date_greater_than_current: 'End date must be after current date',
+  poll_ends_by_default: 'The poll ends 24 hours from now by default',
 
 }
