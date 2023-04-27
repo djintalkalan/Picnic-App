@@ -3,9 +3,8 @@ import { colors } from 'assets/Colors'
 import { MyHeader } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import TopTab, { TabProps } from 'custom-components/TopTab'
-import React, { FC, useCallback } from 'react'
+import React, { FC, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
-import { useDispatch } from 'react-redux'
 import Language, { useLanguage } from 'src/language/Language'
 import { RootParams } from 'src/routes/Routes'
 import UpcomingPastEvents from './UpcomingPastEvents'
@@ -14,18 +13,17 @@ import UpcomingPastEvents from './UpcomingPastEvents'
 
 
 const Events: FC<NativeStackScreenProps<RootParams, 'Events'>> = ({ route, navigation }) => {
-    const dispatch = useDispatch()
 
-    const getTabs = useCallback((): TabProps[] => {
+    const tabs = useMemo<TabProps[]>(() => {
         return [
             {
-                title: Language.upcoming_events,
+                title: Language.upcoming_2,
                 name: 'UpcomingEventsTab',
                 Screen: UpcomingPastEvents,
                 initialParams: { type: 'upcoming', id: route?.params.id }
             },
             {
-                title: Language.past_events,
+                title: Language.previous,
                 name: 'PastEventsTab',
                 Screen: UpcomingPastEvents,
                 // disable: true,
@@ -37,7 +35,7 @@ const Events: FC<NativeStackScreenProps<RootParams, 'Events'>> = ({ route, navig
     return (
         <SafeAreaViewWithStatusBar style={styles.container} >
             <MyHeader title={Language.events} />
-            <TopTab swipeEnabled={false} tabs={getTabs()} />
+            <TopTab swipeEnabled={false} tabs={tabs} />
         </SafeAreaViewWithStatusBar>
     )
 }

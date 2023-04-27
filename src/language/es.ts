@@ -505,5 +505,7 @@ export const es = {
     enjoy_premium_benefits: 'Disfruta de ventajas Premium',
     restore_free: 'Restablecer Gratis Suscripción',
     search: 'Buscar',
-    create: "Crear"
+    create: 'Crear',
+    upcoming_2: 'Próximos',
+    previous: "Anteriores",
 }
