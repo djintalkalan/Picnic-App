@@ -514,11 +514,12 @@ export const es = {
     result: 'Resultado',
     total_votes: 'Total de votos',
     create_poll: 'Crear encuesta',
-    poll_question: '¿Cuál es su pregunta?',
+    poll_question: 'Escriba a continuación su pregunta Sí o No',
     type_question_here: 'Añade aquí los detalles de la pregunta',
     poll_end_date: 'Fecha de finalización de la encuesta',
     poll_end_time: 'Hora de finalización del sondeo',
     end_date_greater_than_current: 'La fecha de finalización debe ser posterior a la fecha actual',
+    poll_ends_by_default: 'La encuesta finaliza por defecto dentro de 24 horas',
 
 
 }
