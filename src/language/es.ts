@@ -523,4 +523,6 @@ export const es = {
     ends_on: 'Finalizará el',
     poll_ended: 'Encuesta finalizada',
     at: 'a las',
+    upcoming_2: 'Próximos',
+    previous: "Anteriores",
 }

@@ -523,4 +523,6 @@ export const en = {
   ends_on: 'Ends on',
   poll_ended: 'Poll ended',
   at: 'at',
+  upcoming_2: 'Upcoming',
+  previous: "Previous",
 }
