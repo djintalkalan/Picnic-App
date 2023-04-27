@@ -73,6 +73,7 @@ import { useFirebaseNotifications } from 'src/notification/FirebaseNotification'
 // import { useLanguage } from 'src/language/Language';
 import { EmojiAlert } from 'custom-components/EmojiAlert';
 import CreatePoll from 'screens/Chat/CreatePoll';
+import LikeDetails from 'screens/Chat/LikeDetails';
 import PaypalConnect from 'screens/Profile/PaypalConnect';
 import PaypalDisconnect from 'screens/Profile/PaypalDisconnect';
 import { NavigationService, scaler } from 'utils';
@@ -138,6 +139,7 @@ const dashboardScreens: IScreens = {
   PaypalConnect,
   PaypalDisconnect,
   CreatePoll,
+  LikeDetails,
 };
 const MyNavigationContainer = () => {
   useFirebaseNotifications();

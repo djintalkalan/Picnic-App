@@ -605,3 +605,8 @@ export const _updatePaypalMerchantId = async (body: any) => {
   console.log('---------- _updatePaypalMerchantId Api Call ---------------');
   return fetchApiData('user/update-paypal-merchant-id', 'POST', body);
 };
+
+export const _getLikeDetails = async (body: any) => {
+  console.log("---------- _getLikeDetails Api Call ---------------")
+  return fetchApiData('message/get-like-details?' + (new URLSearchParams(body)).toString())
+}
