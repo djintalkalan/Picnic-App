@@ -21,7 +21,7 @@ import '@formatjs/intl-datetimeformat/locale-data/es' // locale-data for en
 import '@formatjs/intl-datetimeformat/add-all-tz' // Add ALL tz data
 
 import 'moment/locale/es';
-
+import './ReactotronConfig';
 import notifee, { EventType } from "@notifee/react-native";
 import messaging from '@react-native-firebase/messaging';
 import React from 'react';
@@ -33,7 +33,6 @@ import "react-native-url-polyfill/auto";
 import App from 'src/App';
 import { onMessageReceived, onNotificationOpened } from 'src/notification/FirebaseNotification';
 import { name as appName } from './app.json';
-import './ReactotronConfig';
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {
     switch (type) {

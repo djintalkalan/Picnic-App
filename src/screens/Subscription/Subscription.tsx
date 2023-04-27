@@ -3,7 +3,7 @@ import { setLoadingAction } from 'app-store/actions';
 import { Images } from 'assets/Images';
 import { Button, Text } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database, { useDatabase } from 'database/Database';
+import Database, { useDatabase } from 'database';
 import { add } from 'date-fns';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { EmitterSubscription, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';

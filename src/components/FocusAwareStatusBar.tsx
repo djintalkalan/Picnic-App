@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import { colors } from 'assets';
-import { useOtherValues } from 'database/Database';
+import { useOtherValues } from 'database';
 import * as React from 'react';
 import { ColorValue, StatusBar, StatusBarProps, StatusBarStyle, StyleSheet, View } from 'react-native';
 import { NativeSafeAreaViewProps, SafeAreaView } from 'react-native-safe-area-context';

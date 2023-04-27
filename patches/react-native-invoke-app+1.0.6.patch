@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-invoke-app/android/build.gradle b/node_modules/react-native-invoke-app/android/build.gradle
+index 67bc6fd..14d8551 100644
+--- a/node_modules/react-native-invoke-app/android/build.gradle
++++ b/node_modules/react-native-invoke-app/android/build.gradle
+@@ -41,6 +41,6 @@ repositories {
+ }
+ 
+ dependencies {
+-    compile 'com.facebook.react:react-native:+'
++    implementation 'com.facebook.react:react-native:+'
+ }
+   
