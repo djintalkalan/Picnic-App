@@ -525,4 +525,5 @@ export const es = {
     at: 'a las',
     upcoming_2: 'Próximos',
     previous: "Anteriores",
+    people_who_reacted: 'Pessoas que reagiram',
 }

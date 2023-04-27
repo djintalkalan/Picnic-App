@@ -1,5 +1,6 @@
-import React from "react"
+import React, { PropsWithChildren } from "react"
 import { TouchableOpacity, ViewStyle } from "react-native"
+//@ts-ignore
 import CardView from 'react-native-cardview'
 
 interface ICardProps {
@@ -11,7 +12,7 @@ interface ICardProps {
     onPress?: (e: any) => void
 }
 
-export const Card: React.FC<ICardProps> = (props) => {
+export const Card: React.FC<PropsWithChildren<ICardProps>> = (props) => {
 
     if (props?.onPress) {
         return <TouchableOpacity activeOpacity={0.8} onPress={props?.onPress}>
@@ -23,7 +24,7 @@ export const Card: React.FC<ICardProps> = (props) => {
 
 }
 
-const MyCardView: React.FC<ICardProps> = (props) => <CardView
+const MyCardView: React.FC<PropsWithChildren<ICardProps>> = (props) => <CardView
     useCompatPadding={props?.useCompatPadding}
     style={props?.style}
     cardElevation={props?.cardElevation}

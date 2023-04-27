@@ -525,4 +525,5 @@ export const en = {
   at: 'at',
   upcoming_2: 'Upcoming',
   previous: "Previous",
+  people_who_reacted: "People who reacted",
 }
