@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { EMIT_CAST_VOTE, SocketService } from "socket";
 import Language from "src/language/Language";
-import { scaler } from "utils";
+import { dateFormat, scaler } from "utils";
 
 type PollType = {
     [key: string]: any
@@ -14,8 +14,10 @@ type PollType = {
 const PollMessage = (props: PollType) => {
 
     const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result, isMuted } = props
-    const { question, options, poll_type } = poll || {}
+    const { question, options, poll_type, poll_ends_on } = poll || {}
     const [userData] = useDatabase('userData')
+
+    const isPollEnded = poll?.result_declared == 1 || new Date() > new Date(poll_ends_on)
 
     const submittedAnswer = useMemo(() => {
         const castedVote = poll_submitted_by_users?.find((_: any) => _?.user_id == userData?._id)
@@ -71,12 +73,14 @@ const PollMessage = (props: PollType) => {
                     }
                     return <TouchableOpacity
                         key={_}
-                        disabled={poll?.result_declared == 1 || isMuted}
+                        disabled={isMuted || isPollEnded}
                         style={[styles.optionView,
                         {
                             backgroundColor: selectedOption == _ ? colors.colorFadedPrimary : !selectedOption ? colors.colorWhite : 'rgba(0, 0, 0, 0.05)',
                             borderColor: selectedOption && selectedOption != _ ? colors.colorD : colors.colorPrimary,
-                        }]}
+                        },
+                        !selectedOption && isPollEnded ? styles.disableButtonStyle : {}
+                        ]}
                         onPress={() => {
                             let vote = ''
                             if (!selectedOption || _ != selectedOption) {
@@ -89,6 +93,7 @@ const PollMessage = (props: PollType) => {
                     </TouchableOpacity>
                 })}
             </View>
+            {!poll_result ? <Text style={styles.endOnText} >{isPollEnded ? Language.poll_ended : (Language.ends_on + " " + dateFormat(new Date(poll_ends_on), "MMM DD, YYYY") + " " + Language.at + " " + dateFormat(new Date(poll_ends_on), "hh:mm A"))?.replace(dateFormat(new Date(), ', YYYY'), '')} </Text> : undefined}
         </View>
     )
 }
@@ -134,6 +139,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: scaler(10)
+    },
+    endOnText: {
+        fontSize: scaler(10),
+        color: colors.colorErrorRed
+    },
+    disableButtonStyle: {
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        borderColor: colors.colorD,
     }
 })
 

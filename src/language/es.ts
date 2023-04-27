@@ -520,6 +520,7 @@ export const es = {
     poll_end_time: 'Hora de finalización del sondeo',
     end_date_greater_than_current: 'La fecha de finalización debe ser posterior a la fecha actual',
     poll_ends_by_default: 'La encuesta finaliza por defecto dentro de 24 horas',
-
-
+    ends_on: 'Finalizará el',
+    poll_ended: 'Encuesta finalizada',
+    at: 'a las',
 }
