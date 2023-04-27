@@ -1,13 +1,15 @@
 
+import { config } from 'api';
 import * as Reducers from 'app-store/reducers';
 import { ICreateEventReducer, IEventChatReducer, IEventDetailReducer, IEventForCheckInReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPersonChatReducer, IPrivacyData, IPrivacyState, IUserEventsGroups } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
 import { DefaultRootState, EqualityFn } from 'react-redux';
-import { applyMiddleware, combineReducers, createStore, Store } from "redux";
+import { applyMiddleware, combineReducers, compose, createStore, Store } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import { SelectEffect, Tail } from 'redux-saga/effects';
 import { mergeStorageInPersistedReducer } from 'src/database/Database';
+import Reactotron from '../../ReactotronConfig';
 
 declare module 'react-redux' {
     export interface DefaultRootState {
@@ -46,7 +48,7 @@ declare module 'redux-saga/effects' {
 
 const PERSIST_ENABLED = true// !__DEV__
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = __DEV__ && config.DEBUG_REDUX ? createSagaMiddleware({ sagaMonitor: Reactotron.createSagaMonitor() }) : createSagaMiddleware()
 
 const persistConfig = {
     // Root
@@ -90,10 +92,17 @@ const rootReducer = combineReducers({
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);
-
+const middleWare = __DEV__ && config.DEBUG_REDUX
+    ? compose(
+        applyMiddleware(sagaMiddleware),
+        Reactotron.createEnhancer(),
+        // window.__REDUX_DEVTOOLS_EXTENSION__(),
+        // eslint-disable-next-line no-mixed-spaces-and-tabs
+    )
+    : applyMiddleware(sagaMiddleware);
 const store: Store<DefaultRootState> = createStore<DefaultRootState, any, any, any>(
     persistedReducer,/* preloadedState, */
-    applyMiddleware(sagaMiddleware)
+    middleWare
 )
 
 // Middleware: Redux Persist Persister

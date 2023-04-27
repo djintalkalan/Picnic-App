@@ -1,6 +1,6 @@
 import { colors } from 'assets'
 import { IBottomMenuButton } from 'custom-components/BottomMenu'
-import Database from 'database/Database'
+import Database from 'database'
 import React, { FC, memo, useCallback, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { Contact } from 'react-native-contacts'

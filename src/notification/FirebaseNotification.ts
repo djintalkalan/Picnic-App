@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import { config } from "api";
 import { store } from "app-store";
 import { setActiveEvent, setActiveGroup } from "app-store/actions";
-import Database, { useDatabase } from 'database/Database';
+import Database, { useDatabase } from 'database';
 import IntercomService from "intercom";
 import { Dispatch, useCallback, useEffect } from 'react';
 import { Platform } from "react-native";

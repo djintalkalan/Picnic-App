@@ -5,24 +5,13 @@ import { SafeAreaViewWithStatusBar } from "custom-components/FocusAwareStatusBar
 import { MemberListItem } from "custom-components/ListItem/ListItem";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
 import Language from "src/language/Language";
 import { getImageUrl, scaler } from "utils";
-const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
-
-interface FormType {
-    question: string
-    endDate?: Date | null,
-    endTime?: Date | null,
-}
-
 
 const emojis = ['all', 'like', 'love', 'not_sure', 'surprised', 'maybe', 'question']
 
-const LikeDetails: FC<any> = ({ route, navigation }) => {
-    console.log("emojis", emojis);
-
+const LikeDetails: FC<any> = ({ route }) => {
     const { message_id } = route?.params || {}
     const dispatch = useDispatch();
 
@@ -34,8 +23,6 @@ const LikeDetails: FC<any> = ({ route, navigation }) => {
         const reactions = { ...emojis.reduce((acc: any, curr) => (acc[curr] = [], acc), {}) }
         dispatch(getLikeDetails({
             message_id, onSuccess: (data) => {
-                console.log(reactions == emojis);
-                console.log(reactions === emojis);
                 data?.message_liked_by_users?.forEach((_: any) => {
                     reactions['all'].push(_)
                     reactions[_?.like_type].push(_)
@@ -56,10 +43,9 @@ const LikeDetails: FC<any> = ({ route, navigation }) => {
         />
     ), [])
 
-
     const _data = useMemo(() => {
         const _data = Object.keys(reactions).filter(_ => reactions[_]?.length).sort((a, b) => reactions[b]?.length || 0 - reactions[a]?.length || 0)
-        if (!_data?.length) return ['all']
+        if (!_data?.length) return [emojis[0]]
         return _data
     }, [reactions])
 

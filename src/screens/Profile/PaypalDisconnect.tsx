@@ -3,7 +3,7 @@ import { setLoadingAction } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import Database from 'database/Database';
+import Database from 'database';
 import React, { FC, useCallback, useRef } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
