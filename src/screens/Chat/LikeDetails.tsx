@@ -68,6 +68,7 @@ const LikeDetails: FC<any> = ({ route }) => {
                 contentContainerStyle={{}}
                 horizontal
                 data={_data}
+                showsHorizontalScrollIndicator={false}
                 renderItem={({ item: _, index }) => {
                     return <TouchableOpacity
                         key={_}
