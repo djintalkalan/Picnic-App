@@ -883,22 +883,23 @@ const ChatItem = (props: IChatItem) => {
                                 : null}
                             <Text autoLink onLongPress={_onCopy}
                                 style={styles.message} >{message?.trim()}</Text>
-                            {isMuted || (!isMember && !isAdminOnly) ? null : <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
-                                <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
-                                    <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
-                                        resizeMode: 'contain',
-                                        height: scaler(20), width: scaler(20), marginRight: scaler(5),
-                                        // tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
-                                    }} />
-                                </TouchableOpacity>
-                                {(is_message_liked_by_me || message_total_likes_count) ?
-                                    <TouchableOpacity onPress={_openLikeMenu} >
-                                        <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
-                                            {likeText}
-                                        </Text>
+                            {isMuted || (!isMember && !isAdminOnly) ? null :
+                                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', marginTop: scaler(8) }} >
+                                    <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
+                                        <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
+                                            resizeMode: 'contain',
+                                            height: scaler(20), width: scaler(20), marginRight: scaler(5),
+                                            // tintColor: is_message_liked_by_me ? colors.colorWhite : colors.colorWhite
+                                        }} />
                                     </TouchableOpacity>
-                                    : null}
-                            </View>}
+                                    {(is_message_liked_by_me || message_total_likes_count) ?
+                                        <TouchableOpacity style={{ flexShrink: 1, marginTop: scaler(1) }} onPress={_openLikeMenu} >
+                                            <Text style={[styles.likeBy, { flex: 0, flexShrink: 1, color: colors.colorWhite }]} >
+                                                {likeText}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        : null}
+                                </View>}
                         </View>
                     </View>
 
