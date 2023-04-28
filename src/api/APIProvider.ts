@@ -462,12 +462,12 @@ export const _whatsappImport = async (body: FormData, type: string) => {
 
 export const _getGroupChatNew = async (body: any) => {
   console.log("---------- _getGroupChatNew Api Call ---------------")
-  return fetchApiData('message/group-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=' + (body?.message_id ? "30" : "10") + '&message_id=' + (body?.message_id || ""))
+  return fetchApiData('message/group-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=' + (body?.message_id ? "30" : "15") + '&message_id=' + (body?.message_id || ""))
 }
 
 export const _getEventChatNew = async (body: any) => {
   console.log("---------- _getEventChatNew Api Call ---------------")
-  return fetchApiData('message/event-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=' + (body?.message_id ? "30" : "10") + '&message_id=' + (body?.message_id || ""))
+  return fetchApiData('message/event-chat-new?load_more=0&page=1&id=' + (body?.id ?? "") + '&q=' + (body?.q ?? "") + '&limit=' + (body?.message_id ? "30" : "15") + '&message_id=' + (body?.message_id || ""))
 }
 
 export const _searchChat = async (body: any) => {

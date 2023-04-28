@@ -65,7 +65,7 @@ const LikeDetails: FC<any> = ({ route }) => {
         <MyHeader title={Language.people_who_reacted} />
         <View style={styles.emojiContainer}>
             <FlatList
-                contentContainerStyle={{ flexShrink: 1 }}
+                contentContainerStyle={{}}
                 horizontal
                 data={_data}
                 renderItem={({ item: _, index }) => {
