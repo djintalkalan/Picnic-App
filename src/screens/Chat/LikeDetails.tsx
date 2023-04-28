@@ -3,6 +3,7 @@ import { colors, Images } from "assets";
 import { MyHeader, Text } from "custom-components";
 import { SafeAreaViewWithStatusBar } from "custom-components/FocusAwareStatusBar";
 import { MemberListItem } from "custom-components/ListItem/ListItem";
+import Database from "database";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
@@ -23,6 +24,17 @@ const LikeDetails: FC<any> = ({ route }) => {
         const reactions = { ...emojis.reduce((acc: any, curr) => (acc[curr] = [], acc), {}) }
         dispatch(getLikeDetails({
             message_id, onSuccess: (data) => {
+                try {
+                    const userId = Database.getStoredValue('userData')?._id
+                    const fromIndex = data.message_liked_by_users.findIndex((_: any) => _?.user_id == userId)
+                    if (fromIndex > 0) {
+                        var element = data.message_liked_by_users[fromIndex];
+                        data.message_liked_by_users.splice(fromIndex, 1);
+                        data.message_liked_by_users.splice(0, 0, element);
+                    }
+                } catch (e) {
+
+                }
                 data?.message_liked_by_users?.forEach((_: any) => {
                     reactions['all'].push(_)
                     reactions[_?.like_type].push(_)
@@ -64,13 +76,12 @@ const LikeDetails: FC<any> = ({ route }) => {
                             backgroundColor: selectedType == _ ? colors.colorFadedPrimary : undefined,
                         }]}>
                         {_ == 'all' ?
-                            <Text style={{ color: selectedType == _ ? colors.colorPrimary : undefined }} >All</Text>
+                            <Text style={{ color: selectedType == _ ? colors.colorPrimary : undefined }} >{Language.all}</Text>
                             :
                             //@ts-ignore
                             <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images['ic_emoji_' + _] || undefined} />
-
                         }
-                        <Text style={{ marginLeft: scaler(5), color: selectedType == _ ? colors.colorPrimary : colors.colorGreyMore }} >{reactions[_]?.length}</Text>
+                        <Text style={{ paddingLeft: scaler(10), color: selectedType == _ ? colors.colorPrimary : colors.colorGreyMore }} >{reactions[_]?.length}</Text>
                     </TouchableOpacity>
                 }}
             />
@@ -107,6 +118,7 @@ const styles = StyleSheet.create({
     emojiButton: {
         // height: scaler(60),
         paddingHorizontal: scaler(9),
+        marginHorizontal: scaler(5),
         paddingVertical: scaler(6),
         borderRadius: scaler(5),
         alignItems: 'center',
