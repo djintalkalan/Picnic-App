@@ -49,8 +49,10 @@ const LikeDetails: FC<any> = ({ route }) => {
             title={item?.username}
             icon={item?.image ? { uri: getImageUrl(item?.image, { type: 'users', width: scaler(50) }) } : undefined}
             defaultIcon={Images.ic_home_profile}
-            //@ts-ignore
-            customRightText={<Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images['ic_emoji_' + item?.like_type] || undefined} />}
+            customRightText={<View style={{ paddingHorizontal: scaler(5) }}>
+                {/* @ts-ignore */}
+                <Image style={{ height: scaler(20), width: scaler(20), resizeMode: 'contain' }} source={Images['ic_emoji_' + item?.like_type] || undefined} />
+            </View>}
             isSelected={false}
         />
     ), [])
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     emojiContainer: {
         paddingHorizontal: scaler(4),
         paddingVertical: scaler(4),
-        borderRadius: scaler(8),
+        // borderRadius: scaler(8),
         backgroundColor: colors.colorWhite,
         // borderTopWidth: 1,
         borderBottomWidth: 1,
