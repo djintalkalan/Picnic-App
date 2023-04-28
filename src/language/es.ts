@@ -526,4 +526,5 @@ export const es = {
     upcoming_2: 'Próximos',
     previous: "Anteriores",
     people_who_reacted: 'Pessoas que reagiram',
+    all: "Todo",
 }
