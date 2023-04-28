@@ -526,4 +526,5 @@ export const en = {
   upcoming_2: 'Upcoming',
   previous: "Previous",
   people_who_reacted: "People who reacted",
+  all: "All",
 }
