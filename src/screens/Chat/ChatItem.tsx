@@ -406,7 +406,7 @@ const ChatItem = (props: IChatItem) => {
                 alignItems: myMessage ? 'flex-end' : 'flex-start',
             },
             current_like_type: like_type,
-            transparent: false,
+            transparent: true,
             message: {
                 message_id: _id,
                 resource_id: group?._id,

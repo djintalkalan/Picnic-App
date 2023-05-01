@@ -6,6 +6,7 @@ import React, { Component } from "react";
 import { BackHandler, Dimensions, Image, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
 import { EMIT_LIKE_UNLIKE, SocketService } from "socket";
 import { scaler } from "utils";
+import { Card } from "./Card";
 import { SafeAreaViewWithStatusBar } from "./FocusAwareStatusBar";
 
 const { height, width } = Dimensions.get('screen')
@@ -102,19 +103,21 @@ export class EmojiAlert extends Component<EmojiAlertProps, any> {
                 <SafeAreaViewWithStatusBar barStyle={'dark-content'} translucent style={[styles.absolute, this.transparent ? { backgroundColor: 'transparent' } : {}]}  >
                     <TouchableOpacity activeOpacity={1} onPress={this.hideEmojiAlert} style={[styles.absolute, this.transparent ? { backgroundColor: 'transparent' } : {}]} >
                         <TouchableOpacity activeOpacity={1} style={[styles.alertContainer, this.placementStyle]} >
-                            <View style={styles.emojiContainer} >
-                                {emojis.map(_ => {
-                                    return <TouchableOpacity
-                                        key={_}
-                                        onPress={() => onPressEmoji(_)}
-                                        style={[styles.emojiButton, {
-                                            backgroundColor: this.current_like_type == _ ? 'rgba(0,0,0,0.25)' : undefined,
-                                        }]}>
-                                        {/*@ts-ignore*/}
-                                        <Image style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }} source={Images['ic_emoji_' + _] || undefined} />
-                                    </TouchableOpacity>
-                                })}
-                            </View>
+                            <Card cardElevation={3} style={styles.emojiContainer} cornerRadius={scaler(8)} >
+                                <View style={styles.emojiContainer} >
+                                    {emojis.map(_ => {
+                                        return <TouchableOpacity
+                                            key={_}
+                                            onPress={() => onPressEmoji(_)}
+                                            style={[styles.emojiButton, {
+                                                backgroundColor: this.current_like_type == _ ? 'rgba(0,0,0,0.25)' : undefined,
+                                            }]}>
+                                            {/*@ts-ignore*/}
+                                            <Image style={{ height: scaler(30), width: scaler(30), resizeMode: 'contain' }} source={Images['ic_emoji_' + _] || undefined} />
+                                        </TouchableOpacity>
+                                    })}
+                                </View>
+                            </Card>
                         </TouchableOpacity>
                     </TouchableOpacity>
                 </SafeAreaViewWithStatusBar>
@@ -144,7 +147,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: scaler(4),
         paddingVertical: scaler(4),
         borderRadius: scaler(8),
-        backgroundColor: colors.colorWhite
+        backgroundColor: colors.colorWhite,
+        elevation: 3
     },
     emojiButton: {
         paddingHorizontal: scaler(9),
