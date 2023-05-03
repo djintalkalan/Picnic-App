@@ -8,6 +8,7 @@ import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar
 import ImageLoader from 'custom-components/ImageLoader'
 import { ListItem, MemberListItem } from 'custom-components/ListItem/ListItem'
 import { useVideoPlayer } from 'custom-components/VideoProvider'
+import Database from 'database'
 import { add } from 'date-fns'
 import TZ from "dj-tz-lookup"
 import capitalize from 'lodash/capitalize'
@@ -37,7 +38,6 @@ const DefaultDelta = {
 }
 
 const EventDetail: FC<any> = (props) => {
-
     const dispatch = useDispatch()
     const eventNameRef = useRef("")
     const { loadVideo } = useVideoPlayer()
@@ -49,6 +49,7 @@ const EventDetail: FC<any> = (props) => {
     }), isEqual)
     const [isOpened, setOpened] = useState(false)
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
+    const [savedCalendarEvent, setSavedCalendarEvent] = useState(Database.getCalenderEvent(event?._id))
 
     const eventDate = new Date(event?.event_start_date_time);
     // const eventDate = new Date("2021-09-10");
@@ -430,8 +431,10 @@ const EventDetail: FC<any> = (props) => {
                 title: '"' + event?.name + '" event from Picnic Groups',
                 notes: event?.name
             }).then(res => {
-                console.log("Res", res);
-
+                if (res?.action == 'SAVED') {
+                    Database.saveCalenderEvent(event?._id, res)
+                    setSavedCalendarEvent(res)
+                }
             }).catch(e => {
                 console.log("E", e);
                 if (e?.toString()?.includes('permissionNotGranted')) {
@@ -451,7 +454,6 @@ const EventDetail: FC<any> = (props) => {
         }
         catch (e) {
             console.log("Error", e);
-
         }
     }, [event])
 
@@ -851,7 +853,7 @@ const EventDetail: FC<any> = (props) => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: scaler(10) }}>
                                 {eventDate >= new Date() ?
                                     <View style={{ flex: 1 }}>
-                                        <Button onPress={onPressAddToCalendar} title={Language.add_to_calender} />
+                                        <Button disabled={!!savedCalendarEvent} onPress={onPressAddToCalendar} title={Language.add_to_calender} />
                                     </View> : undefined}
                                 <View style={{ flex: 1 }}>
                                     <Button title={Language.event_chat}
@@ -886,7 +888,7 @@ const EventDetail: FC<any> = (props) => {
                             disabled
                             containerStyle={{ marginHorizontal: scaler(10) }}
                         />
-                        <Button onPress={onPressAddToCalendar} title={Language.add_to_calender}
+                        <Button disabled={!!savedCalendarEvent} onPress={onPressAddToCalendar} title={Language.add_to_calender}
                             containerStyle={{ marginHorizontal: scaler(10) }}
                         />
                     </>
