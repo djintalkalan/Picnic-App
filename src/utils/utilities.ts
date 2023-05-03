@@ -161,6 +161,12 @@ export const isNumeric = (value: any) => {
     return /^-?\d+$/.test(value);
 }
 
+export const isNaturalNumber = (n: any) => {
+    if (!isNumeric(n)) return false
+    n = parseFloat(n)
+    return isNumeric(n) && (n >= 0.0) && (Math.floor(n) === n) && n !== Infinity;
+}
+
 
 export const _showErrorMessage = async (msg?: string, time?: number) => {
     if (!msg || !msg.trim()) return

@@ -241,7 +241,7 @@ const GroupDetail: FC<any> = (props) => {
                 </View>
 
                 {group?.is_group_member ? <BottomButton
-                    title={Language.leave_group}
+                    title={(group?.is_broadcast_group == 1 && !group?.is_admin) ? Language.unfollow : Language.leave_group}
                     icon={Images.ic_leave_group}
                     hideBottomBar
                     buttonTextColor={colors.colorPrimary}
@@ -259,6 +259,12 @@ const GroupDetail: FC<any> = (props) => {
                             })
                             return
                         }
+
+                        if (group?.is_broadcast_group == 1) {
+                            dispatch(leaveGroup({ groupId: group?._id }))
+                            return
+                        }
+
                         _showPopUpAlert({
                             message: Language.are_you_sure_leave_group,
                             onPressButton: () => {
@@ -271,8 +277,8 @@ const GroupDetail: FC<any> = (props) => {
                     }} />
                     :
                     <BottomButton
-                        title={Language.join_now}
-                        icon={Images.ic_join_group}
+                        title={group?.is_broadcast_group == 1 ? Language.follow : Language.join_now}
+                        icon={group?.is_broadcast_group == 1 ? Images.ic_megaphone : Images.ic_join_group}
                         hideBottomBar
                         visibility={!group?.is_group_member && group?.status == 1}
                         buttonTextColor={colors.colorPrimary}
