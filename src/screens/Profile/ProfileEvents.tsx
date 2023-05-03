@@ -20,13 +20,18 @@ const ProfileEvents: FC<any> = (props) => {
             name: "ProfileUpcomingEvents",
             Screen: ProfileEventsList,
             title: Language.upcoming,
-            initialParams: { type: 'upcoming' }
+            initialParams: { type: 'upcoming' },
+            icon: Images.ic_calender,
+            iconPosition: 'right',
         },
         {
             name: "ProfilePastEvents",
             Screen: ProfileEventsList,
             title: Language.history,
-            initialParams: { type: 'past' }
+            initialParams: { type: 'past' },
+            icon: Images.ic_member_tick,
+            iconStyle: { height: scaler(20), width: scaler(20) },
+            iconPosition: 'right',
         },
     ], [language])
     return (
@@ -70,12 +75,12 @@ const ProfileEventsList: FC<any> = (props) => {
         }
     }, [])
 
-    const onSuccess = useCallback(({ pagination }) => {
+    const onSuccess = useCallback(({ pagination }: any) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
 
-    const _renderItem = useCallback(({ item, index }) => {
+    const _renderItem = useCallback(({ item, index }: any) => {
         const { is_event_member, city, state, country, image, event_images } = item?.event
         const eventImage = calculateImageUrl(image, event_images)
         return (
