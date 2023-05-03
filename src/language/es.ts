@@ -513,6 +513,6 @@ export const es = {
     start_a_news_group: 'Crear un grupo de noticias',
     follow: 'Únete',
     unfollow: 'Dejar de Únete',
-    no_message_allowed_in_news_group: 'Como grupo de noticias local, no se permiten mensajes.'
-
+    no_message_allowed_in_news_group: 'Como grupo de noticias local, no se permiten mensajes',
+    news: 'Noticias',
 }
