@@ -31,7 +31,7 @@ const SearchChatScreen: FC<any> = (props) => {
             title: Language.chat,
             name: "ChatSearch",
             Screen: ChatSearch,
-            // icon: Images.ic_chat_bubble,
+            icon: Images.ic_chat_bubble,
             initialParams: { type: props?.route?.params?.type },
         },
         {
@@ -39,6 +39,7 @@ const SearchChatScreen: FC<any> = (props) => {
             name: "SearchedEvents",
             Screen: SearchedEvents,
             initialParams: { type: props?.route?.params?.type },
+            icon: Images.ic_calender
         }
     ] : [], [])
 

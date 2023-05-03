@@ -39,7 +39,7 @@ const reducer = (state: IState = initialState, { type, payload }: any): IState =
 }
 
 
-export const SearchProvider: FC = ({ children }) => {
+export const SearchProvider: FC<any> = ({ children }) => {
     const [{ chats, events, searchedText }, dispatch] = useReducer(reducer, initialState)
 
     const setChats = useCallback((chats: Array<any>) => {

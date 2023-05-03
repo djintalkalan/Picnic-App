@@ -519,7 +519,7 @@ export const en = {
   poll_end_date: 'Poll end date',
   poll_end_time: 'Poll end time',
   end_date_greater_than_current: 'End date must be after current date',
-  poll_ends_by_default: 'The poll ends 24 hours from now by default',
+  poll_ends_by_default: 'Select the end date and time for your poll',
   ends_on: 'Ends on',
   poll_ended: 'Poll ended',
   at: 'at',

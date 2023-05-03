@@ -762,10 +762,11 @@ const getLanguageString = (language: LanguageType) => {
 export const getReadableTime = (date: Date) => {
     try {
         if (!date) return ""
-        let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
-        let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
-        let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
-        return hour + ':' + min + ' ' + isAMPM
+        return dateFormat(date, 'hh:mm A')
+        // let hour = ((date?.getHours()) % 12 || 12) > 9 ? ((date?.getHours()) % 12 || 12) : '0' + ((date?.getHours()) % 12 || 12);
+        // let min = date?.getMinutes() > 9 ? date?.getMinutes() : '0' + date?.getMinutes();
+        // let isAMPM = date?.getHours() >= 12 ? 'PM' : 'AM'
+        // return hour + ':' + min + ' ' + isAMPM
 
     }
     catch (e) {
