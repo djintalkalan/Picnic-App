@@ -132,7 +132,7 @@ const GroupList: FC<any> = (props) => {
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 subtitle={getCityOnly(city, state, country)}
                 customView={is_group_member ?
-                    <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={!!is_broadcast_group ? Images.ic_megaphone : Images?.ic_chat_message} />
+                    <Image style={{ alignSelf: 'center', height: scaler(25), width: scaler(25) }} source={!!is_broadcast_group ? Images.ic_megaphone : Images?.ic_chat_message} />
                     : null}
                 onPress={() => {
                     dispatch(setActiveGroup(item))
