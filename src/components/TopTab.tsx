@@ -2,7 +2,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { colors } from 'assets';
 import { Text } from 'custom-components';
 import React, { useEffect } from 'react';
-import { ColorValue, Image, ImageSourcePropType, TouchableOpacity, View } from 'react-native';
+import { ColorValue, Image, ImageSourcePropType, ImageStyle, StyleProp, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { scaler } from 'utils';
 
 export interface TabProps {
@@ -12,6 +12,7 @@ export interface TabProps {
     disable?: boolean,
     Screen: React.ComponentType<any>,
     initialParams?: any
+    iconStyle?: StyleProp<ImageStyle>,
 }
 
 export interface TopTabProps {
@@ -82,6 +83,16 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                     });
                 };
 
+                const iconStyle = {
+                    tintColor: isFocused ? colors.colorPrimary : colors.colorGreyInactive,
+                    height: scaler(25),
+                    width: scaler(25),
+                    resizeMode: 'contain',
+                    marginRight: options?.iconPosition != "right" ? scaler(7) : undefined,
+                    marginLeft: options?.iconPosition == "right" ? scaler(7) : undefined,
+                    ...StyleSheet.flatten(options?.iconStyle)
+                }
+
                 return (
                     <TouchableOpacity
                         key={index}
@@ -96,13 +107,7 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                     >
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}  >
                             {options?.icon && options?.iconPosition != "right" ?
-                                <Image style={{
-                                    tintColor: isFocused ? colors.colorPrimary : colors.colorGreyInactive,
-                                    height: scaler(25),
-                                    width: scaler(25),
-                                    resizeMode: 'contain',
-                                    marginRight: scaler(7),
-                                }} source={options?.icon} /> : null}
+                                <Image style={iconStyle} source={options?.icon} /> : null}
                             <Text
                                 style={{
                                     fontSize: scaler(12),
@@ -113,13 +118,7 @@ const MyTabBar = ({ state, descriptors, navigation, onChangeIndex }: any) => {
                             >{label}
                             </Text>
                             {options?.icon && options?.iconPosition == "right" ?
-                                <Image style={{
-                                    tintColor: isFocused ? colors.colorPrimary : colors.colorGreyInactive,
-                                    height: scaler(25),
-                                    width: scaler(25),
-                                    resizeMode: 'contain',
-                                    marginLeft: scaler(7),
-                                }} source={options?.icon} /> : null}
+                                <Image style={iconStyle} source={options?.icon} /> : null}
                         </View>
                         <View style={{ width: '100%', height: 1, backgroundColor: isFocused ? colors.colorPrimary : '#DBDBDB' }} ></View>
 

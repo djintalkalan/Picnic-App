@@ -15,7 +15,7 @@ import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import Language from 'src/language/Language';
-import { formatAmount, getSelectedCurrencyFromValue, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
+import { formatAmount, getSelectedCurrencyFromValue, isNaturalNumber, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
 
 
 type FormType = {
@@ -230,7 +230,7 @@ const BookEvent: FC = (props: any) => {
                             maxLength={5}
                             rules={{
                                 validate: (v: string) => {
-                                    if ((selectedTicket?.capacity_type != 'unlimited' && parseInt(v) > (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0))) || parseInt(v) == 0) {
+                                    if (!isNaturalNumber(v) || (selectedTicket?.capacity_type != 'unlimited' && parseInt(v) > (selectedTicket?.capacity - (selectedTicket?.total_sold_tickets || 0))) || parseInt(v) == 0) {
                                         return Language.invalid_seat_quantity
                                     }
                                 }

@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react"
-import { TouchableOpacity, ViewStyle } from "react-native"
+import { StyleProp, TouchableOpacity, ViewStyle } from "react-native"
 //@ts-ignore
 import CardView from 'react-native-cardview'
 
@@ -8,7 +8,7 @@ interface ICardProps {
     cardMaxElevation?: number
     cornerRadius?: number
     useCompatPadding?: boolean
-    style?: ViewStyle | Array<ViewStyle>
+    style?: StyleProp<ViewStyle>
     onPress?: (e: any) => void
 }
 

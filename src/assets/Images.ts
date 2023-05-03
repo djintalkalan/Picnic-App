@@ -90,6 +90,7 @@ export const Images = {
   ic_emoji_not_sure: require("./images/ic_emoji_not_sure.png"),
   ic_emoji_question: require("./images/ic_emoji_question.png"),
   ic_emoji_surprised: require("./images/ic_emoji_surprised.png"),
-  // ic_paypal_error: require("./images/ic_paypal_error.png"),
-
+  ic_megaphone: require("./images/ic_megaphone.png"),
+  ic_megaphone_menu: require("./images/ic_megaphone_menu.png"),
+  // ic_megaphone_menu: require("./images/ic_megaphone_menu.png"),
 };

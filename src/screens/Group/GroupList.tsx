@@ -113,12 +113,12 @@ const GroupList: FC<any> = (props) => {
         dispatch(getAllGroups({ page, onSuccess, setLoader }))
     }, [])
 
-    const onSuccess = useCallback(({ pagination }) => {
+    const onSuccess = useCallback(({ pagination }: any) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
 
-    const _renderItem = useCallback(({ item }, rowMap) => {
-        const { is_group_member, city, state, country, can_anyone_host_events = 0 } = item
+    const _renderItem = useCallback(({ item }: any, rowMap: any) => {
+        const { is_group_member, city, state, country, can_anyone_host_events = 0, is_broadcast_group } = item
         return (
             <ListItem
                 containerStyle={{ height: ITEM_HEIGHT }}
@@ -131,7 +131,9 @@ const GroupList: FC<any> = (props) => {
                 icon={item?.image ? { uri: getImageUrl(item?.image, { width: scaler(120), type: 'groups' }) } : undefined}
                 // subtitle={city + ", " + (state ? (state + ", ") : "") + country}
                 subtitle={getCityOnly(city, state, country)}
-                customView={is_group_member ? <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={Images?.ic_member_tick} /> : null}
+                customView={is_group_member ?
+                    <Image style={{ alignSelf: 'center', height: scaler(20), width: scaler(20) }} source={!!is_broadcast_group ? Images.ic_megaphone : Images?.ic_chat_message} />
+                    : null}
                 onPress={() => {
                     dispatch(setActiveGroup(item))
                     NavigationService.navigate("GroupChatScreen", { id: item?._id })
@@ -152,7 +154,7 @@ const GroupList: FC<any> = (props) => {
         return insets.bottom
     }, [])
 
-    const _renderHiddenItem = useCallback(({ item }, rowMap) => {
+    const _renderHiddenItem = useCallback(({ item }: any, rowMap: any) => {
         const { is_group_member } = item
         return (<View style={{ flex: 1, flexDirection: 'row', height: ITEM_HEIGHT }} >
             <View style={{
