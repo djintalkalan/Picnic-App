@@ -288,6 +288,14 @@ class Database {
         }
     }
 
+    public getCalenderEvent = (eventId: string) => {
+        return this.otherDataStorage.getMap('calender_event_' + eventId) || null
+    }
+
+    public saveCalenderEvent = (eventId: string, data: any) => {
+        this.otherDataStorage.setMap('calender_event_' + eventId, data)
+    }
+
 }
 
 export const useDatabase = <T = any>(key: StorageType, defaultValue?: T):

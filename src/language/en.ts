@@ -512,6 +512,7 @@ export const en = {
   follow: 'Follow',
   unfollow: 'Unfollow',
   no_message_allowed_in_news_group: 'As a local news group, no messages are allowed',
+  news: 'News',
   yes: 'Yes',
   no: 'No',
   result: 'Result',
