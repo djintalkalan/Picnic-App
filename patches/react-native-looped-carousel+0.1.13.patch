@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-looped-carousel/index.js b/node_modules/react-native-looped-carousel/index.js
+index a47d574..86d464e 100644
+--- a/node_modules/react-native-looped-carousel/index.js
++++ b/node_modules/react-native-looped-carousel/index.js
+@@ -403,7 +403,7 @@ export default class Carousel extends Component {
+ 
+     return (
+       <View {...containerProps}>
+-        <ScrollView
++        <ScrollView scrollEventThrottle={0}
+           ref={(c) => { this.scrollView = c; }}
+           onScrollBeginDrag={this._onScrollBegin}
+           onMomentumScrollEnd={this._onScrollEnd}

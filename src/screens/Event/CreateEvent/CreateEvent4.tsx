@@ -4,7 +4,7 @@ import { store } from 'app-store/store';
 import { colors, Images } from 'assets';
 import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-import { IPaypalConnection, useDatabase } from 'database/Database';
+import { IPaypalConnection, useDatabase } from 'database';
 import { round } from 'lodash';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';

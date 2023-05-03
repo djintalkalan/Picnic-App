@@ -1,6 +1,6 @@
 import { colors } from 'assets';
 import { SingleBoldText, Text } from 'custom-components';
-import { useDatabase } from 'database/Database';
+import { useDatabase } from 'database';
 import React, { FC, useCallback, useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { getDisplayName, scaler } from 'utils';

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, ColorValue, GestureResponderEvent, Image, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, ColorValue, GestureResponderEvent, Image, ImageStyle as RNImageStyle, StyleProp, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FastImage, { ImageStyle, ResizeMode, Source } from 'react-native-fast-image';
 
 
@@ -13,7 +13,7 @@ interface IImageLoader {
     children?: any
     loadingStyle?: any
     placeholderSource?: any
-    placeholderStyle?: ViewStyle
+    placeholderStyle?: StyleProp<RNImageStyle>
     customImagePlaceholderDefaultStyle?: any
     reload?: boolean
     onPress?: (e?: GestureResponderEvent) => void

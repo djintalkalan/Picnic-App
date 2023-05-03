@@ -241,27 +241,27 @@ class Database {
     }
 
     //@ts-ignore
-    public getStoredValue = <T = any>(key: StorageType, defaultValue?: any): T => {
+    public getStoredValue = <T = any>(key: StorageType, defaultValue?: T): T => {
         switch (key) {
             case 'authToken':
             case 'firebaseToken':
             case 'selectedLanguage':
-                return this.getStorageForKey(key).getString(key) || defaultValue
+                return (this.getStorageForKey(key).getString(key) || defaultValue) as T
 
             case 'isLogin':
             case 'socketConnected':
-                return this.getStorageForKey(key).getBool(key) || defaultValue
+                return (this.getStorageForKey(key).getBool(key) || defaultValue) as T
 
             case 'userData':
             case 'currentLocation':
             case 'selectedLocation':
             case 'allLanguages':
             case 'paypalConnection':
-                return this.getStorageForKey(key).getMap(key) || defaultValue
+                return (this.getStorageForKey(key).getMap(key) || defaultValue) as T
 
             case 'recentSearches':
             case 'currencies':
-                return this.getStorageForKey(key).getArray(key) || (defaultValue ?? [])
+                return (this.getStorageForKey(key).getArray(key) || (defaultValue ?? [])) as T
         }
     }
 

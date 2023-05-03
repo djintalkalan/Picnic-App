@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { config } from "api";
 import { AxiosResponse } from "axios";
-import Database from "database/Database";
+import Database from 'database';
 import CryptoJS from "react-native-crypto-js";
 import UUIDService from 'src/uuid/UUIDService';
 

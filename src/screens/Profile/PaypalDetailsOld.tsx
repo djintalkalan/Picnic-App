@@ -3,7 +3,7 @@
 // import { colors } from 'assets/Colors';
 // import { Button, MyHeader, TextInput } from 'custom-components';
 // import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
-// import { useDatabase } from 'database/Database';
+// import { useDatabase } from 'database';
 // import React, { FC, useCallback, useEffect } from 'react';
 // import { useForm } from 'react-hook-form';
 // import { StyleSheet, View } from 'react-native';
