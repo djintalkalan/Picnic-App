@@ -28,7 +28,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
         }
     }, shallowEqual)
 
-    const { name, city, image, state, country, _id } = groupDetail ?? activeGroup
+    const { name, city, image, state, country, _id, is_broadcast_group } = groupDetail ?? activeGroup
 
     const activeBackgroundColorRef = useRef<ColorValue>(groupDetail?.background_color || DEFAULT_CHAT_BACKGROUND)
 
@@ -51,10 +51,10 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
 
     const tabs: TabProps[] = useMemo(() => [
         {
-            title: Language.chat,
+            title: is_broadcast_group ? Language.news : Language.chat,
             name: "Chats",
             Screen: GroupChats,
-            icon: Images.ic_chat_bubble,
+            icon: is_broadcast_group ? Images.ic_megaphone : Images.ic_chat_bubble,
             initialParams: { id: _id },
         },
         {
@@ -64,7 +64,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
             initialParams: { type: 'upcoming', id: _id, noLoader: true },
             icon: Images.ic_calender
         }
-    ], [_id, useLanguage()])
+    ], [_id, useLanguage(), is_broadcast_group])
 
     const defaultTabs: TabProps[] = useMemo(() => [
         {
