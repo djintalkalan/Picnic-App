@@ -84,5 +84,7 @@ export const Images = {
   ic_paypal_connect: require("./images/ic_paypal_connect.png"),
   ic_paypal_connected: require("./images/ic_paypal_connected.png"),
   ic_paypal_error: require("./images/ic_paypal_error.png"),
-  // ic_paypal_error: require("./images/ic_paypal_error.png"),
+  ic_megaphone: require("./images/ic_megaphone.png"),
+  ic_megaphone_menu: require("./images/ic_megaphone_menu.png"),
+  // ic_megaphone_menu: require("./images/ic_megaphone_menu.png"),
 };

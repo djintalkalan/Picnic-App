@@ -277,8 +277,12 @@ export const GroupChats: FC<any> = (props) => {
                             onPressSend={_onPressSend}
                         /> :
                         <>
-                            <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: colors.colorPlaceholder }} >
-                                <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
+                            <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: groupDetail?.is_broadcast_group == 1 ? colors.colorWhite : colors.colorPlaceholder }} >
+                                {groupDetail?.is_broadcast_group == 1 ?
+                                    <Text style={{ color: colors.colorPrimary, textAlign: 'center', fontSize: scaler(12) }} >{Language.no_message_allowed_in_news_group}</Text>
+                                    :
+                                    <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
+                                }
                             </View>
                         </>)
                     : null}

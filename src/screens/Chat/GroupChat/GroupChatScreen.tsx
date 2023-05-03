@@ -159,7 +159,7 @@ const GroupChatScreen: FC<NativeStackScreenProps<any, 'GroupChatScreen'>> = (pro
                                 <Image source={Images.ic_lens} style={{ tintColor: colors.colorBlack, height: scaler(20), width: scaler(20), resizeMode: 'contain' }} />
                             </TouchableOpacity>
                             :
-                            <Text style={styles.joinText} >{groupDetail?.status == 1 ? Language.join : ''}</Text>
+                            <Text style={styles.joinText} >{groupDetail?.status == 1 ? groupDetail?.is_broadcast_group == 1 ? Language.follow : Language.join : ''}</Text>
                         }
                     </TouchableOpacity>
                     {groupDetail?.is_admin ? <TouchableOpacity ref={colorPickerButtonRef} onPress={openColorPicker} style={{ paddingHorizontal: scaler(5) }}  >

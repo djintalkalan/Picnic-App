@@ -131,7 +131,7 @@ const Home: FC = () => {
                   _hideTouchAlert()
                 }}
                 title={Language.start_a_broadcast}
-                icon={Images.ic_create_group}
+                icon={Images.ic_megaphone_menu}
               />
               <InnerButton
                 onPress={() => {
