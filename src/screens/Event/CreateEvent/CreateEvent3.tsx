@@ -492,7 +492,7 @@ const CreateEvent3: FC<any> = props => {
                     backgroundColor={colors.colorTextInputBackground}
                     name={'capacity'}
                     returnKeyType={'done'}
-                    maxLength={5}
+                    maxLength={4}
                     rules={{
                       validate: (v: string) => {
                         if (!isUnlimitedCapacity && parseInt(v) == 0) {
@@ -578,7 +578,7 @@ const CreateEvent3: FC<any> = props => {
                     backgroundColor={colors.colorTextInputBackground}
                     name={'noOfFreeTickets'}
                     returnKeyType={'done'}
-                    maxLength={5}
+                    maxLength={4}
                     rules={{
                       validate: (v: string) => {
                         if (!isUnlimitedCapacity && parseInt(v) > parseInt(getValues('capacity') || "0")) {
@@ -808,7 +808,7 @@ const CreateEvent3: FC<any> = props => {
                                     backgroundColor={colors.colorTextInputBackground}
                                     name={`ticketPlans.${i}.capacity`}
                                     returnKeyType={'done'}
-                                    maxLength={5}
+                                    maxLength={4}
                                     rules={{
                                       validate: (v: string) => {
                                         if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`)) {
@@ -835,7 +835,7 @@ const CreateEvent3: FC<any> = props => {
                                   backgroundColor={colors.colorTextInputBackground}
                                   name={`ticketPlans.${i}.noOfFreeTickets`}
                                   returnKeyType={'done'}
-                                  maxLength={5}
+                                  maxLength={4}
                                   rules={{
                                     validate: (v: string) => {
                                       if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) > parseInt(getValues(`ticketPlans.${i}.capacity`) || "0")) {
