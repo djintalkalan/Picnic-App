@@ -529,6 +529,6 @@ export const es = {
     at: 'a las',
     upcoming_2: 'Próximos',
     previous: "Anteriores",
-    people_who_reacted: 'Pessoas que reagiram',
+    people_who_reacted: 'Lista de reacciones',
     all: "Todo",
 }

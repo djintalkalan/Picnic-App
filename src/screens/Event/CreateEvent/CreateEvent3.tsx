@@ -16,7 +16,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import Language, { useLanguage } from 'src/language/Language';
-import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getSelectedCurrencyFromText, getSelectedCurrencyFromValue, getZonedDate, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
+import { dateFormat, getFromZonedDate, getReadableDate, getReadableTime, getSelectedCurrencyFromText, getSelectedCurrencyFromValue, getZonedDate, isNaturalNumber, NavigationService, scaler, stringToDate, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert } from 'utils';
 import { ALL_CURRENCIES, REMOVED_CURRENCIES } from 'utils/Constants';
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
@@ -492,10 +492,10 @@ const CreateEvent3: FC<any> = props => {
                     backgroundColor={colors.colorTextInputBackground}
                     name={'capacity'}
                     returnKeyType={'done'}
-                    maxLength={5}
+                    maxLength={4}
                     rules={{
                       validate: (v: string) => {
-                        if (!isUnlimitedCapacity && parseInt(v) == 0) {
+                        if (!isNaturalNumber(v) || (!isUnlimitedCapacity && parseInt(v) == 0)) {
                           return Language.invalid_capacity
                         }
                       }
@@ -578,7 +578,7 @@ const CreateEvent3: FC<any> = props => {
                     backgroundColor={colors.colorTextInputBackground}
                     name={'noOfFreeTickets'}
                     returnKeyType={'done'}
-                    maxLength={5}
+                    maxLength={4}
                     rules={{
                       validate: (v: string) => {
                         if (!isUnlimitedCapacity && parseInt(v) > parseInt(getValues('capacity') || "0")) {
@@ -808,7 +808,7 @@ const CreateEvent3: FC<any> = props => {
                                     backgroundColor={colors.colorTextInputBackground}
                                     name={`ticketPlans.${i}.capacity`}
                                     returnKeyType={'done'}
-                                    maxLength={5}
+                                    maxLength={4}
                                     rules={{
                                       validate: (v: string) => {
                                         if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`)) {
@@ -835,7 +835,7 @@ const CreateEvent3: FC<any> = props => {
                                   backgroundColor={colors.colorTextInputBackground}
                                   name={`ticketPlans.${i}.noOfFreeTickets`}
                                   returnKeyType={'done'}
-                                  maxLength={5}
+                                  maxLength={4}
                                   rules={{
                                     validate: (v: string) => {
                                       if (!getValues(`ticketPlans.${i}.isUnlimitedCapacity`) && parseInt(v) > parseInt(getValues(`ticketPlans.${i}.capacity`) || "0")) {
