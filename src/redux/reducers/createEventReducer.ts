@@ -102,5 +102,7 @@ const deleteExtraKeys = (d: any) => {
     delete d.is_admin
     delete d.is_event_admin
     delete d.background_color
+    delete d.resource_type
+    delete d.is_broadcast_group
     return d
 }

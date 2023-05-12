@@ -1080,7 +1080,6 @@ const styles = StyleSheet.create({
 
 const removePaymentKeys = (payload: any) => {
   payload.ticket_type = ""
-  payload.resource_type = undefined
   payload.event_fees = ""
   payload.event_currency = ""
   payload.ticket_plans = []
