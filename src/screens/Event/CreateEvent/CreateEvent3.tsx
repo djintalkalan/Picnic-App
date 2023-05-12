@@ -377,7 +377,7 @@ const CreateEvent3: FC<any> = props => {
     return (datePickerVisibility == 'date') ? (getValues(dateString) || undefined) : getValues(timeString) || stringToDate(dateFormat(getValues(dateString), "YYYY-MM-DD"), "YYYY-MM-DD", "-")
   }
 
-  const showCurrencyDropDown = useCallback((e) => {
+  const showCurrencyDropDown = useCallback(() => {
     Keyboard.dismiss()
     setTimeout(() => {
       currencyRef.current?.measureInWindow((x, y, w, h) => {
@@ -1080,6 +1080,7 @@ const styles = StyleSheet.create({
 
 const removePaymentKeys = (payload: any) => {
   payload.ticket_type = ""
+  payload.resource_type = undefined
   payload.event_fees = ""
   payload.event_currency = ""
   payload.ticket_plans = []
