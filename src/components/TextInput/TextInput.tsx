@@ -246,7 +246,7 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 color: colors.colorRed,
                 fontSize: scaler(10),
             }}>
-                {errors?.[errorName]?.message || (capitalize(errorName) + " " + Language.is_required)}
+                {errors?.[errorName]?.message?.toString() || (capitalize(errorName) + " " + Language.is_required)}
             </Text>}
 
         </TouchableOpacity>
