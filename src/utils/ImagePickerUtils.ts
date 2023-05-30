@@ -141,7 +141,7 @@ const openPickImageOrVideo = async (type: 'MULTIPLE_IMAGE_PICKER_OPTIONS' | 'PRO
     }
     catch (e: any) {
         console.log("Picker Error", e)
-        if (e?.code.includes('E_NO_LIBRARY_PERMISSION')) {
+        if (e?.code?.includes('E_NO_LIBRARY_PERMISSION')) {
             Alert.alert(Language.permission_required, Language.app_needs_photo_permission, [
                 {
                     text: Language.give_permission, onPress: async () => {

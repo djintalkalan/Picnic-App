@@ -195,7 +195,8 @@ const showIntercomNotification = (data: any) => {
             sound: 'default',
             // category: AndroidCategory.ALARM,
             defaults: [AndroidDefaults.ALL],
-            color: AndroidColor.RED,
+            color: AndroidColor.WHITE,
+            smallIcon: 'ic_stat_ic_notification',
             pressAction: {
                 id: 'default',
                 launchActivity: 'default',
@@ -247,6 +248,8 @@ const showNotification = async (message: any, isBackground: boolean) => {
                             groupSummary: true,
                             groupId: data?.chat_room_id,
                             groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                            color: AndroidColor.WHITE,
+                            smallIcon: 'ic_stat_ic_notification',
                             pressAction: {
                                 id: 'default',
                                 launchActivity: 'default',
@@ -267,6 +270,8 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         defaults: [AndroidDefaults.ALL],
                         groupId: data?.chat_room_id,
                         groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                        color: AndroidColor.WHITE,
+                        smallIcon: 'ic_stat_ic_notification',
                         pressAction: {
                             id: 'default',
                             launchActivity: 'default',
@@ -314,6 +319,8 @@ const showNotification = async (message: any, isBackground: boolean) => {
                             groupSummary: true,
                             groupId: (data?.group || data?.event)?._id,
                             groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                            color: AndroidColor.WHITE,
+                            smallIcon: 'ic_stat_ic_notification',
                             pressAction: {
                                 id: 'default',
                                 launchActivity: 'default',
@@ -334,6 +341,8 @@ const showNotification = async (message: any, isBackground: boolean) => {
                         defaults: [AndroidDefaults.ALL],
                         groupId: (data?.group || data?.event)?._id,
                         groupAlertBehavior: AndroidGroupAlertBehavior.CHILDREN,
+                        color: AndroidColor.WHITE,
+                        smallIcon: 'ic_stat_ic_notification',
                         pressAction: {
                             id: 'default',
                             launchActivity: 'default',
