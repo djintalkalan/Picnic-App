@@ -60,7 +60,7 @@ export const Button = (props: ButtonProps) => {
 
             buttonStyle: {
                 borderRadius: radius ?? scaler(10),
-                backgroundColor: disabled ? colors?.colorGreyText : backgroundColor ?? colors?.colorPrimary,
+                backgroundColor: !!disabled ? colors?.colorGreyText : backgroundColor ?? colors?.colorPrimary,
                 minWidth: minWidth == null ? undefined : minWidth ?? scaler(120),
                 width: width ?? undefined,
                 alignItems: 'center',
@@ -83,7 +83,7 @@ export const Button = (props: ButtonProps) => {
 
     return (
         <View pointerEvents={props.pointerEvents} style={styles.contentContainerStyle}>
-            <TouchableOpacity disabled={disabled}
+            <TouchableOpacity disabled={!!disabled}
                 onPress={onPressButton}
                 style={styles.buttonStyle}>
                 <Text style={styles.textStyle} type={type} >{title}</Text>
