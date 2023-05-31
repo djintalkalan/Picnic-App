@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, PropsWithChildren, useMemo } from 'react';
 import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { useKeyboardService } from './KeyboardService';
 
@@ -6,7 +6,7 @@ interface KeyboardTopViewProps {
     style?: ViewStyle,
 }
 
-export const KeyboardTopView: FC<KeyboardTopViewProps> = (props) => {
+export const KeyboardTopView: FC<PropsWithChildren<KeyboardTopViewProps>> = (props) => {
     const { isKeyboard, keyboardHeight } = useKeyboardService()
     const styles = useMemo(() => StyleSheet.create({
         container: {
@@ -25,7 +25,7 @@ export const KeyboardTopView: FC<KeyboardTopViewProps> = (props) => {
     )
 }
 
-export const KeyboardHideView: FC<KeyboardTopViewProps> = (props) => {
+export const KeyboardHideView: FC<PropsWithChildren<KeyboardTopViewProps>> = (props) => {
     const { isKeyboard, } = useKeyboardService()
     const styles = useMemo(() => StyleSheet.create({
         container: {

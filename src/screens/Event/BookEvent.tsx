@@ -27,7 +27,7 @@ type FormType = {
 
 const BookEvent: FC = (props: any) => {
     const [noOfTickets, setNoOfTickets] = useState("")
-    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'card' | undefined>();
+    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'card'>();
     const [selectedTicket, setSelectedTicket] = useState<any>({})
     const [toggle, setToggle] = useState(false)
     const [isUserDonating, setIsUserDonation] = useState(true)
@@ -87,7 +87,7 @@ const BookEvent: FC = (props: any) => {
     const dispatch = useDispatch();
 
 
-    const confirmReservation = useCallback((data) => {
+    const confirmReservation = useCallback((data: FormType) => {
 
         const getPaymentMethod = () => {
             if (event?.is_free_event) {
@@ -102,7 +102,7 @@ const BookEvent: FC = (props: any) => {
         let payload = {
             paypal_merchant_id: undefined,
             resource_id: event?._id,
-            no_of_tickets: noOfTickets?.toString(),
+            no_of_tickets: data?.noOfSeats?.toString(),
             plan_id: selectedTicket?._id ?? '',
             transaction_id: "",
             donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'card') ? data.donationAmount : '0',
@@ -120,7 +120,7 @@ const BookEvent: FC = (props: any) => {
             action = authorizePayment
         }
         dispatch(action(payload))
-    }, [event, noOfTickets, payMethodSelected, selectedTicket, isUserDonating])
+    }, [event, payMethodSelected, selectedTicket, isUserDonating])
 
 
 
@@ -168,13 +168,12 @@ const BookEvent: FC = (props: any) => {
             confirmReservation(data)
         else _showPopUpAlert({
             title: Language.confirm_payment_method,
-            //@ts-ignore
-            message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected] + '?',
-            onPressButton: (data) => { confirmReservation(data), _hidePopUpAlert() },
+            message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected as 'done'] + '?',
+            onPressButton: () => { confirmReservation(data), _hidePopUpAlert() },
             buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + " " + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
             buttonStyle: { width: '100%' }
         })
-    })(), [event, noOfTickets, payMethodSelected, isUserDonating])
+    })(), [event?.is_free_event, payMethodSelected, confirmReservation])
 
     const { availableSeats, allSeats } = useMemo(() => {
         return {

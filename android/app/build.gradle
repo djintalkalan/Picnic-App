@@ -3,8 +3,6 @@ apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
-import com.android.build.OutputFile
-
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -162,7 +160,7 @@ android {
             // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             // def versionCodes = ["armeabi-v7a": 1,"arm64-v8a": 3]
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-            def abi = output.getFilter(OutputFile.ABI)
+            def abi = output.getFilter("ABI")
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride = defaultConfig.versionCode * 1000 + versionCodes.get(abi)
                 if (variant.buildType.name.equals("release")) {
@@ -182,7 +180,7 @@ android {
         pickFirst '**/libc++_shared.so'
     }
 
-    lintOptions {
+    lint {
         checkReleaseBuilds false
         abortOnError false
     }
@@ -269,7 +267,7 @@ def releaseConfig() {
         def keyAlias = keyStoreProperties.getProperty('keyAlias')
         def keyPassword = keyStoreProperties.getProperty('keyPassword')
         Boolean isReleaseKeysAvailable = storeFile != null && storePassword != null && keyAlias != null && keyPassword != null
-        if (isReleaseKeysAvailable){
+        if (isReleaseKeysAvailable) {
             config.storeFile = file(storeFile)
             config.storePassword = storePassword
             config.keyAlias = keyAlias
