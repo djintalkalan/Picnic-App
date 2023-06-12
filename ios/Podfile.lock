@@ -884,9 +884,9 @@ PODS:
     - gRPC-Core/Interface (= 1.44.0)
     - Libuv-gRPC (= 0.0.10)
   - gRPC-Core/Interface (1.44.0)
-  - hermes-engine (0.71.8):
-    - hermes-engine/Pre-built (= 0.71.8)
-  - hermes-engine/Pre-built (0.71.8)
+  - hermes-engine (0.71.10):
+    - hermes-engine/Pre-built (= 0.71.10)
+  - hermes-engine/Pre-built (0.71.10)
   - Intercom (12.4.3)
   - intercom-react-native (3.0.5):
     - Intercom (~> 12.4.3)
@@ -1833,7 +1833,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   "gRPC-C++": 9675f953ace2b3de7c506039d77be1f2e77a8db2
   gRPC-Core: 943e491cb0d45598b0b0eb9e910c88080369290b
-  hermes-engine: 47986d26692ae75ee7a17ab049caee8864f855de
+  hermes-engine: d27603b55a48402501ad1928c05411dae9cd6b85
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   intercom-react-native: b2a48297f0ed988970c819133cabe8c965080003
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
