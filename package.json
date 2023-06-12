@@ -97,7 +97,7 @@
     "moment-timezone": "^0.5.40",
     "react": "18.2.0",
     "react-hook-form": "^7.43.7",
-    "react-native": "0.71.8",
+    "react-native": "0.71.10",
     "react-native-add-calendar-event": "^4.0.0",
     "react-native-autolink": "^4.0.0",
     "react-native-aws3": "^0.0.9",
