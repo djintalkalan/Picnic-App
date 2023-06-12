@@ -54,16 +54,15 @@ interface IChatItem {
     message_liked_by_users: Array<any>
     group?: any
     event?: any
-    isGroupType: boolean
     member_deleted_by_user: any
     message_deleted_by_user: any
-    isMuted?: boolean
     coordinates: { lat: string, lng: string }
     text: string
     isMember: boolean
     systemMessageTemplate: any
     event_detail: any,
     poll: any
+    itemType: 'group' | 'event' | 'muted'
 }
 
 const DELETE_TEXT = "{{admin_name}} {{has_deleted_post_from}} {{display_name}}"
@@ -81,7 +80,7 @@ const ChatItem = (props: IChatItem) => {
     const { loadVideo } = useVideoPlayer()
     const [link, setLink] = useState("")
 
-    const { message, poll, isAdmin, message_deleted_by_user, isGroupType, is_system_message, user,
+    const { message, poll, isAdmin, message_deleted_by_user, is_system_message, user,
         event_detail: eventInMessage,
         message_type, _id, setRepliedMessage, parent_message,
         coordinates, contacts,
@@ -91,9 +90,15 @@ const ChatItem = (props: IChatItem) => {
         // message_liked_by_user_name,
         // parent_id,
         message_liked_by_users,
-        message_total_likes_count, isMuted, isMember, systemMessageTemplate } = props ?? {}
+        message_total_likes_count,
+        itemType,
+        isMember,
+        systemMessageTemplate,
+        is_message_liked_by_me = false,
+    } = props ?? {}
 
-    const group = useMemo(() => (isGroupType ? props?.group : props?.event), [isGroupType, props?.group, props?.event])
+    const group = useMemo(() => (itemType == 'group' ? props?.group : props?.event), [props?.group, props?.event])
+
     const { display_name, userImage, userId } = useMemo(() => ({
         display_name: getDisplayName(user),
         userImage: user?.image,// user?.account_deleted == 1 ? null : user?.image,
@@ -101,9 +106,8 @@ const ChatItem = (props: IChatItem) => {
     }), [user])
     const [userData] = useDatabase<any>("userData");
 
-    let is_message_liked_by_me = props?.is_message_liked_by_me || false
     const is_message_sender_is_admin = group?.user_id == props?.created_by
-    const isAdminOnly = (isGroupType && group?.restriction_mode == 'admin' && group?.status == 1 && group?.is_group_member) || false
+    const isAdminOnly = (itemType == 'group' && group?.restriction_mode == 'admin' && group?.status == 1 && group?.is_group_member) || false
 
     const like_type = useMemo(() => {
         if (is_message_liked_by_me)
@@ -229,7 +233,7 @@ const ChatItem = (props: IChatItem) => {
     }, [message_liked_by_users, userData, userId])
 
     const _openChatActionMenu = useCallback(() => {
-        if (!isMember && !isMuted) return
+        if (!isMember && itemType != 'muted') return
         let buttons: IBottomMenuButton[] = [];
         if (message_type != 'poll' && message_type != 'poll_result') {
             buttons.push({
@@ -238,11 +242,10 @@ const ChatItem = (props: IChatItem) => {
             })
         }
 
-        buttons.push(
-            {
-                title: Language.mute,
-                onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [isGroupType ? "groupId" : "eventId"]: group?._id } })),
-            });
+        buttons.push({
+            title: Language.mute,
+            onPress: () => dispatch(muteUnmuteResource({ data: { is_mute: '1', resource_type: "message", resource_id: _id, [itemType == 'group' ? "groupId" : "eventId"]: group?._id } })),
+        });
 
         if ((myMessage || isAdmin) && message_type != 'poll_result') {
             buttons.push({
@@ -251,7 +254,7 @@ const ChatItem = (props: IChatItem) => {
                     _showPopUpAlert({
                         message: Language.are_you_sure_delete_message,
                         onPressButton: () => {
-                            SocketService.emit(isGroupType ? EMIT_GROUP_MESSAGE_DELETE : EMIT_EVENT_MESSAGE_DELETE, {
+                            SocketService.emit(itemType == 'group' ? EMIT_GROUP_MESSAGE_DELETE : EMIT_EVENT_MESSAGE_DELETE, {
                                 resource_id: group?._id,
                                 message_id: _id
                             })
@@ -295,7 +298,7 @@ const ChatItem = (props: IChatItem) => {
                 },
             }]
         }
-        if (isMuted) {
+        if (itemType == 'muted') {
             buttons = [{
                 title: Language.unmute,
                 onPress: () => {
@@ -304,9 +307,6 @@ const ChatItem = (props: IChatItem) => {
                             resource_id: _id,
                             resource_type: 'message',
                             is_mute: '0',
-                        },
-                        onSuccess: (res) => {
-                            // setResources(_ => _.filter(_ => _._id != item?._id))
                         }
                     }))
                 },
@@ -318,7 +318,7 @@ const ChatItem = (props: IChatItem) => {
                 _showPopUpAlert({
                     message: Language.are_you_sure_remove_member,
                     onPressButton: () => {
-                        SocketService.emit(isGroupType ? EMIT_GROUP_MEMBER_DELETE : EMIT_EVENT_MEMBER_DELETE, {
+                        SocketService.emit(itemType == 'group' ? EMIT_GROUP_MEMBER_DELETE : EMIT_EVENT_MEMBER_DELETE, {
                             resource_id: group?._id,
                             user_id: userId
                         })
@@ -327,18 +327,6 @@ const ChatItem = (props: IChatItem) => {
                     buttonStyle: { backgroundColor: colors.colorRed },
                     buttonText: Language.yes_remove
                 })
-
-                // dispatch(muteUnmuteResource({
-                //     data: {
-                //         groupId: group?._id,
-                //         resource_id: _id,
-                //         resource_type: 'message',
-                //         is_mute: '1'
-                //     },
-                //     onSuccess: () => {
-
-                //     }
-                // }))
             },
             textStyle: { color: colors.colorRed }
         }))
@@ -419,7 +407,7 @@ const ChatItem = (props: IChatItem) => {
             message: {
                 message_id: _id,
                 resource_id: group?._id,
-                resource_type: isGroupType ? 'group' : 'event'
+                resource_type: itemType == 'group' ? 'group' : 'event'
             }
         })
     }, [myMessage, like_type])
@@ -430,12 +418,12 @@ const ChatItem = (props: IChatItem) => {
             is_like: is_message_liked_by_me ? "0" : '1',
             like_type: is_message_liked_by_me ? '' : 'like',
             resource_id: group?._id,
-            resource_type: isGroupType ? 'group' : 'event',
+            resource_type: itemType == 'group' ? 'group' : 'event',
         })
 
         dispatch(updateLikeInLocal({
             groupId: group?._id,
-            resourceType: isGroupType ? 'group' : 'event',
+            resourceType: itemType == 'group' ? 'group' : 'event',
             message_id: _id,
             like_type: is_message_liked_by_me ? '' : 'like',
         }))
@@ -454,7 +442,7 @@ const ChatItem = (props: IChatItem) => {
 
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
+                <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
                     <ImageLoader
                         placeholderSource={Images.ic_home_profile}
                         source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -462,7 +450,7 @@ const ChatItem = (props: IChatItem) => {
                 </View>
                 <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View>
             <ImageLoader
@@ -478,7 +466,7 @@ const ChatItem = (props: IChatItem) => {
                     style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
             </View>
                 : null}
-            {isMuted || (!isMember && !isAdminOnly) ?
+            {itemType == 'muted' || (!isMember && !isAdminOnly) ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
@@ -503,8 +491,8 @@ const ChatItem = (props: IChatItem) => {
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0, overflow: 'hidden' }]} >
                     {renderMap}
                 </View>
-                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                {isMember || itemType == 'muted' ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> : null}
             </View>
         }
@@ -512,7 +500,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                 <View style={{ flex: 1, overflow: 'hidden' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -520,7 +508,7 @@ const ChatItem = (props: IChatItem) => {
                         </View>
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                         <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                            <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                            <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                         </TouchableOpacity>
                     </View>
                     {renderMap}
@@ -559,7 +547,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                 <View style={{ flex: 1, overflow: 'hidden' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -589,10 +577,10 @@ const ChatItem = (props: IChatItem) => {
             //     />
             // </View>
 
-            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member || isMuted) ? 'none' : undefined} >
+            return <View style={styles.myContainer} pointerEvents={!(group?.is_group_member || group?.is_event_member || itemType == 'muted') ? 'none' : undefined} >
                 <PollMessage containerStyle={{ marginVertical: scaler(0), }} {...props} />
-                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                {isMember || itemType == 'muted' ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> : null}
             </View>
         }
@@ -601,7 +589,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                 <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -639,7 +627,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                 <View style={{ flex: 1, overflow: 'hidden' }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -708,8 +696,8 @@ const ChatItem = (props: IChatItem) => {
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end', padding: 0 }]} >
                     {map}
                 </View>
-                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                {isMember || itemType == 'muted' ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> : null}
             </View>
         }
@@ -717,7 +705,7 @@ const ChatItem = (props: IChatItem) => {
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
                 <View style={{ flex: 1 }} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                        <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                        <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
                                 placeholderSource={Images.ic_home_profile}
                                 source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -725,7 +713,7 @@ const ChatItem = (props: IChatItem) => {
                         </View>
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                         <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                            <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                            <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                         </TouchableOpacity>
                     </View>
                     {map}
@@ -737,7 +725,7 @@ const ChatItem = (props: IChatItem) => {
     if (message_type == 'file') {
         return <View style={{ width: '100%', padding: scaler(10), backgroundColor: colors.colorWhite }} >
             <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
+                <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorWhite }] : styles.imageContainer}>
                     <ImageLoader
                         placeholderSource={Images.ic_home_profile}
                         source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -745,7 +733,7 @@ const ChatItem = (props: IChatItem) => {
                 </View>
                 <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                 <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity>
             </View>
             <ImageLoader
@@ -755,7 +743,7 @@ const ChatItem = (props: IChatItem) => {
                 source={{ uri: config.VIDEO_URL + (message?.substring(0, message?.lastIndexOf("."))) + "-00001.png" }}// getImageUrl(message, { width: width, type: 'messages' }) }}
                 //@ts-ignore
                 style={{ resizeMode: 'contain', marginVertical: scaler(10), borderRadius: scaler(15), height: (width - scaler(20)) / 1.9, width: width - scaler(20) }} />
-            <TouchableOpacity disabled={isMuted} onPress={() => {
+            <TouchableOpacity disabled={itemType == 'muted'} onPress={() => {
                 loadVideo && loadVideo(config.VIDEO_URL + message)
             }} style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: scaler(55), bottom: scaler(40), left: width / 3, right: width / 3, }} >
                 {/* <View style={{ backgroundColor: colors.colorWhite, borderRadius: scaler(30), height: scaler(60), width: scaler(60) }} > */}
@@ -767,7 +755,7 @@ const ChatItem = (props: IChatItem) => {
                     style={[styles.message, { color: colors.colorBlackText, flex: 1, }]} >{text?.trim()}</Text>
             </View>
                 : null}
-            {isMuted || (!isMember && !isAdminOnly) ?
+            {itemType == 'muted' || (!isMember && !isAdminOnly) ?
                 null :
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
@@ -788,7 +776,7 @@ const ChatItem = (props: IChatItem) => {
 
     if (myMessage) {
         return <>
-            {isMuted && link ? <Preview
+            {itemType == 'muted' && link ? <Preview
                 text={link} /> : null}
             <View style={styles.myContainer} >
                 <View style={[styles.myMessageContainer, { alignItems: 'flex-end' }]} >
@@ -835,7 +823,7 @@ const ChatItem = (props: IChatItem) => {
                     <Text autoLink
                         onLongPress={_onCopy}
                         style={[styles.myMessage, {}]} >{message?.trim()}</Text>
-                    {isMuted || (!isMember && !isAdminOnly) ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
+                    {itemType == 'muted' || (!isMember && !isAdminOnly) ? null : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scaler(8) }} >
                         <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                             <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
                                 resizeMode: 'contain',
@@ -853,18 +841,18 @@ const ChatItem = (props: IChatItem) => {
                     </View>}
                 </View>
 
-                {isMember || isMuted ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
-                    <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                {isMember || itemType == 'muted' ? <TouchableOpacity onPress={_openChatActionMenu} style={{ marginStart: scaler(5) }} >
+                    <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                 </TouchableOpacity> : null}
             </View>
-            {!isMuted && link ? <Preview
+            {itemType != 'muted' && link ? <Preview
                 text={link} /> : null}
         </>
     }
 
     return (
         <>
-            {isMuted && link ? <Preview
+            {itemType == 'muted' && link ? <Preview
                 text={link} /> : null}
             <View style={styles.container} >
                 <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
@@ -873,7 +861,7 @@ const ChatItem = (props: IChatItem) => {
                 </TouchableOpacity> */}
                     <View style={{ flex: 1 }} >
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
-                            <View style={(is_message_sender_is_admin || isMuted) ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
+                            <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                                 <ImageLoader
                                     placeholderSource={Images.ic_home_profile}
                                     source={{ uri: getImageUrl(userImage, { width: scaler(30), type: 'users' }) }}
@@ -881,7 +869,7 @@ const ChatItem = (props: IChatItem) => {
                             </View>
                             <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
                             <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
-                                <MaterialCommunityIcons color={!isMember && !isMuted ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                                <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
                             </TouchableOpacity>
                         </View>
                         {/* <Text style={is_message_sender_is_admin ? [styles.userName, { color: colors.colorPrimary }] : styles.userName} >{display_name}</Text> */}
@@ -927,7 +915,7 @@ const ChatItem = (props: IChatItem) => {
                                 : null}
                             <Text autoLink onLongPress={_onCopy}
                                 style={styles.message} >{message?.trim()}</Text>
-                            {isMuted || (!isMember && !isAdminOnly) ? null :
+                            {itemType == 'muted' || (!isMember && !isAdminOnly) ? null :
                                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', marginTop: scaler(8) }} >
                                     <TouchableOpacity onLongPress={onLongPressLikeIcon} disabled={!isMember && !isAdminOnly} onPress={onPressLikeIcon} >
                                         <Image source={is_message_liked_by_me ? (Images as any)['ic_emoji_' + like_type] : Images.ic_smiley} style={{
@@ -950,7 +938,7 @@ const ChatItem = (props: IChatItem) => {
                 </View>
 
             </View>
-            {!isMuted && link ? <Preview
+            {itemType != 'muted' && link ? <Preview
                 text={link} /> : null}
         </>
     )
@@ -1042,5 +1030,3 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
 })
-
-

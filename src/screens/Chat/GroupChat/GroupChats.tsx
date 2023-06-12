@@ -7,7 +7,7 @@ import { ILocation, useDatabase } from 'database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, ListRenderItem, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -88,7 +88,7 @@ export const GroupChats: FC<any> = (props) => {
     }, [repliedMessage])
 
 
-    const _uploadImageOrVideo = useCallback((image, mediaType: 'photo' | 'video', text?: string) => {
+    const _uploadImageOrVideo = useCallback((image: any, mediaType: 'photo' | 'video', text?: string) => {
 
         dispatch(uploadFile({
             prefixType: mediaType == 'video' ? 'video' : 'messages',
@@ -118,7 +118,7 @@ export const GroupChats: FC<any> = (props) => {
         }))
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+    const _onChooseImage = useCallback((image: any, mediaType: 'photo' | 'video') => {
         NavigationService.navigate("ImagePreview", { image, mediaType, repliedMessage, _uploadImageOrVideo, setRepliedMessage });
     }, [repliedMessage])
 
@@ -203,16 +203,16 @@ export const GroupChats: FC<any> = (props) => {
         }
     }, [groupDetail?.background_color])
     const systemMessageTemplate = useSystemMessageTemplate()
-    const _renderChatItem = useCallback(({ item, index }) => {
+    const _renderChatItem = useCallback<ListRenderItem<any>>(({ item, index }) => {
         return (
             <ChatItem
                 {...item}
                 systemMessageTemplate={systemMessageTemplate}
-                isGroupType={true}
                 group={groupDetail}
                 isMember={groupDetail?.status == 1 && groupDetail?.is_group_member && (groupDetail?.is_admin || groupDetail?.restriction_mode == 'open' || (groupDetail?.restriction_mode == 'subscribed' && userData?.is_premium))}
                 isAdmin={groupDetail?.is_admin}
                 setRepliedMessage={setRepliedMessage}
+                itemType={'group'}
             />)
     }, [groupDetail])
 

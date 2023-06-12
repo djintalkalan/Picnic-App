@@ -4,7 +4,7 @@ import { colors } from 'assets/Colors';
 import { MyHeader } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList, ListRenderItem, RefreshControl, StyleSheet, View } from 'react-native';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ChatItem from 'screens/Chat/ChatItem';
 import Language, { useSystemMessageTemplate } from 'src/language/Language';
@@ -33,17 +33,17 @@ const HiddenPosts: FC = () => {
         dispatch(getMutedResources({ resource_type: 'message', page, onSuccess: onSuccess }))
     }, [])
 
-    const onSuccess = useCallback(({ pagination }) => {
+    const onSuccess = useCallback(({ pagination }: any) => {
         paginationState.current = pagination || { currentPage: 1, totalPages: 1 }
     }, [])
     const systemMessageTemplate = useSystemMessageTemplate()
 
-    const _renderChatItem = useCallback(({ item, index }) => {
+    const _renderChatItem = useCallback<ListRenderItem<any>>(({ item, index }) => {
         return (
             <ChatItem
                 systemMessageTemplate={systemMessageTemplate}
                 {...item?.muted_messages}
-                isMuted={true}
+                itemType={'muted'}
             />)
     }, [])
 

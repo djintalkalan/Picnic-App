@@ -8,7 +8,7 @@ import { ILocation, useDatabase } from 'database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ColorValue, Dimensions, FlatList, GestureResponderEvent, Image, ImageBackground, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ColorValue, Dimensions, FlatList, GestureResponderEvent, Image, ImageBackground, ListRenderItem, Platform, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -90,7 +90,7 @@ const EventChats: FC<any> = (props) => {
         }
     }, [repliedMessage])
 
-    const _uploadImageOrVideo = useCallback((image, mediaType: 'photo' | 'video', text?: string) => {
+    const _uploadImageOrVideo = useCallback((image: any, mediaType: 'photo' | 'video', text?: string) => {
         dispatch(uploadFile({
             prefixType: mediaType == 'video' ? 'video' : 'messages',
             image, onSuccess: (url, thumbnail) => {
@@ -120,7 +120,7 @@ const EventChats: FC<any> = (props) => {
         }))
     }, [repliedMessage])
 
-    const _onChooseImage = useCallback((image, mediaType: 'photo' | 'video') => {
+    const _onChooseImage = useCallback((image: any, mediaType: 'photo' | 'video') => {
         NavigationService.navigate("ImagePreview", { image, mediaType, repliedMessage, _uploadImageOrVideo, setRepliedMessage });
     }, [repliedMessage])
 
@@ -211,10 +211,11 @@ const EventChats: FC<any> = (props) => {
 
     const systemMessageTemplate = useSystemMessageTemplate()
 
-    const _renderChatItem = useCallback(({ item, index }) => {
+    const _renderChatItem = useCallback<ListRenderItem<any>>(({ item, index }) => {
         return (
             <ChatItem
                 {...item}
+                itemType={'event'}
                 systemMessageTemplate={systemMessageTemplate}
                 event={eventDetail}
                 isAdmin={eventDetail?.is_admin}
