@@ -4,7 +4,7 @@ import { Button, MyHeader, Text, TextInput, useKeyboardService } from "custom-co
 import { SafeAreaViewWithStatusBar } from "custom-components/FocusAwareStatusBar";
 import { add } from "date-fns";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { DeviceEventEmitter, EmitterSubscription, StyleSheet, View } from "react-native";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -14,8 +14,13 @@ import Language from "src/language/Language";
 import { dateFormat, getReadableDate, getReadableTime, roundToNearest15, scaler, stringToDate, _showErrorMessage } from "utils";
 const closeImage = AntDesign.getImageSourceSync("close", 50, colors.colorErrorRed)
 
+interface Option {
+    value: string
+}
+
 interface FormType {
-    question: string
+    question: string,
+    pollOptions: Option[],
     endDate?: Date | null,
     endTime?: Date | null,
 }
@@ -37,11 +42,16 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
         defaultValues: (() => {
             const nextDate = roundToNearest15(add(new Date(), { days: 1 }))
             return {
+                pollOptions: [{ value: '' }, { value: '' }],
                 endDate: nextDate,
                 endTime: nextDate
             }
         })()
     });
+
+    const {
+        fields: pollOptions, append, prepend, remove, insert, update, replace
+    } = useFieldArray<FormType>({ name: 'pollOptions', control: control, })
 
     const keyboardValues = useKeyboardService()
 
@@ -65,12 +75,11 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
         return (datePickerVisibility == 'date') ? (getValues('endDate') || undefined) : getValues('endTime') || stringToDate(dateFormat(getValues('endDate'), "YYYY-MM-DD"), "YYYY-MM-DD", "-")
     }
 
-    useEffect(() => {
-
-    }, [])
-
     const onSubmit = useCallback(() => handleSubmit((data: FormType) => {
-        const { question, endDate, endTime } = data
+        const { question, endDate, endTime, pollOptions } = data
+
+        console.log("data", data);
+
 
         if (!endDate || !endTime) {
             _showErrorMessage(!endDate ? Language.end_date_required : Language.end_time_required)
@@ -103,7 +112,9 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
             message_type: "poll",
             poll: {
                 question,
-                poll_ends_on: endTime?.toISOString()
+                poll_ends_on: endTime?.toISOString(),
+                poll_type: 'single_select',
+                options: pollOptions?.map(_ => _?.value?.trim())
             }
         })
 
@@ -116,6 +127,9 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
 
     useEffect(() => {
         if (subscription) return subscription.remove
+        return () => {
+            if (subscription) return subscription.remove
+        }
     }, [])
 
 
@@ -141,6 +155,25 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
                 errors={errors}
             />
 
+            <Text style={[styles.inputTitle, { marginTop: scaler(15) }]}>
+                {Language.poll_options}
+            </Text>
+
+            {pollOptions?.map((_, i) => {
+                return <TextInput
+                    key={_.id}
+                    placeholder={`${Language.option} ${i + 1}`}
+                    name={`pollOptions.${i}.value`}
+                    maxLength={50}
+                    required={`${Language.option} ${i + 1} ${Language.is_required}`}
+                    keyboardValues={keyboardValues}
+                    style={{}}
+                    borderColor={colors.colorTextInputBackground}
+                    backgroundColor={colors.colorTextInputBackground}
+                    control={control}
+                    errors={(errors?.pollOptions as any)?.[i]}
+                />
+            })}
             <Text style={[styles.inputTitle, { marginTop: scaler(20) }]}>
                 {Language.poll_ends_by_default}
             </Text>

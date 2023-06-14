@@ -49,25 +49,25 @@ const PollMessage = (props: PollType) => {
                     if (poll_result) {
                         const percentage = round((poll_result?.options?.[_] * 100) / (poll_result?.total_votes || 1), 2)
                         return <View key={_} style={[styles.percentView, {
+                            paddingVertical: scaler(5),
                             borderColor: selectedOption != _ && selectedOption ? colors.colorD : colors.colorPrimary,
                         }]} >
                             <View style={{
-                                paddingVertical: scaler(5),
-                                paddingHorizontal: scaler(10),
-                                width: `${percentage}%`,
+                                width: `${percentage || 5}%`,
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
                                 backgroundColor: colors.colorFadedPrimary,
-                            }}>
-                                <Text style={[styles.optionText, { color: colors.colorPrimary }]}>{" "}</Text>
-                            </View>
+                            }} />
                             <Text style={[styles.optionText, {
-                                color: colors.colorPrimary, position: 'absolute',
-                                left: 10
+                                color: colors.colorPrimary,
+                                marginHorizontal: scaler(5),
+                                flex: 1,
                             }]}>{_}</Text>
                             <Text style={[styles.optionText,
                             {
                                 color: colors.colorPrimary,
-                                position: 'absolute',
-                                right: 10
+                                marginRight: scaler(5),
                             }]}>{`${percentage}%`}</Text>
                         </View>
                     }

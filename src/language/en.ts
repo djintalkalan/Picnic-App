@@ -518,7 +518,7 @@ export const en = {
   result: 'Result',
   total_votes: 'Total votes',
   create_poll: 'Create Poll',
-  poll_question: 'Enter your Yes or No question below',
+  poll_question: 'Enter your question below',
   type_question_here: 'Add question details here',
   poll_end_date: 'Poll end date',
   poll_end_time: 'Poll end time',
@@ -531,4 +531,6 @@ export const en = {
   previous: "Previous",
   people_who_reacted: "List of reactions",
   all: "All",
+  poll_options: 'Enter your options below',
+  option: "Option",
 }

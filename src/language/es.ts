@@ -518,7 +518,7 @@ export const es = {
     result: 'Resultado',
     total_votes: 'Total de votos',
     create_poll: 'Crear encuesta',
-    poll_question: 'Escriba a continuación su pregunta Sí o No',
+    poll_question: 'Escriba a continuación su pregunta',
     type_question_here: 'Añade aquí los detalles de la pregunta',
     poll_end_date: 'Fecha de finalización de la encuesta',
     poll_end_time: 'Hora de finalización del sondeo',
@@ -531,4 +531,6 @@ export const es = {
     previous: "Anteriores",
     people_who_reacted: 'Lista de reacciones',
     all: "Todo",
+    poll_options: 'Escriba a continuación su opciones',
+    option: "Opción",
 }
