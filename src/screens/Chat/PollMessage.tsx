@@ -13,7 +13,7 @@ type PollType = {
 }
 const PollMessage = (props: PollType) => {
 
-    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result, isMuted } = props
+    const { poll, isGroupType, _id: message_id, group, poll_submitted_by_users, containerStyle, poll_result, itemType } = props
     const { question, options, poll_type, poll_ends_on } = poll || {}
     const [userData] = useDatabase('userData')
 
@@ -73,7 +73,7 @@ const PollMessage = (props: PollType) => {
                     }
                     return <TouchableOpacity
                         key={_}
-                        disabled={isMuted || isPollEnded}
+                        disabled={itemType == 'muted' || isPollEnded}
                         style={[styles.optionView,
                         {
                             backgroundColor: selectedOption == _ ? colors.colorFadedPrimary : !selectedOption ? colors.colorWhite : 'rgba(0, 0, 0, 0.05)',

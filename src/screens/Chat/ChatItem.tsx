@@ -331,7 +331,7 @@ const ChatItem = (props: IChatItem) => {
             textStyle: { color: colors.colorRed }
         }))
         _showBottomMenu({ buttons: buttons })
-    }, [isMember])
+    }, [isMember, itemType])
 
     const dispatch = useDispatch()
 
@@ -587,7 +587,7 @@ const ChatItem = (props: IChatItem) => {
 
         return <View style={styles.container} >
             <View style={{ flexDirection: 'row', marginLeft: scaler(10) }} >
-                <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents={!(group?.is_group_member || group?.is_event_member) ? 'none' : undefined} >
+                <View style={{ flex: 1, overflow: 'hidden' }} pointerEvents={!(group?.is_group_member || group?.is_event_member || itemType == 'muted') ? 'none' : undefined} >
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scaler(4) }} >
                         <View style={(is_message_sender_is_admin || itemType == 'muted') ? [styles.imageContainer, { borderColor: colors.colorGreyText }] : styles.imageContainer}>
                             <ImageLoader
@@ -596,6 +596,9 @@ const ChatItem = (props: IChatItem) => {
                                 style={{ borderRadius: scaler(30), height: scaler(30), width: scaler(30) }} />
                         </View>
                         <Text style={is_message_sender_is_admin ? [styles.imageDisplayName] : [styles.imageDisplayName, { color: colors.colorBlack }]} >{display_name}</Text>
+                        {isMember || itemType == 'muted' ? <TouchableOpacity onPress={_openChatActionMenu} style={{ padding: scaler(5) }} >
+                            <MaterialCommunityIcons color={!isMember && itemType != 'muted' ? 'transparent' : colors.colorGreyMore} name={'dots-vertical'} size={scaler(22)} />
+                        </TouchableOpacity> : null}
                     </View>
                     <PollMessage
                         {...props} />
