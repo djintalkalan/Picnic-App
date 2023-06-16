@@ -1,11 +1,12 @@
 import { setLoadingAction } from "app-store/actions";
 import { colors, Images } from "assets";
-import { Button, MyHeader, Text, TextInput, useKeyboardService } from "custom-components";
+import { Button, KeyboardHideView, MyHeader, Text, TextInput, useKeyboardService } from "custom-components";
 import { SafeAreaViewWithStatusBar } from "custom-components/FocusAwareStatusBar";
 import { add } from "date-fns";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { DeviceEventEmitter, EmitterSubscription, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
@@ -135,7 +136,7 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
 
     return <SafeAreaViewWithStatusBar style={styles.container} >
         <MyHeader title={Language.create_poll} />
-        <View style={styles.innerContainer} >
+        <KeyboardAwareScrollView style={styles.innerContainer} >
 
             <Text style={styles.inputTitle}>
                 {Language.poll_question}
@@ -215,7 +216,7 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
                     errors={errors} />
             </View>
 
-        </View>
+        </KeyboardAwareScrollView>
         <DateTimePickerModal
             ref={datePickerRef}
             locale={Language.getLanguage()}
@@ -293,7 +294,10 @@ const CreatePoll: FC<any> = ({ route, navigation }) => {
                 setDatePickerVisibility(null);
             }}
         />
-        <Button onPress={onSubmit} title={Language.create_poll} containerStyle={{ margin: scaler(18) }} />
+        <KeyboardHideView>
+            <Button onPress={onSubmit} title={Language.create_poll} containerStyle={{ margin: scaler(18) }} />
+        </KeyboardHideView>
+
     </SafeAreaViewWithStatusBar>
 }
 
