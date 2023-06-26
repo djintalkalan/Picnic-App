@@ -528,9 +528,10 @@ export const es = {
     poll_ended: 'Encuesta finalizada',
     at: 'a las',
     upcoming_2: 'Próximos',
-    previous: "Anteriores",
+    previous: 'Anteriores',
     people_who_reacted: 'Lista de reacciones',
-    all: "Todo",
+    all: 'Todo',
     poll_options: 'Escriba a continuación su opciones',
-    option: "Opción",
+    option: 'Opción',
+    email_to_us: 'Envíe sus preguntas a info@picnicmore.com',
 }
