@@ -531,4 +531,5 @@ export const en = {
   previous: "Previous",
   people_who_reacted: "List of reactions",
   all: "All",
+  email_to_us: 'Email info@picnicmore.com with any questions',
 }

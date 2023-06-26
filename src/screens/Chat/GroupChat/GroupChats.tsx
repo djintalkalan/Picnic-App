@@ -1,13 +1,13 @@
 import { useIsFocused } from '@react-navigation/native'
 import { getGroupChat, setLoadingAction, uploadFile } from 'app-store/actions'
 import { colors, Images } from 'assets'
-import { useKeyboardService } from 'custom-components'
+import { Text, useKeyboardService } from 'custom-components'
 import { EmojiAlert } from 'custom-components/EmojiAlert'
 import { ILocation, useDatabase } from 'database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, ListRenderItem, Platform, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, ListRenderItem, Platform, StyleSheet, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -282,10 +282,12 @@ export const GroupChats: FC<any> = (props) => {
                         /> :
                         <>
                             <View style={{ paddingVertical: scaler(5), paddingHorizontal: scaler(10), backgroundColor: groupDetail?.is_broadcast_group == 1 ? colors.colorWhite : colors.colorPlaceholder }} >
-                                {groupDetail?.is_broadcast_group == 1 ?
-                                    <Text style={{ color: colors.colorPrimary, textAlign: 'center', fontSize: scaler(12) }} >{Language.no_message_allowed_in_news_group}</Text>
-                                    :
-                                    <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
+                                {groupDetail?.is_default_group == 1 ?
+                                    <Text autoLink autoLinkProps={{ linkStyle: { color: colors.colorPrimary, fontWeight: '500', textDecorationLine: 'underline' } }} style={{ color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{Language.email_to_us}</Text>
+                                    : groupDetail?.is_broadcast_group == 1 ?
+                                        <Text style={{ color: colors.colorPrimary, textAlign: 'center', fontSize: scaler(12) }} >{Language.no_message_allowed_in_news_group}</Text>
+                                        :
+                                        <Text style={{ fontStyle: 'italic', color: colors.colorWhite, textAlign: 'center', fontSize: scaler(12) }} >{groupDetail?.status == 6 ? Language.group_is_no_longer_available : Language.formatString(Language.only_can_send_messages, groupDetail?.restriction_mode == 'subscribed' ? Language.subscribers?.toLowerCase() : Language.admin?.toLowerCase())}</Text>
                                 }
                             </View>
                         </>)

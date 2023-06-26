@@ -7,7 +7,7 @@ import { openLink } from "utils";
 interface TextProps extends RNTextProps {
     type?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic",
     autoLink?: boolean,
-    autoLinkProps?: AutolinkProps,
+    autoLinkProps?: Omit<AutolinkProps, 'text'>,
 }
 
 const _onAutoLinkPress = (url: string, match: Match) => {
@@ -161,7 +161,7 @@ export const SingleBoldText = ({ text: IText, style, fontWeight = "500" }: { tex
     return <Text style={style} >
         {IText?.substring(0, startBoldIndex)}
         <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-            {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replaceAll('**', '')}
+            {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replace(/\**/g, '')}
         </Text>
         {IText?.substring(endBoldIndex + 2)}
     </Text>
@@ -239,7 +239,7 @@ export const MultiBoldTextOld = ({ text: IText, style, fontWeight = "500" }: { t
             return <Fragment key={i.toString()} >
                 {IText?.substring(i == 0 ? 0 : indexArray[i - 1].end, startBoldIndex)?.replace('**', '')}
                 <Text style={[StyleSheet.flatten(style), { fontWeight: fontWeight }]}>
-                    {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replaceAll('**', '')}
+                    {IText?.substring(startBoldIndex, endBoldIndex + 2)?.replace(/\**/g, '')}
                 </Text>
                 {IText?.substring(endBoldIndex + 2, i == indexArray.length - 1 ? undefined : endBoldIndex + 2)?.replace('**', '')}
             </Fragment>

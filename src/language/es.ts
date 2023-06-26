@@ -531,4 +531,5 @@ export const es = {
     previous: "Anteriores",
     people_who_reacted: 'Lista de reacciones',
     all: "Todo",
+    email_to_us: 'Envíe sus preguntas a info@picnicmore.com',
 }

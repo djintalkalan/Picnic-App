@@ -27,7 +27,7 @@ const GroupDetail: FC<any> = (props) => {
 
 
     const language = useLanguage()
-    const getBottomMenuButtons = useCallback((item) => {
+    const getBottomMenuButtons = useCallback((item: any) => {
         return [
             {
                 title: Language.block,
@@ -126,7 +126,7 @@ const GroupDetail: FC<any> = (props) => {
 
     const [userData] = useDatabase('userData');
 
-    const _renderGroupMembers = useCallback(({ item, index }) => {
+    const _renderGroupMembers = useCallback(({ item, index }: any) => {
         return (
             <MemberListItem
                 onLongPress={item?.is_admin ? undefined : () => {
@@ -185,7 +185,7 @@ const GroupDetail: FC<any> = (props) => {
                         buttonText: Language.yes_delete
                     })
                 }} />
-
+            {/** @ts-ignore */}
             {(!group?.is_admin || group?.status == 1) && <SwipeRow ref={swipeRef} disableRightSwipe
                 rightOpenValue={-scaler(80)}
             >
@@ -300,7 +300,7 @@ const GroupDetail: FC<any> = (props) => {
             // copyTo: 'cachesDirectory'
         }).then(document => {
             console.log(document);
-            if (document?.uri && document?.name.endsWith(type == 'telegram' ? ".json" : ".txt")) {
+            if (document?.uri && document?.name?.endsWith(type == 'telegram' ? ".json" : ".txt")) {
                 const { uri, name, type: t } = document
                 const file = { uri, name, type: t }
                 const formData = new FormData()
@@ -343,7 +343,7 @@ const GroupDetail: FC<any> = (props) => {
         });
     }, [group])
 
-    const openEditButton = useCallback((e) => {
+    const openEditButton = useCallback((e: any) => {
         dotMenuButtonRef.current?.measureInWindow((x, y, w, h) => {
             _showTouchAlert({
                 placementStyle: {
