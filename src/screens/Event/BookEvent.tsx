@@ -96,7 +96,7 @@ const BookEvent: FC = (props: any) => {
                 }
                 return 'free'
             }
-            return getTotalPayment()?.paidTicketsPrice > 0 ? payMethodSelected : 'free'
+            return totalPayment?.paidTicketsPrice > 0 ? payMethodSelected : 'free'
         }
 
         let payload = {
@@ -149,7 +149,7 @@ const BookEvent: FC = (props: any) => {
         return Math.max((freeTicket || 0), 0)
     }, [selectedTicket])
 
-    const getTotalPayment = useCallback(() => {
+    const totalPayment = useMemo(() => {
         let paidTicketsSelected = free_tickets > parseInt(noOfTickets) ? 0 : parseInt(noOfTickets) - free_tickets
         let paidTicketsPrice = paidTicketsSelected * selectedTicket.amount
         let totalTax = paidTicketsPrice * selectedTicket.event_tax_rate / 100
@@ -164,16 +164,16 @@ const BookEvent: FC = (props: any) => {
     }, [noOfTickets, free_tickets, selectedTicket])
 
     const onSubmit = useCallback(() => handleSubmit(data => {
-        if (event?.is_free_event || getTotalPayment().paidTicketsSelected == 0)
+        if (event?.is_free_event || totalPayment.paidTicketsSelected == 0)
             confirmReservation(data)
         else _showPopUpAlert({
             title: Language.confirm_payment_method,
             message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected as 'done'] + '?',
             onPressButton: () => { confirmReservation(data), _hidePopUpAlert() },
-            buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + " " + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice),
+            buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + " " + formatAmount(selectedTicket.currency, totalPayment?.paidTicketsPrice),
             buttonStyle: { width: '100%' }
         })
-    })(), [event?.is_free_event, payMethodSelected, confirmReservation])
+    })(), [event?.is_free_event, payMethodSelected, confirmReservation, totalPayment])
 
     const { availableSeats, allSeats } = useMemo(() => {
         return {
@@ -191,7 +191,7 @@ const BookEvent: FC = (props: any) => {
                 return Language.reserve
             }
         }
-        return payMethodSelected != 'cash' && getTotalPayment()?.paidTicketsPrice != 0 ? Language.pay + ' ' + formatAmount(selectedTicket.currency, getTotalPayment()?.paidTicketsPrice) : Language.reserve
+        return payMethodSelected != 'cash' && totalPayment?.paidTicketsPrice != 0 ? Language.pay + ' ' + formatAmount(selectedTicket.currency, totalPayment?.paidTicketsPrice) : Language.reserve
     }
 
 
@@ -264,10 +264,10 @@ const BookEvent: FC = (props: any) => {
                                 {Language.applicable_tax}
                             </Text>
                             <Text style={[styles.address, { fontSize: scaler(13), marginTop: scaler(10), marginLeft: scaler(8), color: colors.colorBlackText }]}>
-                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, getTotalPayment()?.totalTax) : formatAmount(selectedTicket.currency, 0)}
+                                {noOfTickets && selectedTicket.event_tax_amount ? formatAmount(selectedTicket.currency, totalPayment?.totalTax) : formatAmount(selectedTicket.currency, 0)}
                             </Text>
                             <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center', marginVertical: scaler(16) }} />
-                            {getTotalPayment().paidTicketsSelected != 0 ? <>
+                            {totalPayment.paidTicketsSelected != 0 ? <>
                                 <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500' }}>
                                     {event?.payment_method?.length > 1 ? Language.select_payment_options : Language.payment_methods}
                                 </Text>
@@ -394,7 +394,7 @@ const BookEvent: FC = (props: any) => {
                         <Button
                             title={getTitle()}
                             onPress={onSubmit}
-                            disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && getTotalPayment().paidTicketsSelected != 0}
+                            disabled={!payMethodSelected && (!event?.is_free_event || (event.is_donation_enabled && isUserDonating)) && totalPayment.paidTicketsSelected != 0}
                         />
                         : undefined
                     }
