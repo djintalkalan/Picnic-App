@@ -104,7 +104,7 @@ async function callApi(url: string, header: header, body: any, method?: Method):
   return api.request({
     method: method,
     url: url,
-    data: body,
+    data: method != 'GET' ? body : undefined,
     headers: header as AxiosRequestHeaders,
   })
 }
