@@ -29,6 +29,11 @@ import SignUp1 from 'screens/Auth/SignUp/SignUp1';
 import SignUp2 from 'screens/Auth/SignUp/SignUp2';
 import SignUp3 from 'screens/Auth/SignUp/SignUp3';
 import VerifyOtp from 'screens/Auth/VerifyOtp';
+import ReceiveBitcoin from 'screens/Bitcoin/ReceiveBitcoin';
+import SendBitcoinAddressOrReceipt from 'screens/Bitcoin/SendBitcoin/SendBitcoinAddressOrReceipt';
+import SendBitcoinAmount from 'screens/Bitcoin/SendBitcoin/SendBitcoinAmount';
+import ListBitcoinTransactions from 'screens/Bitcoin/SendBitcoin/ListBitcoinTransactions';
+import Mnemonic from 'screens/Bitcoin/Mnemonic';
 import EventChats from 'screens/Chat/EventChat/EventChats';
 import GroupChatScreen from 'screens/Chat/GroupChat/GroupChatScreen';
 import ImagePreview from 'screens/Chat/ImagePreview';
@@ -76,8 +81,14 @@ import CreatePoll from 'screens/Chat/CreatePoll';
 import LikeDetails from 'screens/Chat/LikeDetails';
 import PaypalConnect from 'screens/Profile/PaypalConnect';
 import PaypalDisconnect from 'screens/Profile/PaypalDisconnect';
-import { NavigationService, scaler } from 'utils';
+import FeatureFlagService from 'src/featureflag/FeatureFlagService';
+import LightningService from 'src/lightning/LightningService';
+import MyWallet from 'src/screens/Bitcoin/myWallet';
+import { NavigationService, scaler, _showInviteCodes } from 'utils';
 import { KeyboardAccessoryView, StaticHolder } from 'utils/StaticHolder';
+import Language from 'src/language/Language';
+import { InviteCodes } from 'custom-components/InviteCodes';
+import { config } from 'api';
 
 interface IScreens {
   [key: string]: React.FC<any>
@@ -104,6 +115,11 @@ const dashboardScreens: IScreens = {
   Settings: Settings,
   UpdatePassword: UpdatePassword,
   PrivacyScreen: PrivacyScreen,
+  SendBitcoinAmount: SendBitcoinAmount,
+  SendBitcoinAddressOrReceipt: SendBitcoinAddressOrReceipt,
+  ListBitcoinTransactions: ListBitcoinTransactions,
+  Mnemonic: Mnemonic,
+  ReceiveBitcoin: ReceiveBitcoin,
   BlockedMembers: BlockedMembers,
   MutedGroupsEvents: MutedGroupsEvents,
   SelectLocation: SelectLocation,
@@ -140,7 +156,12 @@ const dashboardScreens: IScreens = {
   PaypalDisconnect,
   CreatePoll,
   LikeDetails,
+  MyWallet
 };
+
+const MNEMONIC = "mnemonic"
+const INVITE_CODE = "inviteCode"
+
 const MyNavigationContainer = () => {
   useFirebaseNotifications();
   const dispatch = useDispatch();
@@ -185,7 +206,67 @@ const MyNavigationContainer = () => {
         AnalyticService.setUserData(userData)
       });
       SocketService.init(dispatch);
-      IntercomService.init()
+      IntercomService.init();
+
+      FeatureFlagService.checkFlag("enable-lightning").then(async (result) => {
+        console.log("----- enable-lightning: ", result, " -----")
+
+        let flags = await FeatureFlagService.allFlags();
+        console.log("----- Launchdarkly flags: ", flags)
+
+        const { "production-certificate": productionCertifcate, "invite-codes": inviteCodes } = flags;
+
+        if (productionCertifcate) {
+          console.log("----- production-certificate: ", productionCertifcate, " -----");
+          LightningService.initWithProductionCertificate(config.BREEZ_CERTIFICATE_BASE64, config.BREEZ_PRIVATE_KEY_BASE64)
+        }
+        else if (inviteCodes) {
+          // Database.clearLightningStorage();
+          console.log("----- invite-codes: ", inviteCodes, " -----");
+
+          let inviteCode = Database.getStoredValue("inviteCode", '')
+          let mnemonic = Database.getStoredValue("mnemonic", '')
+
+          if (inviteCode && mnemonic) {
+            console.log("----- invite code and mnemonic -----", inviteCode, mnemonic)
+            LightningService.initWithInviteCode(inviteCode, mnemonic)
+          }
+          else {
+            _showInviteCodes({
+              title: "Invite Codes",
+              message: "Select an invite code",
+              callback: (code: string) => {
+                let mnemonic = ""
+                switch (code) {
+                  case "1":
+                    inviteCode = config.INVITE_CODE
+                    mnemonic = config.MNEMONIC
+                    break;
+                  case "2":
+                    inviteCode = config.INVITE_CODE_2
+                    mnemonic = config.MNEMONIC_2
+                    break;
+                  case "3":
+                    inviteCode = config.INVITE_CODE_3
+                    mnemonic = config.MNEMONIC_3
+                    break;
+                  case "4":
+                    inviteCode = config.INVITE_CODE_4
+                    mnemonic = config.MNEMONIC_4
+                    break;
+                }
+
+                console.log("----- invite code and mnemonic selected -----: ", inviteCode, mnemonic)
+
+                Database.setInviteCode(inviteCode)
+                Database.setMnemonic(mnemonic)
+
+                LightningService.initWithInviteCode(inviteCode, mnemonic);
+              }
+            })
+          }
+        }
+      });
     }
     return () => {
       SocketService.closeSocket();
@@ -249,6 +330,7 @@ const MyNavigationContainer = () => {
         <KeyboardAccessoryView ref={ref => StaticHolder.setKeyboardAccessoryView(ref)} />
         <TouchAlert ref={ref => StaticHolder.setTouchAlert(ref)} />
         <EmojiAlert ref={ref => StaticHolder.setEmojiAlert(ref)} />
+        <InviteCodes ref={ref => StaticHolder.setInviteCodes(ref)} />
         <DropdownAlertWithStatusBar />
       </NavigationContainer>
     </SafeAreaProvider>

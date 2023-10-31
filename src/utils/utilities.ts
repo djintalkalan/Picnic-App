@@ -26,6 +26,7 @@ import Database, { ILocation } from 'src/database/Database';
 import Language, { LanguageType } from 'src/language/Language';
 import { ALL_CURRENCIES, DEFAULT_CURRENCY, ICurrency, ICurrencyKeys, ICurrencyValues, REMOVED_CURRENCIES } from './Constants';
 import { StaticHolder } from './StaticHolder';
+import { InviteCodesType } from 'custom-components';
 //@ts-ignore
 const LaunchNavigator: LType = LaunchNVG
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
@@ -187,6 +188,13 @@ export const _showPopUpAlert = (data: IAlertType) => {
     Keyboard.dismiss()
     setTimeout(() => {
         StaticHolder.alert(data)
+    }, 0);
+}
+
+export const _showInviteCodes = (data: InviteCodesType) => {
+    Keyboard.dismiss()
+    setTimeout(() => {
+        StaticHolder.showInviteCodes(data)
     }, 0);
 }
 
@@ -523,6 +531,11 @@ export const formatAmount = (currency: string, amount: string | number) => {
 
 }
 
+export const formatBitcoin = (amount: number, exchangeRate: number): string => {
+    const btcAmount = exchangeRate == 0.0 ? 0.0 : amount / exchangeRate;
+    return btcAmount.toFixed(8) + " BTC"
+}
+
 export const WaitTill = async (time: number) => {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -616,7 +629,7 @@ export const shareAppLink = async (name: string) => {
             fallbackUrl: link
         },
         social: {
-            title: "Picnic Groups",
+            title: Language.picnic_groups,
             descriptionText: Language.join_us_link,
             imageUrl: logoUrl,
         },
@@ -632,7 +645,7 @@ export const shareAppLink = async (name: string) => {
     const line = Language.picnic_share_line + '\n' + Language.download_app_here + " : " + dynamicLink
 
     try {
-        const shareResult = await share("Share " + name, line)
+        const shareResult = await share(Language.share + " " + name, line)
         handleShareAction(shareResult, 'application', Platform.OS)
     }
     catch (e) {
@@ -898,4 +911,6 @@ export const roundToNearest15 = (date = new Date()) => {
     return new Date(Math.round(date.getTime() / ms) * ms);
 }
 
-
+export const numberWithCommas = (number: number | string) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

@@ -2,7 +2,7 @@ import { config } from 'api/config';
 import axios, { AxiosRequestHeaders, AxiosResponse, Method } from 'axios';
 import React, { MutableRefObject } from 'react';
 import { DeviceEventEmitter, Platform } from 'react-native';
-import { Progress, Request, RNS3 } from 'react-native-aws3';
+import { Progress, RNS3, Request } from 'react-native-aws3';
 import Database from 'src/database/Database';
 import FirestoreService from 'src/firestore/FirestoreService';
 import { DefaultLanguage, LanguageType } from 'src/language/Language';
@@ -40,7 +40,7 @@ function interceptResponse(this: AxiosResponse<any>): any {
       console.log("body ", this.config?.data);
       console.log("methodType ", this.config?.method)
     }
-    if (JSON.stringify(this.data).startsWith("<") || JSON.stringify(this.data).startsWith("\"<")) {
+    if (JSON.stringify(this.data)?.startsWith("<") || JSON.stringify(this.data)?.startsWith("\"<")) {
       DeviceEventEmitter.emit("STOP_LOADER_EVENT");
       setTimeout(() => {
         _showErrorMessage("Internal Server Error")
@@ -61,6 +61,8 @@ function interceptResponse(this: AxiosResponse<any>): any {
 
   }
 }
+
+console.log("BASE_URL: " + config.BASE_URL);
 
 const api = axios.create({
   baseURL: config.BASE_URL + config.API_VERSION,
@@ -120,6 +122,8 @@ async function fetchApiData(url: string, method?: Method, body?: any) {
       'Accept-Language': selectedLanguage,
       'uuid': UUIDService.getUUID(),
     }
+    console.log("header ------- ========== ", header);
+
     return callApi(url, header, body, method)
   } catch (error: any) {
     throw new Error(error)
@@ -143,7 +147,7 @@ const callUploadFileAWS = async (file: { uri: string, name: string, type: any, }
   uploadRequest = RNS3.put(file, options)
   uploadRequest.progress((progress) => progressCallback(progress, file?.name.substring(0, file?.name?.indexOf(".")))).then((response) => {
     console.log("response", response)
-    if (response.status !== 201)
+    if (response?.status !== 201)
       throw new Error("Failed to upload image to S3");
     // console.log("res" + response.body);
     return response
@@ -379,6 +383,33 @@ export const _likeUnlikeMessage = async (body: any) => {
 export const _joinEvent = async (body: string) => {
   console.log("---------- _joinEvent Api Call ---------------")
   return fetchApiData('payment/confirm-reservation', "POST", body)
+}
+
+
+// request for a bolt11
+export const _bolt11Event = async (body: any) => {
+  console.log("---------- _bolt11Event Api Call ---------------")
+  return fetchApiData('payment/request-bolt11', "POST", body)
+}
+
+export const _confirmBolt11Event = async (body: any) => {
+  console.log("---------- _confirmBolt11Event Api Call ---------------")
+  return fetchApiData('payment/confirm-bolt11', "POST", body)
+}
+
+export const _requestAmountOwed = async (body: any = {}) => {
+  console.log("---------- _requestAmountOwed Api Call ---------------")
+  return fetchApiData('payment/request-amount-owed', "GET", body)
+}
+
+export const _requestBip39 = async (body: any = {}) => {
+  console.log("---------- _requestBip39 Api Call ---------------")
+  return fetchApiData('lightning/request-bip39', "GET", body)
+}
+
+export const _submitBolt11 = async (body: any = {}) => {
+  console.log("---------- _submitBolt11 Api Call ---------------")
+  return fetchApiData('payment/submit-bolt11', "POST", body)
 }
 
 export const _getEventChat = async (body: any) => {

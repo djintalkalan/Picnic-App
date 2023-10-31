@@ -13,7 +13,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
     try {
         const uData = Database.getStoredValue("userData")
         let res = yield call(ApiProvider._getProfile);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             const { notification_settings, ...userData } = res?.data
             if (userData?.language) {
                 const selectedLanguage = Database.getStoredValue('selectedLanguage')
@@ -27,7 +27,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
             }))
             Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
             IntercomService.updateUser(userData)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -35,7 +35,7 @@ function* getProfile({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 57", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -45,7 +45,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
     try {
         const uData = Database.getStoredValue("userData")
         let res = yield call(ApiProvider._updateProfile, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             const { notification_settings, ...userData } = res?.data
             yield put(setNotificationSettings({
@@ -55,7 +55,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
             Database.setUserData({ ...userData, is_premium: userData?.is_premium ? uData?.is_premium : false })
             IntercomService.updateUser(userData)
             NavigationService.replace("Settings")
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -63,7 +63,7 @@ function* updateProfile({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 58", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -73,9 +73,9 @@ function* updateNotificationSetting({ type, payload, }: action): Generator<any, 
 
     try {
         let res = yield call(ApiProvider._updateNotificationSetting, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -83,7 +83,7 @@ function* updateNotificationSetting({ type, payload, }: action): Generator<any, 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 59", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -94,10 +94,10 @@ function* updatePassword({ type, payload, }: action): Generator<any, any, any> {
 
     try {
         let res = yield call(ApiProvider._updatePassword, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             NavigationService.goBack()
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -105,7 +105,7 @@ function* updatePassword({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 60", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -115,9 +115,9 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
 
     try {
         let res = yield call(ApiProvider._checkEmail, { email: payload?.email });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             payload?.onSuccess()
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             payload?.onSuccess(res.message)
             // _showErrorMessage(res.message);
         } else {
@@ -126,7 +126,7 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 61", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -138,7 +138,7 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
     try {
         let res = yield call(ApiProvider._getMyAllGroups, null, payload?.page);
         yield put(setLoadingAction(false));
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -150,14 +150,14 @@ function* _getMyAllGroups({ type, payload, }: action): Generator<any, any, any> 
             if (res?.data?.pagination?.currentPage == 1) groups = []
             yield put(setUserGroups([...groups, ...res?.data?.data]))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 62", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -170,7 +170,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
     try {
         let res = yield call(ApiProvider._getUpcomingPastEvents, payload, payload?.body?.page);
         yield put(setLoadingAction(false));
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (payload?.body?.onSuccess) payload?.body?.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -181,7 +181,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
             })
             if (res?.data?.pagination?.currentPage == 1) events = []
             yield put(setUserUpcomingPastEvents({ type: event_filter_type, data: [...events, ...res?.data?.data] }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -189,7 +189,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 63", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -197,7 +197,7 @@ function* _getUpcomingPastEvents({ type, payload, }: action): Generator<any, any
 function* _paypalTrackSeller({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._paypalTrackSeller);
-        if (res.status === 200) {
+        if (res?.status === 200) {
             let authorized = ''
             let action_url: any = {}
             const userData = Database.getStoredValue('userData')
@@ -218,7 +218,7 @@ function* _paypalTrackSeller({ type, payload, }: action): Generator<any, any, an
             })
             yield WaitTill(200);
             payload?.onSuccess && payload?.onSuccess(true)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             yield put(setLoadingAction(false));
             // _showErrorMessage(res.message);
         } else {
@@ -227,7 +227,7 @@ function* _paypalTrackSeller({ type, payload, }: action): Generator<any, any, an
         }
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 64", error);
         yield put(setLoadingAction(false));
     }
 }

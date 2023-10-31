@@ -18,7 +18,9 @@ const Scanner: FC<any> = (props) => {
         console.log("Event", JSON.stringify(e.data));
         scannerRef.current?.disable()
         setQrScanning(false)
-        if (e.data && e.data?.startsWith("picnic-groups")) {
+        if (e.data && props?.route?.params?.id === "bitcoinAddress") {
+            NavigationService.navigate('SendBitcoinAmount', { currency: props?.route?.params?.currency, address: e.data })
+        } else if (e.data && e.data?.startsWith("picnic-groups")) {
             // setTimeout(() => {
             //     scannerRef.current?.enable()
             // }, 1000);

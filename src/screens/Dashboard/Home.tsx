@@ -17,7 +17,7 @@ import GroupList from 'screens/Group/GroupList'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language, { useLanguage } from 'src/language/Language'
 import { getCityOnly, getImageUrl, NavigationService, scaler, shareAppLink, _hideTouchAlert, _showTouchAlert } from 'utils'
-
+import FeatureFlagWrapper from 'src/featureflag/FeatureFlagWrapper'
 
 const addIcon = Ionicons.getImageSourceSync("add-circle-sharp", 50, colors.colorPrimary)
 
@@ -95,7 +95,6 @@ const Home: FC = () => {
   // const b = "id2id2id2";
 
   const _createButtonRef = useRef<TouchableOpacity>(null)
-
   const _openMenu = () => {
     _createButtonRef?.current?.measureInWindow((x, y) => {
       _showTouchAlert({
@@ -121,7 +120,7 @@ const Home: FC = () => {
                 title={Language.share_picnic}
                 icon={Images.ic_share_picnic}
                 onPress={() => {
-                  shareAppLink("Picnic Groups")
+                  shareAppLink(Language.picnic_groups)
                   _hideTouchAlert()
                 }}
               />
@@ -175,6 +174,51 @@ const Home: FC = () => {
     })
   }
 
+  const _settingsButtonRef = useRef<TouchableOpacity>(null)
+  const _settingsMenu = () => {
+    _settingsButtonRef?.current?.measureInWindow((x, y) => {
+      _showTouchAlert({
+        transparent: false,
+        placementStyle: {
+          right: scaler(10),
+          top: y + scaler(45) + (Platform.OS == 'android' ? StatusBar.currentHeight || 0 : 0)
+        },
+        alertComponent: () => {
+          return (<View
+            style={
+              {
+                backgroundColor: "rgba(255,255,255,1)",
+                padding: scaler(20),
+                borderRadius: scaler(10)
+              }}>
+            <TouchableOpacity style={{ marginBottom: scaler(20) }}>
+              <InnerButton
+                imageStyle={{ width: scaler(25), height: scaler(25), resizeMode: "contain", marginLeft: scaler(10) }}
+                title={Language.setting_menu_setting}
+                icon={Images.ic_setting}
+                onPress={() => {
+                  onPressSetting();
+                  _hideTouchAlert()
+                }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={{}}>
+              <InnerButton
+                imageStyle={{ width: scaler(25), height: scaler(25), resizeMode: "contain", marginLeft: scaler(10) }}
+                onPress={() => {
+                  NavigationService.navigate('MyWallet');
+                  _hideTouchAlert()
+                }}
+                title={Language.setting_menu_wallet}
+                icon={Images.ic_bitcoin}
+              />
+            </TouchableOpacity>
+          </View>)
+        },
+      })
+    })
+  }
+
   return (
     <SafeAreaViewWithStatusBar translucent backgroundColor={'white'} edges={['top']} >
       <View style={styles.headerContainer} >
@@ -198,9 +242,26 @@ const Home: FC = () => {
             source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(100) }) } : null}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onPressSetting} >
-          <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain' }} source={Images.ic_setting} />
-        </TouchableOpacity>
+
+        {/* <TouchableOpacity onPress={_settingsMenu} ref={_settingsButtonRef} >
+          <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain', backgroundColor: "#eee", borderRadius: scaler(25) }} source={Images.ic_more_group} />
+        </TouchableOpacity> */}
+        {/* <FeatureFlagWrapper flag='enable-lightning' condition={false}>
+          <Text>settings</Text>
+        </FeatureFlagWrapper> */}
+        <FeatureFlagWrapper flag='enable-lightning'>
+          <TouchableOpacity onPress={_settingsMenu} ref={_settingsButtonRef} >
+            <Image style={{ marginLeft: scaler(10), height: scaler(25), width: scaler(25), resizeMode: 'contain', backgroundColor: "#eee", borderRadius: scaler(25) }} source={Images.ic_more_group} />
+          </TouchableOpacity>
+        </FeatureFlagWrapper>
+        <FeatureFlagWrapper flag='enable-lightning' condition={false}>
+          <TouchableOpacity onPress={onPressSetting}>
+            <ImageLoader style={{ borderRadius: scaler(18), height: scaler(35), width: scaler(35), resizeMode: 'contain' }}
+              placeholderSource={Images.ic_setting}
+              source={userData?.image ? { uri: getImageUrl(userData?.image, { type: 'users', width: scaler(100) }) } : null}
+            />
+          </TouchableOpacity>
+        </FeatureFlagWrapper>
 
       </View>
       <View style={{ flex: 1 }} >

@@ -146,7 +146,7 @@ export const ContactMessageReplied = memo((props: IContactMessageReplied) => {
     const { isMyMessage, contacts } = props
     const contact = contacts[0]
     if (!contact?.company) contact.company = ""
-    const senderName = props?.isMyMessageParent ? "You" : getDisplayName(props?.sender)
+    const senderName = props?.isMyMessageParent ? Language.you : getDisplayName(props?.sender)
     return <TouchableOpacity activeOpacity={0.7} style={{
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,

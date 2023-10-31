@@ -12,7 +12,7 @@ function* _getPersonChat({ type, payload, }: action): Generator<any, any, any> {
         console.log("payload", payload);
 
         let res = yield call(ApiProvider._getPersonChat, { user_id: payload?.id, message_id: payload?.message_id, page: 1, limit: payload?.message_id ? 100 : 40 });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             const chats = res?.data?.data // mergeMessageObjects(res?.data?.data, res?.data?.message_total_likes_count, res?.data?.is_message_liked_by_me)
             // merge()
             console.log("CHATS", chats);
@@ -26,7 +26,7 @@ function* _getPersonChat({ type, payload, }: action): Generator<any, any, any> {
                 yield put((payload?.message_id ? setChatInPerson : refreshChatInPerson)({ chatRoomUserId: payload?.id, chats: chats, message_id: payload?.message_id }))
 
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -35,7 +35,7 @@ function* _getPersonChat({ type, payload, }: action): Generator<any, any, any> {
         // yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 56", error);
         payload?.setChatLoader && payload?.setChatLoader(false)
         // yield put(setLoadingAction(false));
     }

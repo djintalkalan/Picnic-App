@@ -1,5 +1,5 @@
 import { checkEmail, setLoadingAction } from 'app-store/actions';
-import { colors, Images } from 'assets';
+import { Images, colors } from 'assets';
 import { Button, Stepper, Text, TextInput } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { EmailValidations, validateEmail } from 'custom-components/TextInput/rules';
@@ -63,6 +63,7 @@ const SendOtp: FC = () => {
                     email: getValues('email'),
                     onSuccess: (errorMessage: string) => {
                         if (errorMessage) {
+                            console.log(errorMessage);
                             setError('email', { message: errorMessage });
                         } else {
                             onSubmit();
@@ -72,6 +73,7 @@ const SendOtp: FC = () => {
             );
         }
     }, []);
+    console.log("adasdasd =========== ----------- ")
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>

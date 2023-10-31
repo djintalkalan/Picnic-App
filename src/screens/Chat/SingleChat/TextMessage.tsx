@@ -77,7 +77,7 @@ export const TextMessage = memo((props: ITextMessage) => {
     const likeString = useMemo<React.ReactNode>(() => {
         let string: any = [<Text key='1' >{Language.like}</Text>]
         if (is_message_liked_by_me) {
-            string = [<Text key='2'>{Language.liked_by} </Text>, <Text key='3' style={{ fontWeight: '600' }} >You</Text>]
+            string = [<Text key='2'>{Language.liked_by} </Text>, <Text key='3' style={{ fontWeight: '600' }} >{Language.you}</Text>]
             if (message_liked_by_users?.length == 2) {
                 string.push(<Text key='4'> {Language.and} </Text>)
                 string.push(<Text key='5' style={{ fontWeight: '500' }} >{getDisplayName(person)}</Text>)
@@ -168,7 +168,7 @@ export const TextMessage = memo((props: ITextMessage) => {
 
 export const TextMessageReplied = memo((props: ITextMessageReplied) => {
     const { isMyMessage, isMyMessageParent } = props
-    const senderName = props?.isMyMessageParent ? "You" : getDisplayName(props?.sender)
+    const senderName = props?.isMyMessageParent ? Language.you : getDisplayName(props?.sender)
     return <TouchableOpacity activeOpacity={0.7} style={{
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,

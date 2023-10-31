@@ -89,7 +89,7 @@ export const createEventReducer = (state: ICreateEventReducer = initialCreateEve
 
 const deleteExtraKeys = (d: any) => {
     delete d.user_id
-    delete d.status
+    delete d?.status
     delete d.event_canceled_date
     delete d.is_public
     delete d.creator_of_event

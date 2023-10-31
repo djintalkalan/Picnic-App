@@ -9,44 +9,44 @@ import { scaler } from "utils";
 import { Text } from "../Text";
 
 interface TextInputProps extends RNTextInputProps {
-    fontFamily?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic"
-    containerStyle?: ViewStyle
-    iconContainerStyle?: StyleProp<ViewStyle>
-    disabled?: boolean
-    onPress?: (e?: GestureResponderEvent) => void
-    onPressIcon?: (e?: GestureResponderEvent) => void
-    value?: string
-    title?: string
-    height?: number
-    control?: Control<any>
-    required?: boolean | string
-    icon?: ImageSourcePropType
-    iconSize?: number
-    name?: string
+    fontFamily?: "black" | "blackItalic" | "bold" | "boldItalic" | "extraBold" | "extraBoldItalic" | "extraLight" | "extraLightItalic" | "italic" | "light" | "lightItalic" | "medium" | "mediumItalic" | "regular" | "semiBold" | "semiBoldItalic" | "thin" | "thinItalic";
+    containerStyle?: ViewStyle;
+    iconContainerStyle?: StyleProp<ViewStyle>;
+    disabled?: boolean;
+    onPress?: (e?: GestureResponderEvent) => void;
+    onPressIcon?: (e?: GestureResponderEvent) => void;
+    value?: string;
+    title?: string;
+    height?: number;
+    control?: Control<any>;
+    required?: boolean | string;
+    icon?: ImageSourcePropType;
+    iconSize?: number;
+    name?: string;
     iconPosition?: 'left' | 'right',
-    errors?: FieldErrors | Merge<FieldError, FieldErrors<any>>
-    backgroundColor?: ColorValue
-    limit?: number
-    borderColor?: ColorValue
+    errors?: FieldErrors | Merge<FieldError, FieldErrors<any>>;
+    backgroundColor?: ColorValue;
+    limit?: number;
+    borderColor?: ColorValue;
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
     keyboardValues?: KeyboardValues,
-    format?: any
+    format?: any;
 }
 
 
 export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((props, ref) => {
 
-    const [isFocused, setFocused] = useState(false)
-    const { format, iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props
-    const openKeyboardAccessory = props?.keyboardValues?.openKeyboardAccessory
+    const [isFocused, setFocused] = useState(false);
+    const { format, iconContainerStyle, style, borderColor = "#E9E9E9", backgroundColor, limit, onFocus, onBlur, iconSize = scaler(22), iconPosition = 'right', onPressIcon, multiline, fontFamily = "regular", icon, errors, control, title, required, name = "", rules, onChangeText, onPress, height = scaler(24), value, containerStyle, disabled, ...rest } = props;
+    const openKeyboardAccessory = props?.keyboardValues?.openKeyboardAccessory;
 
     const errorName = useMemo(() => {
         if (name.includes(".")) {
-            return name.substring(name.lastIndexOf('.') + 1)
+            return name.substring(name.lastIndexOf('.') + 1);
         } else {
-            return name
+            return name;
         }
-    }, [name])
+    }, [name]);
 
     const styles = useMemo(() => {
 
@@ -85,9 +85,9 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                 position: 'absolute', end: scaler(15), justifyContent: 'center',
                 ...StyleSheet.flatten(iconContainerStyle)
             }
-        })
+        });
 
-    }, [style, height, containerStyle, fontFamily, icon, iconContainerStyle])
+    }, [style, height, containerStyle, fontFamily, icon, iconContainerStyle]);
 
     return (
         <TouchableOpacity
@@ -125,12 +125,12 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                 ref={(r) => {
                                     if (ref) {
                                         if (typeof ref == 'function') {
-                                            ref(r)
+                                            ref(r);
                                         } else {
-                                            ref.current = r
+                                            ref.current = r;
                                         }
                                     }
-                                    cRef(r)
+                                    cRef(r);
                                 }}
                                 // onContentSizeChange={(e) => {
                                 //     console.log(e.nativeEvent.contentSize)
@@ -149,20 +149,20 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                     (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(
                                         <View style={styles.accessory}>
                                             <TouchableOpacity onPress={() => {
-                                                Keyboard.dismiss()
+                                                Keyboard.dismiss();
                                             }} style={{ padding: scaler(8) }} >
                                                 <Text style={{ fontWeight: '500', color: colors.colorPrimary, fontSize: scaler(14) }} >{Language.done}</Text>
                                             </TouchableOpacity>
                                         </View>
-                                    )
-                                    setFocused(true)
-                                    onFocus && onFocus(e)
+                                    );
+                                    setFocused(true);
+                                    onFocus && onFocus(e);
                                 }}
                                 onBlur={(e) => {
-                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null)
-                                    setFocused(false)
-                                    onBlurC()
-                                    onBlur && onBlur(e)
+                                    (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null);
+                                    setFocused(false);
+                                    onBlurC();
+                                    onBlur && onBlur(e);
                                 }}
                                 onChangeText={text => {
                                     onChange(text);
@@ -207,14 +207,14 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
                                             <Text>{Language.done}</Text>
                                         </TouchableOpacity>
                                     </View>
-                                )
-                                setFocused(true)
-                                onFocus && onFocus(e)
+                                );
+                                setFocused(true);
+                                onFocus && onFocus(e);
                             }}
                             onBlur={(e) => {
-                                (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null)
-                                setFocused(false)
-                                onBlur && onBlur(e)
+                                (multiline && Platform.OS == 'android') && openKeyboardAccessory && openKeyboardAccessory(null);
+                                setFocused(false);
+                                onBlur && onBlur(e);
                             }}
                             placeholderTextColor={colors.colorGreyText}
                             onChangeText={text => {
@@ -250,5 +250,5 @@ export const TextInput: FC<TextInputProps & RefAttributes<any>> = forwardRef((pr
             </Text>}
 
         </TouchableOpacity>
-    )
-})
+    );
+});

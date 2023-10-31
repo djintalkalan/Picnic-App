@@ -311,13 +311,13 @@ const GroupDetail: FC<any> = (props) => {
                 dispatch(setLoadingAction(true))
                 _whatsappImport(formData, type).then((res) => {
                     dispatch(setLoadingAction(false))
-                    if (res.status == 200) {
+                    if (res?.status == 200) {
                         _showSuccessMessage(Language.successfully_imported);
                         dispatch(getGroupChat({
                             id: props?.route?.params?.id
                         }))
                         NavigationService.replace("GroupChatScreen", { id: props?.route?.params?.id })
-                    } else if (res.status == 400) {
+                    } else if (res?.status == 400) {
                         _showErrorMessage(res.message);
                     } else {
                         _showErrorMessage(Language.something_went_wrong);

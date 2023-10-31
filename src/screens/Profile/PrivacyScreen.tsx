@@ -66,6 +66,14 @@ const PrivacyScreen: FC<any> = (props) => {
                         subtitle={privacyState?.posts + " " + Language.messages}
                     />
 
+                    <SettingButton
+                        onPress={() => {
+                            NavigationService.navigate('Mnemonic')
+                        }}
+                        image={Images.ic_bitcoin}
+                        title={Language?.bitcoin_mnemonic}
+                        subtitle=''
+                    />
                 </View>
             </View>
 

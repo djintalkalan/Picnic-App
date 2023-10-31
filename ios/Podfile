@@ -1,5 +1,9 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
 platform :ios, '13.0'
 prepare_react_native_project!
@@ -20,7 +24,18 @@ if linkage != nil
 end
 
 target 'Picnic' do
+
+  #Static framework for Rollbar
+  # pod 'KSCrash', :modular_headers => true
+  # pod 'RollbarCommon', :modular_headers => true
+  # pod 'RollbarCrashReport', :modular_headers => true
+  # pod 'RollbarNotifier', :modular_headers => true
+  # pod 'RollbarReactNative',:path => '../node_modules/rollbar-react-native', :modular_headers => true
+
   # React Native Maps dependencies
+  # The following line is only needed if building on an Apple silicon Mac without rosetta.
+  # pod 'Google-Maps-iOS-Utils', :git => 'https://github.com/Simon-TechForm/google-maps-ios-utils.git', :branch => 'feat/support-apple-silicon'
+
   rn_maps_path = '../node_modules/react-native-maps'
   pod 'react-native-google-maps', :path => rn_maps_path
 
@@ -49,15 +64,15 @@ target 'Picnic' do
 
 
   config = use_native_modules!
-
+  # use_frameworks! :linkage => :static
+  # $RNFirebaseAsStaticFramework = true
+  
   # Flags change depending on the env values.
   flags = get_default_flags()
 
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.
-    # Upcoming versions of React Native may rely on get_default_flags(), but
-    # we make it explicit here to aid in the React Native upgrade process.
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
     # Enables Flipper.
@@ -75,10 +90,11 @@ target 'Picnic' do
   end
 
   post_install do |installer|
+    system('sh patch-firebase-for-xcode15.sh')
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
+      config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)

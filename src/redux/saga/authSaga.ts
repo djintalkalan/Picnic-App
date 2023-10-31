@@ -28,7 +28,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(isSignUp ? ApiProvider._restoreAccount : ApiProvider._loginApi, { ...rest, device_token: firebaseToken });
         yield put(setLoadingAction(false));
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (res?.data?.is_two_factor_enabled == '1') {
                 NavigationService.navigate('VerifyOtp', { is2FA: true, ...rest });
             }
@@ -52,7 +52,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
                     yield put(restorePurchaseAction({ noAlert: true }))
                 }
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -60,7 +60,7 @@ function* doLogin({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 1", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -70,9 +70,9 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
 
     try {
         let res = yield call(ApiProvider._forgotPassword, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             NavigationService.navigate("VerifyOtp", payload)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -80,7 +80,7 @@ function* forgotPassword({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 2", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -119,7 +119,7 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
         const { isSignUp = false, is2FA = false, ...rest } = payload
         if (is2FA) rest.device_token = Database.getStoredValue('firebaseToken')
         let res = yield call(isSignUp || is2FA ? ApiProvider._verifySignupOtp : ApiProvider._verifyOtp, rest);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (isSignUp) {
                 if (res?.data?.resignUp) {
                     yield put(setLoadingAction(false));
@@ -148,7 +148,7 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
                 return
             }
             NavigationService.replace("CreateNewPassword", rest)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -156,7 +156,7 @@ function* verifyOtp({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 3", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -167,10 +167,10 @@ function* resetPassword({ type, payload, }: action): Generator<any, any, any> {
 
     try {
         let res = yield call(ApiProvider._resetPassword, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             NavigationService.navigate("Login")
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -178,7 +178,7 @@ function* resetPassword({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 4", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -188,10 +188,10 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
 
     try {
         let res = yield call(ApiProvider._checkEmail, { email: payload?.email });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             payload?.onSuccess()
             return
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             payload?.onSuccess(res.message)
             // _showErrorMessage(res.message);
         } else {
@@ -200,7 +200,7 @@ function* checkEmail({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 5", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -211,7 +211,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
     const firebaseToken = Database.getStoredValue('firebaseToken')
     try {
         let res = yield call(ApiProvider._signUp, { ...rest, device_token: firebaseToken });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res?.message);
             yield put(resetStateOnLogin())
             const { access_token, notification_settings, location, ...userData } = res?.data
@@ -224,7 +224,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
                 userData,
                 isLogin: true
             })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -232,7 +232,7 @@ function* doSignUp({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 6", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -242,8 +242,8 @@ function* doLogout({ type, payload, }: action): Generator<any, any, any> {
     try {
         const firebaseToken = Database.getStoredValue('firebaseToken')
         let res = yield call(ApiProvider._logoutApi, { device_token: firebaseToken });
-        if (res.status == 200) {
-        } else if (res.status == 400) {
+        if (res?.status == 200) {
+        } else if (res?.status == 400) {
             // _showErrorMessage(res.message);
         } else {
             // _showErrorMessage(Language.something_went_wrong);
@@ -254,7 +254,7 @@ function* doLogout({ type, payload, }: action): Generator<any, any, any> {
 
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 7", error);
         _hidePopUpAlert()
         yield put(tokenExpiredAction(false));
         yield put(setLoadingAction(false));
@@ -265,11 +265,11 @@ function* deleteAccount({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._deleteAccount, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showErrorMessage(res.message);
             _hidePopUpAlert()
             yield put(tokenExpiredAction(false));
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -277,7 +277,7 @@ function* deleteAccount({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 8", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -303,7 +303,7 @@ function* tokenExpired({ type, payload, }: action): Generator<any, any, any> {
         FastImage.clearMemoryCache()
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 9", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -346,7 +346,7 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
                 }
             }
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             // _showErrorMessage(res.message);
         } else {
             // _showErrorMessage(Language.something_went_wrong);
@@ -354,7 +354,7 @@ function* restorePurchase({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 10", error);
         yield put(setLoadingAction(false));
     }
 }

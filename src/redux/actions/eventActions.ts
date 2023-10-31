@@ -140,6 +140,12 @@ export const authorizePayment = (payload: any) => ({
     payload
 })
 
+export const payWithBitcoin = (payload: any) => ({
+    type: ActionTypes.PAY_WITH_BITCOIN,
+    payload
+})
+
+
 export const getEventsForCheckIn = (payload: any) => ({
     type: ActionTypes.GET_EVENTS_FOR_CHECK_IN,
     payload

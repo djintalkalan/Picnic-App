@@ -17,5 +17,7 @@ export const colors = {
     colorTextPlaceholder: '#9A9A9A',
     colorErrorRed: '#C93F34',
     colorLink: '#0e559c',
+    ColorButtonText: '#272727',
+    ColorButtonSliderBackground: '#BDBDBD'
 
-}
+};

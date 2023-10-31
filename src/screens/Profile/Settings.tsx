@@ -14,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useDispatch } from 'react-redux'
 import { useDatabase } from 'src/database/Database'
+import FeatureFlagWrapper from 'src/featureflag/FeatureFlagWrapper'
 import IntercomService from 'src/intercom/IntercomService'
 import Language, { useLanguage, useUpdateLanguage } from 'src/language/Language'
 import UUIDService from 'src/uuid/UUIDService'
@@ -68,7 +69,7 @@ const Settings: FC<any> = (props) => {
         dispatch(setLoadingAction(true))
         InteractionManager.runAfterInteractions(() => {
             _setLanguage({ language: language }).then((res: any) => {
-                if (res && res.status == 200) {
+                if (res && res?.status == 200) {
                     _hidePopUpAlert()
                     updateLanguage(language)
                     dispatch(setLoadingAction(false))
@@ -164,9 +165,33 @@ const Settings: FC<any> = (props) => {
                         image={Images.ic_paypal_icon}
                         title={Language?.paypal_details}
                         arrowRight={true}
-
                     />
-
+                    <FeatureFlagWrapper flag='enable-lightning' >
+                        <SettingButton
+                            onPress={() => { NavigationService.navigate('ReceiveBitcoin') }}
+                            image={Images.ic_bitcoin_receive}
+                            title={Language?.receive_bitcoin}
+                            arrowRight={true}
+                        />
+                        <SettingButton
+                            onPress={() => { NavigationService.navigate('SendBitcoinAmount') }}
+                            image={Images.ic_bitcoin_send}
+                            title={Language?.send_bitcoin}
+                            arrowRight={true}
+                        />
+                        {/* <SettingButton
+                            onPress={() => { NavigationService.navigate('Mnemonic') }}
+                            image={Images.ic_bitcoin_send}
+                            title={Language?.bitcoin_mnemonic}
+                            arrowRight={true}
+                        /> */}
+                        <SettingButton
+                            onPress={() => { NavigationService.navigate('ListBitcoinTransactions') }}
+                            image={Images.ic_bitcoin_transactions}
+                            title={Language?.bitcoin_transactions}
+                            arrowRight={true}
+                        />
+                    </FeatureFlagWrapper>
 
                     <SettingButton
                         onPress={() => {

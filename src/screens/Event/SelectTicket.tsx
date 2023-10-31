@@ -28,7 +28,7 @@ const SelectTicket: FC = (props: any) => {
         _totalSoldTickets({ resource_id: props?.route?.params?.id }).then(res => {
             if (res?.status == 200) {
                 console.log('res', res);
-                setAllPlans(res?.data?.tickets?.filter((_: any) => { return _.status != 2 }))
+                setAllPlans(res?.data?.tickets?.filter((_: any) => { return _?.status != 2 }))
             } else console.log(res);
         }).catch(e => console.log(e))
     }, [])

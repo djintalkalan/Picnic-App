@@ -18,6 +18,8 @@ import { CodePushDialog } from './codepush/CodePush';
 import Database, { useOtherValues } from './database/Database';
 import Language from './language/Language';
 import MyNavigationContainer from './routes/MyNavigationContainer';
+global.Buffer = require('buffer').Buffer;
+
 if (__DEV__) {
     FastImage.clearMemoryCache()
     FastImage.clearDiskCache()
@@ -29,6 +31,7 @@ const App: FC = () => {
 
     const [showGif, setGif] = useOtherValues<boolean>("showGif", true);
 
+
     const getVersion = useCallback(() => {
         if (config.APP_TYPE != 'production') {
             setTimeout(() => {
@@ -37,7 +40,7 @@ const App: FC = () => {
             return
         }
         _getAppVersion().then((res: any) => {
-            if (res && res.status == 200) {
+            if (res && res?.status == 200) {
                 let serverVersion = res?.data?.[Platform.OS]
                 const currentVersion = (config.APP_VERSION)
                 let isUpdateAvailable = Semver.compare(serverVersion, currentVersion)
@@ -122,6 +125,7 @@ const App: FC = () => {
         })
 
     }, [])
+
 
     return (
         <GestureHandlerRootView style={styles.container} >

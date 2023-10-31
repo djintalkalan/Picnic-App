@@ -12,7 +12,7 @@
 #import "RNBootSplash.h"
 
 // ENV
-#import <react-native-ultimate-config/ConfigValues.h>
+#import <ConfigValues.h>
 
 //Firebase
 #import <Firebase.h>
@@ -64,16 +64,6 @@
 #else
   return [CodePush bundleURL]; // return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-}
-
-/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
-///
-/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
-/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
-/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
-- (BOOL)concurrentRootEnabled
-{
-  return true;
 }
 
 @end

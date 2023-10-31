@@ -5,12 +5,24 @@
     "workbench.editor.enablePreview": false,
     "workbench.editor.enablePreviewFromQuickOpen": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true
+        "source.organizeImports": false
     },
     "editor.defaultFormatter": "vscode.typescript-language-features",
     "[typescriptreact]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
+    "terminal.integrated.profiles.osx": {
+        "rosetta": {
+          "path": "arch",
+          "args": [
+            "-x86_64",
+            "zsh",
+            "-l"
+          ],
+          "overrideName": true
+        }
+      },
+    "terminal.integrated.defaultProfile.osx": "rosetta",
     "cSpell.words": [
         "appcenter",
         "authorise",

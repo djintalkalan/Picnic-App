@@ -174,7 +174,7 @@ const ChatInput = forwardRef<TextInput, ChatInputProps>((props, ref: ForwardedRe
                         <View style={styles.accessory}>
                             <Button
                                 onPress={() => Keyboard.dismiss()}
-                                title="Done"
+                                title={Language.done}
                             />
                         </View>
                     </InputAccessoryView>}

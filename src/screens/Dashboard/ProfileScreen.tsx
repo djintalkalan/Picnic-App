@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native'
 import { getProfile, updateProfile, uploadFile } from 'app-store/actions'
 import { colors } from 'assets/Colors'
 import { Images } from 'assets/Images'
@@ -14,6 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useDispatch } from 'react-redux'
 import Database, { ILocation, useDatabase } from 'src/database/Database'
 import Language from 'src/language/Language'
+import LightningService from 'src/lightning/LightningService'
 import { dateFormat, formattedAddressToString, getFormattedAddress2, getImageUrl, NavigationService, scaler, stringToDate, _zoomImage } from 'utils'
 import ImagePickerUtils from 'utils/ImagePickerUtils'
 type FormType = {
@@ -41,8 +43,10 @@ const ProfileScreen: FC<any> = (props) => {
 
 
 
+    const isFocused = useIsFocused();
     // const [isEditEnabled, setEditEnabled] = useState(props?.route?.params?.isEditEnabled)
     const [isEditEnabled, setEditEnabled] = useState(true)
+    const [btcAmount, setbtcAmount] = useState(0);
     const [profileImage, setProfileImage] = useState<any>()
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -65,6 +69,26 @@ const ProfileScreen: FC<any> = (props) => {
 
     const keyboardValues = useKeyboardService()
 
+    useEffect(() => {
+        async function setupState() {
+
+            // set bitcoion amount
+            let nodeInfo = await LightningService.getNodeInfo();
+            let _btc = 0.0;
+            if (nodeInfo !== null) {
+                // convert from milisats to sats
+                let sats = nodeInfo.channelsBalanceMsat / 1000;
+
+                // convert from sats to btc
+                _btc = sats / 100_000_000;
+                console.log("sats", sats)
+
+                setbtcAmount(_btc);
+            }
+        }
+        isFocused && setupState();
+
+    }, [isFocused]);
 
     useLayoutEffect(() => {
         dispatch(getProfile())
@@ -249,6 +273,22 @@ const ProfileScreen: FC<any> = (props) => {
                         keyboardType={'email-address'}
                         rules={EmailValidations()}
                         control={control}
+                        errors={errors}
+                    />
+                    <TextInput
+                        containerStyle={{ flex: 1, marginEnd: scaler(4), }}
+                        placeholder={Language.my_bitcoin_wallet}
+                        borderColor={colors.colorTextInputBackground}
+                        backgroundColor={colors.colorTextInputBackground}
+                        name={'bitcoinWallet'}
+                        icon={Images.ic_bitcoin_grey}
+                        onPress={() => {
+                            console.log("locationRef.current", locationRef.current);
+                        }}
+                        value={(btcAmount).toFixed(6) + " BTC"}
+                        disabled={true}
+                        // required={Language.please_enter_default_location}
+                        // control={control}
                         errors={errors}
                     />
 

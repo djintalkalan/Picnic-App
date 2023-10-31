@@ -288,7 +288,7 @@ const CreateEvent3: FC<any> = props => {
             event_tax_amount: "0",
             currency: getSelectedCurrencyFromText(_.currency)?.value,
             description: _.ticketDescription,
-            status: _.status == 2 ? 2 : undefined,
+            status: _?.status == 2 ? 2 : undefined,
             sales_ends_on,
             total_free_tickets: _?.noOfFreeTickets || 0,
             capacity: _?.capacity,

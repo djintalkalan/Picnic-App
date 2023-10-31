@@ -1,3 +1,4 @@
+import bitcoinTypes from './bitcoinTypes';
 import chatTypes from './chatTypes';
 import createEventTypes from './createEventTypes';
 import otherTypes from './otherTypes';
@@ -7,7 +8,8 @@ const ActionTypes = {
   ...userTypes,
   ...otherTypes,
   ...chatTypes,
-  ...createEventTypes
+  ...createEventTypes,
+  ...bitcoinTypes,
 }
 export interface action {
   type: String,

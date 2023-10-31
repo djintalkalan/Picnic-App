@@ -1,3 +1,4 @@
+export * from './bitcoinReducer';
 export * from './createEventReducer';
 export * from './eventChatReducer';
 export * from './eventReducer';

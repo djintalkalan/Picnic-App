@@ -1,17 +1,19 @@
 import { createEvent, setLoadingAction, uploadFileArray } from 'app-store/actions';
 import { updateCreateEvent } from 'app-store/actions/createEventActions';
 import { store } from 'app-store/store';
-import { colors, Images } from 'assets';
+import { Images, colors } from 'assets';
 import { BackButton, Button, CheckBox, MyHeader, Stepper, Text, TextInput, useKeyboardService } from 'custom-components';
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar';
 import { IPaypalConnection, useDatabase } from 'database';
 import { round } from 'lodash';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
+import FeatureFlagService from 'src/featureflag/FeatureFlagService';
+import FeatureFlagWrapper from 'src/featureflag/FeatureFlagWrapper';
 import Language from 'src/language/Language';
 import { NavigationService, scaler } from 'utils';
 
@@ -36,6 +38,8 @@ const CreateEvent4: FC<any> = props => {
     const [isPayByPaypal, setIsPayByPaypal] = useState(false)
     const { current: event } = useRef(store.getState().createEventState)
     const [{ isPaypalConnected }] = useDatabase<IPaypalConnection>("paypalConnection", {})
+    const [isPayByBitcoin, setIsPayByBitcoin] = useState(false)
+    const [featureFlag, setFeatureFlag] = useState(false)
 
     const dispatch = useDispatch()
     const {
@@ -59,10 +63,19 @@ const CreateEvent4: FC<any> = props => {
         event?.payment_method && event?.payment_method?.includes('paypal') && isPaypalConnected && setIsPayByPaypal(true)
     }, [isPaypalConnected])
 
+    useEffect(() => {
+        FeatureFlagService.checkFlag("enable-lightning").then((result) => {
+            if (result) {
+                setFeatureFlag(true);
+            }
+        })
+    }, [])
+
     const setEventValues = useCallback(() => {
         console.log("event", event);
         // console.log("userData?.paypal_merchant_id", userData?.paypal_merchant_id);
         event?.payment_method && event?.payment_method?.includes('cash') && setIsPayByCash(true)
+        featureFlag && event?.payment_method && event?.payment_method?.includes('bitcoin') && setIsPayByBitcoin(true)
         // setValue('paypalEmail', event?.payment_email ?? '')
         // setValue('apiUserName', event?.payment_api_username ?? '')
         // setValue('apiPassword', event?.payment_api_password ?? '')
@@ -83,7 +96,7 @@ const CreateEvent4: FC<any> = props => {
         const payload: any = {
             // is_creators_paypal_configured: usePaypalBusinessAccount ? '1' : '0',
             is_booking_disabled: isBookingDisabled ? '1' : '0',
-            payment_method: (() => { const methods = []; isPayByCash && methods.push('cash'); isPayByPaypal && methods.push('paypal'); return methods; })(),
+            payment_method: (() => { const methods = []; isPayByCash && methods.push('cash'); isPayByPaypal && methods.push('paypal'); featureFlag && isPayByBitcoin && methods.push('bitcoin'); return methods; })(),
             // payment_email: !usePaypalBusinessAccount && data?.paypalEmail?.trim() || '',
             // payment_api_username: usePaypalBusinessAccount && data?.apiUserName?.trim() || '',
             // payment_api_password: usePaypalBusinessAccount && data?.apiPassword?.trim() || '',
@@ -131,7 +144,7 @@ const CreateEvent4: FC<any> = props => {
             );
 
         }, 0);
-    }, [isPayByPaypal, isPayByCash, isBookingDisabled, isPaypalConnected]);
+    }, [isPayByPaypal, isPayByCash, isPayByBitcoin, isBookingDisabled, isPaypalConnected]);
 
     const onSubmit = useCallback(() => handleSubmit((data) => {
         if (!data?.policy?.trim() && event.is_donation_enabled != 1 && isPayByPaypal) {
@@ -159,12 +172,12 @@ const CreateEvent4: FC<any> = props => {
     })(), [callCreateEventApi, event, isPayByPaypal],);
 
     const calculateButtonDisability = useCallback(() => {
-        if ((!isPayByPaypal && !isPayByCash) && !isBookingDisabled
+        if ((!isPayByPaypal && !isPayByCash && !isPayByBitcoin) && !isBookingDisabled
         ) {
             return true;
         }
         return false;
-    }, [isPayByPaypal, isPayByCash, isBookingDisabled]);
+    }, [isPayByPaypal, isPayByCash, isPayByBitcoin, isBookingDisabled]);
 
     return (
         <SafeAreaViewWithStatusBar style={styles.container}>
@@ -196,6 +209,18 @@ const CreateEvent4: FC<any> = props => {
                             <MaterialIcons name={isPayByCash ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                         </TouchableOpacity>
                         <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
+
+                        <FeatureFlagWrapper flag='enable-lightning'>
+                            <TouchableOpacity style={styles.payView} onPress={() => {
+                                setIsPayByBitcoin(!isPayByBitcoin)
+                            }}>
+                                <Image source={Images.ic_bitcoin} style={{ height: scaler(16), width: scaler(19), resizeMode: "contain" }} />
+                                <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_bitcoin : Language.pay_by_bitcoin}</Text>
+                                <MaterialIcons name={isPayByBitcoin ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
+                            </TouchableOpacity>
+                        </FeatureFlagWrapper>
+                        <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
+
                         <TouchableOpacity style={styles.payView} onPress={() => {
                             if (!isPayByPaypal && !isPaypalConnected) {
                                 NavigationService.navigate('PaypalDetails', {
@@ -208,10 +233,9 @@ const CreateEvent4: FC<any> = props => {
                             }
                         }}>
                             <Image source={Images.ic_paypal} style={{ height: scaler(16), width: scaler(19) }} />
-                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_paypal : Language.pay_by_paypal}</Text>
+                            <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1 }}>{event.is_donation_enabled == 1 ? Language.accept_in_paypal : Language.pay_with_paypal}</Text>
                             <MaterialIcons name={isPayByPaypal ? 'check-circle' : 'radio-button-unchecked'} size={scaler(20)} color={colors.colorPrimary} />
                         </TouchableOpacity>
-                        <View style={{ height: scaler(1), width: '95%', backgroundColor: '#EBEBEB', alignSelf: 'center' }} />
                     </View>
 
                     <TouchableOpacity onPress={() => {

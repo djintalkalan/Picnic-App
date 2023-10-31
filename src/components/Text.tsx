@@ -17,6 +17,10 @@ const _onAutoLinkPress = (url: string, match: Match) => {
             Linking.openURL(url)
             break;
         default:
+            const dynamicDomains = ['picnicbeta.page.link', 'picnicdev.page.link', 'picnicgroups.page.link']
+            const i = dynamicDomains.findIndex(_ => url?.includes(_))
+            if (i >= 0)
+                return Linking.openURL(url)
             openLink(url?.toLowerCase())
             break;
     }
@@ -251,8 +255,8 @@ const reducer = (acc: any, cur: any, index: number) => {
     let previousVal = acc[acc.length - 1];
     if (
         previousVal &&
-        previousVal.startsWith('**') &&
-        !previousVal.endsWith('**')
+        previousVal?.startsWith('**') &&
+        !previousVal?.endsWith('**')
     ) {
         acc[acc.length - 1] = previousVal + ' ' + cur;
     } else {

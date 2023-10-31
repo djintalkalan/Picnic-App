@@ -241,31 +241,27 @@ const Subscription: FC = (props: any) => {
                 // if (expireAt >= new Date()) {
                 console.log("Calculating purchase");
                 // res.data = null
-                if (expireAt >= thisDate && res?.data?.type == 'trial') {
-                    requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
+                const requestPurchase = async () => {
+                    requestSubscription({
+                        sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false,
+                        ...(Platform.OS == 'android' ? {
+                            subscriptionOffers: [{
+                                sku: subscriptionIds[i],
+                                offerToken: ''
+                            }]
+                        } : {})
+                    }).catch(e => {
                         console.log("E", e);
                     })
-                    return
+                }
+                if (expireAt >= thisDate && res?.data?.type == 'trial') {
+                    return requestPurchase()
                 }
                 if ((expireAt < thisDate || !res.data || (res?.data?.is_premium != undefined && !res?.data?.is_premium))) {
                     console.log("Requesting purchase");
-                    if (true) {
-                        requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
-                            console.log("E", e);
-                        })
-                        // .then(handlePurchase, handleError).catch((r) => {
-                        //     console.log("catch", r);
-                        //     dispatch(setLoadingAction(false))
-                        // }).finally(() => {
-                        //     console.log("Complete");
-                        //     dispatch(setLoadingAction(false))
-
-                        // })
-                    }
+                    requestPurchase()
                 } else if (res?.data?.type == 'monthly' && i == 0) {
-                    requestSubscription({ sku: subscriptionIds[i], andDangerouslyFinishTransactionAutomaticallyIOS: false }).catch(e => {
-                        console.log("E", e);
-                    })
+                    requestPurchase()
                 } else {
                     continueToMemberShip(Language.you_are_already_a_member)
                 }
@@ -274,8 +270,7 @@ const Subscription: FC = (props: any) => {
             console.log(e);
             dispatch(setLoadingAction(false))
         })
-    }, [handlePurchase])
-
+    }, [])
 
     const continueToMemberShip = useCallback((message?: string) => {
         _showSuccessMessage(message)
@@ -329,16 +324,6 @@ const Subscription: FC = (props: any) => {
                         <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
                     </View>
                 }
-                {/* {products?.length ? <>
-                    <View style={{ margin: scaler(20), justifyContent: 'flex-end' }}>
-                        <Button title={Language.join_now_at} onPress={() => callPurchase(0)} />
-                        <Text onPress={() => callPurchase(1)} style={{ fontWeight: '600', fontSize: scaler(14), alignSelf: 'center', marginTop: scaler(15) }}>{Language.or_try_our_membership_at}</Text>
-                    </View>
-                </> :
-                    products && <View style={{ flex: 1 }} >
-                        <Text style={{ fontSize: scaler(14), textAlign: 'center', alignSelf: 'center', marginHorizontal: scaler(20), color: "rgba(2, 54, 60, 1)" }}>{Language.in_app_unavailable}</Text>
-                    </View>
-                } */}
                 {!userData?.is_premium ?
                     <Button containerStyle={{ marginHorizontal: scaler(20), }} title={Language.restore_purchase} onPress={() => {
                         restorePurchase()

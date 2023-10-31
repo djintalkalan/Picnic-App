@@ -163,7 +163,7 @@ export const LocationMessage = memo((props: ILocationMessage) => {
 export const LocationMessageReplied = memo((props: ILocationMessageReplied) => {
     const { isMyMessage, location } = props
 
-    const senderName = props?.isMyMessageParent ? "You" : getDisplayName(props?.sender)
+    const senderName = props?.isMyMessageParent ? Language.you : getDisplayName(props?.sender)
     return <TouchableOpacity activeOpacity={0.7} style={{
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,

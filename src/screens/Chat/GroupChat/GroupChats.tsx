@@ -6,7 +6,7 @@ import { EmojiAlert } from 'custom-components/EmojiAlert'
 import { ILocation, useDatabase } from 'database'
 import { find as findUrl } from 'linkifyjs'
 import { debounce } from 'lodash'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { ColorValue, DeviceEventEmitter, Dimensions, FlatList, ImageBackground, ListRenderItem, Platform, StyleSheet, TextInput, View } from 'react-native'
 import { Bar } from 'react-native-progress'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -204,6 +204,9 @@ export const GroupChats: FC<any> = (props) => {
     }, [groupDetail?.background_color])
     const systemMessageTemplate = useSystemMessageTemplate()
     const _renderChatItem = useCallback<ListRenderItem<any>>(({ item, index }) => {
+        if (!!groupDetail?.is_broadcast_group && item?.message?.includes('{{has_joined_the_group}}')) {
+            return <Fragment />
+        }
         return (
             <ChatItem
                 {...item}

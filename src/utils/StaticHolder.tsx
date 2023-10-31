@@ -1,4 +1,4 @@
-import { IAlertType, PopupAlert } from "custom-components";
+import { IAlertType, PopupAlert, InviteCodes, InviteCodesType } from "custom-components";
 import { BottomMenu, IBottomMenu } from "custom-components/BottomMenu";
 import { EmojiAlert, EmojiAlertType } from "custom-components/EmojiAlert";
 import { ImageZoom } from "custom-components/ImageZoom";
@@ -64,6 +64,11 @@ export class StaticHolder {
   static showEmojiAlert(data: EmojiAlertType) { this.emojiAlert?.showEmojiAlert(data) }
   static hideEmojiAlert() { this.emojiAlert?.hideEmojiAlert() }
 
+  // InviteCodes 
+  static inviteCodes: (InviteCodes) | null | undefined;
+  static setInviteCodes(inviteCodes: (InviteCodes) | null | undefined) { this.inviteCodes = inviteCodes; }
+  static showInviteCodes(data: InviteCodesType) { this.inviteCodes?.showInviteCodes(data) }
+  static hideInviteCodes() { this.inviteCodes?.hideInviteCodes() }
 }
 
 export class KeyboardAccessoryView extends React.Component {

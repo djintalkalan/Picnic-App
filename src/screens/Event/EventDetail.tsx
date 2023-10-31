@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { config } from 'api'
 import { _copyEvent, _getAdminChatCount } from 'api/APIProvider'
 import { deleteEvent, deleteEventAsPublicAdmin, getEventDetail, getEventMembersList, leaveEvent, muteUnmuteResource, reportResource, setActiveGroup, setLoadingAction } from 'app-store/actions'
-import { colors, Images } from 'assets'
+import { Images, colors } from 'assets'
 import { Button, Card, Text, TextInput } from 'custom-components'
 import { SafeAreaViewWithStatusBar } from 'custom-components/FocusAwareStatusBar'
 import ImageLoader from 'custom-components/ImageLoader'
@@ -24,8 +24,9 @@ import QRCode from 'react-native-qrcode-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useDispatch, useSelector } from 'react-redux'
+import FeatureFlagService from 'src/featureflag/FeatureFlagService'
 import Language from 'src/language/Language'
-import { dateFormatInSpecificZone, formatAmount, getCityOnly, getImageUrl, launchMap, NavigationService, scaler, shareDynamicLink, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage } from 'utils'
+import { NavigationService, _hidePopUpAlert, _hideTouchAlert, _showErrorMessage, _showPopUpAlert, _showTouchAlert, _zoomImage, dateFormatInSpecificZone, formatAmount, getCityOnly, getImageUrl, launchMap, scaler, shareDynamicLink } from 'utils'
 
 
 const { height, width } = Dimensions.get('screen')
@@ -50,6 +51,7 @@ const EventDetail: FC<any> = (props) => {
     const [isOpened, setOpened] = useState(false)
     const [unreadCountOfAdmin, setUnreadCountOfAdmin] = useState(0)
     const [savedCalendarEvent, setSavedCalendarEvent] = useState(Database.getCalenderEvent(event?._id))
+    const [featureFlag, setFeatureFlag] = useState(false)
 
     const eventDate = new Date(event?.event_start_date_time);
     // const eventDate = new Date("2021-09-10");
@@ -59,7 +61,7 @@ const EventDetail: FC<any> = (props) => {
 
     const { isCancelledByMember, activeTicket }: { isCancelledByMember: boolean, activeTicket: any } = useMemo(() => {
         if (event?.my_tickets) {
-            const index = event?.my_tickets?.findIndex((_: any) => _.status == 1) ?? -1
+            const index = event?.my_tickets?.findIndex((_: any) => _?.status == 1) ?? -1
             const activeTicket = index > -1 ? event?.my_tickets[index] : null
 
             if (activeTicket) {
@@ -121,6 +123,14 @@ const EventDetail: FC<any> = (props) => {
             setImageArray([...(event?.image ? [{ type: 'image', name: event?.image }] : []), ...(event?.event_images || [])])
         }
     }, [(event?.image || event?.event_images)])
+
+    useEffect(() => {
+        FeatureFlagService.checkFlag("enable-lightning").then((result) => {
+            if (result) {
+                setFeatureFlag(true);
+            }
+        })
+    }, [])
 
     const _showCancellationPolicy = useCallback(() => {
         _showPopUpAlert({
@@ -354,7 +364,7 @@ const EventDetail: FC<any> = (props) => {
                         <Card style={styles.planView} useCompatPadding={false} cornerRadius={scaler(5)} cardElevation={3} >
                             <View style={{ borderRadius: scaler(5) }}>
                                 {ticket_plans?.map((_: any, i: number) => {
-                                    if (_.status == 1)
+                                    if (_?.status == 1)
                                         return <TicketPlans key={i} {..._} />
                                 })}
                             </View>
@@ -368,7 +378,7 @@ const EventDetail: FC<any> = (props) => {
 
     const calculateButtonDisability = useCallback(() => {
         if (!(event?.payment_api_username || event?.payment_email || event?.creator_of_event?.paypal_merchant_id) &&
-            (!event?.payment_method?.includes('cash') &&
+            (!(event?.payment_method?.includes('cash') || event?.payment_method?.includes('bitcoin')) &&
                 !event?.is_free_event)) {
             return true;
         }
@@ -428,7 +438,7 @@ const EventDetail: FC<any> = (props) => {
                 endDate,
                 allDay: false,
                 location: event?.address,
-                title: '"' + event?.name + '" event from Picnic Groups',
+                title: '"' + event?.name + '" ' + Language.event_from_Picnic_Groups,
                 notes: event?.name
             }).then(res => {
                 if (res?.action == 'SAVED') {
@@ -533,7 +543,7 @@ const EventDetail: FC<any> = (props) => {
                     <TouchableOpacity onPress={() => NavigationService.goBack()} style={styles.backButton} >
                         <Image style={styles.imgBack} source={Images.ic_back_group} />
                     </TouchableOpacity>
-                    {event.status == 1 && (eventDate >= new Date() || event?.is_admin) ?
+                    {event?.status == 1 && (eventDate >= new Date() || event?.is_admin) ?
                         <TouchableOpacity ref={dotMenuButtonRef} onPress={() => openEditButton()} style={styles.backButton} >
                             <Image style={styles.imgBack} source={Images.ic_more_group} />
                         </TouchableOpacity>
@@ -550,10 +560,10 @@ const EventDetail: FC<any> = (props) => {
                                 </Text>
                             </View>
                         </View>
-                        <View>
+                        <View style={{ alignItems: "flex-end" }}>
                             <TouchableOpacity ref={priceButtonRef} disabled={!ticket_plans?.length} onPress={() => !event?.is_free_event ? showAllTicketVisible() : undefined} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <View style={{ alignItems: 'flex-end' }} >
-                                    <Text style={{ fontSize: scaler(19), fontWeight: '600' }}>
+                                    <Text style={{ fontSize: scaler(24), fontWeight: '600', textAlign: "right" }}>
                                         {event?.is_free_event ? Language.free : formatAmount(event?.event_currency, event?.event_fees)}
                                     </Text>
                                     {event?.is_free_event && event?.is_donation_enabled ?
@@ -564,8 +574,27 @@ const EventDetail: FC<any> = (props) => {
                                     <Image source={Images.ic_arrow_dropdown} style={{ height: scaler(30), width: scaler(30), tintColor: colors.colorBlack }} />
                                     : undefined}
                             </TouchableOpacity>
-                            <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person}</Text>
-
+                            {/* this is causing a problem */}
+                            {
+                                featureFlag && event?.payment_method?.includes('bitcoin') ?
+                                    event?.is_admin ?
+                                        <>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person + (featureFlag && event?.payment_method?.includes('bitcoin') ? " " : "")}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Image source={Images.ic_lightning_gold} style={{ height: scaler(18), width: scaler(18), marginLeft: scaler(10), resizeMode: "contain" }} />
+                                                <Text style={styles.address} >{event?.is_free_event ? '' : featureFlag && event?.payment_method?.includes('bitcoin') && Language.accepts_bitcoin}</Text>
+                                            </View>
+                                        </>
+                                        :
+                                        <View style={{ flexDirection: "row" }}>
+                                            <Text style={styles.address} >{event?.is_free_event ? '' : Language.per_person + (featureFlag && event?.payment_method?.includes('bitcoin') ? " " : "")}</Text>
+                                            <Image source={Images.ic_bitcoin} style={{ height: scaler(18), width: scaler(18), marginLeft: scaler(10), resizeMode: "contain" }} />
+                                        </View>
+                                    :
+                                    null
+                            }
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', zIndex: -1 }} >
@@ -750,7 +779,7 @@ const EventDetail: FC<any> = (props) => {
                             </View>
                         : null}
 
-                    {event.status == 1 && !event?.is_admin && <>
+                    {event?.status == 1 && !event?.is_admin && <>
                         <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.event_hosted_by}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: scaler(15) }}>
                             <ImageLoader
@@ -781,7 +810,7 @@ const EventDetail: FC<any> = (props) => {
                         </View>
                     </>}
 
-                    {event?.event_group?.name && event.status == 1 ?
+                    {event?.event_group?.name && event?.status == 1 ?
                         <>
                             <Text style={{ fontWeight: '500', fontSize: scaler(15) }}>{Language.group}</Text>
                             <ListItem
@@ -996,7 +1025,8 @@ const styles = StyleSheet.create({
         fontSize: scaler(12),
         fontWeight: '400',
         color: colors.colorGreyInactive,
-        marginTop: scaler(2)
+        marginTop: scaler(2),
+        textAlign: "right"
     },
     groupType: {
         fontSize: scaler(12),

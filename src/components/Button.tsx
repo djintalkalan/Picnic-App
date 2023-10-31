@@ -6,29 +6,29 @@ import { scaler } from "utils";
 import { Text } from "./Text";
 
 interface ButtonProps {
-    disabled?: boolean
+    disabled?: boolean;
     onPress?: (event: GestureResponderEvent) => void;
     buttonStyle?: StyleProp<ViewStyle>;
     containerStyle?: StyleProp<ViewStyle>;
     center?: boolean;
-    backgroundColor?: ColorValue
+    backgroundColor?: ColorValue;
     width?: number | string;
-    minWidth?: number | string
+    minWidth?: number | string;
     title: string;
-    type?: 'bold' | 'light' | 'regular' | 'medium'
+    type?: 'bold' | 'light' | 'regular' | 'medium';
     fontColor?: ColorValue;
     radius?: number;
-    fontSize?: number
-    paddingVertical?: number
-    paddingHorizontal?: number
-    pointerEvents?: 'none'
-    textStyle?: TextStyle
-    opacityType?: 'gesture' | 'react'
+    fontSize?: number;
+    paddingVertical?: number;
+    paddingHorizontal?: number;
+    pointerEvents?: 'none';
+    textStyle?: TextStyle;
+    opacityType?: 'gesture' | 'react';
 }
 
 export const Button = (props: ButtonProps) => {
 
-    const { disabled = false, onPress, opacityType = "react", textStyle, containerStyle, center, radius, backgroundColor, width, title, type = 'medium', fontColor = colors.colorWhite, buttonStyle, fontSize = scaler(14), minWidth, paddingHorizontal, paddingVertical } = props
+    const { disabled = false, onPress, opacityType = "react", textStyle, containerStyle, center, radius, backgroundColor, width, title, type = 'medium', fontColor = colors.colorWhite, buttonStyle, fontSize = scaler(14), minWidth, paddingHorizontal, paddingVertical } = props;
     // const TouchableOpacity = React.useMemo(() => {
     //     if (opacityType == 'gesture' && Platform.OS == 'ios') {
     //         return RTO
@@ -42,13 +42,13 @@ export const Button = (props: ButtonProps) => {
             requestAnimationFrame(() => {
                 onPress(e);
             });
-        } : undefined
-    }, [onPress])
+        } : undefined;
+    }, [onPress]);
 
     const styles = React.useMemo(() => {
-        let container = {}
+        let container = {};
         if (center) {
-            container = { width: '100%', alignItems: 'center' }
+            container = { width: '100%', alignItems: 'center' };
         }
         return StyleSheet.create({
             contentContainerStyle: {
@@ -78,7 +78,7 @@ export const Button = (props: ButtonProps) => {
                 ...StyleSheet.flatten(textStyle) //Object.assign({}, ...(Array.isArray(textStyle) ? textStyle : [textStyle]))
 
             }
-        })
+        });
     }, [containerStyle, textStyle, fontColor, fontSize, center, width, buttonStyle, backgroundColor, paddingHorizontal, radius, paddingVertical, minWidth, disabled]);
 
     return (
@@ -90,7 +90,7 @@ export const Button = (props: ButtonProps) => {
             </TouchableOpacity>
         </View>
     );
-}
+};
 
 
-export default Button
+export default Button;

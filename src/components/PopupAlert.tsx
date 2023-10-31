@@ -1,7 +1,7 @@
-import { colors } from "assets";
+import { Images, colors } from "assets";
 import { Text } from "custom-components";
 import React, { Component, FC } from "react";
-import { BackHandler, Dimensions, GestureResponderEvent, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import { BackHandler, Dimensions, GestureResponderEvent, Image, ScrollView, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Language from "src/language/Language";
 import { scaler } from "utils";
@@ -24,6 +24,8 @@ export interface IAlertType {
     onPressCancel?: () => void
     leftTitle?: boolean
     isClose?: boolean
+    footerText?: string
+    isBackButton?: boolean
 }
 
 export class PopupAlert extends Component<PopupAlertProps, any> {
@@ -46,8 +48,10 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
     fullWidthMessage: boolean = false
     leftTitle = false;
     isClose = false;
+    footerText?: string;
+    isBackButton = false;
 
-    showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel, leftTitle, isClose }: IAlertType) => {
+    showAlert = ({ title, message, buttonText, onPressButton, buttonStyle, cancelButtonText, customView, onPressCancel, leftTitle, isClose, footerText, isBackButton }: IAlertType) => {
         this.title = title || ""
         this.message = message || ""
         this.buttonText = buttonText || ""
@@ -67,6 +71,7 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         }
 
         this.isClose = isClose || false
+        this.isBackButton = isBackButton || false
 
         if (this.isClose) {
             this.cancelButtonText = ""
@@ -75,6 +80,8 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
         if (this.leftTitle) {
             this.fullWidthMessage = true
         }
+
+        this.footerText = footerText;
 
         // if (this.cancelButtonText == Language.close || this.cancelButtonText == Language.cancel) {
         //     this.cancelButtonText = ""
@@ -118,6 +125,15 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
             return (
                 <SafeAreaViewWithStatusBar translucent style={styles.absolute}  >
                     <View style={[styles.alertContainer, this.leftTitle ? { alignItems: 'flex-start' } : {}]} >
+                        {this.isBackButton ?
+                            <TouchableOpacity onPress={this.hideAlert} style={styles.backIcon}>
+                                <Image source={Images.ic_left} style={{ tintColor: colors.colorBlack, top: scaler(6), height: scaler(20), width: scaler(30), resizeMode: 'contain' }} />
+                                {/* <MaterialIcons
+                                    color={colors.colorBlack}
+                                    size={scaler(25)}
+                                    name="back" /> */}
+                            </TouchableOpacity>
+                            : null}
                         {this.isClose ?
                             <TouchableOpacity onPress={this.hideAlert} style={styles.crossIcon}>
                                 <MaterialIcons
@@ -148,6 +164,9 @@ export class PopupAlert extends Component<PopupAlertProps, any> {
                                 onPress={this.onPressButton} /> : null}
                         {this.cancelButtonText ?
                             <Text onPress={this.onPressCancel} style={[styles.cancelText, this.leftTitle ? { alignSelf: 'center', } : {}]} >{this.cancelButtonText}</Text> : null}
+                        {this.footerText ?
+                            <Text>{this.footerText}</Text>
+                            : null}
                     </View>
                 </SafeAreaViewWithStatusBar>
             )
@@ -228,5 +247,11 @@ const styles = StyleSheet.create({
         padding: scaler(10),
         top: scaler(10),
         right: scaler(10)
+    },
+    backIcon: {
+        position: 'absolute',
+        padding: scaler(10),
+        top: scaler(10),
+        left: scaler(10)
     }
 })

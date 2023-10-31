@@ -178,7 +178,7 @@ export const VideoMessage = memo((props: IVideoMessage) => {
 
 export const VideoMessageReplied = memo((props: IVideoMessageReplied) => {
     const { isMyMessage, isMyMessageParent } = props
-    const senderName = props?.isMyMessageParent ? "You" : getDisplayName(props?.sender)
+    const senderName = props?.isMyMessageParent ? Language.you : getDisplayName(props?.sender)
     return <TouchableOpacity activeOpacity={0.7} style={{
         flexGrow: 1, marginBottom: scaler(5),
         borderLeftColor: colors.colorLink,
@@ -191,7 +191,7 @@ export const VideoMessageReplied = memo((props: IVideoMessageReplied) => {
     }} >
         <View style={{ padding: scaler(5), flexGrow: 1, paddingEnd: scaler(10) }} >
             <Text style={{ color: colors.colorLink, fontWeight: '500' }} >{senderName}</Text>
-            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >Video</Text>
+            <Text style={{ fontSize: scaler(12), color: colors.colorBlackText }} >{Language.video}</Text>
         </View>
 
         <ImageLoader

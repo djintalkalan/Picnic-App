@@ -51,3 +51,8 @@ export const updateDeviceLanguage = (payload?: any): action => ({
   type: ActionTypes.UPDATE_DEVICE_LANGUAGE,
   payload
 })
+
+export const updateDeviceFiat = (payload?: any): action => ({
+  type: ActionTypes.UPDATE_DEVICE_FIAT,
+  payload
+})

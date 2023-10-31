@@ -41,7 +41,7 @@ function* uploadImage({ type, payload }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider.uploadFileAWS, file, prefixType, uploadProgress);
         console.log("Upload", res);
 
-        if (res && res.status == 201) {
+        if (res && res?.status == 201) {
             let location: string = res?.body?.postResponse?.location ?? res?.headers?.Location
             if (location) {
                 // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))
@@ -91,7 +91,7 @@ function* uploadImageArray({ type, payload }: action): Generator<any, any, any> 
             let res = yield call(ApiProvider.uploadFileAWS, file, isImage ? prefixType : 'video', (p, id) => uploadProgress(p, id, i + 1, image?.length));
             console.log("Upload", res);
 
-            if (res && res.status == 201) {
+            if (res && res?.status == 201) {
                 let location: string = res?.body?.postResponse?.location ?? res?.headers?.Location
                 if (location) {
                     // console.log("location.substring(location?.lastIndexOf(prefixType))", location.substring(location?.lastIndexOf(prefixType)))

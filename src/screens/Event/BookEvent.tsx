@@ -1,6 +1,6 @@
 
 import { _totalSoldTickets } from 'api/APIProvider';
-import { authorizePayment, joinEvent } from 'app-store/actions';
+import { authorizePayment, joinEvent, payWithBitcoin } from 'app-store/actions';
 import { colors } from 'assets/Colors';
 import { Images } from 'assets/Images';
 import { Button, CheckBox, KeyboardHideView, MyHeader, Text, TextInput } from 'custom-components';
@@ -10,13 +10,16 @@ import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from '
 import { useForm } from 'react-hook-form';
 import { Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView as ScrollView } from 'react-native-keyboard-aware-scroll-view';
-//@ts-ignore
-import ReadMore from 'react-native-read-more-text';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import FeatureFlagService from 'src/featureflag/FeatureFlagService';
 import Language from 'src/language/Language';
-import { formatAmount, getSelectedCurrencyFromValue, isNaturalNumber, scaler, _hidePopUpAlert, _showPopUpAlert } from 'utils';
-
+import LightningService from 'src/lightning/LightningService';
+import { formatAmount, getSelectedCurrencyFromValue, isNaturalNumber, scaler, _hidePopUpAlert, _showPopUpAlert, _showErrorMessage } from 'utils';
+//@ts-ignore
+import ReadMore from 'react-native-read-more-text';
+// import { useIsFocused } from '@react-navigation/native';
+const SATOSHIS = 100_000_000;
 
 type FormType = {
     noOfSeats: string;
@@ -26,15 +29,18 @@ type FormType = {
 
 
 const BookEvent: FC = (props: any) => {
+    // const isFocused = useIsFocused();
+    const [btcUsdAmount, setbtcUsdAmount] = useState(0.0);
     const [noOfTickets, setNoOfTickets] = useState("")
-    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'card'>();
+    const [payMethodSelected, setPayMethodSelected] = useState<'paypal' | 'cash' | 'card' | 'bitcoin' | undefined>();
     const [selectedTicket, setSelectedTicket] = useState<any>({})
     const [toggle, setToggle] = useState(false)
+    const [btcExchangeRate, setBtcEchangeRate] = useState(0.0)
+    const [featureFlag, setFeatureFlag] = useState(false)
     const [isUserDonating, setIsUserDonation] = useState(true)
     const { event } = useSelector(state => ({
         event: state?.eventDetails?.[props?.route?.params?.id]?.event,
     }), isEqual)
-
     const {
         handleSubmit,
         control,
@@ -86,44 +92,6 @@ const BookEvent: FC = (props: any) => {
 
     const dispatch = useDispatch();
 
-
-    const confirmReservation = useCallback((data: FormType) => {
-
-        const getPaymentMethod = () => {
-            if (event?.is_free_event) {
-                if (event?.is_donation_enabled && isUserDonating) {
-                    return payMethodSelected
-                }
-                return 'free'
-            }
-            return totalPayment?.paidTicketsPrice > 0 ? payMethodSelected : 'free'
-        }
-
-        let payload = {
-            paypal_merchant_id: undefined,
-            resource_id: event?._id,
-            no_of_tickets: data?.noOfSeats?.toString(),
-            plan_id: selectedTicket?._id ?? '',
-            transaction_id: "",
-            donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'card') ? data.donationAmount : '0',
-            is_donation: event?.is_free_event && event?.is_donation_enabled && isUserDonating ? '1' : '0',
-            amount: selectedTicket?.amount ?? '',
-            currency: selectedTicket?.currency ?? "",
-            payment_method: getPaymentMethod(),
-            paid_via_email: "", //send when payment_method is paypal
-            paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
-        }
-        let action = joinEvent
-        if (payMethodSelected && payMethodSelected != 'cash' && (payload?.is_donation == '1' || event?.is_free_event != 1)) {
-            if (event?.creator_of_event?.paypal_merchant_id && !event?.payment_api_username && !event?.payment_email)
-                payload.paypal_merchant_id = event?.creator_of_event?.paypal_merchant_id
-            action = authorizePayment
-        }
-        dispatch(action(payload))
-    }, [event, payMethodSelected, selectedTicket, isUserDonating])
-
-
-
     const _renderTruncatedFooter = (handlePress: any) => {
         return (
             <Text style={{ color: colors.colorPrimary, marginTop: 5 }} onPress={handlePress}>
@@ -163,6 +131,99 @@ const BookEvent: FC = (props: any) => {
         return payment
     }, [noOfTickets, free_tickets, selectedTicket])
 
+
+    // useEffect(() => {
+    //     async function setupState() {
+    //
+    //         // set bitcoion amount
+    //         let nodeInfo = await LightningService.getNodeInfo();
+    //         let _btc = 0.0;
+    //         if (nodeInfo !== null) {
+    //             // convert from milisats to sats
+    //             let sats = nodeInfo.channelsBalanceMsat / 1000;
+    //
+    //             // convert from sats to btc
+    //             _btc = sats / 100_000_000;
+    //             console.log("sats", sats)
+    //
+    //             const _exchangeRate = await LightningService.fetchExchangeRate(selectedTicket?.currency);
+    //             const _currencyAmount: number = _btc * _exchangeRate;
+    //
+    //             setbtcUsdAmount(_currencyAmount);
+    //         }
+    //     }
+    //     isFocused && setupState();
+    //
+    // }, [isFocused]);
+
+
+    const confirmReservation = useCallback(async (data: any) => {
+
+        const getPaymentMethod = () => {
+            if (event?.is_free_event) {
+                if (event?.is_donation_enabled && isUserDonating) {
+                    return payMethodSelected
+                }
+                return 'free'
+            }
+            return totalPayment?.paidTicketsPrice > 0 ? payMethodSelected : 'free'
+        }
+
+        // check for amount - validation
+        // if (payMethodSelected == 'bitcoin') {
+        //     let totalAmount = selectedTicket.amount * data?.noOfSeats;
+        //     console.log(`totalAmount: ${totalAmount}, btcAmount: ${btcUsdAmount}`)
+        //     console.log("selectedTicket.amount > btcAmount ======== ", totalAmount, selectedTicket?.currency, data?.noOfSeats, selectedTicket.amount > btcUsdAmount, selectedTicket.amount, btcUsdAmount)
+        //     if (totalAmount > btcUsdAmount) {
+        //         return _showErrorMessage("You don`t have enough bitcoin.");
+        //     }
+        // }
+
+        let joinEventPayload = {
+            paypal_merchant_id: undefined,
+            resource_id: event?._id,
+            no_of_tickets: data?.noOfSeats?.toString(),
+            plan_id: selectedTicket?._id ?? '',
+            transaction_id: "",
+            donation_amount: event.is_donation_enabled && (payMethodSelected == 'paypal' || payMethodSelected == 'card') ? data.donationAmount : '0',
+            is_donation: event?.is_free_event && event?.is_donation_enabled && isUserDonating ? '1' : '0',
+            amount: selectedTicket?.amount ?? '',
+            currency: selectedTicket?.currency ?? "",
+            payment_method: getPaymentMethod(),
+            paid_via_email: "", //send when payment_method is paypal
+            paid_via_option: "" // send when payment_method is paypal and paid by option is c card, debit card, email etc (e.g credit_card, debit_card, email)
+        }
+
+        let payload: any = joinEventPayload
+
+        let action = joinEvent
+
+        // pay with paypall
+        if (payMethodSelected &&
+            !['cash', 'bitcoin'].includes(payMethodSelected) &&
+            (payload?.is_donation == '1' || event?.is_free_event != 1)) {
+            if (event?.creator_of_event?.paypal_merchant_id && !event?.payment_api_username && !event?.payment_email)
+                payload.paypal_merchant_id = event?.creator_of_event?.paypal_merchant_id
+            action = authorizePayment
+        }
+        // pay with bitcoin
+        else if (featureFlag == true && payMethodSelected == 'bitcoin') {
+            let requestBolt11Payload = {
+                lang: "en",
+                memo: `${event?.name}:${event?.event_group?.name} ${new Date()}`,
+                value: Math.round((totalPayment?.paidTicketsPrice / btcExchangeRate) * SATOSHIS),
+                resource_id: event?._id,
+            }
+
+            payload = {
+                requestBolt11Payload,
+                joinEventPayload
+            }
+            action = payWithBitcoin
+        }
+        dispatch(action(payload))
+    }, [event, payMethodSelected, selectedTicket, isUserDonating, totalPayment])
+
     const onSubmit = useCallback(() => handleSubmit(data => {
         if (event?.is_free_event || totalPayment.paidTicketsSelected == 0)
             confirmReservation(data)
@@ -171,7 +232,10 @@ const BookEvent: FC = (props: any) => {
             message: (payMethodSelected == 'cash' ? Language.are_you_sure_you_want_to_pay_using : Language.are_you_sure_you_want_to_pay_using) + ' ' + Language[payMethodSelected as 'done'] + '?',
             onPressButton: () => { confirmReservation(data), _hidePopUpAlert() },
             buttonText: (payMethodSelected == 'cash' ? Language.reserve : Language.pay) + " " + formatAmount(selectedTicket.currency, totalPayment?.paidTicketsPrice),
-            buttonStyle: { width: '100%' }
+            buttonStyle: { width: '100%' },
+            footerText: (featureFlag && payMethodSelected == 'bitcoin' ? `1 BTC = $${btcExchangeRate}` : undefined),
+            isBackButton: true,
+            cancelButtonText: null
         })
     })(), [event?.is_free_event, payMethodSelected, confirmReservation, totalPayment])
 
@@ -193,6 +257,20 @@ const BookEvent: FC = (props: any) => {
         }
         return payMethodSelected != 'cash' && totalPayment?.paidTicketsPrice != 0 ? Language.pay + ' ' + formatAmount(selectedTicket.currency, totalPayment?.paidTicketsPrice) : Language.reserve
     }
+
+
+    useEffect(() => {
+        async function setupExchangeRateAsync() {
+            const btcExchangeRate: number = await LightningService.fetchBTCToUSD();
+            setBtcEchangeRate(btcExchangeRate);
+        }
+        FeatureFlagService.checkFlag("enable-lightning").then((result) => {
+            if (result) {
+                setFeatureFlag(true);
+                setupExchangeRateAsync();
+            }
+        })
+    }, [])
 
 
     return (
@@ -277,7 +355,7 @@ const BookEvent: FC = (props: any) => {
                                             type={_}
                                             payMethodSelected={payMethodSelected}
                                             setPayMethodSelected={setPayMethodSelected}
-                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash' && !event?.creator_of_event?.paypal_merchant_id}
+                                            disabled={!event?.payment_api_username && !event?.payment_email && _ != 'cash' && !event?.creator_of_event?.paypal_merchant_id && _ != 'bitcoin'}
                                             isDonation={event.is_donation_enabled} />
                                         {i == 0 ? <View style={{ height: 1, width: '100%', backgroundColor: '#DBDBDB', alignSelf: 'center' }} /> : undefined}
                                     </Fragment>
@@ -448,20 +526,23 @@ const PaymentMethod = (props: { type: string, payMethodSelected: any, setPayMeth
 
             case "paypal":
                 val.image = Images.ic_paypal
-                val.text = (props?.isDonation ? Language.donate_by_paypal : Language?.pay_by_paypal)
+                val.text = (props?.isDonation ? Language.donate_by_paypal : Language?.pay_with_paypal)
                 break;
             case "card":
                 val.image = Images.ic_credit_card
                 val.text = (props?.isDonation ? Language.donate_by_credit : Language?.pay_by_credit)
                 break;
-
+            case "bitcoin":
+                val.image = Images.ic_bitcoin;
+                val.text = (props?.isDonation ? Language.donate_by_bitcoin : Language?.pay_by_bitcoin)
+                break;
         }
         return val
     }, [props?.type, props?.isDonation, props?.payMethodSelected])
     return (
         <TouchableOpacity style={[styles.payView, { backgroundColor: props?.disabled ? '' : '' }]} onPress={() => { props?.setPayMethodSelected(props?.type) }} disabled={props?.disabled} >
             <Image source={image}
-                style={{ height: scaler(16), width: scaler(19), tintColor: props.disabled ? colors.colorGreyText : undefined }} />
+                style={{ resizeMode: "contain", height: scaler(16), width: scaler(19), tintColor: props.disabled ? colors.colorGreyText : undefined }} />
             <Text style={{ marginLeft: scaler(8), fontSize: scaler(14), fontWeight: '500', flex: 1, color: props.disabled ? colors.colorGreyInactive : '' }}>{text}</Text>
             <MaterialIcons name={icon}
                 size={scaler(20)} color={props.disabled ? colors.colorGreyText : colors.colorPrimary} />

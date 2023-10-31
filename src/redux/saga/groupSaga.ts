@@ -12,7 +12,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
     // yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._mutedBlockedReportedCount, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             let data = {
                 events: res?.data?.muted?.events || 0,
                 users: res?.data?.blocked?.users || 0,
@@ -21,7 +21,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
             }
             yield put(setPrivacyState(data))
             payload?.onSuccess && payload?.onSuccess(res?.data)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -29,7 +29,7 @@ function* _mutedBlockedReportedCount({ type, payload, }: action): Generator<any,
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 36", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -39,7 +39,7 @@ function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, an
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getBlockedMembers, payload?.page,);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -51,7 +51,7 @@ function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, an
             if (res?.data?.pagination?.currentPage == 1) blockedUsers = []
             yield put(setBlockedMembers([...blockedUsers, ...res?.data?.data]))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -59,7 +59,7 @@ function* _getBlockedMembers({ type, payload, }: action): Generator<any, any, an
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 37", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -69,12 +69,12 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._blockUnblockResource, payload?.data);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?.resource_type == 'user' && payload?.data?.is_blocked == "0")
                 yield put(removeFromBlockedMember(payload?.data?.resource_id))
             if (payload.onSuccess) payload.onSuccess(res?.data)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -82,7 +82,7 @@ function* _blockUnblockResource({ type, payload, }: action): Generator<any, any,
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 38", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -95,7 +95,7 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
 
     try {
         let res = yield call(ApiProvider._muteUnmuteResource, rest);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message)
             // if (payload.onSuccess) payload.onSuccess(res?.data)
             if (payload?.data?.is_mute == "1")
@@ -115,7 +115,7 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
             else {
                 yield put(removeMutedResource({ data: payload?.data?.resource_id, type: resource_type }))
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -123,7 +123,7 @@ function* _muteUnmuteResource({ type, payload, }: action): Generator<any, any, a
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 39", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -132,9 +132,9 @@ function* _reportResource({ type, payload, }: action): Generator<any, any, any> 
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._reportResource, { ...payload, is_reported: "1" });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -142,7 +142,7 @@ function* _reportResource({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 40", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -152,7 +152,7 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getMutedResources, resource_type, page);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -165,7 +165,7 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
             } else
                 yield put(addMutedResource({ data: res?.data?.data, type: resource_type }))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -173,7 +173,7 @@ function* _getMutedResources({ type, payload, }: action): Generator<any, any, an
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 41", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -182,7 +182,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         let res = yield call(payload?.data?._id ? ApiProvider._updateGroup : ApiProvider._createGroup, payload?.data);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             if (payload?.data?._id) {
                 yield put(updateGroupDetail({ groupId: payload?.data?._id, data: res?.data }))
@@ -194,7 +194,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
             NavigationService.goBack()
             if (payload.onSuccess) payload.onSuccess(res?.data)
             yield put(getAllGroups({ page: 1 }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -202,7 +202,7 @@ function* _createGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 42", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -218,7 +218,7 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._getAllGroups, location, payload?.page);
         payload?.setLoader && payload?.setLoader(false)
 
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (payload.onSuccess) payload.onSuccess({
                 pagination: {
                     currentPage: res?.data?.pagination?.currentPage,
@@ -230,14 +230,14 @@ function* _getAllGroups({ type, payload, }: action): Generator<any, any, any> {
             if (res?.data?.pagination?.currentPage == 1) groupList = []
             yield put(setAllGroups(res?.data?.data))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 43", error);
         payload?.setLoader && payload?.setLoader(false)
     }
 }
@@ -248,7 +248,7 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getGroupDetail, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
 
             if (res?.data?.group?.status == 5) {
                 console.log("SCREEN", NavigationService?.getCurrentScreen());
@@ -269,7 +269,7 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
             // if (res?.data?.group?.is_admin)
             //     yield put(getGroupMembers(payload))
             yield put(setGroupDetail({ groupId: payload, data: res?.data }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -277,7 +277,7 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 44", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -285,9 +285,9 @@ function* _getGroupDetail({ type, payload, }: action): Generator<any, any, any> 
 function* _getGroupMembers({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getGroupMembers, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(setGroupMembers({ groupId: payload, data: res?.data }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -295,7 +295,7 @@ function* _getGroupMembers({ type, payload, }: action): Generator<any, any, any>
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 45", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -304,9 +304,9 @@ function* _removeGroupMember({ type, payload, }: action): Generator<any, any, an
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._removeGroupMember, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(removeGroupMemberSuccess({ groupId: payload?.resource_id, data: payload?.user_id }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -314,7 +314,7 @@ function* _removeGroupMember({ type, payload, }: action): Generator<any, any, an
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 46", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -325,7 +325,7 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._joinGroup, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(joinGroupSuccess(payload))
             SocketService?.emit(EMIT_JOIN_ROOM, {
                 resource_id: payload
@@ -334,7 +334,7 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
             if (name != "HomeGroupTab" && name != "Home") {
                 yield put(getGroupDetail(payload))
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -342,7 +342,7 @@ function* _joinGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 47", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -351,7 +351,7 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._deleteGroup, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             NavigationService?.navigate("Home")
             // if (NavigationService?.getCurrentScreen()?.name == "GroupDetail") {
             //     NavigationService.goBack()
@@ -360,7 +360,7 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
             SocketService.emit(EMIT_GROUP_DELETE, {
                 resource_id: payload
             })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -368,7 +368,7 @@ function* _deleteGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 48", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -379,7 +379,7 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leaveGroup, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(leaveGroupSuccess(payload?.groupId))
             SocketService?.emit(EMIT_LEAVE_ROOM, {
                 resource_id: payload?.groupId
@@ -389,7 +389,7 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
                 yield put(getGroupDetail(payload?.groupId))
                 NavigationService.goBack()
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -397,7 +397,7 @@ function* _leaveGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 49", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -409,7 +409,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
         if (!payload?.noLoader)
             yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._getMyEvents, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             for (const index in res?.data?.data) {
                 if (res?.data?.data[index].ticket_type == 'multiple') {
                     const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
@@ -429,7 +429,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
                 }
             }
             yield put((payload?.type == 'upcoming' ? setUpcomingEvents : setPastEvents)({ groupId: payload?.groupId, data: res?.data?.data }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -437,7 +437,7 @@ function* _getMyEvents({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 50", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -447,7 +447,7 @@ function* _deleteGroupSuccess({ type, payload, }: action): Generator<any, any, a
         yield put(deleteEventSuccess({ groupId: payload }))
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 51", error);
     }
 }
 
@@ -455,9 +455,9 @@ function* _leadGroup({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leadGroup, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(getGroupDetail(payload))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -465,7 +465,7 @@ function* _leadGroup({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 52", error);
         yield put(setLoadingAction(false));
     }
 }

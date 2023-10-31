@@ -1,10 +1,10 @@
 
 import { config } from 'api';
 import * as Reducers from 'app-store/reducers';
-import { ICreateEventReducer, IEventChatReducer, IEventDetailReducer, IEventForCheckInReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPersonChatReducer, IPrivacyData, IPrivacyState, IUserEventsGroups } from 'app-store/reducers';
+import { IBitcoinReducer, ICreateEventReducer, IEventChatReducer, IEventDetailReducer, IEventForCheckInReducer, IEventReducer, IGroupChatReducer, IGroupDetailReducer, IGroupReducer, IHomeReducer, INotificationSettings, IPersonChatReducer, IPrivacyData, IPrivacyState, IUserEventsGroups } from 'app-store/reducers';
 import { rootSaga } from "app-store/saga";
 import { DefaultRootState, EqualityFn } from 'react-redux';
-import { applyMiddleware, combineReducers, compose, createStore, Store } from "redux";
+import { Store, applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { Persistor, persistReducer, persistStore } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import { SelectEffect, Tail } from 'redux-saga/effects';
@@ -31,6 +31,7 @@ declare module 'react-redux' {
         userGroupsEvents: IUserEventsGroups
         createEventState: ICreateEventReducer
         eventForCheckIn: IEventForCheckInReducer
+        bitcoinState: IBitcoinReducer
     }
 
     function useSelector<TState = DefaultRootState, Selected = unknown>(
@@ -89,6 +90,7 @@ const rootReducer = combineReducers({
     userGroupsEvents: Reducers?.userEventGroupReducer,
     createEventState: Reducers?.createEventReducer,
     eventForCheckIn: Reducers?.eventForCheckInReducer,
+    bitcoinState: Reducers.bitcoinReducer,
 });
 
 const persistedReducer = mergeStorageInPersistedReducer(persistReducer, persistConfig, rootReducer);

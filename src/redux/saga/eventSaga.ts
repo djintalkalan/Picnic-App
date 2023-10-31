@@ -10,12 +10,15 @@ import { EMIT_EVENT_DELETE, EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, EMIT_JOIN_
 import Language from 'src/language/Language';
 import { NavigationService, _showErrorMessage, _showSuccessMessage } from "utils";
 import ActionTypes, { action } from "../action-types";
+import LightningService from 'src/lightning/LightningService';
+
+import { joinEvent } from 'app-store/actions';
 
 function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
     // yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getMyGroups);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             // if (!res?.data?.length) {
             //     _showPopUpAlert({
             //         title: Language.groups_not_available,
@@ -33,7 +36,7 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
             //     })
             // }
             yield put(setMyGroups(res.data || []))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -41,7 +44,7 @@ function* _getMyGroups({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 13", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -52,11 +55,11 @@ function* _verifyQrCode({ type, payload, }: action): Generator<any, any, any> {
     const { onSuccess } = payload
     try {
         let res = yield call(ApiProvider._scanTicket, payload?.data);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(getEventMembers(payload?.data?.resource_id));
             _showSuccessMessage(res.message);
             onSuccess(true)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
             onSuccess(false)
 
@@ -67,7 +70,7 @@ function* _verifyQrCode({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 14", error);
         yield put(setLoadingAction(false));
         onSuccess(false)
     }
@@ -77,9 +80,9 @@ function* _getAllCurrencies({ type, payload, }: action): Generator<any, any, any
     // yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getAllCurrencies);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             Database.setValue("currencies", res.data?.currencies)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -87,7 +90,7 @@ function* _getAllCurrencies({ type, payload, }: action): Generator<any, any, any
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 15", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -102,7 +105,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
             data.is_booking_disabled = '0' as unknown as number
         }
         let res = yield call(data?._id ? ApiProvider._updateEvent : ApiProvider._createEvent, data);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             if (data?._id) {
                 yield put(updateEventDetail(res?.data))
@@ -115,7 +118,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
             // if (payload.onSuccess) payload.onSuccess(res?.data)
             yield put(getAllEvents({ page: 1 }))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -123,7 +126,7 @@ function* _createEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 16", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -141,7 +144,7 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
         let res = yield call(ApiProvider._getAllEvents, location, payload?.page);
         payload?.setLoader && payload?.setLoader(false)
 
-        if (res.status == 200) {
+        if (res?.status == 200) {
             for (const index in res?.data?.data) {
                 if (res?.data?.data[index].ticket_type == 'multiple') {
                     const leastTicket = res?.data?.data[index]?.ticket_plans?.reduce((p: any, c: any) => ((Math.min(p.amount, c.amount)) == c.amount ? c : p))
@@ -171,14 +174,14 @@ function* _getAllEvents({ type, payload, }: action): Generator<any, any, any> {
             if (res?.data?.pagination?.currentPage == 1) eventList = []
             yield put(setAllEvents(res?.data?.data))
 
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
         }
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 17", error);
         payload?.setLoader && payload?.setLoader(false)
     }
 }
@@ -189,7 +192,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._getEventDetail, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (isEmpty(res.data.event) || !res?.data?.event?._id) {
                 yield put(setLoadingAction(false));
 
@@ -241,7 +244,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
             if (type == ActionTypes.GET_EDIT_EVENT_DETAIL) {
                 yield put(setCreateEvent(res?.data?.event))
             }
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
             if (type == ActionTypes.GET_EDIT_EVENT_DETAIL)
                 NavigationService.goBack()
@@ -252,7 +255,7 @@ function* _getEventDetail({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 18", error);
         yield put(setLoadingAction(false));
         if (type == ActionTypes.GET_EDIT_EVENT_DETAIL)
             NavigationService.goBack()
@@ -263,14 +266,14 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._deleteEvent, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message)
             NavigationService?.navigate("Home")
             // yield put(deleteEventSuccess(payload))
             SocketService.emit(EMIT_EVENT_DELETE, {
                 resource_id: payload
             })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -278,7 +281,7 @@ function* _deleteEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 19", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -287,13 +290,13 @@ function* _deleteEventAsPublicAdmin({ type, payload, }: action): Generator<any, 
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._deleteEventAsPublicAdmin, { resource_id: payload });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message)
             NavigationService?.navigate("HomeEventTab")
             SocketService.emit(EMIT_EVENT_DELETE_BY_PUBLIC_GROUP_LEADER, {
                 resource_id: payload
             })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -301,7 +304,7 @@ function* _deleteEventAsPublicAdmin({ type, payload, }: action): Generator<any, 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 20", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -312,10 +315,10 @@ function* _pinUnpinEvent({ type, payload, }: action): Generator<any, any, any> {
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._pinUnpinEvent, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res.message);
             yield put(pinEventSuccess(payload?.resource_id))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -323,7 +326,7 @@ function* _pinUnpinEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 21", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -332,7 +335,7 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._joinEvent, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             _showSuccessMessage(res?.message)
             SocketService.emit(EMIT_JOIN_ROOM, {
                 resource_id: payload?.resource_id
@@ -340,7 +343,7 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
             yield put(joinEventSuccess(payload?.resource_id))
             yield put(getEventDetail(payload?.resource_id))
             NavigationService.navigate('EventDetail')
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
             if (res?.data?.invalid_resource) {
                 yield put(getEventDetail(res?.data?.resource_id))
@@ -352,7 +355,7 @@ function* _joinEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 22", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -361,13 +364,13 @@ function* _leaveEvent({ type, payload, }: action): Generator<any, any, any> {
     try {
         yield put(setLoadingAction(true));
         let res = yield call(ApiProvider._leaveEvent, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(leaveEventSuccess(payload))
             yield put(getEventDetail(payload))
             SocketService?.emit(EMIT_LEAVE_ROOM, {
                 resource_id: payload
             })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -375,7 +378,7 @@ function* _leaveEvent({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 23", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -383,7 +386,7 @@ function* _leaveEvent({ type, payload, }: action): Generator<any, any, any> {
 function* _getEventMembers({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getEventMembers, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             const checkedIn: any[] = []
             const notCheckedIn: any[] = []
             res?.data?.data.forEach((el: any) => {
@@ -406,7 +409,7 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
                 eventId: payload,
                 data: { eventMembersCheckedIn: checkedIn, eventMembersNotCheckedIn: notCheckedIn }
             }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -414,7 +417,7 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 24", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -422,13 +425,13 @@ function* _getEventMembers({ type, payload, }: action): Generator<any, any, any>
 function* _getEventMembersList({ type, payload, }: action): Generator<any, any, any> {
     try {
         let res = yield call(ApiProvider._getEventMembersList, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
 
             yield put(setEventMembersList({
                 eventId: payload,
                 data: { eventMembers: res?.data }
             }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -436,7 +439,7 @@ function* _getEventMembersList({ type, payload, }: action): Generator<any, any, 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 25", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -446,9 +449,9 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
     yield put(setLoadingAction(true));
     try {
         let res = yield call(ApiProvider._removeEventMember, payload);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(removeEventMemberSuccess({ eventId: payload?.resource_id, data: payload?.user_id }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -456,7 +459,7 @@ function* _removeEventMember({ type, payload, }: action): Generator<any, any, an
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 26", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -469,7 +472,7 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
             resource_id, no_of_tickets, currency, plan_id, donation_amount, is_donation,
             payment_method: paypal_merchant_id ? payment_method : undefined
         });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             if (res?.data?.is_payment_by_passed) {
                 _showSuccessMessage(res?.message)
                 SocketService.emit(EMIT_JOIN_ROOM, {
@@ -480,7 +483,7 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
                 NavigationService.navigate('EventDetail')
             }
             else NavigationService.navigate("Payment", { data: { ...payload, res: res?.data } })
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -488,9 +491,46 @@ function* _authorizePayment({ type, payload, }: action): Generator<any, any, any
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 27", error);
         yield put(setLoadingAction(false));
     }
+}
+
+function* _payWithBitcoin({ type, payload, }: action): Generator<any, any, any> {
+    try {
+        let { requestBolt11Payload, joinEventPayload } = payload
+
+        yield put(setLoadingAction(true));
+
+        console.log("request for bolt11 to be made for event:")
+        let bolt11Response = yield call(ApiProvider._bolt11Event, requestBolt11Payload)
+        console.log("bolt11 response: ", bolt11Response)
+
+        // parse bolt11
+        console.log("decoded bolt11")
+        let decodedBolt11 = yield call(LightningService.parseInvoice, bolt11Response.data.payment_request)
+        console.log("decoded bolt11: ", decodedBolt11)
+
+        // pay bolt11
+        console.log("attempting to pay bolt11")
+        let payment = yield call(LightningService.sendPayment, decodedBolt11.bolt11)
+        console.log("payment: ", payment)
+
+        // confirm bolt11
+        console.log("confirming that bolt11 was paid from the voltage node")
+        let confirmBolt11Response = yield call(ApiProvider._confirmBolt11Event, { r_hash: payment.id })
+        console.log("payment confirmed: ", confirmBolt11Response)
+
+        // if payment was confirmed
+        if (confirmBolt11Response.data === true) {
+            yield put(joinEvent(joinEventPayload))
+        }
+    } catch (error) {
+        console.log("Catch Error: ", error);
+        _showErrorMessage(Language.breez_error_message)
+        yield put(setLoadingAction(false));
+    }
+
 }
 
 function* _capturePayment({ type, payload, }: action): Generator<any, any, any> {
@@ -498,7 +538,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
     const { res: { _id }, token, PayerID: payer_id, resource_id, paypal_merchant_id } = payload
     try {
         let res = yield call(paypal_merchant_id ? ApiProvider._capturePaymentV2 : ApiProvider._capturePayment, { _id, ...(!paypal_merchant_id ? { token, payer_id } : {}) });
-        if (res.status == 200) {
+        if (res?.status == 200) {
             // NavigationService.goBack()
             // yield put(joinEvent(rest));
             _showSuccessMessage(res?.message)
@@ -508,7 +548,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
             yield put(joinEventSuccess(resource_id))
             yield put(getEventDetail(resource_id))
             NavigationService.navigate('EventDetail')
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message, 4000);
             NavigationService.goBack()
         } else {
@@ -518,7 +558,7 @@ function* _capturePayment({ type, payload, }: action): Generator<any, any, any> 
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 29", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -538,7 +578,7 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
 
     try {
         let res = yield call(ApiProvider._getMyEventForCheckIn, body);
-        if (res.status == 200) {
+        if (res?.status == 200) {
 
             if (!res?.data?.data?.length) {
                 res.data.data = []
@@ -570,7 +610,7 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
                 },
                 events: [...(body?.page == 1 ? [] : events), ...res?.data?.data]
             }))
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
         } else {
             _showErrorMessage(Language.something_went_wrong);
@@ -578,7 +618,7 @@ function* _fetchEventForCheckIn({ type, payload, }: action): Generator<any, any,
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 30 ", error);
         yield put(setLoadingAction(false));
     }
 }
@@ -588,11 +628,11 @@ function* _undoCheckIn({ type, payload, }: action): Generator<any, any, any> {
     const { onSuccess } = payload
     try {
         let res = yield call(ApiProvider._undoCheckIn, payload?.data);
-        if (res.status == 200) {
+        if (res?.status == 200) {
             yield put(getEventMembers(payload?.data?.resource_id));
             _showSuccessMessage(res.message);
             onSuccess(true)
-        } else if (res.status == 400) {
+        } else if (res?.status == 400) {
             _showErrorMessage(res.message);
             onSuccess(false)
 
@@ -603,7 +643,7 @@ function* _undoCheckIn({ type, payload, }: action): Generator<any, any, any> {
         yield put(setLoadingAction(false));
     }
     catch (error) {
-        console.log("Catch Error", error);
+        console.log("Catch Error 31", error);
         yield put(setLoadingAction(false));
         onSuccess(false)
     }
@@ -625,7 +665,7 @@ function* _connectPaypal({ type, payload }: action): Generator<any, any, any> {
         }
         yield put(setLoadingAction(false));
     } catch (error) {
-        console.log('Catch Error', error);
+        console.log('Catch Error 32', error);
         yield put(setLoadingAction(false));
     }
 }
@@ -652,5 +692,5 @@ export default function* watchEvents() {
     yield takeLatest(ActionTypes.GET_EVENTS_FOR_CHECK_IN, _fetchEventForCheckIn);
     yield takeLatest(ActionTypes.UNDO_CHECK_IN, _undoCheckIn);
     yield takeLatest(ActionTypes.CONNECT_PAYPAL, _connectPaypal);
-
+    yield takeLatest(ActionTypes.PAY_WITH_BITCOIN, _payWithBitcoin)
 };

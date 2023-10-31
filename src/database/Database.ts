@@ -3,6 +3,7 @@ import { isEqual } from "lodash";
 import { MMKVInstance, MMKVLoader, useMMKVStorage } from "react-native-mmkv-storage";
 import { ILanguages, LanguageType } from "src/language/Language";
 import { _showErrorMessage } from "utils";
+import { ICurrency } from "utils/Constants";
 
 export type LiteralUnion<T extends U, U = string> = T | (U & {});
 export interface GooglePlaceData {
@@ -56,10 +57,12 @@ export interface IRecentSearches {
 
 export type StorageType = "userData" | "isLogin" | "firebaseToken" |
     "authToken" | "selectedLanguage" | "currentLocation" | "selectedLocation" |
-    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText" | "allLanguages" | "paypalConnection"
+    "recentSearches" | 'currencies' | 'socketConnected' | "searchHomeText" | "allLanguages" | "paypalConnection" |
+    "greenlightCreds" | "mnemonic" | "inviteCode" | "selectedCurrency"
 const StorageVariables = ["userData", "isLogin", "firebaseToken",
     "authToken", "selectedLanguage", "currentLocation", "selectedLocation",
-    "recentSearches", "currencies", 'socketConnected', "searchHomeText", "allLanguages", "paypalConnection"]
+    "recentSearches", "currencies", 'socketConnected', "searchHomeText", "allLanguages",
+    "paypalConnection", "greenlightCreds", "mnemonic", "inviteCode", "selectedCurrency"]
 
 export interface IPaypalConnection {
     paypal_merchant_id?: string
@@ -67,20 +70,6 @@ export interface IPaypalConnection {
     errorMessages?: any[]
     isPaypalConnected?: boolean
     actionUrl?: string
-}
-
-type DataBaseType = {
-    userData?: any
-    isLogin?: boolean
-    socketConnected?: boolean
-    firebaseToken?: string
-    authToken?: string
-    selectedLanguage?: LanguageType
-    currentLocation?: ILocation
-    selectedLocation?: ILocation
-    recentSearches?: Array<IRecentSearches>
-    paypalConnection?: IPaypalConnection
-    allLanguages?: ILanguages
 }
 
 export interface ILocation {
@@ -97,6 +86,27 @@ export interface ILocation {
     } | null
 }
 
+export interface IGreenlightCredentials {
+    key?: Uint8Array
+    certificate?: Uint8Array
+}
+
+type DataBaseType = {
+    userData?: any
+    isLogin?: boolean
+    socketConnected?: boolean
+    firebaseToken?: string
+    authToken?: string
+    mnemonic?: string
+    inviteCode?: string
+    selectedLanguage?: LanguageType
+    currentLocation?: ILocation
+    selectedLocation?: ILocation
+    recentSearches?: Array<IRecentSearches>
+    paypalConnection?: IPaypalConnection
+    allLanguages?: ILanguages
+    greenlightCreds?: IGreenlightCredentials
+}
 
 class Database {
 
@@ -116,7 +126,10 @@ class Database {
     private userDataStorage = new MMKVLoader().withEncryption().withInstanceID("userDataStorage").initialize();
     private otherDataStorage = new MMKVLoader().withEncryption().withInstanceID("otherDataStorage").initialize();
     private languageStorage = new MMKVLoader().withEncryption().withInstanceID("languageStorage").initialize();
+    private currencyStorage = new MMKVLoader().withEncryption().withInstanceID("currencyStorage").initialize();
     private locationStorage = new MMKVLoader().withEncryption().withInstanceID("locationStorage").initialize();
+    private lightningStorage = new MMKVLoader().withEncryption().withInstanceID("lightningStorage").initialize();
+
 
     DefaultCountry = 'US' // RNLocalize.getCountry() ?? 'US'
 
@@ -149,6 +162,10 @@ class Database {
         this.languageStorage.setString('selectedLanguage', language)
     }
 
+    public setSelectedCurrency = (currency: ICurrency) => {
+        this.currencyStorage.setString('selectedCurrency', JSON.stringify(currency))
+    }
+
     public setCurrentLocation = (location: ILocation) => {
         this.locationStorage.setMap('currentLocation', location)
     }
@@ -162,9 +179,30 @@ class Database {
         this.otherDataStorage.setArray('recentSearches', [data, ...oldData])
     }
 
+    public setMnemonic = (data: string) => {
+        this.lightningStorage?.setString("mnemonic", data);
+    }
+
+    public setInviteCode = (data: string) => {
+        this.lightningStorage?.setString("inviteCode", data);
+    }
+
+    public setGreenlightCreds = (data: IGreenlightCredentials) => {
+        this.lightningStorage?.setMap("greenlightCreds", data)
+    }
+
     public updatePaypalDetails = (data: IPaypalConnection) => {
         this.otherDataStorage?.setMap("paypalConnection", data)
     }
+
+    /**
+     * clear storage for lightning,
+     * this is mostly for debugging purposes
+     */
+    public clearLightningStorage = () => {
+        this.lightningStorage.clearStore()
+    }
+
 
     getStorageForKey = (key?: StorageType): MMKVInstance => {
         switch (key) {
@@ -189,8 +227,16 @@ class Database {
             case 'searchHomeText':
                 return this.otherDataStorage
 
+            case 'greenlightCreds':
+            case 'mnemonic':
+            case 'inviteCode':
+                return this.lightningStorage
+
             case 'socketConnected':
                 return this.socketStorage
+
+            case 'selectedCurrency':
+                return this.currencyStorage
 
             default:
                 break;
@@ -246,6 +292,8 @@ class Database {
             case 'authToken':
             case 'firebaseToken':
             case 'selectedLanguage':
+            case 'inviteCode':
+            case 'mnemonic':
                 return (this.getStorageForKey(key).getString(key) || defaultValue) as T
 
             case 'isLogin':
@@ -257,11 +305,13 @@ class Database {
             case 'selectedLocation':
             case 'allLanguages':
             case 'paypalConnection':
+            case 'greenlightCreds':
                 return (this.getStorageForKey(key).getMap(key) || defaultValue) as T
 
             case 'recentSearches':
             case 'currencies':
                 return (this.getStorageForKey(key).getArray(key) || (defaultValue ?? [])) as T
+
         }
     }
 
