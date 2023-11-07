@@ -2,7 +2,7 @@ import { isEqual } from 'lodash'
 import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Alert, InteractionManager, Platform } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
-import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions'
+import { check, openSettings, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions'
 import Database, { ILocation, useDatabase, useOtherValues } from 'src/database/Database'
 import Language from 'src/language/Language'
 import { getAddressFromLocation } from 'utils'
@@ -68,12 +68,12 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                     })
                 },
             },
-            { text: Language.cancel, }
+            // { text: Language.cancel, }
         ], { cancelable: true })
     }, [])
 
     let denyTime = useRef(0)
-    const getPermissionResult = useCallback(async (result) => {
+    const getPermissionResult = useCallback(async (result: PermissionStatus) => {
         switch (result) {
             case RESULTS.UNAVAILABLE:
                 setLocationEnabled(true)
@@ -125,9 +125,9 @@ export const LocationServiceProvider: FC<any> = ({ children }) => {
                         await getPermissionResult(result);
                     },
                 },
-                {
-                    text: Language.cancel,
-                }
+                // {
+                //     text: Language.cancel,
+                // }
             ], { cancelable: true })
         }
     }, [isLogin])
