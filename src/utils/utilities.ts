@@ -18,7 +18,7 @@ import moment from 'moment-timezone';
 import { Keyboard, Linking, Platform } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-import LaunchNVG, { LaunchNavigator as LType } from 'react-native-launch-navigator';
+import LaunchNavigator from 'react-native-launch-navigator';
 import Share from 'react-native-share';
 import { ShareOpenResult } from 'react-native-share/lib/typescript/types';
 import Toast from 'react-native-simple-toast';
@@ -27,12 +27,9 @@ import Language, { LanguageType } from 'src/language/Language';
 import { ALL_CURRENCIES, DEFAULT_CURRENCY, ICurrency, ICurrencyKeys, ICurrencyValues, REMOVED_CURRENCIES } from './Constants';
 import { StaticHolder } from './StaticHolder';
 import { InviteCodesType } from 'custom-components';
-//@ts-ignore
-const LaunchNavigator: LType = LaunchNVG
 Geocoder.init(config.GOOGLE_MAP_API_KEY);
 try {
-    //@ts-ignore
-    LaunchNVG?.setGoogleApiKey(config.GOOGLE_MAP_API_KEY);
+    LaunchNavigator?.setGoogleApiKey && LaunchNavigator.setGoogleApiKey(config.GOOGLE_MAP_API_KEY);
 } catch (e) {
 
 }
@@ -41,14 +38,14 @@ const urlRegx = /[?&]([^=#]+)=([^&#]*)/g
 const logoUrl = 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/0e/fa/de/0efade76-c963-6e51-722b-2a0bfba89a3c/AppIcon-0-0-1x_U007emarketing-0-0-0-10-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1024x1024bb.png'
 
 export const launchMap = async (address: string | { lat: number, long: number },) => {
-    let app = null;
+    let app;
 
     const map = Platform.OS == 'android' ? LaunchNavigator.APP.GOOGLE_MAPS : LaunchNavigator.APP.APPLE_MAPS
     const map2 = Platform.OS == 'ios' ? LaunchNavigator.APP.GOOGLE_MAPS : LaunchNavigator.APP.APPLE_MAPS
 
-    app = await LaunchNavigator.isAppAvailable(map) ? map : null
+    app = LaunchNavigator.isAppAvailable(map) ? map : undefined
     if (!app) {
-        app = await LaunchNavigator.isAppAvailable(map2) ? map2 : null
+        app = LaunchNavigator.isAppAvailable(map2) ? map2 : undefined
     }
 
 

@@ -1,0 +1,19 @@
+diff --git a/node_modules/react-native-launch-navigator/index.d.ts b/node_modules/react-native-launch-navigator/index.d.ts
+index f20ff02..fdaeaa0 100644
+--- a/node_modules/react-native-launch-navigator/index.d.ts
++++ b/node_modules/react-native-launch-navigator/index.d.ts
+@@ -219,6 +219,14 @@ declare module 'react-native-launch-navigator' {
+     enableDebug: (
+         enabled: boolean
+     ) => void;
++
++    /**
++     * Set Google API key to navigator
++     * @param key {string}
++     */
++    setGoogleApiKey: (
++        key: string
++    ) => void;
+   }
+ 
+   export default LaunchNavigator;
